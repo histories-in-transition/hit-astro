@@ -1,14 +1,19 @@
-<header class="bg-fixed bg-brandRose">
-<div class="flex justify-between px-16">
-    <h1 class="text-5xl self-center tracking-wide uppercase underline underline-offset-8 decoration-slate-800"><a href="index.html">Histories in transition</a></h1>
-    <img src="/images/imafo_logo_kurz_HP_var01b_96_230_v2.png">
-</div>
-<nav class="px-16 pb-3">
-    <ul class="flex place-content-start gap-x-8">   
-        <li class="hover:underline underline-offset-4">Manuscripts</li>
-        <li class="hover:underline underline-offset-4">Case studies</li>
-        <li class="hover:underline underline-offset-4">Index</li>
-        <li class="hover:underline underline-offset-4"><a href="about.html">About</a></li>
-    </ul>
-</nav>
+<header class="sticky top-0">
+    <div class="hidden bg-brandRose md:flex pb-3 align-center justify-items-start">
+        <span class="px-10 text-3xl text-brandRed self-center tracking-wide uppercase underline underline-offset-8 decoration-brandRed"><a href="index.html">Histories in transition</a></span>
+        <nav class="px-10 self-end">
+            <ul class="flex place-content-start gap-x-8">   
+                <li class="hover:underline underline-offset-4 decoration-2 decoration-brandRed">Manuscripts</li>
+                <li class="hover:underline underline-offset-4 decoration-2 decoration-brandRed">Case studies</li>
+                <li class="hover:underline underline-offset-4 decoration-2 decoration-brandRed">Index</li>
+                <li class="hover:underline underline-offset-4 decoration-2 decoration-brandRed"><a href="about.html">About</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="md:hidden bg-brandRed flex justify-around">
+        <span class="px-4 text-2xl text-brandIvory self-center tracking-wide uppercase"><a href="index.html">Histories in transition</a></span>
+        <nav-bar class="self-center">
+            <button id="menu-sidebar"><img src="/images/burger-menu.svg" class="w-5"></img></button>            
+        </nav-bar>
+    </div>
 </header>
