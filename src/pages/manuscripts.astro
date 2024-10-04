@@ -1,0 +1,114 @@
+---
+import PageLayout from "../layouts/page-layout.astro"; 
+import mss from "../content/data/manuscripts.json";
+---
+
+
+<PageLayout>
+  <style>
+    /* To make the table rows striped */
+    tr:nth-child(even) {
+      background-color: #fef9f8;
+    }
+    tr:nth-child(odd) {
+      background-color: #f5e8e6;
+    }
+    /* To highlight a row on click */
+    tr:focus {
+            outline: none; /* Remove the default outline on focus */
+            background-color: #ca9f91; 
+        }
+  </style>
+
+<div class="mx-auto p-4 lg:w-4/5">
+		<div>
+			<div class="flex justify-between align-middle mb-2">
+        <h1 class="text-2xl font-semibold text-brandBrown py-2">Manuscripts</h1>
+        <button id="download-btn" class="border rounded-md shadow-sm bg-brandBrown text-brandPaleWhite px-4 font-semibold hover:bg-brandPaleWhite hover:border-brandBrown hover:text-brandBrown transition">Download CSV</button>
+    </div>
+      <table id="hit-mss-table" class="data-table" class="text-brandBrown w-full table-fixed shadow-md border lg:leading-7 text-sm lg:text-base">
+        <thead>
+          <tr>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Shelfmark</span>
+                <input type="text" id="nameSearch" placeholder="Search Name" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Settlement</span>
+                <input type="text" id="genreSearch" placeholder="Search Genre" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Library | Collection</span>
+                <input type="text" id="authorSearch" placeholder="Search Author" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Digital facsimile</span>
+                <input type="text" id="contextSearch" placeholder="" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Catalog Entry</span>
+                <input type="text" id="contextSearch" placeholder="" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+          </tr>
+        </thead>
+               
+              
+        <tbody>
+            {Object.values(mss).map((ms) => (
+              <tr tabindex="0">
+                <td class="px-3">
+                    <a href=`` class="hover:text-brandPaleWhite hover:font-semibold">{ms.shelfmark[0]?.value}</a>
+                </td>
+                <td class="px-3">
+                  {ms.library_full[0]?.settlement[0]?.name}
+                </td>
+                <td class="px-3">
+                    {ms.library_full[0]?.library_full}                   
+                  <a href=""></a>
+                </td>
+                
+                <td class="px-3">
+                  {ms.digi_url && (
+             <div class="flex">                
+                <a href={ms.digi_url} class="inline-flex hover:text-brandPaleWhite">
+                    <section>Digital facsimile</section> 
+                    <img src="" alt="" class="w-4 inline">
+                </a>
+            </div>
+           
+          )}
+                </td>
+                <td class="px-3">
+                   {ms.catalog_url && (
+           <div class="flex">
+                <a href={ms.catalog_url} class="inline-flex hover:text-brandPaleWhite">
+                    <section>Catalog entry</section>                 
+                    <img src="" alt="" class="w-4 inline">
+                </a>
+            </div>            
+        )}
+                </td>
+              </tr>
+              ))}
+            
+            
+        </tbody>
+             
+            </table>
+     
+            
+         
+		</div>
+	</div>
+  <script src="../lib/table-search.js"></script>
+</PageLayout>
