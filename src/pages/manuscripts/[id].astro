@@ -1,0 +1,192 @@
+---
+
+import PageLayout from "../../layouts/page-layout.astro";
+import Button from "../../components/button.astro"
+import manuscripts from "../../content/data/manuscripts.json";
+import msItems from "../../content/data/ms_items.json";
+
+export async function getStaticPaths() {
+    const items = Object.values(msItems);
+    
+    const paths = Object.values(manuscripts).map((manuscript) => {
+      const id = manuscript.hit_id
+      const matchingMsItems = items.filter((item) => {
+      return item.manuscript.some((ms) => ms.hit_id === id);
+    });
+      return {
+        params: {id: manuscript.hit_id},
+        props: {data: manuscript, msItem: matchingMsItems}
+      }
+    });
+
+    return paths;
+}
+
+const { data: manuscript, msItem: matchingMsItems } = Astro.props;
+
+---
+
+<PageLayout>
+    <div>
+        <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
+            <h1 class="text-3xl font-semibold py-3 text-brandRed">{manuscript?.shelfmark[0].value}</h1>
+            <div class="flex gap-2 justify-end">
+              <Button>TEI-XML</Button>
+              <Button>PDF</Button>
+            </div>
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+
+              <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
+              <dd class="pl-5">{manuscript?.library_full[0].settlement[0]?.name}</dd>
+              
+              
+              <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
+              <dd class="pl-5"><a href={manuscript?.library_full[0].gnd_url} target="_blank">{manuscript.library_full[0].library_full}</a></dd>
+              
+              
+              <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
+              <dd class="pl-5">{manuscript?.idno}</dd>
+
+              <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
+              <dd class="pl-5">{manuscript?.idno_former}</dd>
+            </dl>
+
+            <!-- <h2 class="font-semibold px-5">Das Äuseres</h2> -->
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+                <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
+                <dd class="pl-5">
+                    {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
+                    {manuscript?.material?.value.includes("mixed") && <span>Mischung</span>}
+                    {manuscript?.material?.value.includes("paper") && <span>Papier</span>}
+                     {manuscript?.material_spec}</dd>
+                     
+                <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
+                <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
+
+                <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+              <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
+              {manuscript.quiremarks && (
+                <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+                <dd class="pl-5">{manuscript?.quiremarks}</dd>
+           )} 
+                {manuscript.catchwords && (
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
+                     <dd class="pl-5">{manuscript?.catchwords}</dd>
+                )}
+                <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
+                <dd class="pl-5">
+                  {manuscript?.quire_structure && (
+                     <span set:html={manuscript.quire_structure}></span>
+                  )}
+                </dd>
+                
+                
+                </dl>
+                <!-- <h2>Geschichte:</h2> -->
+
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+              <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
+              <dd class="pl-5">{manuscript?.history}</dd> 
+
+              <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
+              <dd class="pl-5">{manuscript?.orig_place[0]?.name}</dd> 
+
+              <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+              <dd class="pl-5">
+                {
+                    manuscript.provenance.map((entry, index) => (
+                      <>
+                        <a href="" class="hover:text-brandRed">
+                          {entry.label}
+                        </a>
+                       
+                        {index < manuscript.provenance.length - 1 && ', '}
+                      </>
+                    ))
+                  }</dd> 
+            <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
+            <dd class="pl-5">
+                {manuscript.manuscripts_dated.map((date, index) => (
+                    <>
+                    <span>{date.authority[0].name} ({date.authority[0].short_title}): {date.date[0].label}</span>
+                    {index < manuscript.manuscripts_dated.length -1 && ', '}
+                    </>
+                ))
+           }
+            </dd>
+
+              <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+              <dd class="pl-5">{manuscript?.bibliography}</dd> 
+            </dl>
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+                <dt class="font-semibold border-r border-gray-300 pr-2">Externe Links:</dt>
+                <dd class="pl-5">
+                    <div class="flex flex-col">
+                        {manuscript.digi_url && (
+                             <div class="flex">
+                                <a href={manuscript.digi_url} class="inline-flex hover:text-brandRed">
+                                    <section>Digitalisat</section> 
+                                    
+                                </a>
+                            </div>
+                           
+                          )}
+                          
+                        {manuscript.catalog_url && (
+                           <div class="flex">                        
+                                <a href={manuscript.catalog_url} class="inline-flex hover:text-brandRed">
+                                    <section>Katalogisat</section> 
+                                    
+                                </a>
+                            </div>                    
+                        )}
+        
+                        {manuscript.manuscripta_url && (
+                             <div class="flex">
+                                <a href={manuscript.manuscripta_url} class="inline-flex hover:text-brandRed">
+                                    <section>Manuscripta.at</section> 
+                                    
+                                </a>
+                            </div>
+                           
+                          )}
+        
+                          {manuscript.handschriftenportal_url && (
+                             <div class="flex">
+                                <a href={manuscript.handschriftenportal_url} class="inline-flex hover:text-brandRed">
+                                    <section>Handschriftenportal</section> 
+                                    
+                                </a>
+                            </div>
+                           
+                          )}
+                        </div>    
+                </dd>
+            </dl>
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+              <dt class="font-semibold border-r border-gray-300 pr-2">Inhalt:</dt>
+              <dd class="pl-5">{manuscript.content_summary}</dd>
+              {matchingMsItems.map(item => {
+                return <dt class="border-r border-gray-300 pr-2 justify-self-end">{item.locus_grp}</dt>
+                <dd class="pl-5">
+                {item.title_work[0].title && <span class="font-semibold">{item.title_work[0].title}</span>}
+                {item.title_note && <span>({item.title_note})</span>}
+                {item.rubric && <span class="italic">›{item.rubric}‹</span>}
+                {item.incipit && <span class="italic">{item.incipit} ... </span>}                
+                {item.explicit && <span class="italic">{item.explicit}</span>}
+                {item.final_rubric && <span class="italic">›{item.final_rubric}‹</span>}
+                {item.decoration && <span>{item.decoration}</span>}
+                {item.bibl && <span>{item.bibl}</span>}
+
+                </dd>
+                ;
+              })}
+          </dl>
+         
+           
+                  
+           
+    
+    </article>
+    </div>
+</PageLayout>

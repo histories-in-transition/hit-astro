@@ -31,9 +31,9 @@ function reapplyRowStriping(rows) {
       // if the row is visible , check the visibleRow Index which increments each time a visible row is found
       if (visibleRowIndex % 2 === 0) {
         // computes the remainder of the division by 2 - if 0 the number of the row is even - apply one color, else (% 2 = 1) apply the other color for odd
-        row.style.backgroundColor = "#fef9f8"; // Color for even rows
+        row.style.backgroundColor = "#fff8f7"; // Color for even rows
       } else {
-        row.style.backgroundColor = "#f5e8e6"; // Color for odd rows
+        row.style.backgroundColor = "#fcf1e8"; // Color for odd rows
       }
       visibleRowIndex++; // Increment visible row counter with every loop; by the first visible row index is 0, by the next 1 etc.
     }
@@ -44,7 +44,7 @@ function reapplyRowStriping(rows) {
 const tableRows = document.querySelectorAll("tbody tr");
 tableRows.forEach((row) => {
   row.addEventListener("mouseenter", () => {
-    row.style.backgroundColor = "#d6bbb2";
+    row.style.backgroundColor = "#ffc08c";
     row.style.color = "black";
   });
   row.addEventListener("mouseleave", () => {

@@ -5,10 +5,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        brandIvory: "#FFF0EE",
-        brandRose: "#EDD4C2",
-        brandRed: "#8A4C55",
-        brandYellow: "#FFAC1D",
+        brandIvory: "#fff8f7",
+        brandRose: "#fcf1e8",
+        brandRed: "#9c3e03",
       },
     },
   },
