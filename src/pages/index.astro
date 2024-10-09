@@ -1,5 +1,6 @@
 ---
-import PageLayout from "../layouts/page-layout.astro"
+import PageLayout from "../layouts/page-layout.astro";
+import Button from "../components/button.astro"
 ---
 <PageLayout>
 	<div class="hidden md:grid mx-auto w-3/4 grid-cols-2 py-4 px-10 place-content-center gap-10">
@@ -9,8 +10,8 @@ import PageLayout from "../layouts/page-layout.astro"
 				<h2 class="self-center text-2xl italic">The Case of Freising and Salzburg (9th – 12th c.)</h2>
 			</div>
 			<p class="py-3">This project seeks to rethink the cultural history of historiography in the Carolingian and post-Carolingian periods (9th–12th centuries) by focusing on two key centers - Salzburg and Freising. The project explores the evolution of historical thinking and writing, exploring how texts were written, combined, and contextualized in manuscripts, emphasizing the materiality of manuscripts and how medieval historiographers worked with materials like parchment and pen. It also examines the social and intellectual contexts that influenced these works. A central aspect of the project is the creation of a relational database, which will allow users to analyze and visualize the chronological layers and connections between manuscripts.</p>
-			<button class="bg-white text-black border-2 rounded-md py-2 px-4 hover:bg-brandRed hover:text-brandIvory transition border-brandRed"><a href="about.html">About the project</a></button>
-			<button class="bg-white text-black border-2 rounded-md py-2 px-4 hover:bg-brandRed hover:text-brandIvory transition border-brandRed"><a href="database.html">Explore the database</a></button>
+			<Button><a href="about.html">About the project</a></Button>
+			<Button><a href="database.html">Explore the database</a></Button>
 
 		</div>
 		<figure class="grid gap-2 content-start">
