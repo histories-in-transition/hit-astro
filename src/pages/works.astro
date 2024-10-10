@@ -1,0 +1,95 @@
+---
+import PageLayout from "../layouts/page-layout.astro"; 
+import works from "../content/data/works.json";
+import msitems from "../content/data/ms_items.json";
+import Button from "../components/button.astro";
+
+const msItems = Object.values(msitems)
+
+
+---
+
+
+<PageLayout>
+  <style>
+    /* To make the table rows striped */
+    tr:nth-child(even) {
+      background-color: #fff8f7;
+    }
+    tr:nth-child(odd) {
+      background-color: #fcf1e8;
+    }
+   
+  </style>
+
+<div class="mx-auto p-4 lg:w-4/5">
+		<div>
+			<div class="flex justify-between align-middle mb-2">
+        <h2 class="text-2xl font-semibold text-brandBrown py-2">Works</h2>
+        <Button id="download-btn">CSV</Button>
+        
+    </div>
+      <table id="hit-mss-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+        <thead>
+          <tr>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Titel</span>
+                <input type="text" id="nameSearch" placeholder="Suche Titel" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Author</span>
+                <input type="text" id="authorSearch" placeholder="Suche Author" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            <th>
+              <div class="flex flex-col items-start p-2">
+                <span class="font-bold">Handschriften</span>
+                <input type="text" id="genreSearch" placeholder="Suche HS" class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+              </div>
+            </th>
+            
+          </tr>
+        </thead>
+               
+              
+        <tbody>
+            {Object.values(works).map((work) => (
+              <tr tabindex="0">
+                <td class="px-3">
+                    <a href=`/works/${work.hit_id}`>{work.title}</a>
+                </td>
+                <td class="px-3">
+                    {work.author.map(item => {
+                        return <a href=`/authors/${item.hit_id}`>{item.name}</a>
+                    })}
+                </td>
+                <td class="px-3">
+      {msItems
+        .filter(msItem => msItem.title_work.some(title => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
+        .map(filteredMsItem => {
+            return <>
+             <a href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
+            {filteredMsItem.manuscript.map(ms => ms.shelfmark[0].value)}
+          </a> <span>({filteredMsItem.locus_grp}) | </span>
+            </>
+        }        
+      )}
+    </td>
+             
+              </tr>
+              ))}
+            
+            
+        </tbody>
+             
+            </table>
+     
+            
+         
+		</div>
+	</div>
+  <script src="../lib/table-search.js"></script>
+</PageLayout>
