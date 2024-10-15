@@ -1,5 +1,5 @@
 ---
-
+import {Icon} from "astro-icon/components";
 import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
       }
     });
 
-    return paths;
+    return paths; 
 }
 
 const { data: manuscript, msItem: matchingMsItems } = Astro.props;
@@ -34,14 +34,14 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
               <Button>TEI-XML</Button>
               <Button>PDF</Button>
             </div>
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
               <dd class="pl-5">{manuscript?.library_full[0].settlement[0]?.name}</dd>
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-              <dd class="pl-5"><a href={manuscript?.library_full[0].gnd_url} target="_blank">{manuscript.library_full[0].library_full}</a></dd>
+              <dd class="pl-5"><a href={manuscript?.library_full[0].gnd_url} target="_blank" class="hover:text-brandRed">{manuscript.library_full[0].library_full} <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon></a></dd>
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
@@ -53,7 +53,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
             </dl>
 
             <!-- <h2 class="font-semibold px-5">Das Äuseres</h2> -->
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
                 <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
                 <dd class="pl-5">
                     {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
@@ -80,20 +80,20 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                 )}
                 <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
                 <dd class="pl-5">
-                  {manuscript?.quire_structure && (
-                     <span set:html={manuscript.quire_structure}></span>
+                  {manuscript.quire_structure && (
+                     <span set:html={manuscript?.quire_structure}></span>
                   )}
                 </dd>
 
                 
                 <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
                 <dd class="pl-5">
-                  {manuscript.binding_date.map(date => (
-                    <span>{date.value}</span>
+                  {manuscript?.binding_date.map(date => (
+                    <span>{date?.value}</span>
                   ))}
                   {manuscript?.binding}</dd>
                 
-                  {manuscript.acc_mat && (
+                  {manuscript?.acc_mat && (
                      <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
                       <dd class="pl-5">
                     {manuscript?.acc_mat}
@@ -102,7 +102,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                 </dl>
                 <!-- <h2>Geschichte:</h2> -->
 
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
               <dd class="pl-5">{manuscript?.history}</dd> 
 
@@ -113,7 +113,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
               <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
               <dd class="pl-5">
                 {
-                    manuscript.provenance.map((entry, index) => (
+                    manuscript?.provenance.map((entry, index) => (
                       <>
                         <a href="" class="hover:text-brandRed">
                           {entry.label}
@@ -136,7 +136,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
               <dd class="pl-5">{manuscript?.bibliography}</dd> 
             </dl>
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
                 <dt class="font-semibold border-r border-gray-300 pr-2">Externe Links:</dt>
                 <dd class="pl-5">
                     <div class="flex flex-col">
@@ -183,17 +183,20 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
             </dl>
 
             
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Inhalt:</dt>
-              <dd class="pl-5">{manuscript.content_summary}</dd>
-
+              <dd class="pl-5">{manuscript?.content_summary}</dd>
               {matchingMsItems
                 .sort((a, b) => {
                   // To sort nested msItems - show the 'mother' msItem first, then the children - extract the first and second numbers from the "locus_grp" strings 
                   const extractNumbers = (locusGrp : string) => {
                     const match = locusGrp.match(/^(\d+)[^\d]*(\d*)/);
-                    const startNumber = parseInt(match[1]);  // The first number use parseInt to convert to number
-                    const endNumber = match[2] ? parseInt(match[2]) : startNumber;  // The second number if present, otherwise use the startNumber
+                    if (!match) {
+                      // Return a default value if match is null (invalid format)
+                      return [0, 0]; // or handle as needed, e.g., return [-1, -1] to push these to the end
+                    }
+                    const startNumber = parseInt(match[1], 10);  // The first number, use parseInt with radix 10
+                    const endNumber = match[2] ? parseInt(match[2], 10) : startNumber;  // The second number if present, otherwise use the startNumber
                     return [startNumber, endNumber];
                   };
 
@@ -203,13 +206,13 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                   // Compare first by the starting numbers
                   if (startA !== startB) return startA - startB;
 
-                  // If starting numbers are the same, compare by the ending numbers show larger first
+                  // If starting numbers are the same, compare by the ending numbers (show larger first)
                   return endB - endA;
                 })
                 .map(item => {
                 return <dt class="border-r border-gray-300 pr-2 justify-self-end">{item.locus_grp}</dt>
                 <dd class="pl-5">
-                {item.title_work[0]?.title && <span class="font-semibold">{item.title_work[0].title}</span>}
+                {item.title_work[0]?.title && <span class="font-semibold underline underline-offset-4 hover:text-brandRed"><a href=`/works/${item.title_work[0].hit_id}`>{item.title_work[0].title}</a></span>}
                 {item.title_note && <span>({item.title_note})</span>}
                 {item.rubric && <span class="italic">›{item.rubric}‹</span>}
                 {item.incipit && <span class="italic">{item.incipit} ... </span>}                
@@ -221,12 +224,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                 </dd>
                 ;
               })}
-          </dl>
-         
-           
-                  
-           
-    
+          </dl>   
     </article>
     </div>
 </PageLayout>

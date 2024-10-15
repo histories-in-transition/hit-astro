@@ -1,7 +1,16 @@
 // Put event listener on the input - cll function searchTable
-document.querySelectorAll("input").forEach((input, index) => {
-  input.addEventListener("input", () => {
-    searchTable(index, input.value);
+// document.querySelectorAll("input").forEach((input, index) => {
+//   input.addEventListener("input", () => {
+//     searchTable(index, input.value);
+//   });
+// });
+
+document.querySelectorAll("form[data-search-form]").forEach((input, index) => {
+  input.addEventListener("input", (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const searchValue = formData.get("q");
+    searchTable(index, searchValue);
   });
 });
 
@@ -53,7 +62,7 @@ tableRows.forEach((row) => {
   });
 });
 
-// Function for download button on table
+// Function for download CSV button on table
 
 document.getElementById("download-btn").addEventListener("click", function () {
   // Function to convert table to CSV

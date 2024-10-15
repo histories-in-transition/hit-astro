@@ -1,0 +1,83 @@
+---
+import PageLayout from "../../layouts/page-layout.astro";
+import Button from "../../components/button.astro"
+import { Icon } from "astro-icon/components";
+import msitems from "../../content/data/ms_items.json";
+const msItems = Object.values(msitems)
+import works from "../../content/data/works.json";
+
+export async function getStaticPaths() {  
+  const paths = Object.values(works).map((work) => ({
+    params: { id: work.hit_id.toString() }, 
+    props: { data: work }
+  }));
+
+  return paths;
+}
+       
+const { data: work } = Astro.props;
+---
+
+<PageLayout>
+    <div>
+        <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
+        <h1 class="text-3xl font-semibold py-3 text-brandRed">{work?.title}</h1>
+        <div class="flex gap-2 justify-end">
+          <Button>TEI-XML</Button>
+          <Button>PDF</Button>
+        </div>
+        <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+
+            <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+            <dd class="pl-5">{work?.author.map(item => <a href=`/authors/${item.hit_id}` class="hover:text-brandRed">{item.name}</a>)}</dd>
+            
+            
+            <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+            <dd class="pl-5">
+                {work.bibliography.length > 0 
+                ? work.bibliography.map(item => item)
+                : 'N/A'}</dd>            
+             <dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
+             <dd class="pl-5">
+                 {work?.gnd_url
+                ? <a href={work.gnd_url} class="hover:text-brandRed">{work.gnd_url.split('gnd/')[1]}</a>
+            : 'N/A'}</dd>  
+            <dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
+            <dd class="pl-5">{work.source_text.length > 0
+                ? work.source_text.map(text => <a href=`/works/${text.hit_id}` class="hover:text-brandRed">{text.title}</a>) 
+                : 'N/A'}
+                {work.note_source
+                ? <span>({work.note_source})</span>
+                : ''
+                }
+                </dd>
+             
+            <dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
+            <dd class="pl-5">
+                {work.genre.length > 0
+                ?  work.genre.map((item, index) => {
+                       return <>
+                       {item.main_genre.length > 0 && item.main_genre.map(item => `${item.genre}: `)} 
+                       {item.genre}
+                      {index < work.genre.length - 1 && ' | '}</>
+                    })
+                : 'N/A'}
+            </dd>
+
+            <dt class="font-semibold border-r border-gray-300 pr-2">Überlieferung:</dt>
+            <dd class="pl-5">
+                {msItems
+                    .filter(msItem => msItem.title_work.some(title => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
+                    .map(filteredMsItem => {
+                        return <>
+                         <a href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
+                        {filteredMsItem.manuscript.map(ms => ms.shelfmark[0].value)}
+                      </a> <span>({filteredMsItem.locus_grp}) | </span>
+                        </>
+                    }        
+                  )}
+            </dd>
+          </dl>
+        </article>
+    </div>
+</PageLayout>
