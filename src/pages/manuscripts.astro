@@ -36,7 +36,7 @@ import Button from "../components/button.astro";
             <th>
               <form role="search" data-search-form >
                 <label class="flex flex-col items-start p-2">
-                  <div>Suche Signatur</div>
+                  <div>Signatur</div>
                   <input type="search" name="q" placeholder="Suche Signatur ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                 </label>
               </form>              
@@ -44,7 +44,7 @@ import Button from "../components/button.astro";
             <th>
               <form role="search" data-search-form >
                 <label class="flex flex-col items-start p-2">
-                  <div>Suche Ort</div>
+                  <div>Ort</div>
                   <input type="search" name="q" placeholder="Suche Ort ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                 </label>
               </form>
@@ -52,16 +52,26 @@ import Button from "../components/button.astro";
             <th>
               <form role="search" data-search-form >
                 <label class="flex flex-col items-start p-2">
-                  <div>Suche Bibliothek</div>
+                  <div>Bibliothek</div>
                   <input type="search" name="q" placeholder="Suche Bibliothek ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                 </label>
               </form>
             </th>
-            <th scope="col">
-              Digitalisat
+            <th>
+              <form role="search" data-search-form >
+                <label class="flex flex-col items-start p-2">
+                  <div>Entstehungsort</div>
+                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                </label>
+              </form>
             </th>
-            <th scope="col">
-              Catalog Entry
+            <th>
+              <form role="search" data-search-form >
+                <label class="flex flex-col items-start p-2">
+                  <div>Entstehungsdatum</div>
+                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                </label>
+              </form>
             </th>
           </tr>
         </thead>
@@ -82,24 +92,28 @@ import Button from "../components/button.astro";
                 </td>
                 
                 <td class="px-3">
-                  {ms.digi_url && (
-             <div class="flex text-wrap">                
-                <a href={ms.digi_url} class="inline-flex hover:text-brandRed">
-                    <span><i data-lucide="circle-check-big"></i></span>                     
+                                              
+                {ms.orig_place.map((item, index) => {
+                  return <>
+                    <a href="/">
+                    {item.name}                
                 </a>
-            </div>
+                {index < ms.orig_place.length -1 && ' & '}
+                  </>
+                })}
+            
            
-          )}
+       
                 </td>
                 <td class="px-3">
-                   {ms.catalog_url && (
-           <div class="flex">
-                <a href={ms.catalog_url} class="inline-flex hover:text-brandRed">
-                    <section>Catalog entry</section>                 
-                    
+                  {ms.orig_dated.map((item, index) => {
+                  return <>
+                    <a href="/">
+                    {item.value}                
                 </a>
-            </div>            
-        )}
+                {index < ms.orig_dated.length -1 && ' & '}
+                  </>
+                })}
                 </td>
               </tr>
               ))}
