@@ -35,6 +35,14 @@ const msItems = Object.values(msitems)
         <thead>
           <tr> 
             <th>                  
+                <form role="search" data-search-form>
+                  <label class="flex flex-col items-start p-2">
+                    <div>ID</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+            <th>                  
               <form role="search" data-search-form>
                 <label class="flex flex-col items-start p-2">
                   <div>Titel</div>
@@ -82,6 +90,7 @@ const msItems = Object.values(msitems)
         <tbody>
             {msItems.map(item => (
                 <tr tabindex="0">
+                <td class="p-2"><a href=`/msitems/${item.id}`>{item.id}</a></td>
                 <td class="p-2">{item.title_work[0]?.title}</td>
             <td class="p-2">{item.title_work.map(work => work.author.map(aut => aut.name))}</td>
             <td class="p-2">{item.decoration.map(deco => deco.value)}</td>

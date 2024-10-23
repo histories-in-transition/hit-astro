@@ -108,7 +108,9 @@ search.addWidgets([
       item(hit, { html, components }) {
         return html`
           <article>
-            <h3><a href="${hit.rec_id}">${hit.work.title}</a> ${hit.work}</h3>
+            <h3>
+              <a href="/msitems/${hit.rec_id}">${hit.work.title}</a>
+            </h3>
             <p>${hit.manuscript.shelfmark}</p>
           </article>
         `;
