@@ -1,6 +1,5 @@
 ---
 import PageLayout from "../layouts/page-layout.astro"; 
-import works from "../content/data/works.json";
 import msitems from "../content/data/ms_items.json";
 import Button from "../components/button.astro";
 import { Icon } from "astro-icon/components";
@@ -45,7 +44,7 @@ const msItems = Object.values(msitems)
             <th>                  
               <form role="search" data-search-form>
                 <label class="flex flex-col items-start p-2">
-                  <div>Titel</div>
+                  <div>Werk</div>
                   <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                 </label>
               </form>
@@ -91,14 +90,11 @@ const msItems = Object.values(msitems)
             {msItems.map(item => (
                 <tr tabindex="0">
                 <td class="p-2"><a href=`/msitems/${item.id}`>{item.id}</a></td>
-                <td class="p-2">{item.title_work[0]?.title}</td>
-            <td class="p-2">{item.title_work.map(work => work.author.map(aut => aut.name))}</td>
-            <td class="p-2">{item.decoration.map(deco => deco.value)}</td>
-                
-   
-    
-    <td class="p-2">{item.manuscript[0]?.shelfmark[0].value}</td>
-    <td class="p-2">{item.manuscript[0]?.orig_place.map(place => place.name)}</td>
+                <td class="p-2"><a href=`/works/${item.title_work[0]?.hit_id}`>{item.title_work[0]?.title}</a></td>
+                <td class="p-2">{item.title_work.map(work => work.author.map(aut => <a href=`/authors/${aut.hit_id}`>{aut.name}</a>))}</td>
+                <td class="p-2">{item.decoration.map(deco => deco.value)}</td>
+                <td class="p-2"><a href=`/manuscripts/${item.manuscript[0]?.hit_id}`>{item.manuscript[0]?.shelfmark[0].value}</a></td>
+                <td class="p-2">{item.manuscript[0]?.orig_place.map((place) => (place.name)).join(', ')}</td>
              
               </tr>
              

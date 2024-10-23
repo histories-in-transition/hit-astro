@@ -8,7 +8,7 @@
         "value": "ÖNB, Cod. 387"
       }
     ],
-    "hit_id": "hit_mansuscript__1",
+    "hit_id": "hit_manuscript__1",
     "library": [
       {
         "id": 1,
@@ -430,8 +430,786 @@
       "name": "Leon Pürstinger"
     },
     "Created on": "2024-06-04",
-    "Last modified": "2024-07-29",
-    "content_summary": "Einordnung der Handschrift nach den grundlegenden Studien von Arno Borst, die eine aktuellere Klassifikation als die gängigen Bibliothekskataloge bieten. Die Handschrift enthält, wie ihre Schwesternhandschrift Clm 210, den Liber calculationis (Sigle k12 nach Borst). Der Liber besteht aus drei Segmenten, von denen zwei im Inhaltsverzeichnis mit insgesamt 111 Kapitelnummern versehen wurden. Der erste Abschnitt enthält in 99 Kapiteln u.a. einen liturgischen Sonnenjahreskalender (E2) und diverse komputistische Tabellen sowie Anleitungen (darunter verschiedene Auszüge aus Bedas Texten, vgl. k6). Der zweite Block behandelt mit 11 Kapiteln astronomische Inhalte. Das dritte Segement besteht aus Bedas \"De natura rerurm\" (vgl. k5) und einem umfangreichen Mondzykluskalender (E5).\nIn vorliegender Datenbank wird der Liber calculationis als Gesamtwerk, die drei Segmente und ausgewählte inhaltliche Bestandteile angeführt.\n\nAuf 3r ein Bienensegen samt einem althochdeutschen Wort im Stile einer Überschrift ohne erkennbaren Textbezug aus dem 10. Jahrhundert; auf der leer gebliebenen Seite 3v findet sich das Ave maris stella."
+    "Last modified": "2024-10-18",
+    "content_summary": "Einordnung der Handschrift nach den grundlegenden Studien von Arno Borst, die eine aktuellere Klassifikation als die gängigen Bibliothekskataloge bieten. Die Handschrift enthält, wie ihre Schwesternhandschrift Clm 210, den Liber calculationis (Sigle k12 nach Borst). Der Liber besteht aus drei Segmenten, von denen zwei im Inhaltsverzeichnis mit insgesamt 111 Kapitelnummern versehen wurden. Der erste Abschnitt enthält in 99 Kapiteln u.a. einen liturgischen Sonnenjahreskalender (E2) und diverse komputistische Tabellen sowie Anleitungen (darunter verschiedene Auszüge aus Bedas Texten, vgl. k6). Der zweite Block behandelt mit 11 Kapiteln astronomische Inhalte. Das dritte Segement besteht aus Bedas \"De natura rerurm\" (vgl. k5) und einem umfangreichen Mondzykluskalender (E5).\nIn vorliegender Datenbank wird der Liber calculationis als Gesamtwerk, die drei Segmente und ausgewählte inhaltliche Bestandteile angeführt."
+  },
+  "21": {
+    "id": 21,
+    "order": "1.50000000000000000000",
+    "shelfmark": [
+      {
+        "id": 1,
+        "value": "ÖNB, Cod. 2090"
+      }
+    ],
+    "hit_id": "hit_manuscript__21",
+    "library": [
+      {
+        "id": 1,
+        "value": "ÖNB"
+      }
+    ],
+    "manuscripta_url": "https://manuscripta.at/?ID=5187",
+    "handschriftenportal_url": "",
+    "catalog_url": "http://data.onb.ac.at/rec/AC13961404",
+    "digi_url": "http://data.onb.ac.at/dtl/8931254",
+    "idno": "Cod. 2090",
+    "idno_former": "Salisb. 311",
+    "quire_structure": "TBD.\n",
+    "library_full": [
+      {
+        "id": 1,
+        "order": "1.00000000000000000000",
+        "label": "ÖNB",
+        "hit_id": "hit_org__1",
+        "gnd_url": "https://d-nb.info/gnd/2020893-5",
+        "library_full": "Österreichische Nationalbibliothek",
+        "library_website": "https://www.onb.ac.at/",
+        "settlement": [
+          {
+            "id": 6,
+            "order": "6.00000000000000000000",
+            "name": "Wien",
+            "geonames_url": "https://www.geonames.org/2761369/vienna.html",
+            "hit_id": "hit_place__6",
+            "wikidata_url": "",
+            "country": [
+              {
+                "id": 1,
+                "value": "Österreich"
+              }
+            ],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-07-03",
+            "Last modified by": {
+              "id": 87,
+              "name": "Ksenia Borisova"
+            },
+            "Last modified": "2024-07-09"
+          }
+        ],
+        "wikidata": "",
+        "Created by": {
+          "id": 3,
+          "name": "Peter Andorfer"
+        },
+        "Created on": "2024-06-04",
+        "Last modified by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Last modified": "2024-07-03"
+      }
+    ],
+    "extent": "98",
+    "foliation": "",
+    "acc_mat": "Spiegel, spätmittelalterliches Fragment.",
+    "binding": "Hellbrauner Ledereinband über Holzdeckeln aus Salzburg. Verzierter, gerahmter Deckel mit einem Diagonalkreuz aus doppelt gestrichenen Linien. Reste von Schließen. Auf dem Hinterdeckel sind Spuren eines Haken. Am Vorderdeckel ein Pergamentstreifen mit einer Teilinhaltsangabe.",
+    "binding_date": [
+      {
+        "id": 21,
+        "value": "um 1433"
+      }
+    ],
+    "history": "Zur Zeit Erzbischofs Gebhard (1060-1088) angelegt und bis in das Episkopat Adalbert (1168-1177) weitergeführt. Die Handschrift verblieb bis zum Jahr 1806 im Besitz der Salzburger Dombibliothek und kam anschließend in die damalige Hofblibliothek.",
+    "bibliography": [],
+    "height": "365",
+    "width": "260",
+    "material_spec": "",
+    "orig_place": [
+      {
+        "id": 3,
+        "order": "3.00000000000000000000",
+        "name": "Salzburg",
+        "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
+        "hit_id": "hit_place__3",
+        "wikidata_url": "",
+        "country": [
+          {
+            "id": 1,
+            "order": "1.00000000000000000000",
+            "name": "Österreich",
+            "geonames_url": "https://www.geonames.org/2782113/republic-of-austria.html",
+            "hit_id": "hit_place__1",
+            "wikidata_url": "https://www.wikidata.org/wiki/Q40",
+            "country": [],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-06-05",
+            "Last modified by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Last modified": "2024-06-09"
+          }
+        ],
+        "Created by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Created on": "2024-06-12",
+        "Last modified by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Last modified": "2024-07-11"
+      }
+    ],
+    "catchwords": "",
+    "quiremarks": "",
+    "material": {
+      "id": 14782,
+      "value": "parchment",
+      "color": "darker-orange"
+    },
+    "provenance": [
+      {
+        "id": 8,
+        "order": "7.00000000000000000000",
+        "label": "Dombibliothek Salzburg",
+        "hit_id": "hit_org__8",
+        "gnd_url": "https://d-nb.info/gnd/4220685-6",
+        "library_full": "Domkapitelbibliothek Salzburg",
+        "library_website": "",
+        "settlement": [
+          {
+            "id": 3,
+            "order": "3.00000000000000000000",
+            "name": "Salzburg",
+            "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
+            "hit_id": "hit_place__3",
+            "wikidata_url": "",
+            "country": [
+              {
+                "id": 1,
+                "value": "Österreich"
+              }
+            ],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-06-12",
+            "Last modified by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Last modified": "2024-07-11"
+          }
+        ],
+        "wikidata": "",
+        "Created by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Created on": "2024-07-10",
+        "Last modified by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Last modified": "2024-07-18"
+      }
+    ],
+    "manuscripts_dated": [
+      {
+        "id": 30,
+        "order": "27.00000000000000000000",
+        "hit_id": "hit_dated__30",
+        "manuscript": [
+          {
+            "id": 21,
+            "value": "ÖNB, Cod. 2090"
+          }
+        ],
+        "date": [
+          {
+            "id": 38,
+            "order": "38.00000000000000000000",
+            "label": "1060-1065",
+            "not_before": "1060-04-08",
+            "hit_id": "hit_date__38",
+            "not_after": "1065-07-23",
+            "Created by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified": "2024-07-26"
+          }
+        ],
+        "authority": [
+          {
+            "id": 7,
+            "order": "7.00000000000000000000",
+            "name": "Unterkircher",
+            "short_title": "Die datierten Handschriften der Österreichischen Nationalbibliothek bis zum Jahre 1400",
+            "zotero_id": ""
+          }
+        ],
+        "page": "47",
+        "preferred_date": true,
+        "Created by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Created on": "2024-07-26",
+        "Last modified by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Last modified": "2024-07-26T13:28:35.850202Z",
+        "note": ""
+      },
+      {
+        "id": 31,
+        "order": "28.00000000000000000000",
+        "hit_id": "hit_dated__31",
+        "manuscript": [
+          {
+            "id": 21,
+            "value": "ÖNB, Cod. 2090"
+          }
+        ],
+        "date": [
+          {
+            "id": 39,
+            "order": "39.00000000000000000000",
+            "label": "11. Jh., zweite Hälfte",
+            "not_before": "1050-01-01",
+            "hit_id": "hit_date__39",
+            "not_after": "1099-12-31",
+            "Created by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified": "2024-07-26"
+          }
+        ],
+        "authority": [
+          {
+            "id": 8,
+            "order": "8.00000000000000000000",
+            "name": "Hermann",
+            "short_title": "Die deutschen romanischen Handschriften",
+            "zotero_id": ""
+          }
+        ],
+        "page": "35",
+        "preferred_date": false,
+        "Created by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Created on": "2024-07-26",
+        "Last modified by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Last modified": "2024-07-26T13:28:29.988028Z",
+        "note": "\"In Salzburg in der 2. Hälfte des XI. Jahrhunderts, vermutlich zur Zeit des Erzbischofs Gebhard (1060-1088) oder des Erzbischofs Thiemo (1090-1101) geschrieben\"."
+      }
+    ],
+    "orig_dated": [
+      {
+        "ids": {
+          "database_table_3512": 38,
+          "database_table_3516": 30
+        },
+        "value": "1060-1065"
+      },
+      {
+        "ids": {
+          "database_table_3512": 39,
+          "database_table_3516": 31
+        },
+        "value": "11. Jh., zweite Hälfte"
+      }
+    ],
+    "Created by": {
+      "id": 86,
+      "name": "Leon Pürstinger"
+    },
+    "Last modified by": {
+      "id": 96,
+      "name": "Jesper van der Most"
+    },
+    "Created on": "2024-06-17",
+    "Last modified": "2024-09-09",
+    "content_summary": null
+  },
+  "22": {
+    "id": 22,
+    "order": "1.66666666666666674068",
+    "shelfmark": [
+      {
+        "id": 1,
+        "value": "ÖNB, Cod. 366"
+      }
+    ],
+    "hit_id": "hit_manuscript__22",
+    "library": [
+      {
+        "id": 1,
+        "value": "ÖNB"
+      }
+    ],
+    "manuscripta_url": "https://manuscripta.at/?ID=9750",
+    "handschriftenportal_url": "",
+    "catalog_url": "https://search.onb.ac.at/permalink/f/sb7jht/ONB_alma21302410040003338",
+    "digi_url": "",
+    "idno": "Cod. 366",
+    "idno_former": "",
+    "quire_structure": "TBD.\n",
+    "library_full": [
+      {
+        "id": 1,
+        "order": "1.00000000000000000000",
+        "label": "ÖNB",
+        "hit_id": "hit_org__1",
+        "gnd_url": "https://d-nb.info/gnd/2020893-5",
+        "library_full": "Österreichische Nationalbibliothek",
+        "library_website": "https://www.onb.ac.at/",
+        "settlement": [
+          {
+            "id": 6,
+            "order": "6.00000000000000000000",
+            "name": "Wien",
+            "geonames_url": "https://www.geonames.org/2761369/vienna.html",
+            "hit_id": "hit_place__6",
+            "wikidata_url": "",
+            "country": [
+              {
+                "id": 1,
+                "value": "Österreich"
+              }
+            ],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-07-03",
+            "Last modified by": {
+              "id": 87,
+              "name": "Ksenia Borisova"
+            },
+            "Last modified": "2024-07-09"
+          }
+        ],
+        "wikidata": "",
+        "Created by": {
+          "id": 3,
+          "name": "Peter Andorfer"
+        },
+        "Created on": "2024-06-04",
+        "Last modified by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Last modified": "2024-07-03"
+      }
+    ],
+    "extent": "208",
+    "foliation": "",
+    "acc_mat": "Decretales: Fragmenta.",
+    "binding": "Helles Leder mit Streicheisenlinien über Holzdeckeln aus Salzburg.",
+    "binding_date": [
+      {
+        "id": 21,
+        "value": "um 1433"
+      }
+    ],
+    "history": "",
+    "bibliography": [],
+    "height": "340",
+    "width": "240",
+    "material_spec": "Mehrere Blätter aus Kalbpergament. Haarseiten sind teils sehr dunkel.",
+    "orig_place": [
+      {
+        "id": 3,
+        "order": "3.00000000000000000000",
+        "name": "Salzburg",
+        "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
+        "hit_id": "hit_place__3",
+        "wikidata_url": "",
+        "country": [
+          {
+            "id": 1,
+            "order": "1.00000000000000000000",
+            "name": "Österreich",
+            "geonames_url": "https://www.geonames.org/2782113/republic-of-austria.html",
+            "hit_id": "hit_place__1",
+            "wikidata_url": "https://www.wikidata.org/wiki/Q40",
+            "country": [],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-06-05",
+            "Last modified by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Last modified": "2024-06-09"
+          }
+        ],
+        "Created by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Created on": "2024-06-12",
+        "Last modified by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Last modified": "2024-07-11"
+      }
+    ],
+    "catchwords": "",
+    "quiremarks": "Lagenzählung zunächst mit Majuskeln, später mit Zahlen.",
+    "material": {
+      "id": 14782,
+      "value": "parchment",
+      "color": "darker-orange"
+    },
+    "provenance": [
+      {
+        "id": 8,
+        "order": "7.00000000000000000000",
+        "label": "Dombibliothek Salzburg",
+        "hit_id": "hit_org__8",
+        "gnd_url": "https://d-nb.info/gnd/4220685-6",
+        "library_full": "Domkapitelbibliothek Salzburg",
+        "library_website": "",
+        "settlement": [
+          {
+            "id": 3,
+            "order": "3.00000000000000000000",
+            "name": "Salzburg",
+            "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
+            "hit_id": "hit_place__3",
+            "wikidata_url": "",
+            "country": [
+              {
+                "id": 1,
+                "value": "Österreich"
+              }
+            ],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-06-12",
+            "Last modified by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Last modified": "2024-07-11"
+          }
+        ],
+        "wikidata": "",
+        "Created by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Created on": "2024-07-10",
+        "Last modified by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Last modified": "2024-07-18"
+      }
+    ],
+    "manuscripts_dated": [
+      {
+        "id": 9,
+        "order": "9.00000000000000000000",
+        "hit_id": "hit_dated__9",
+        "manuscript": [
+          {
+            "id": 22,
+            "value": "ÖNB, Cod. 366"
+          }
+        ],
+        "date": [
+          {
+            "id": 22,
+            "order": "22.00000000000000000000",
+            "label": "780-800",
+            "not_before": "0780-01-01",
+            "hit_id": "hit_date__22",
+            "not_after": "0799-12-31",
+            "Created by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified": "2024-07-12"
+          }
+        ],
+        "authority": [
+          {
+            "id": 2,
+            "order": "2.00000000000000000000",
+            "name": "Bischoff",
+            "short_title": "Die südostdeutschen Schreibschulen und Bibliotheken in der Karolingerzeit",
+            "zotero_id": ""
+          }
+        ],
+        "page": "86-87",
+        "preferred_date": false,
+        "Created by": {
+          "id": 87,
+          "name": "Ksenia Borisova"
+        },
+        "Created on": "2024-07-10",
+        "Last modified by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Last modified": "2024-07-15T14:59:30.484307Z",
+        "note": "\"wohl nicht später als in den 80er oder frühen 90er Jahren\"."
+      }
+    ],
+    "orig_dated": [
+      {
+        "ids": {
+          "database_table_3512": 22,
+          "database_table_3516": 9
+        },
+        "value": "780-800"
+      }
+    ],
+    "Created by": {
+      "id": 86,
+      "name": "Leon Pürstinger"
+    },
+    "Last modified by": {
+      "id": 86,
+      "name": "Leon Pürstinger"
+    },
+    "Created on": "2024-07-01",
+    "Last modified": "2024-07-26",
+    "content_summary": null
+  },
+  "23": {
+    "id": 23,
+    "order": "1.75000000000000000000",
+    "shelfmark": [
+      {
+        "id": 1,
+        "value": "ÖNB, Cod. 371"
+      }
+    ],
+    "hit_id": "hit_manuscript__23",
+    "library": [
+      {
+        "id": 1,
+        "value": "ÖNB"
+      }
+    ],
+    "manuscripta_url": "https://manuscripta.at/?ID=9755",
+    "handschriftenportal_url": "",
+    "catalog_url": "http://data.onb.ac.at/rec/AC13957864",
+    "digi_url": "https://digital.onb.ac.at/RepViewer/viewer.faces?doc=DTL_9330751&order=1&view=SINGLE",
+    "idno": "Cod. 371",
+    "idno_former": "Salisb. 28",
+    "quire_structure": "",
+    "library_full": [
+      {
+        "id": 1,
+        "order": "1.00000000000000000000",
+        "label": "ÖNB",
+        "hit_id": "hit_org__1",
+        "gnd_url": "https://d-nb.info/gnd/2020893-5",
+        "library_full": "Österreichische Nationalbibliothek",
+        "library_website": "https://www.onb.ac.at/",
+        "settlement": [
+          {
+            "id": 6,
+            "order": "6.00000000000000000000",
+            "name": "Wien",
+            "geonames_url": "https://www.geonames.org/2761369/vienna.html",
+            "hit_id": "hit_place__6",
+            "wikidata_url": "",
+            "country": [
+              {
+                "id": 1,
+                "value": "Österreich"
+              }
+            ],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-07-03",
+            "Last modified by": {
+              "id": 87,
+              "name": "Ksenia Borisova"
+            },
+            "Last modified": "2024-07-09"
+          }
+        ],
+        "wikidata": "",
+        "Created by": {
+          "id": 3,
+          "name": "Peter Andorfer"
+        },
+        "Created on": "2024-06-04",
+        "Last modified by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Last modified": "2024-07-03"
+      }
+    ],
+    "extent": "228",
+    "foliation": "",
+    "acc_mat": "",
+    "binding": "",
+    "binding_date": [],
+    "history": "Der Mönch Perhthar schenkt die Handschrift vor dem Jahr 990 an Erzbischof Friedrich",
+    "bibliography": [],
+    "height": "335",
+    "width": "215",
+    "material_spec": "",
+    "orig_place": [
+      {
+        "id": 5,
+        "order": "5.00000000000000000000",
+        "name": "Saint-Amand-les-Eaux",
+        "geonames_url": "https://www.geonames.org/2981839/saint-amand-les-eaux.html",
+        "hit_id": "hit_place__5",
+        "wikidata_url": "https://www.wikidata.org/wiki/Q334131",
+        "country": [
+          {
+            "id": 14,
+            "order": "2.50000000000000000000",
+            "name": "Frankreich",
+            "geonames_url": "https://www.geonames.org/3017382/republic-of-france.html",
+            "hit_id": "hit_place__14",
+            "wikidata_url": "",
+            "country": [],
+            "Created by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Created on": "2024-07-11",
+            "Last modified by": {
+              "id": 36,
+              "name": "Ivana Dobcheva"
+            },
+            "Last modified": "2024-07-11"
+          }
+        ],
+        "Created by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Created on": "2024-06-17",
+        "Last modified by": {
+          "id": 36,
+          "name": "Ivana Dobcheva"
+        },
+        "Last modified": "2024-07-11"
+      }
+    ],
+    "catchwords": "",
+    "quiremarks": "",
+    "material": {
+      "id": 14782,
+      "value": "parchment",
+      "color": "darker-orange"
+    },
+    "provenance": [],
+    "manuscripts_dated": [
+      {
+        "id": 32,
+        "order": "29.00000000000000000000",
+        "hit_id": "hit_dated__32",
+        "manuscript": [
+          {
+            "id": 23,
+            "value": "ÖNB, Cod. 371"
+          }
+        ],
+        "date": [
+          {
+            "id": 6,
+            "order": "6.00000000000000000000",
+            "label": "9 Jh., erste Hälfte",
+            "not_before": "0801-01-01",
+            "hit_id": "hit_date__6",
+            "not_after": "0850-12-31",
+            "Created by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified by": {
+              "id": 86,
+              "name": "Leon Pürstinger"
+            },
+            "Last modified": "2024-07-12"
+          }
+        ],
+        "authority": [
+          {
+            "id": 2,
+            "order": "2.00000000000000000000",
+            "name": "Bischoff",
+            "short_title": "Die südostdeutschen Schreibschulen und Bibliotheken in der Karolingerzeit",
+            "zotero_id": ""
+          }
+        ],
+        "page": "121",
+        "preferred_date": false,
+        "Created by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Created on": "2024-09-03",
+        "Last modified by": {
+          "id": 86,
+          "name": "Leon Pürstinger"
+        },
+        "Last modified": "2024-09-03T13:08:08.996847Z",
+        "note": ""
+      }
+    ],
+    "orig_dated": [
+      {
+        "ids": {
+          "database_table_3512": 6,
+          "database_table_3516": 32
+        },
+        "value": "9 Jh., erste Hälfte"
+      }
+    ],
+    "Created by": {
+      "id": 87,
+      "name": "Ksenia Borisova"
+    },
+    "Last modified by": {
+      "id": 86,
+      "name": "Leon Pürstinger"
+    },
+    "Created on": "2024-07-03",
+    "Last modified": "2024-09-03",
+    "content_summary": null
   },
   "2": {
     "id": 2,
@@ -442,7 +1220,7 @@
         "value": "UBWÜ, Cod. M. p. th. f. 46"
       }
     ],
-    "hit_id": "hit_mansuscript__2",
+    "hit_id": "hit_manuscript__2",
     "library": [
       {
         "id": 2,
@@ -726,8 +1504,8 @@
       "name": "Leon Pürstinger"
     },
     "Created on": "2024-06-04",
-    "Last modified": "2024-07-26",
-    "content_summary": "10. Jh.: Auf 19v und 98r wurden von einer Hand zwei Rezepte eingetragen. Von der gleichen Hand auf 20v, 21r und 98v diverse abergläubische Segen.\n11. Jh.: Auf 6r ein neumierter liturgischer Nachtrag; auf 145r in der oberen Blatthälfte teils neumierte Responsorien, Versikel, Antiphonen der Quadragesimalzeit."
+    "Last modified": "2024-10-18",
+    "content_summary": ""
   },
   "4": {
     "id": 4,
@@ -738,7 +1516,7 @@
         "value": "BSB, Clm. 210"
       }
     ],
-    "hit_id": "hit_mansuscript__4",
+    "hit_id": "hit_manuscript__4",
     "library": [
       {
         "id": 4,
@@ -751,7 +1529,7 @@
     "digi_url": "https://www.digitale-sammlungen.de/en/view/bsb00047183",
     "idno": "Clm. 210",
     "idno_former": "Cim. 309",
-    "quire_structure": "<sup>1</sup> + (II+1)<sup>5</sup> + 6 IV<sup>53</sup> + IV<sup>61</sup>/<sup>62</sup> (61/62 Doppelblatt zum Ausfalten) + 6 IV<sup>110</sup> + 2 (IV+1)<sup>128</sup> + 4 IV1<sup>60</sup> + (II-1)<sup>163</sup> +<sup>1</sup>\n",
+    "quire_structure": "1 + (II+1)<sup>5</sup> + 6 IV<sup>53</sup> + IV<sup>61</sup>/<sup>62</sup> (61/62 Doppelblatt zum Ausfalten) + 6 IV<sup>110</sup> + 2 (IV+1)<sup>128</sup> + 4 IV<sup>160</sup> + (II-1)<sup>163</sup> +1\n",
     "library_full": [
       {
         "id": 4,
@@ -918,11 +1696,11 @@
       "name": "Ivana Dobcheva"
     },
     "Last modified by": {
-      "id": 87,
-      "name": "Ksenia Borisova"
+      "id": 36,
+      "name": "Ivana Dobcheva"
     },
     "Created on": "2024-06-12",
-    "Last modified": "2024-09-25",
+    "Last modified": "2024-10-09",
     "content_summary": null
   },
   "5": {
@@ -934,7 +1712,7 @@
         "value": "BSB, Clm. 6326"
       }
     ],
-    "hit_id": "hit_mansuscript__5",
+    "hit_id": "hit_manuscript__5",
     "library": [
       {
         "id": 4,
@@ -1053,7 +1831,7 @@
       }
     ],
     "catchwords": "",
-    "quiremarks": "am Ende, I**7**– XVI**127,** zwischen Punkten",
+    "quiremarks": "am Ende, I**7**– XVI**127,** zwischen Punkten",
     "material": {
       "id": 14782,
       "value": "parchment",
@@ -1199,7 +1977,7 @@
           }
         ],
         "page": "20",
-        "preferred_date": false,
+        "preferred_date": true,
         "Created by": {
           "id": 87,
           "name": "Ksenia Borisova"
@@ -1209,7 +1987,7 @@
           "id": 87,
           "name": "Ksenia Borisova"
         },
-        "Last modified": "2024-07-08T10:12:42.825711Z",
+        "Last modified": "2024-10-17T09:43:18.724699Z",
         "note": null
       }
     ],
@@ -1238,8 +2016,8 @@
       "name": "Ksenia Borisova"
     },
     "Created on": "2024-06-13",
-    "Last modified": "2024-09-24",
-    "content_summary": null
+    "Last modified": "2024-10-17",
+    "content_summary": "Martinellus, Geschichtliche Texte, Hagiographische Texte, Lyrik"
   },
   "6": {
     "id": 6,
@@ -1250,7 +2028,7 @@
         "value": "BSB, Clm. 6308"
       }
     ],
-    "hit_id": "hit_mansuscript__6",
+    "hit_id": "hit_manuscript__6",
     "library": [
       {
         "id": 4,
@@ -1566,7 +2344,7 @@
         "value": "BSB, Clm. 6380"
       }
     ],
-    "hit_id": "hit_mansuscript__7",
+    "hit_id": "hit_manuscript__7",
     "library": [
       {
         "id": 4,
@@ -1818,7 +2596,7 @@
         "value": "BSB, Clm. 6375"
       }
     ],
-    "hit_id": "hit_mansuscript__8",
+    "hit_id": "hit_manuscript__8",
     "library": [
       {
         "id": 4,
@@ -2134,7 +2912,7 @@
         "value": "BSB, Clm. 6381"
       }
     ],
-    "hit_id": "hit_mansuscript__9",
+    "hit_id": "hit_manuscript__9",
     "library": [
       {
         "id": 4,
@@ -2528,7 +3306,7 @@
         "value": "BSB, Clm. 6382"
       }
     ],
-    "hit_id": "hit_mansuscript__10",
+    "hit_id": "hit_manuscript__10",
     "library": [
       {
         "id": 4,
@@ -2848,7 +3626,7 @@
         "value": "BSB, Clm. 6383"
       }
     ],
-    "hit_id": "hit_mansuscript__11",
+    "hit_id": "hit_manuscript__11",
     "library": [
       {
         "id": 4,
@@ -3105,7 +3883,7 @@
         "value": "BSB, Clm. 6388"
       }
     ],
-    "hit_id": "hit_mansuscript__12",
+    "hit_id": "hit_manuscript__12",
     "library": [
       {
         "id": 4,
@@ -3396,7 +4174,7 @@
         "value": "BSB, Clm. 6391"
       }
     ],
-    "hit_id": "hit_mansuscript__13",
+    "hit_id": "hit_manuscript__13",
     "library": [
       {
         "id": 4,
@@ -3653,7 +4431,7 @@
         "value": "BSB, Clm. 6392"
       }
     ],
-    "hit_id": "hit_mansuscript__14",
+    "hit_id": "hit_manuscript__14",
     "library": [
       {
         "id": 4,
@@ -3905,7 +4683,7 @@
         "value": "BSB, Clm. 6393"
       }
     ],
-    "hit_id": "hit_mansuscript__15",
+    "hit_id": "hit_manuscript__15",
     "library": [
       {
         "id": 4,
@@ -4162,7 +4940,7 @@
         "value": "BSB, Clm. 6376"
       }
     ],
-    "hit_id": "hit_mansuscript__16",
+    "hit_id": "hit_manuscript__16",
     "library": [
       {
         "id": 4,
@@ -4478,7 +5256,7 @@
         "value": "BSB, Clm. 1086"
       }
     ],
-    "hit_id": "hit_mansuscript__17",
+    "hit_id": "hit_manuscript__17",
     "library": [
       {
         "id": 4,
@@ -4794,7 +5572,7 @@
         "value": "BSB, Clm. 29226"
       }
     ],
-    "hit_id": "hit_mansuscript__18",
+    "hit_id": "hit_manuscript__18",
     "library": [
       {
         "id": 4,
@@ -4898,7 +5676,7 @@
         "value": "BSB, Clm. 6341"
       }
     ],
-    "hit_id": "hit_mansuscript__19",
+    "hit_id": "hit_manuscript__19",
     "library": [
       {
         "id": 4,
@@ -5213,7 +5991,7 @@
         "value": "BSB, Clm 27305"
       }
     ],
-    "hit_id": "hit_mansuscript__20",
+    "hit_id": "hit_manuscript__20",
     "library": [
       {
         "id": 4,
@@ -5552,784 +6330,6 @@
     },
     "Created on": "2024-06-17",
     "Last modified": "2024-09-25",
-    "content_summary": null
-  },
-  "21": {
-    "id": 21,
-    "order": "1.50000000000000000000",
-    "shelfmark": [
-      {
-        "id": 1,
-        "value": "ÖNB, Cod. 2090"
-      }
-    ],
-    "hit_id": "hit_mansuscript__21",
-    "library": [
-      {
-        "id": 1,
-        "value": "ÖNB"
-      }
-    ],
-    "manuscripta_url": "https://manuscripta.at/?ID=5187",
-    "handschriftenportal_url": "",
-    "catalog_url": "http://data.onb.ac.at/rec/AC13961404",
-    "digi_url": "http://data.onb.ac.at/dtl/8931254",
-    "idno": "Cod. 2090",
-    "idno_former": "Salisb. 311",
-    "quire_structure": "TBD.\n",
-    "library_full": [
-      {
-        "id": 1,
-        "order": "1.00000000000000000000",
-        "label": "ÖNB",
-        "hit_id": "hit_org__1",
-        "gnd_url": "https://d-nb.info/gnd/2020893-5",
-        "library_full": "Österreichische Nationalbibliothek",
-        "library_website": "https://www.onb.ac.at/",
-        "settlement": [
-          {
-            "id": 6,
-            "order": "6.00000000000000000000",
-            "name": "Wien",
-            "geonames_url": "https://www.geonames.org/2761369/vienna.html",
-            "hit_id": "hit_place__6",
-            "wikidata_url": "",
-            "country": [
-              {
-                "id": 1,
-                "value": "Österreich"
-              }
-            ],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-07-03",
-            "Last modified by": {
-              "id": 87,
-              "name": "Ksenia Borisova"
-            },
-            "Last modified": "2024-07-09"
-          }
-        ],
-        "wikidata": "",
-        "Created by": {
-          "id": 3,
-          "name": "Peter Andorfer"
-        },
-        "Created on": "2024-06-04",
-        "Last modified by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Last modified": "2024-07-03"
-      }
-    ],
-    "extent": "98",
-    "foliation": "",
-    "acc_mat": "Spiegel, spätmittelalterliches Fragment.",
-    "binding": "Hellbrauner Ledereinband über Holzdeckeln aus Salzburg. Verzierter, gerahmter Deckel mit einem Diagonalkreuz aus doppelt gestrichenen Linien. Reste von Schließen. Auf dem Hinterdeckel sind Spuren eines Haken. Am Vorderdeckel ein Pergamentstreifen mit einer Teilinhaltsangabe.",
-    "binding_date": [
-      {
-        "id": 21,
-        "value": "um 1433"
-      }
-    ],
-    "history": "Zur Zeit Erzbischofs Gebhard (1060-1088) angelegt und bis in das Episkopat Adalbert (1168-1177) weitergeführt. Die Handschrift verblieb bis zum Jahr 1806 im Besitz der Salzburger Dombibliothek und kam anschließend in die damalige Hofblibliothek.",
-    "bibliography": [],
-    "height": "365",
-    "width": "260",
-    "material_spec": "",
-    "orig_place": [
-      {
-        "id": 3,
-        "order": "3.00000000000000000000",
-        "name": "Salzburg",
-        "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
-        "hit_id": "hit_place__3",
-        "wikidata_url": "",
-        "country": [
-          {
-            "id": 1,
-            "order": "1.00000000000000000000",
-            "name": "Österreich",
-            "geonames_url": "https://www.geonames.org/2782113/republic-of-austria.html",
-            "hit_id": "hit_place__1",
-            "wikidata_url": "https://www.wikidata.org/wiki/Q40",
-            "country": [],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-06-05",
-            "Last modified by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Last modified": "2024-06-09"
-          }
-        ],
-        "Created by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Created on": "2024-06-12",
-        "Last modified by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Last modified": "2024-07-11"
-      }
-    ],
-    "catchwords": "",
-    "quiremarks": "",
-    "material": {
-      "id": 14782,
-      "value": "parchment",
-      "color": "darker-orange"
-    },
-    "provenance": [
-      {
-        "id": 8,
-        "order": "7.00000000000000000000",
-        "label": "Dombibliothek Salzburg",
-        "hit_id": "hit_org__8",
-        "gnd_url": "https://d-nb.info/gnd/4220685-6",
-        "library_full": "Domkapitelbibliothek Salzburg",
-        "library_website": "",
-        "settlement": [
-          {
-            "id": 3,
-            "order": "3.00000000000000000000",
-            "name": "Salzburg",
-            "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
-            "hit_id": "hit_place__3",
-            "wikidata_url": "",
-            "country": [
-              {
-                "id": 1,
-                "value": "Österreich"
-              }
-            ],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-06-12",
-            "Last modified by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Last modified": "2024-07-11"
-          }
-        ],
-        "wikidata": "",
-        "Created by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Created on": "2024-07-10",
-        "Last modified by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Last modified": "2024-07-18"
-      }
-    ],
-    "manuscripts_dated": [
-      {
-        "id": 30,
-        "order": "27.00000000000000000000",
-        "hit_id": "hit_dated__30",
-        "manuscript": [
-          {
-            "id": 21,
-            "value": "ÖNB, Cod. 2090"
-          }
-        ],
-        "date": [
-          {
-            "id": 38,
-            "order": "38.00000000000000000000",
-            "label": "1060-1065",
-            "not_before": "1060-04-08",
-            "hit_id": "hit_date__38",
-            "not_after": "1065-07-23",
-            "Created by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified": "2024-07-26"
-          }
-        ],
-        "authority": [
-          {
-            "id": 7,
-            "order": "7.00000000000000000000",
-            "name": "Unterkircher",
-            "short_title": "Die datierten Handschriften der Österreichischen Nationalbibliothek bis zum Jahre 1400",
-            "zotero_id": ""
-          }
-        ],
-        "page": "47",
-        "preferred_date": true,
-        "Created by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Created on": "2024-07-26",
-        "Last modified by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Last modified": "2024-07-26T13:28:35.850202Z",
-        "note": ""
-      },
-      {
-        "id": 31,
-        "order": "28.00000000000000000000",
-        "hit_id": "hit_dated__31",
-        "manuscript": [
-          {
-            "id": 21,
-            "value": "ÖNB, Cod. 2090"
-          }
-        ],
-        "date": [
-          {
-            "id": 39,
-            "order": "39.00000000000000000000",
-            "label": "11. Jh., zweite Hälfte",
-            "not_before": "1050-01-01",
-            "hit_id": "hit_date__39",
-            "not_after": "1099-12-31",
-            "Created by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified": "2024-07-26"
-          }
-        ],
-        "authority": [
-          {
-            "id": 8,
-            "order": "8.00000000000000000000",
-            "name": "Hermann",
-            "short_title": "Die deutschen romanischen Handschriften",
-            "zotero_id": ""
-          }
-        ],
-        "page": "35",
-        "preferred_date": false,
-        "Created by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Created on": "2024-07-26",
-        "Last modified by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Last modified": "2024-07-26T13:28:29.988028Z",
-        "note": "\"In Salzburg in der 2. Hälfte des XI. Jahrhunderts, vermutlich zur Zeit des Erzbischofs Gebhard (1060-1088) oder des Erzbischofs Thiemo (1090-1101) geschrieben\"."
-      }
-    ],
-    "orig_dated": [
-      {
-        "ids": {
-          "database_table_3512": 38,
-          "database_table_3516": 30
-        },
-        "value": "1060-1065"
-      },
-      {
-        "ids": {
-          "database_table_3512": 39,
-          "database_table_3516": 31
-        },
-        "value": "11. Jh., zweite Hälfte"
-      }
-    ],
-    "Created by": {
-      "id": 86,
-      "name": "Leon Pürstinger"
-    },
-    "Last modified by": {
-      "id": 96,
-      "name": "Jesper van der Most"
-    },
-    "Created on": "2024-06-17",
-    "Last modified": "2024-09-09",
-    "content_summary": null
-  },
-  "22": {
-    "id": 22,
-    "order": "1.66666666666666674068",
-    "shelfmark": [
-      {
-        "id": 1,
-        "value": "ÖNB, Cod. 366"
-      }
-    ],
-    "hit_id": "hit_mansuscript__22",
-    "library": [
-      {
-        "id": 1,
-        "value": "ÖNB"
-      }
-    ],
-    "manuscripta_url": "https://manuscripta.at/?ID=9750",
-    "handschriftenportal_url": "",
-    "catalog_url": "https://search.onb.ac.at/permalink/f/sb7jht/ONB_alma21302410040003338",
-    "digi_url": "",
-    "idno": "Cod. 366",
-    "idno_former": "",
-    "quire_structure": "TBD.\n",
-    "library_full": [
-      {
-        "id": 1,
-        "order": "1.00000000000000000000",
-        "label": "ÖNB",
-        "hit_id": "hit_org__1",
-        "gnd_url": "https://d-nb.info/gnd/2020893-5",
-        "library_full": "Österreichische Nationalbibliothek",
-        "library_website": "https://www.onb.ac.at/",
-        "settlement": [
-          {
-            "id": 6,
-            "order": "6.00000000000000000000",
-            "name": "Wien",
-            "geonames_url": "https://www.geonames.org/2761369/vienna.html",
-            "hit_id": "hit_place__6",
-            "wikidata_url": "",
-            "country": [
-              {
-                "id": 1,
-                "value": "Österreich"
-              }
-            ],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-07-03",
-            "Last modified by": {
-              "id": 87,
-              "name": "Ksenia Borisova"
-            },
-            "Last modified": "2024-07-09"
-          }
-        ],
-        "wikidata": "",
-        "Created by": {
-          "id": 3,
-          "name": "Peter Andorfer"
-        },
-        "Created on": "2024-06-04",
-        "Last modified by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Last modified": "2024-07-03"
-      }
-    ],
-    "extent": "208",
-    "foliation": "",
-    "acc_mat": "Decretales: Fragmenta.",
-    "binding": "Helles Leder mit Streicheisenlinien über Holzdeckeln aus Salzburg.",
-    "binding_date": [
-      {
-        "id": 21,
-        "value": "um 1433"
-      }
-    ],
-    "history": "",
-    "bibliography": [],
-    "height": "340",
-    "width": "240",
-    "material_spec": "Mehrere Blätter aus Kalbpergament. Haarseiten sind teils sehr dunkel.",
-    "orig_place": [
-      {
-        "id": 3,
-        "order": "3.00000000000000000000",
-        "name": "Salzburg",
-        "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
-        "hit_id": "hit_place__3",
-        "wikidata_url": "",
-        "country": [
-          {
-            "id": 1,
-            "order": "1.00000000000000000000",
-            "name": "Österreich",
-            "geonames_url": "https://www.geonames.org/2782113/republic-of-austria.html",
-            "hit_id": "hit_place__1",
-            "wikidata_url": "https://www.wikidata.org/wiki/Q40",
-            "country": [],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-06-05",
-            "Last modified by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Last modified": "2024-06-09"
-          }
-        ],
-        "Created by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Created on": "2024-06-12",
-        "Last modified by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Last modified": "2024-07-11"
-      }
-    ],
-    "catchwords": "",
-    "quiremarks": "Lagenzählung zunächst mit Majuskeln, später mit Zahlen.",
-    "material": {
-      "id": 14782,
-      "value": "parchment",
-      "color": "darker-orange"
-    },
-    "provenance": [
-      {
-        "id": 8,
-        "order": "7.00000000000000000000",
-        "label": "Dombibliothek Salzburg",
-        "hit_id": "hit_org__8",
-        "gnd_url": "https://d-nb.info/gnd/4220685-6",
-        "library_full": "Domkapitelbibliothek Salzburg",
-        "library_website": "",
-        "settlement": [
-          {
-            "id": 3,
-            "order": "3.00000000000000000000",
-            "name": "Salzburg",
-            "geonames_url": "https://www.geonames.org/2766824/salzburg.html",
-            "hit_id": "hit_place__3",
-            "wikidata_url": "",
-            "country": [
-              {
-                "id": 1,
-                "value": "Österreich"
-              }
-            ],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-06-12",
-            "Last modified by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Last modified": "2024-07-11"
-          }
-        ],
-        "wikidata": "",
-        "Created by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Created on": "2024-07-10",
-        "Last modified by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Last modified": "2024-07-18"
-      }
-    ],
-    "manuscripts_dated": [
-      {
-        "id": 9,
-        "order": "9.00000000000000000000",
-        "hit_id": "hit_dated__9",
-        "manuscript": [
-          {
-            "id": 22,
-            "value": "ÖNB, Cod. 366"
-          }
-        ],
-        "date": [
-          {
-            "id": 22,
-            "order": "22.00000000000000000000",
-            "label": "780-800",
-            "not_before": "0780-01-01",
-            "hit_id": "hit_date__22",
-            "not_after": "0799-12-31",
-            "Created by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified": "2024-07-12"
-          }
-        ],
-        "authority": [
-          {
-            "id": 2,
-            "order": "2.00000000000000000000",
-            "name": "Bischoff",
-            "short_title": "Die südostdeutschen Schreibschulen und Bibliotheken in der Karolingerzeit",
-            "zotero_id": ""
-          }
-        ],
-        "page": "86-87",
-        "preferred_date": false,
-        "Created by": {
-          "id": 87,
-          "name": "Ksenia Borisova"
-        },
-        "Created on": "2024-07-10",
-        "Last modified by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Last modified": "2024-07-15T14:59:30.484307Z",
-        "note": "\"wohl nicht später als in den 80er oder frühen 90er Jahren\"."
-      }
-    ],
-    "orig_dated": [
-      {
-        "ids": {
-          "database_table_3512": 22,
-          "database_table_3516": 9
-        },
-        "value": "780-800"
-      }
-    ],
-    "Created by": {
-      "id": 86,
-      "name": "Leon Pürstinger"
-    },
-    "Last modified by": {
-      "id": 86,
-      "name": "Leon Pürstinger"
-    },
-    "Created on": "2024-07-01",
-    "Last modified": "2024-07-26",
-    "content_summary": null
-  },
-  "23": {
-    "id": 23,
-    "order": "1.75000000000000000000",
-    "shelfmark": [
-      {
-        "id": 1,
-        "value": "ÖNB, Cod. 371"
-      }
-    ],
-    "hit_id": "hit_mansuscript__23",
-    "library": [
-      {
-        "id": 1,
-        "value": "ÖNB"
-      }
-    ],
-    "manuscripta_url": "https://manuscripta.at/?ID=9755",
-    "handschriftenportal_url": "",
-    "catalog_url": "http://data.onb.ac.at/rec/AC13957864",
-    "digi_url": "https://digital.onb.ac.at/RepViewer/viewer.faces?doc=DTL_9330751&order=1&view=SINGLE",
-    "idno": "Cod. 371",
-    "idno_former": "Salisb. 28",
-    "quire_structure": "",
-    "library_full": [
-      {
-        "id": 1,
-        "order": "1.00000000000000000000",
-        "label": "ÖNB",
-        "hit_id": "hit_org__1",
-        "gnd_url": "https://d-nb.info/gnd/2020893-5",
-        "library_full": "Österreichische Nationalbibliothek",
-        "library_website": "https://www.onb.ac.at/",
-        "settlement": [
-          {
-            "id": 6,
-            "order": "6.00000000000000000000",
-            "name": "Wien",
-            "geonames_url": "https://www.geonames.org/2761369/vienna.html",
-            "hit_id": "hit_place__6",
-            "wikidata_url": "",
-            "country": [
-              {
-                "id": 1,
-                "value": "Österreich"
-              }
-            ],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-07-03",
-            "Last modified by": {
-              "id": 87,
-              "name": "Ksenia Borisova"
-            },
-            "Last modified": "2024-07-09"
-          }
-        ],
-        "wikidata": "",
-        "Created by": {
-          "id": 3,
-          "name": "Peter Andorfer"
-        },
-        "Created on": "2024-06-04",
-        "Last modified by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Last modified": "2024-07-03"
-      }
-    ],
-    "extent": "228",
-    "foliation": "",
-    "acc_mat": "",
-    "binding": "",
-    "binding_date": [],
-    "history": "Der Mönch Perhthar schenkt die Handschrift vor dem Jahr 990 an Erzbischof Friedrich",
-    "bibliography": [],
-    "height": "335",
-    "width": "215",
-    "material_spec": "",
-    "orig_place": [
-      {
-        "id": 5,
-        "order": "5.00000000000000000000",
-        "name": "Saint-Amand-les-Eaux",
-        "geonames_url": "https://www.geonames.org/2981839/saint-amand-les-eaux.html",
-        "hit_id": "hit_place__5",
-        "wikidata_url": "https://www.wikidata.org/wiki/Q334131",
-        "country": [
-          {
-            "id": 14,
-            "order": "2.50000000000000000000",
-            "name": "Frankreich",
-            "geonames_url": "https://www.geonames.org/3017382/republic-of-france.html",
-            "hit_id": "hit_place__14",
-            "wikidata_url": "",
-            "country": [],
-            "Created by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Created on": "2024-07-11",
-            "Last modified by": {
-              "id": 36,
-              "name": "Ivana Dobcheva"
-            },
-            "Last modified": "2024-07-11"
-          }
-        ],
-        "Created by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Created on": "2024-06-17",
-        "Last modified by": {
-          "id": 36,
-          "name": "Ivana Dobcheva"
-        },
-        "Last modified": "2024-07-11"
-      }
-    ],
-    "catchwords": "",
-    "quiremarks": "",
-    "material": {
-      "id": 14782,
-      "value": "parchment",
-      "color": "darker-orange"
-    },
-    "provenance": [],
-    "manuscripts_dated": [
-      {
-        "id": 32,
-        "order": "29.00000000000000000000",
-        "hit_id": "hit_dated__32",
-        "manuscript": [
-          {
-            "id": 23,
-            "value": "ÖNB, Cod. 371"
-          }
-        ],
-        "date": [
-          {
-            "id": 6,
-            "order": "6.00000000000000000000",
-            "label": "9 Jh., erste Hälfte",
-            "not_before": "0801-01-01",
-            "hit_id": "hit_date__6",
-            "not_after": "0850-12-31",
-            "Created by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified by": {
-              "id": 86,
-              "name": "Leon Pürstinger"
-            },
-            "Last modified": "2024-07-12"
-          }
-        ],
-        "authority": [
-          {
-            "id": 2,
-            "order": "2.00000000000000000000",
-            "name": "Bischoff",
-            "short_title": "Die südostdeutschen Schreibschulen und Bibliotheken in der Karolingerzeit",
-            "zotero_id": ""
-          }
-        ],
-        "page": "121",
-        "preferred_date": false,
-        "Created by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Created on": "2024-09-03",
-        "Last modified by": {
-          "id": 86,
-          "name": "Leon Pürstinger"
-        },
-        "Last modified": "2024-09-03T13:08:08.996847Z",
-        "note": ""
-      }
-    ],
-    "orig_dated": [
-      {
-        "ids": {
-          "database_table_3512": 6,
-          "database_table_3516": 32
-        },
-        "value": "9 Jh., erste Hälfte"
-      }
-    ],
-    "Created by": {
-      "id": 87,
-      "name": "Ksenia Borisova"
-    },
-    "Last modified by": {
-      "id": 86,
-      "name": "Leon Pürstinger"
-    },
-    "Created on": "2024-07-03",
-    "Last modified": "2024-09-03",
     "content_summary": null
   }
 }

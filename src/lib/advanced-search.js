@@ -111,6 +111,7 @@ search.addWidgets([
             <h3>
               <a href="/msitems/${hit.rec_id}">${hit.work.title}</a>
             </h3>
+            <p>${hit.work.author}</p>
             <p>${hit.manuscript.shelfmark}</p>
           </article>
         `;
