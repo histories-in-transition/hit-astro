@@ -11,7 +11,7 @@ const fileNames = ["manuscripts.json", "works.json", "ms_items.json"];
 // async function to fetch the data from the url
 
 async function fetchAllData() {
-  // make a folder to store the data - use process.cwd to get the root (node operates fro the root), concatinate src etc. - node knows to put / or \
+  // make a folder to store the data - use process.cwd to get the root (run node from root 'node scripts/data-fetch.js'), concatinate src etc. - node knows to put / or \
   const folderPath = join(process.cwd(), "src", "content", "data");
   mkdirSync(folderPath, { recursive: true });
 

@@ -29,7 +29,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
 <PageLayout>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-            <h1 class="text-3xl font-semibold py-3 text-brandRed">{manuscript?.shelfmark[0].value}</h1>
+            <h1 class="text-3xl font-semibold py-3 text-brandRed">{manuscript?.shelfmark[0]?.value}</h1>
             <div class="flex gap-2 justify-end">
               <Button>TEI-XML</Button>
               <Button>PDF</Button>
@@ -37,11 +37,11 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-              <dd class="pl-5">{manuscript?.library_full[0].settlement[0]?.name}</dd>
+              <dd class="pl-5">{manuscript?.library_full[0]?.settlement[0]?.name}</dd>
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-              <dd class="pl-5"><a href={manuscript?.library_full[0].gnd_url} target="_blank" class="hover:text-brandRed">{manuscript.library_full[0].library_full} <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon></a></dd>
+              <dd class="pl-5"><a href={manuscript?.library_full[0]?.gnd_url} target="_blank" class="hover:text-brandRed">{manuscript.library_full[0]?.library_full} <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon></a></dd>
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>

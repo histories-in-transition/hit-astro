@@ -40,7 +40,7 @@ jobs:
         with:
           enablement: true
 
-      - name: install dependencies
+      - name: install dependencies # install all dependencies need to run the project
         run: pnpm install
 
       - name: build website
