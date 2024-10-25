@@ -32,7 +32,7 @@ jobs:
           version: 9
 
       - name: fetch fresh data using script
-        run: npm run get-data # using pnpm to run the js using shorthand as recorded in package.json
+        run: pnpm run get-data # using pnpm to run the js using shorthand as recorded in package.json
 
       - name: setup pages
         id: pages
@@ -40,8 +40,11 @@ jobs:
         with:
           enablement: true
 
+      - name: install dependencies
+        run: pnpm install
+
       - name: build website
-        run: npm run build
+        run: pnpm run build
 
       - name: upload artifact (the dist folder from astro)
         uses: actions/upload-pages-artifact@v3
