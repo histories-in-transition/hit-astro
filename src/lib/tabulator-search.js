@@ -1,4 +1,5 @@
 import { Tabulator } from "tabulator-tables";
+import "tabulator-tables/dist/css/tabulator.css";
 
 //define some sample data
 var tabledata = [
@@ -28,65 +29,25 @@ var tabledata = [
 ];
 
 //create Tabulator on DOM element with id "example-table"
-
-var table = new Tabulator("#example-table", {
-  data: tabledata, //load row data from array
-  layout: "fitColumns", //fit columns to width of table
-  responsiveLayout: "hide", //hide columns that don't fit on the table
-  addRowPos: "top", //when adding a new row, add it to the top of the table
-  history: true, //allow undo and redo actions on the table
-  pagination: "local", //paginate the data
-  paginationSize: 7, //allow 7 rows per page of data
-  paginationCounter: "rows", //display count of paginated rows in footer
-  movableColumns: true, //allow column order to be changed
-  initialSort: [
-    //set the initial sort order of the data
-    { column: "name", dir: "asc" },
-  ],
-  columnDefaults: {
-    tooltip: true, //show tool tips on cells
-  },
+var table = new Tabulator("#tabulator-table", {
+  height: 205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+  data: tabledata, //assign data to table
+  layout: "fitColumns", //fit columns to width of table (optional)
   columns: [
-    //define the table columns
-    { title: "Name", field: "name", editor: "input" },
-    {
-      title: "Task Progress",
-      field: "progress",
-      hozAlign: "left",
-      formatter: "progress",
-      editor: true,
-    },
-    {
-      title: "Gender",
-      field: "gender",
-      width: 95,
-      editor: "select",
-      editorParams: { values: ["male", "female"] },
-    },
-    {
-      title: "Rating",
-      field: "rating",
-      formatter: "star",
-      hozAlign: "center",
-      width: 100,
-      editor: true,
-    },
-    { title: "Color", field: "col", width: 130, editor: "input" },
+    //Define Table Columns
+    { title: "Name", field: "name", width: 150 },
+    { title: "Age", field: "age", hozAlign: "left", formatter: "progress" },
+    { title: "Favourite Color", field: "col" },
     {
       title: "Date Of Birth",
       field: "dob",
-      width: 130,
       sorter: "date",
       hozAlign: "center",
     },
-    {
-      title: "Driver",
-      field: "car",
-      width: 90,
-      hozAlign: "center",
-      formatter: "tickCross",
-      sorter: "boolean",
-      editor: true,
-    },
   ],
+});
+
+//trigger an alert message when the row is clicked
+table.on("rowClick", function (e, row) {
+  alert("Row " + row.getData().id + " Clicked!!!!");
 });

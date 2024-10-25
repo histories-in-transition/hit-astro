@@ -1,16 +1,10 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
-
 ---
 <PageLayout>
-    <main>
-		<h2 class="text-2xl text-brandRed">Schreiberhände</h2>
-		<div class="grid justify-normal content-start">
-				<div id="example-table" class="bg-orange-400"></div>
-			</div>
-	</main>
+    <div class="md:w-3/4 p-5 mx-auto">
+        <h2 class="text-2xl text-brandRed font-semibold">Schreiberhände</h2>
+        <div id="tabulator-table"></div>
+    </div>
+    <script src="../lib/tabulator-search.js"></script>
 </PageLayout>
-<script src="../lib/tabulator-search.js">
-
-
-</script>

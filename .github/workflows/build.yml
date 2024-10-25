@@ -1,0 +1,53 @@
+name: Fetch data, build website and deploy to github pages
+# defines when the action should be executed in this case on push to the main branch or manual trigger
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+# can have several jobs which run parallel. each job can have several steps which are listed and follow one another
+# if there are several jobs watch out if one need another to be executed first e.g. build need: fetch
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout the repo # clone the repo to the docker run in ubuntu
+        uses: actions/checkout@v4 # there is already a code for this step, we refer to the path in the github ans state the version
+
+      - name: set up node.js # for our commands to be executed we need to set node in the ubuntu docker
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22 # need to specify the verion
+
+      - name: set up pnpm
+        uses: pnpm/action-setup@v4 # this one lives in the pnpm github repo
+        with:
+          version: 9
+
+      - name: fetch fresh data using script
+        run: pnpm run get-data # using pnpm to run the js using shorthand as recorded in package.json
+
+      - name: setup pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: build website
+        run: pnpm run build
+
+      - name: upload artifact (the dist folder from astro)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to Github pages
+        id: deployment
+        uses: actions/deploy-pages@v4
