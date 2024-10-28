@@ -1,5 +1,5 @@
 export function withBasePath(pathname) {
-  const base = import.meta.env.VITE_BASE_PATH;
+  const base = import.meta.env.BASE_URL;
   if (!pathname.startsWith("/")) return pathname;
-  else return `${base}${pathname}`;
+  return `${base}${pathname}`;
 }
