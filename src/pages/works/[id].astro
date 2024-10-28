@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
-import Button from "../../components/button.astro"
+import Button from "../../components/button.astro";
+import NavLink from "../../components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import msitems from "../../content/data/ms_items.json";
 const msItems = Object.values(msitems)
@@ -29,7 +30,7 @@ const { data: work } = Astro.props;
         <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
 
             <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-            <dd class="pl-5">{work?.author.map(item => <a href=`/authors/${item.hit_id}` class="hover:text-brandRed">{item.name}</a>)}</dd>
+            <dd class="pl-5">{work?.author.map(item => <NavLink href=`/authors/${item.hit_id}` class="hover:text-brandRed">{item.name}</NavLink>)}</dd>
             
             
             <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
@@ -40,11 +41,11 @@ const { data: work } = Astro.props;
              <dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
              <dd class="pl-5">
                  {work?.gnd_url
-                ? <a href={work.gnd_url} class="hover:text-brandRed">{work.gnd_url.split('gnd/')[1]}</a>
+                ? <NavLink href={work.gnd_url} class="hover:text-brandRed">{work.gnd_url.split('gnd/')[1]}</NavLink>
             : 'N/A'}</dd>  
             <dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
             <dd class="pl-5">{work.source_text.length > 0
-                ? work.source_text.map(text => <a href=`/works/${text.hit_id}` class="hover:text-brandRed">{text.title}</a>) 
+                ? work.source_text.map(text => <NavLink href=`/works/${text.hit_id}` class="hover:text-brandRed">{text.title}</NavLink>) 
                 : 'N/A'}
                 {work.note_source
                 ? <span>({work.note_source})</span>
@@ -70,9 +71,9 @@ const { data: work } = Astro.props;
                     .filter(msItem => msItem.title_work.some(title => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
                     .map(filteredMsItem => {
                         return <>
-                         <a href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
+                         <NavLink href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
                         {filteredMsItem.manuscript.map(ms => ms.shelfmark[0].value)}
-                      </a> <span>({filteredMsItem.locus_grp}) | </span>
+                      </NavLink> <span>({filteredMsItem.locus_grp}) | </span>
                         </>
                     }        
                   )}

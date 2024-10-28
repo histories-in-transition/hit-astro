@@ -4,6 +4,7 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
 import msItems from "../../content/data/ms_items.json";
+import NavLink from "../../components/nav-link.astro";
 
 export async function getStaticPaths() {
     const items = Object.values(msItems);
@@ -41,7 +42,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-              <dd class="pl-5"><a href={manuscript?.library_full[0]?.gnd_url} target="_blank" class="hover:text-brandRed">{manuscript.library_full[0]?.library_full} <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon></a></dd>
+              <dd class="pl-5"><NavLink href={manuscript?.library_full[0]?.gnd_url} target="_blank" class="hover:text-brandRed">{manuscript.library_full[0]?.library_full} <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon></NavLink></dd>
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
@@ -115,9 +116,9 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                 {
                     manuscript?.provenance.map((entry, index) => (
                       <>
-                        <a href="" class="hover:text-brandRed">
+                        <NavLink href="/" class="hover:text-brandRed">
                           {entry.label}
-                        </a>
+                        </NavLink>
                        
                         {index < manuscript.provenance.length - 1 && ', '}
                       </>
@@ -142,39 +143,39 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                     <div class="flex flex-col">
                         {manuscript.digi_url && (
                              <div class="flex">
-                                <a href={manuscript.digi_url} class="inline-flex hover:text-brandRed">
+                                <NavLink href={manuscript.digi_url} class="inline-flex hover:text-brandRed">
                                     <section>Digitalisat</section> 
                                     
-                                </a>
+                                </NavLink>
                             </div>
                            
                           )}
                           
                         {manuscript.catalog_url && (
                            <div class="flex">                        
-                                <a href={manuscript.catalog_url} class="inline-flex hover:text-brandRed">
+                                <NavLink href={manuscript.catalog_url} class="inline-flex hover:text-brandRed">
                                     <section>Katalogisat</section> 
                                     
-                                </a>
+                                </NavLink>
                             </div>                    
                         )}
         
                         {manuscript.manuscripta_url && (
                              <div class="flex">
-                                <a href={manuscript.manuscripta_url} class="inline-flex hover:text-brandRed">
+                                <NavLink href={manuscript.manuscripta_url} class="inline-flex hover:text-brandRed">
                                     <section>Manuscripta.at</section> 
                                     
-                                </a>
+                                </NavLink>
                             </div>
                            
                           )}
         
                           {manuscript.handschriftenportal_url && (
                              <div class="flex">
-                                <a href={manuscript.handschriftenportal_url} class="inline-flex hover:text-brandRed">
+                                <NavLink href={manuscript.handschriftenportal_url} class="inline-flex hover:text-brandRed">
                                     <section>Handschriftenportal</section> 
                                     
-                                </a>
+                                </NavLink>
                             </div>
                            
                           )}
@@ -212,7 +213,7 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                 .map(item => {
                 return <dt class="border-r border-gray-300 pr-2 justify-self-end">{item.locus_grp}</dt>
                 <dd class="pl-5">
-                {item.title_work[0]?.title && <span class="font-semibold underline underline-offset-4 hover:text-brandRed"><a href=`/works/${item.title_work[0].hit_id}`>{item.title_work[0].title}</a></span>}
+                {item.title_work[0]?.title && <span class="font-semibold underline underline-offset-4 hover:text-brandRed"><NavLink href=`/works/${item.title_work[0].hit_id}`>{item.title_work[0].title}</NavLink></span>}
                 {item.title_note && <span>({item.title_note})</span>}
                 {item.rubric && <span class="italic">›{item.rubric}‹</span>}
                 {item.incipit && <span class="italic">{item.incipit} ... </span>}                

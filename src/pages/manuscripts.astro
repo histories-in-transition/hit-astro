@@ -2,6 +2,7 @@
 import PageLayout from "../layouts/page-layout.astro"; 
 import mss from "../content/data/manuscripts.json";
 import Button from "../components/button.astro";
+import NavLink from "../components/nav-link.astro";
 //import {createIcons, ArrowRight, CircleCheckBig} from 'lucide';
 // createIcons({ icons: {
 //   ArrowRight,
@@ -81,7 +82,7 @@ import Button from "../components/button.astro";
             {Object.values(mss).map((ms) => (
               <tr tabindex="0">
                 <td class="px-3">
-                    <a href=`/manuscripts/${ms.hit_id}` class="hover:text-brandRed hover:font-semibold">{ms.shelfmark[0]?.value}</a>
+                    <NavLink href=`/manuscripts/${ms.hit_id}` class="hover:text-brandRed hover:font-semibold">{ms.shelfmark[0]?.value}</NavLink>
                 </td>
                 <td class="px-3">
                   {ms.library_full[0]?.settlement[0]?.name}

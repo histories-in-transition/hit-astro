@@ -3,7 +3,8 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro"
 import { Icon } from "astro-icon/components";
 import msitems from "../../content/data/ms_items.json";
-const msItems = Object.values(msitems)
+const msItems = Object.values(msitems);
+import NavLink from "../../components/nav-link.astro";
 import works from "../../content/data/works.json";
 
 export async function getStaticPaths() {  
@@ -21,7 +22,7 @@ const { data: item } = Astro.props;
 <PageLayout>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-        <h2 class="text-3xl font-semibold py-3 text-brandRed"><a href=`/manuscripts/${item.manuscript[0]?.hit_id}` class="underline underline-offset-2">{item.manuscript[0]?.shelfmark[0].value}</a><span> ({item?.locus_grp}) </span></h2>
+        <h2 class="text-3xl font-semibold py-3 text-brandRed"><NavLink href=`/manuscripts/${item.manuscript[0]?.hit_id}` class="underline underline-offset-2">{item.manuscript[0]?.shelfmark[0].value}</NavLink><span> ({item?.locus_grp}) </span></h2>
         
         <div class="flex gap-2 justify-end">
           <Button>TEI-XML</Button>
@@ -30,7 +31,7 @@ const { data: item } = Astro.props;
         <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
 
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
-            <dd class="pl-5">{item.title_work?.map(title => <a href=`/works/${title?.hit_id}` class="hover:text-brandRed">{title.title}</a>)}</dd>
+            <dd class="pl-5">{item.title_work?.map(title => <NavLink href=`/works/${title?.hit_id}` class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
             {item.title_note && 
             <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
             <dd class="pl-5">{item?.title_note}</dd>

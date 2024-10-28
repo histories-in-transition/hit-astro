@@ -9,4 +9,4 @@ const { href, ...rest } = Astro.props; // destructures Astro.props to extract th
 const pathname = withBasePath(href)
 
 ---
-<a {...rest} href={pathname}><slot /></a>
+<a {...rest} href={pathname} ><slot /></a>

@@ -4,7 +4,7 @@ import works from "../content/data/works.json";
 import msitems from "../content/data/ms_items.json";
 import Button from "../components/button.astro";
 import { Icon } from "astro-icon/components";
-
+import NavLink from "../components/nav-link.astro";
 const msItems = Object.values(msitems)
 
 
@@ -75,13 +75,13 @@ const msItems = Object.values(msitems)
             {Object.values(works).map((work) => (
               <tr tabindex="0">
                 <td class="px-3">
-                    <a href=`/works/${work.hit_id}`>{work.title}</a>
+                    <NavLink href=`/works/${work.hit_id}`>{work.title}</NavLink>
                 </td>
 
                 <td class="px-3">
                     {work.author.map((item, index) => {
                         return <>
-                        <a href=`/authors/${item.hit_id}`>{item.name}</a>
+                        <NavLink href=`/authors/${item.hit_id}`>{item.name}</NavLink>
                         {index < work.author.length -1 && ' & '}
                         </>
                     })}
@@ -100,9 +100,9 @@ const msItems = Object.values(msitems)
         .filter(msItem => msItem.title_work.some(title => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
         .map(filteredMsItem => {
             return <>
-             <a href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
+             <NavLink href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
             {filteredMsItem.manuscript.map(ms => ms.shelfmark[0].value)}
-          </a> <span>({filteredMsItem.locus_grp}) | </span>
+          </NavLink> <span>({filteredMsItem.locus_grp}) | </span>
             </>
         }        
       )}
