@@ -3,7 +3,7 @@ import PageLayout from "../layouts/page-layout.astro";
 import Button from "../components/button.astro"
 import NavLink from "../components/nav-link.astro";
 import { Image } from "astro:assets";
-import clm210_91v_f from "../../public/assets/images/clm210_91v_f.jpg";
+import clm210 from "../../public/assets/images/clm210.jpg";
 
 ---
 <PageLayout>
@@ -20,7 +20,7 @@ import clm210_91v_f from "../../public/assets/images/clm210_91v_f.jpg";
 		</div>
 		<figure class="md:grid gap-2 content-start hidden">
 			<img src="/hit-astro/public/images/clm210_91v_f.jpg" alt="" class="object-contain w-full" loading="lazy" height="200px">
-			<Image alt="Image from the manuscript BSB Clm 210, fol. 91v, showing personification of the months." src={clm210_91v_f}></Image>
+			<Image alt="Image from the manuscript BSB Clm 210, fol. 91v, showing personification of the months." src={clm210}></Image>
 			<figcaption class="font-extralight text-xs text-right">BSB, Clm. 210, fol. 91v</figcaption>
 		</figure>		
 	</div>
