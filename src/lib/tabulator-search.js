@@ -1,5 +1,6 @@
 import { Tabulator } from "tabulator-tables";
 import "tabulator-tables/dist/css/tabulator.css";
+import "tabulator-tables/dist/js/tabulator.js";
 
 //define some sample data
 var tabledata = [
@@ -35,7 +36,7 @@ var table = new Tabulator("#tabulator-table", {
   layout: "fitColumns", //fit columns to width of table (optional)
   columns: [
     //Define Table Columns
-    { title: "Name", field: "name", width: 150 },
+    { title: "Label", field: "name", width: 150 },
     { title: "Age", field: "age", hozAlign: "left", formatter: "progress" },
     { title: "Favourite Color", field: "col" },
     {

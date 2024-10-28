@@ -6,7 +6,13 @@ import { getData } from "./api-client.js";
 const baseUrl =
   "https://raw.githubusercontent.com/histories-in-transition/hit-baserow-dump/refs/heads/main/data/";
 
-const fileNames = ["manuscripts.json", "works.json", "ms_items.json"];
+const fileNames = [
+  "manuscripts.json",
+  "works.json",
+  "ms_items.json",
+  "hands.json",
+  "strata.json",
+];
 
 // async function to fetch the data from the url
 
