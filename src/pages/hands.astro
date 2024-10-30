@@ -1,10 +1,128 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
+import handsJson from "../content/data/hands.json";
+import NavLink from "../components/nav-link.astro";
+import Button from "../components/button.astro";
+const hands = Object.values(handsJson);
+
+
 ---
+
 <PageLayout>
-    <div class="md:w-3/4 p-5 mx-auto">
-        <h2 class="text-2xl text-brandRed font-semibold">Schreiberhände</h2>
-        <div id="tabulator-table"></div>
-    </div>
-    <script src="../lib/tabulator-search.js"></script>
-</PageLayout>
+    <style>
+      /* To make the table rows striped */
+      tr:nth-child(even) {
+        background-color: #fff8f7;
+      }
+      tr:nth-child(odd) {
+        background-color: #fcf1e8;
+      }
+     
+    </style>
+  
+  <div class="mx-auto p-4 lg:w-4/5">
+          <div>
+              <div class="flex justify-between align-middle mb-2">
+          <h2 class="text-2xl font-semibold text-brandRed py-2">Schreiberhände</h2>
+          <Button>Download CSV</Button>
+          
+      </div>
+        <table id="hit-mss-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+          <thead>
+            <tr>
+              <th>
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Label</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>              
+              </th>
+              <th>
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Handschrift</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+              <th>
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Rolle</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+              <th>
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Text</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+              <th>
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Datiert</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+              <th>
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Lokalisiert</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+            </tr>
+          </thead>
+                 
+                
+          <tbody>
+              {Object.values(hands).map((hand) => (
+                <tr tabindex="0">
+                  <td class="px-3">
+                      <NavLink href=`/hands/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.label[0]?.value}</NavLink>
+                  </td>
+                  <td class="px-3">
+                    <NavLink href=`/manuscripts/hit_manuscript__${hand.manuscript[0]?.id}` class="hover:text-brandRed hover:font-semibold">{hand.manuscript[0]?.value}</NavLink>
+                  </td>
+                  <td class="px-3">
+                        {hand.hands_role.map(occasion => {
+                           return occasion.role.map(item => item.value)
+                        })
+                        }
+                    </td>
+                  
+                  <td class="px-3">
+                                                
+                  
+              
+             
+         
+                  </td>
+                  <td class="px-3">
+                   
+                  </td>
+                  <td class="px-3">
+                   
+                </td>
+                </tr>
+                ))}
+              
+              
+          </tbody>
+               
+              </table>
+       
+              
+           
+          </div>
+      </div>
+    <script src="../lib/table-search.js"></script>
+    
+  </PageLayout>
