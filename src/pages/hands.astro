@@ -92,24 +92,25 @@ const hands = Object.values(handsJson);
                     <NavLink href=`/manuscripts/hit_manuscript__${hand.manuscript[0]?.id}` class="hover:text-brandRed hover:font-semibold">{hand.manuscript[0]?.value}</NavLink>
                   </td>
                   <td class="px-3">
-                        {hand.hands_role.map(occasion => {
-                           return occasion.role.map(item => item.value)
-                        })
-                        }
+                    {[...new Set(
+            hand.hands_role.flatMap((occasion) =>
+            occasion.role.map((item) => item.value)
+          )
+        )].join(", ")}
                     </td>
                   
-                  <td class="px-3">
-                                                
-                  
-              
-             
-         
+                  <td class="px-3"> 
+                    {hand.hands_role.map(role => {
+                        return role.text.map(item => item.value)
+                    }).join(' / ')}
                   </td>
                   <td class="px-3">
-                   
+                    {hand.dating[0]?.value || ""}
                   </td>
                   <td class="px-3">
-                   
+                   {hand.hands_placed.map(place => {
+                    return place.place[0]?.name
+                   }).join(', ')}
                 </td>
                 </tr>
                 ))}
