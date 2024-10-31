@@ -3,6 +3,7 @@ import PageLayout from "../layouts/page-layout.astro";
 import handsJson from "../content/data/hands.json";
 import NavLink from "../components/nav-link.astro";
 import Button from "../components/button.astro";
+import {Icon} from "astro-icon/components";
 const hands = Object.values(handsJson);
 
 
@@ -21,14 +22,15 @@ const hands = Object.values(handsJson);
     </style>
   
   <div class="mx-auto p-4 lg:w-4/5">
-          <div>
-              <div class="flex justify-between align-middle mb-2">
-          <h2 class="text-2xl font-semibold text-brandRed py-2">Schreiberhände</h2>
-          <Button>Download CSV</Button>
-          
-      </div>
-        <table id="hit-mss-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
-          <thead>
+    <div>
+        <div class="flex justify-between align-middle mb-2">
+    <h2 class="text-2xl font-semibold text-brandRed py-2">Schreiberhände</h2>        
+    <Button id="download-btn">CSV <Icon aria-hidden="true" name="lucide:download" class="inline-flex"></Icon></Button>
+    
+</div>
+  <div class="overflow-y-auto max-h-[1000px]">
+    <table id="hit-hands-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+      <thead class="sticky top-0">
             <tr>
               <th>
                 <form role="search" data-search-form >
@@ -93,11 +95,12 @@ const hands = Object.values(handsJson);
                   </td>
                   <td class="px-3">
                     {[...new Set(
-            hand.hands_role.flatMap((occasion) =>
-            occasion.role.map((item) => item.value)
-          )
-        )].join(", ")}
-                    </td>
+                        hand.hands_role.flatMap(occasion => {
+                            return occasion.role.map((item) => item.value)
+                        }
+                    )
+                    )].join(", ")}
+                </td>
                   
                   <td class="px-3"> 
                     {hand.hands_role.map(role => {

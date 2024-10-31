@@ -23,15 +23,15 @@ const msItems = Object.values(msitems)
   </style>
 
 <div class="mx-auto p-4 lg:w-4/5">
-		<div>
-			<div class="flex justify-between align-middle mb-2">
-        <h2 class="text-2xl font-semibold text-brandRed py-2">MS Items</h2>
-        
-        <Button id="download-btn">CSV <Icon aria-hidden="true" name="lucide:download" class="inline-flex"></Icon></Button>
-        
-    </div>
-      <table id="hit-works-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
-        <thead>
+  <div>
+    <div class="flex justify-between align-middle mb-2">
+      <h2 class="text-2xl font-semibold text-brandRed py-2">Werke</h2>        
+      <Button id="download-btn">CSV <Icon aria-hidden="true" name="lucide:download" class="inline-flex"></Icon></Button>
+      
+  </div>
+    <div class="overflow-y-auto max-h-[1000px]">
+      <table id="hit-msitems-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+        <thead class="sticky top-0">
           <tr> 
             <th>                  
                 <form role="search" data-search-form>
@@ -104,10 +104,10 @@ const msItems = Object.values(msitems)
         </tbody>
              
             </table>
-     
+     </div>
             
          
-		</div>
+		
 	</div>
   <script src="../lib/table-search.js"></script>
 </PageLayout>
