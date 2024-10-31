@@ -32,6 +32,14 @@ const hands = Object.values(handsJson);
     <table id="hit-hands-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
       <thead class="sticky top-0">
             <tr>
+                <th>
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Scribe</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>              
+                  </th>
               <th>
                 <form role="search" data-search-form >
                   <label class="flex flex-col items-start p-2">
@@ -87,6 +95,9 @@ const hands = Object.values(handsJson);
           <tbody>
               {Object.values(hands).map((hand) => (
                 <tr tabindex="0">
+                    <td class="px-3">
+                      <NavLink href=`/scribes/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.scribe[0]?.name}</NavLink>
+                  </td>
                   <td class="px-3">
                       <NavLink href=`/hands/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.label[0]?.value}</NavLink>
                   </td>
@@ -101,11 +112,19 @@ const hands = Object.values(handsJson);
                     )
                     )].join(", ")}
                 </td>
-                  
+                {/* Text */}
                   <td class="px-3"> 
                     {hand.hands_role.map(role => {
-                        return role.text.map(item => item.value)
-                    }).join(' / ')}
+                        return role.ms_item.map(item => {
+                            return item.title_work.map((work, index) => {
+                                return <>
+                                <NavLink href=`/works/${work.hit_id}`>{work.title}</NavLink>
+                                {index < item.title_work.length -1 && ' / '}
+                                </>
+                            })
+                        })
+                    })
+                    }
                   </td>
                   <td class="px-3">
                     {hand.dating[0]?.value || ""}
