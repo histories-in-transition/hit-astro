@@ -34,6 +34,9 @@ jobs:
         with:
           version: 9
 
+      - name: install dependencies # install all dependencies need to run the project
+        run: pnpm install
+
       - name: fetch fresh data using script
         run: pnpm run get-data # using pnpm to run the js using shorthand as recorded in package.json
 
@@ -42,9 +45,6 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
-      - name: install dependencies # install all dependencies need to run the project
-        run: pnpm install
 
       - name: build website
         run: pnpm run build
