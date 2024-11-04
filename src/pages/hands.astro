@@ -6,7 +6,6 @@ import Button from "../components/button.astro";
 import {Icon} from "astro-icon/components";
 const hands = Object.values(handsJson);
 
-
 ---
 
 <PageLayout>
@@ -96,7 +95,7 @@ const hands = Object.values(handsJson);
               {Object.values(hands).map((hand) => (
                 <tr tabindex="0">
                     <td class="px-3">
-                      <NavLink href=`/scribes/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.scribe[0]?.name}</NavLink>
+                     {/*  <NavLink href=`/scribes/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.scribe[0]?.name}</NavLink> */}
                   </td>
                   <td class="px-3">
                       <NavLink href=`/hands/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.label[0]?.value}</NavLink>
@@ -112,20 +111,31 @@ const hands = Object.values(handsJson);
                     )
                     )].join(", ")}
                 </td>
+                <td></td>
                 {/* Text */}
-                  <td class="px-3"> 
-                    {hand.hands_role.map(role => {
-                        return role.ms_item.map(item => {
-                            return item.title_work.map((work, index) => {
-                                return <>
-                                <NavLink href=`/works/${work.hit_id}`>{work.title}</NavLink>
-                                {index < item.title_work.length -1 && ' / '}
-                                </>
-                            })
-                        })
-                    })
-                    }
-                  </td>
+                  {/* <td class="px-3"> 
+                    {hand.hands_role?.map((role) => {
+                      const works: { id: string; title: string }[] = []; // Declare works array
+
+                      role?.ms_item?.forEach((item) => {
+                        item?.title_work?.forEach((work) => {
+                          works.push({ id: work.hit_id, title: work.title }); // Push id and title to works
+                        });
+                      });
+
+                      return (
+                        <Fragment>
+                          {works.map((work, index) => (
+                            <span>
+                              <NavLink href={`/works/${work.id}`}>{work.title}</NavLink>
+                              {index < works.length - 1 && ' / '}
+                            </span>
+                          ))}
+                        </Fragment>
+                      );
+                    })}
+
+                  </td> */}
                   <td class="px-3">
                     {hand.dating[0]?.value || ""}
                   </td>
