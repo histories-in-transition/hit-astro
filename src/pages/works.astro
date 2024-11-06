@@ -38,7 +38,7 @@ const msItems = Object.values(msitems)
                 <form role="search" data-search-form >
                   <label class="flex flex-col items-start p-2">
                     <div>Titel</div>
-                    <input type="search" name="q" placeholder="Suche Titel ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                   </label>
                 </form>
               </th>
@@ -46,7 +46,7 @@ const msItems = Object.values(msitems)
                 <form role="search" data-search-form>
                   <label class="flex flex-col items-start p-2">
                     <div>Author</div>
-                    <input type="search" name="q" placeholder="Suche Author ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                   </label>
                 </form>
               </th>
@@ -54,7 +54,7 @@ const msItems = Object.values(msitems)
                 <form role="search" data-search-form>
                   <label class="flex flex-col items-start p-2">
                     <div>Genre</div>
-                    <input type="search" name="q" placeholder="Suche Genre ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                   </label>
                 </form>
               </th>
@@ -62,7 +62,7 @@ const msItems = Object.values(msitems)
                 <form role="search" data-search-form>
                   <label class="flex flex-col items-start p-2">
                     <div>Handschriften</div>
-                    <input type="search" name="q" placeholder="Suche Handschriften ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                   </label>
                 </form>
               </th>
@@ -72,17 +72,17 @@ const msItems = Object.values(msitems)
         
         
           <tbody>
-              {Object.values(works).map((work) => (
+              {Object.values(works).map(work => (
                 <tr tabindex="0">
                   <td class="px-3">
                       <NavLink href=`/works/${work.hit_id}`>{work.title}</NavLink>
                   </td>
                   <td class="px-3">
                       {work.author.map((item, index) => {
-                          return <>
+                          return <span>
                           <NavLink href=`/authors/${item.hit_id}`>{item.name}</NavLink>
                           {index < work.author.length -1 && ' & '}
-                          </>
+                          </span>
                       })}
                   </td>
                   <td class="px-3">
@@ -94,17 +94,15 @@ const msItems = Object.values(msitems)
                       })}
                   </td>
                   <td class="px-3">
-        {msItems
-          .filter(msItem => msItem.title_work.some(title => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
-          .map(filteredMsItem => {
-              return <>
-               <NavLink href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
-              {filteredMsItem.manuscript.map(ms => ms.shelfmark[0].value)}
-            </NavLink> <span>({filteredMsItem.locus_grp}) | </span>
-              </>
-          }
-        )}
-            </td>
+                    {work.related__ms_items.map((item, index) => {
+                      return <span>                        
+                        <NavLink class="hover:underline" href=`/manuscripts/${item.manuscript[0].hit_id}`>{item.manuscript[0].shelfmark[0].value}</NavLink>
+                        (<NavLink class="hover:underline" href=`/msitems/${item.id}`>{item.locus_grp}</NavLink>)
+                        {index < work.related__ms_items.length -1 && ' | '}
+                      </span>
+                    })
+                    }
+                   </td>
         
                 </tr>
                 ))}
