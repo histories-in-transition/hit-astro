@@ -54,6 +54,7 @@ const msItems = Object.values(msitems);
     import {
       mutateM2mField,
       mutateNestedM2mField,
+      mutate2NestedM2mField,
     } from "../lib/tabulator-utils.js";
 
     var tabledata = [...Object.values(data)];
@@ -81,7 +82,7 @@ const msItems = Object.values(msitems);
           title: "Haupgenre",
           field: "genre",
           mutator: mutateNestedM2mField,
-          mutatorParams: { labelField: "main_genre" },
+          mutatorParams: { labelField: "main_genre", labelSubField: "genre" },
           headerFilter: "input",
         },
 
@@ -94,6 +95,14 @@ const msItems = Object.values(msitems);
         }, */
         {
           title: "Überlieferung",
+          field: "related__ms_items",
+          mutator: mutate2NestedM2mField,
+          mutatorParams: {
+            labelField: "manuscript",
+            labelSubField: "shelfmark",
+            labelSubSubField: "value",
+          },
+          headerFilter: "input",
         },
       ],
     });
