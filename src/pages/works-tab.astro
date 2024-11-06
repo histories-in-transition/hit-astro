@@ -1,5 +1,6 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
+import DownloadButtons from "../components/download-buttons.astro";
 import { Icon } from "astro-icon/components";
 ---
 
@@ -8,35 +9,7 @@ import { Icon } from "astro-icon/components";
     <div>
       <div class="flex justify-between align-middle mb-2">
         <h2 class="text-2xl font-semibold text-brandRed py-2">Werke</h2>
-        <div class="flex gap-3">
-          <button
-            class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
-            id="download-csv"
-            >CSV <Icon
-              aria-hidden="true"
-              name="lucide:download"
-              class="inline-flex"
-            /></button
-          >
-          <button
-            class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
-            id="download-json"
-            >JSON <Icon
-              aria-hidden="true"
-              name="lucide:download"
-              class="inline-flex"
-            /></button
-          >
-          <button
-            class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
-            id="download-html"
-            >HTML <Icon
-              aria-hidden="true"
-              name="lucide:download"
-              class="inline-flex"
-            /></button
-          >
-        </div>
+        <DownloadButtons />
       </div>
     </div>
     <div class="overflow-y-auto max-h-[1000px]">
