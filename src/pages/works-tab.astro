@@ -30,12 +30,17 @@ import { Icon } from "astro-icon/components";
 
     var table = new Tabulator("#tabulator-table", {
       headerFilterLiveFilterDelay: 600,
-      height: 800,
+      height: 1000,
       data: tabledata,
       layout: "fitColumns",
       responsiveLayout: "collapse",
       columns: [
-        { title: "Titel", field: "view_label", headerFilter: "input",  formatter:"textarea" },
+        {
+          title: "Titel",
+          field: "view_label",
+          headerFilter: "input",
+          formatter: "textarea",
+        },
         {
           title: "Autor",
           field: "author",
@@ -48,10 +53,10 @@ import { Icon } from "astro-icon/components";
         },
 
         {
-          title: "Haupgenre",
+          title: "Genre",
           field: "genre",
           mutator: jsonpathLookup,
-          mutatorParams: { path: "$..genre", reverse: true},
+          mutatorParams: { path: "$..genre", reverse: true },
           headerFilter: "input",
         },
         {

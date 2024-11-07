@@ -9,7 +9,7 @@ import works from "../../content/data/works.json";
 
 export async function getStaticPaths() {  
   const paths = Object.values(msitems).map((item) => ({
-    params: { id: item.id.toString() }, 
+    params: { id: item.hit_id.toString() }, 
     props: { data: item }
   }));
 
