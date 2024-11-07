@@ -23,7 +23,9 @@ const base = import.meta.env.BASE_URL;
                   <li class={`${pathname === base + '/works' ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}>
                     <NavLink href="/works">Werke</NavLink>
                   </li>
-               
+                  <li class={`${pathname === base + '/works-tab' ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}>
+                    <NavLink href="/works-tab">Werke tab</NavLink>
+                  </li>
                   <li class={`${pathname === base + "/ms-items" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}>
                     <NavLink href="/ms-items">MS Items</NavLink>
                   </li>
@@ -42,6 +44,7 @@ const base = import.meta.env.BASE_URL;
     </div>
     <div id="nav-links" class="hidden rounded-sm grid grid-cols-1 p-5 bg-brandRed">        
         <NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/works">Werke</NavLink>
+        <NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/works-tab">Werke (tabulator.js)</NavLink>
         <NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/manuscripts">Handschriften</NavLink>
         <NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/search">Suche</NavLink>
         <NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/">Authoren</NavLink>
