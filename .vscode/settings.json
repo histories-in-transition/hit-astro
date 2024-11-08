@@ -1,0 +1,24 @@
+{
+	"css.validate": false,
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"editor.quickSuggestions": {
+		"strings": true
+	},
+	"editor.rulers": [100],
+	"emmet.showSuggestionsAsSnippets": true,
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	"files.eol": "\n",
+	"html.autoCreateQuotes": false,
+	"less.validate": false,
+	"prettier.documentSelectors": ["**/*.astro"],
+	"scss.validate": false,
+	"tailwindCSS.classAttributes": ["class", "class:list"],
+	"tailwindCSS.validate": true,
+	"typescript.tsdk": "node_modules/typescript/lib",
+}

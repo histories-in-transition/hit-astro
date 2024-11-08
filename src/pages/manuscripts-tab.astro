@@ -1,0 +1,94 @@
+---
+import PageLayout from "../layouts/page-layout.astro";
+import DownloadButtons from "../components/download-buttons.astro";
+---
+
+<PageLayout>
+	<div class="mx-auto p-4 lg:w-4/5">
+		<div>
+			<div class="flex justify-between align-middle mb-2">
+				<h2 class="text-2xl font-semibold text-brandRed py-2">Handschriften</h2>
+				<DownloadButtons />
+			</div>
+			<div class="overflow-y-auto max-h-[1000px]">
+				<table id="tabulator-table"></table>
+			</div>
+		</div>
+		<script src="../lib/table-search.js"></script>
+	</div>
+	<script>
+		import { TabulatorFull as Tabulator } from "tabulator-tables";
+		import "tabulator-tables/dist/css/tabulator_materialize.min.css";
+		import data from "../content/data/manuscripts.json";
+		import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
+
+		var tabledata = [...Object.values(data)];
+
+		var table = new Tabulator("#tabulator-table", {
+			headerFilterLiveFilterDelay: 600,
+			height: 900,
+			data: tabledata,
+			layout: "fitColumns",
+			responsiveLayout: "collapse",
+			columns: [
+				{
+					title: "Signatur",
+					field: "view_label",
+					formatter: "textarea",
+					headerFilter: "input",
+				},
+				{
+					title: "Aktueller Standort",
+					field: "library_full",
+					mutator: jsonpathsLookup,
+					mutatorParams: {
+						paths: ["$[*].settlement[*].name", "$[*].library_full"],
+						separator: ": ",
+					},
+					headerFilter: "input",
+				},
+
+				{
+					title: "Entstehungsort",
+					field: "orig_place",
+					mutator: jsonpathLookup,
+					mutatorParams: { path: "$[*].name" },
+					headerFilter: "input",
+				},
+				{
+					title: "Entstehungsdatum",
+					field: "manuscripts_dated",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].date[*].label",
+						separator: "; ",
+					},
+					headerFilter: "input",
+				},
+			],
+		});
+
+		//trigger download of data.csv file
+		document.getElementById("download-csv")!.addEventListener("click", function () {
+			table.download("csv", "data.csv");
+		});
+
+		//trigger download of data.json file
+		document.getElementById("download-json")!.addEventListener("click", function () {
+			table.download("json", "data.json");
+		});
+
+		//trigger download of data.html file
+		document.getElementById("download-html")!.addEventListener("click", function () {
+			table.download("html", "data.html", { style: true });
+		});
+
+		// event listeners set:
+		// href to the ms detail view page
+		table.on("rowClick", function (e, row) {
+			var data = row.getData();
+			var url = `manuscripts/${data["hit_id"]}`;
+			window.open(url, "_self");
+		});
+	</script>
+</PageLayout>

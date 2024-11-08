@@ -5,18 +5,24 @@ import "tailwindcss/tailwind.css";
 import PageFooter from "../components/page-footer.astro";
 import PageHeader from "../components/page-header.astro";
 
+interface Props {
+	title?: string;
+}
+
+const { title = "Page" } = Astro.props;
 ---
+
 <html class="h-full">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="light" />
 		<meta charset="utf-8" />
-		<title>Histories in transition</title>
+		<title>{title} - Histories in transition</title>
 		<meta name="description" content="" />
 	</head>
 	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brandIvory">
-		<PageHeader/>
-		<slot/>
-		<PageFooter/>
+		<PageHeader />
+		<slot />
+		<PageFooter />
 	</body>
 </html>
