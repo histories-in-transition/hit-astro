@@ -6,15 +6,16 @@ const base = import.meta.env.BASE_URL;
 
 <header class="sticky top-0">
 	<div class="bg-brandRed p-3 align-center flex justify-between">
-		<h1
+		<div
 			class="md:px-10 text-xl md:text-3xl text-brandIvory self-center tracking-wide uppercase underline-offset-8 decoration-brandRose py-2"
 		>
 			<NavLink href="/index.html"
-				>Histories in transition<span class="hidden md:flex normal-case italic text-xl"
+				>Histories in transition
+				<span class="hidden md:flex normal-case italic text-xl"
 					>The Case of Freising and Salzburg (9th – 12th c.)</span
-				></NavLink
-			>
-		</h1>
+				>
+			</NavLink>
+		</div>
 		<nav aria-labelledby="primary-navigation" class="md:hidden">
 			<button
 				id="hamburger"
@@ -104,9 +105,6 @@ const base = import.meta.env.BASE_URL;
 		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/about">
 			Über uns
 		</NavLink>
-
-		<!-- TOOD: make this work -->
-		<!-- <Link class="py-1 px-3 hover:underline underline-offset-4 text-brandIvory" href="/about.html">Über uns</MyLink> -->
 	</div>
 
 	<script src="../lib/menu.js"></script>

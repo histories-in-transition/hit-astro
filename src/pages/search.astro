@@ -1,42 +1,39 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
-import 'instantsearch.css/themes/satellite.css';
+import "instantsearch.css/themes/satellite.css";
 ---
-<PageLayout>
-    <main class="md:w-3/4 grid mx-auto py-4 gap-8">
-        <h2 class="text-2xl text-brandBrown">Advanced search</h2>
-        
-        <div>
-            <div data-search-panel>              
 
-                <div data-search-results>
-                    <div id="searchbox"></div>
-                    <div id="stats-container"></div>
-                    <div id="current-refinements"></div>
-                    <div class="grid grid-cols-[1fr_3fr] gap-6 p-5">
-						<div>                            
+<PageLayout title="Search">
+	<main class="md:w-3/4 grid mx-auto py-4 gap-8">
+		<h1 class="text-2xl text-brandBrown">Advanced search</h1>
+
+		<div>
+			<div data-search-panel>
+				<div data-search-results>
+					<div id="searchbox"></div>
+					<div id="stats-container"></div>
+					<div id="current-refinements"></div>
+					<div class="grid grid-cols-[1fr_3fr] gap-6 p-5">
+						<div>
 							<div class="p-5" id="clear-refinements"></div>
 							<div id="refinement-list-work"></div>
-                            <div id="refinement-list-authors"></div>
-                            <div id="refinement-list-manuscripts"></div>
-                            <div id="refinement-list-library"></div>
+							<div id="refinement-list-authors"></div>
+							<div id="refinement-list-manuscripts"></div>
+							<div id="refinement-list-library"></div>
 							<div id="refinement-list-hands-role"></div>
-                            <div id="refinement-list-hands"></div>
+							<div id="refinement-list-hands"></div>
 							<div id="refinement-list-decoration"></div>
-                        </div>
-                       <div>
-						<div class="grid gap-4">
-                            <div id="pagination"></div>
-                            <div id="hits"></div>
-                        </div>
-					   </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        
-     
-    </main>
+						</div>
+						<div>
+							<div class="grid gap-4">
+								<div id="pagination"></div>
+								<div id="hits"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
 </PageLayout>
 <script src="../lib/advanced-search.js"></script>
