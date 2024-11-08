@@ -10,6 +10,7 @@ import {
   clearRefinements,
   currentRefinements,
 } from "instantsearch.js/es/widgets";
+import { withBasePath } from "./withBasePath";
 
 const project_collection_name = "hit__msitems";
 const main_search_field = "full_text";
@@ -106,10 +107,12 @@ search.addWidgets([
       empty: "No results for <q>{{ query }}</q>",
 
       item(hit, { html, components }) {
+        const href = withBasePath(`/msitems/${hit.rec_id}`)
+
         return html`
           <article>
             <h3>
-              <a href="/msitems/${hit.rec_id}">${hit.work.title}</a>
+              <a href="${href}">${hit.work.title}</a>
             </h3>
             <p>${hit.work.author}</p>
             <p>${hit.manuscript.shelfmark}</p>

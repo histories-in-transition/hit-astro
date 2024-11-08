@@ -4,6 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "format:check": "prettier . --cache --check",
+		"format:fix": "pnpm run format:check --write",
     "get-data": "tsx ./scripts/data-fetch.ts",
     "start": "astro dev",
     "build": "astro check && astro build",
@@ -31,7 +33,10 @@
     "typesense-instantsearch-adapter": "^2.8.0"
   },
   "devDependencies": {
+    "@acdh-oeaw/prettier-config": "^2.0.0",
     "@types/node": "^22.7.5",
-    "@types/tabulator-tables": "^6.2.3"
+    "@types/tabulator-tables": "^6.2.3",
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }
