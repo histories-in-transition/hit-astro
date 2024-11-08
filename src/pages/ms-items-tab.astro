@@ -22,7 +22,10 @@ import DownloadButtons from "../components/download-buttons.astro";
       import { TabulatorFull as Tabulator } from "tabulator-tables";
       import "tabulator-tables/dist/css/tabulator_materialize.min.css";
       import data from "../content/data/ms_items.json";
-      import { jsonpathLookup } from "../lib/tabulator-utils.js";
+      import {
+        jsonpathLookup,
+        jsonpathsLookup,
+      } from "../lib/tabulator-utils.js";
       import NavLink from "../components/nav-link.astro";
 
       var tabledata = [...Object.values(data)];
@@ -42,10 +45,10 @@ import DownloadButtons from "../components/download-buttons.astro";
           {
             title: "Werk",
             field: "title_work",
-            mutator: jsonpathLookup,
+            mutator: jsonpathsLookup,
             mutatorParams: {
-              path: "$[*].title",
-              separator: "; ",
+              paths: ["$[*].author[*].name", "$[*].title"],
+              separator: ": ",
             },
             headerFilter: "input",
           },
