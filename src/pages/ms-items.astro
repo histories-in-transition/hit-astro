@@ -1,113 +1,111 @@
 ---
-import PageLayout from "../layouts/page-layout.astro"; 
-import msitems from "../content/data/ms_items.json";
-import Button from "../components/button.astro";
-import { Icon } from "astro-icon/components";
-import NavLink from "../components/nav-link.astro";
-const msItems = Object.values(msitems)
-
-
+import PageLayout from "../layouts/page-layout.astro";
+import DownloadButtons from "../components/download-buttons.astro";
 ---
 
+<PageLayout title="MS-Items">
+	<div class="mx-auto p-4 lg:w-4/5">
+		<div>
+			<div class="flex justify-between align-middle mb-2">
+				<h1 class="text-2xl font-semibold text-brandRed py-2">MS-Items</h1>
+				<DownloadButtons />
+			</div>
+			<div class="overflow-y-auto max-h-[1000px]">
+				<table
+					id="tabulator-table"
+					class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table"
+				>
+				</table>
+			</div>
+		</div>
+		<script>
+			import { TabulatorFull as Tabulator } from "tabulator-tables";
+			import "tabulator-tables/dist/css/tabulator_materialize.min.css";
+			import data from "../content/data/ms_items.json";
+			import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
+			import NavLink from "../components/nav-link.astro";
 
-<PageLayout title="Ms-Items">
-  <style>
-    /* To make the table rows striped */
-    tr:nth-child(even) {
-      background-color: #fff8f7;
-    }
-    tr:nth-child(odd) {
-      background-color: #fcf1e8;
-    }
-   
-  </style>
+			var tabledata = [...Object.values(data)];
 
-<div class="mx-auto p-4 lg:w-4/5">
-  <div>
-    <div class="flex justify-between align-middle mb-2">
-      <h2 class="text-2xl font-semibold text-brandRed py-2">Werke</h2>        
-      <Button id="download-btn">CSV <Icon aria-hidden="true" name="lucide:download" class="inline-flex"></Icon></Button>
-      
-  </div>
-    <div class="overflow-y-auto max-h-[1000px]">
-      <table id="hit-msitems-table" class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table">
-        <thead class="sticky top-0">
-          <tr> 
-            <th>                  
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>ID</div>
-                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>
-            <th>                  
-              <form role="search" data-search-form>
-                <label class="flex flex-col items-start p-2">
-                  <div>Werk</div>
-                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                </label>
-              </form>
-            </th>
-            <th>              
-              <form role="search" data-search-form>
-                <label class="flex flex-col items-start p-2">
-                  <div>Author</div>
-                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                </label>
-              </form>
-            </th>
-            <th>              
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Dekoration</div>
-                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>
-            <th>             
-              <form role="search" data-search-form >
-                <label class="flex flex-col items-start p-2">
-                  <div>Handschrift</div>
-                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                </label>
-              </form>
-            </th>
-            
-            <th>             
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Entstehungsort</div>
-                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th> 
-          </tr>
-        </thead>
-               
-              
-        <tbody>
-            {msItems.map(item => (
-                <tr tabindex="0">
-                <td class="p-2"><NavLink href=`/msitems/${item.hit_id}`>{item.id}</NavLink></td>
-                <td class="p-2"><NavLink href=`/works/${item.title_work[0]?.hit_id}`>{item.title_work[0]?.title}</NavLink></td>
-                <td class="p-2">{item.title_work.map(work => work.author.map(aut => <NavLink href=`/authors/${aut.hit_id}`>{aut.name}</NavLink>))}</td>
-                <td class="p-2">{item.decoration.map(deco => deco.value)}</td>
-                <td class="p-2"><NavLink href=`/manuscripts/${item.manuscript[0]?.hit_id}`>{item.manuscript[0]?.shelfmark[0].value}</NavLink></td>
-                <td class="p-2">{item.manuscript[0]?.orig_place.map((place) => (place.name)).join(', ')}</td>
-             
-              </tr>
-             
-            ))}
-            
-            
-        </tbody>
-             
-            </table>
-     </div>
-            
-         
-		
-	</div>
-  <script src="../lib/table-search.js"></script>
-</PageLayout>
+			var table = new Tabulator("#tabulator-table", {
+				headerFilterLiveFilterDelay: 600,
+				height: 900,
+				data: tabledata,
+				layout: "fitColumns",
+				responsiveLayout: "collapse",
+				columns: [
+					{
+						title: "ID",
+						field: "view_label",
+						formatter: "textarea",
+					},
+					{
+						title: "Werk",
+						field: "title_work",
+						mutator: jsonpathsLookup,
+						mutatorParams: {
+							paths: ["$[*].author[*].name", "$[*].title"],
+							separator: ": ",
+						},
+						headerFilter: "input",
+					},
+					/*  {
+            title: "Autor",
+            field: "title_work",
+            mutator: jsonpathLookup,
+            mutatorParams: {
+              path: "$[*].author[*].name",
+              separator: "; ",
+            },
+            headerFilter: "input",
+          }, */
+
+					{
+						title: "Dekoration",
+						field: "decoration",
+						mutator: jsonpathLookup,
+						mutatorParams: { path: "$[*].value" },
+						headerFilter: "input",
+					},
+					{
+						title: "Handschrift",
+						field: "manuscript",
+						mutator: jsonpathLookup,
+						mutatorParams: {
+							path: "$[*].shelfmark[*].value",
+							separator: "; ",
+						},
+						headerFilter: "input",
+					},
+				],
+			});
+
+			//trigger download of data.csv file
+			document.getElementById("download-csv")!.addEventListener("click", function () {
+				table.download("csv", "data.csv");
+			});
+
+			//trigger download of data.json file
+			document.getElementById("download-json")!.addEventListener("click", function () {
+				table.download("json", "data.json");
+			});
+
+			//trigger download of data.html file
+			document.getElementById("download-html")!.addEventListener("click", function () {
+				table.download("html", "data.html", { style: true });
+			});
+
+			// event listeners set:
+			// href to the work detail view page
+			table.on("rowClick", function (e, row) {
+				var data = row.getData();
+				var url = `msitems/${data["hit_id"]}`;
+				window.open(url, "_self");
+			});
+			table.on("cellClick", function (e, cell) {
+				const data = cell.getData();
+				const url = ``;
+			});
+		</script>
+	</div></PageLayout
+>
