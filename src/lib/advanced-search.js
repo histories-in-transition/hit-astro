@@ -107,8 +107,8 @@ search.addWidgets([
       empty: "No results for <q>{{ query }}</q>",
 
       item(hit, { html, components }) {
-        const href = withBasePath(`/msitems/${hit.rec_id}`)
-
+        const href = withBasePath(`/msitems/${hit.id}`)
+       
         return html`
           <article>
             <h3>
