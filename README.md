@@ -1,47 +1,54 @@
-# Astro Starter Kit: Minimal
 
-```sh
-npm create astro@latest -- --template minimal
-```
+# HiT-Histories in Transition
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+**HiT-Astro** is an application for managing and interacting with a collection of manuscripts and historical data, built using [Astro](https://astro.build/). For more on the project itself see the about page as well as the project site in the [ACDH website](https://www.oeaw.ac.at/acdh/research/dh-research-infrastructure/activities/web-development/hit-histories-in-transition). 
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Table of Contents
+- [Datamodel](#data-model)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [License](#license)
 
-## 🚀 Project Structure
+## Datamodel
 
-Inside of your Astro project, you'll see the following folders and files:
+This project uses the data model defined in [dbdiagram.io](https://dbdiagram.io/d/HiT-6731b349e9daa85acafee5fa) to organize and store manuscripts, codicological units, manuscript items, works, authors, genres, and related metadata. 
+To suit the researchers' aim the data is entered in a relational database [baserow](https://baserow.io/). This data is dumped on a regular basis in a [sister repository](https://github.com/histories-in-transition/hit-baserow-dump). The JSON files are then processed in the current repository, making visualizations and advanced filtered search possible.  
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Getting Started
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Prerequisites
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. **Package Manager**: This project uses `pnpm`. If you haven't installed it:
+   ```bash
+   npm install -g pnpm
+   ```
+2. **Clone the repo**
+   ```bash
+   git clone https://github.com/histories-in-transition/hit-astro.git
+	cd hit-astro
+	```
 
-## 🧞 Commands
+3. **Installation**
+	1. Install dependencies:
+	``bash
+	pnpm install``
+	2. Configure the application:
+	   Currently the application uses a base path: 'hit-astro' set in `astro.config.mjs` 
+    3. To run the project locally:
+    ```bash
+    pnpm run dev
+    ```
 
-All commands are run from the root of the project, from a terminal:
+## Project Structure
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+-   **`src/content/`**: Contains collections and JSON data files (fetched using the scripts in the scripts folder). 
+-   **`src/components/`**: Contains *astro* components such as header, footer etc.
+-   **`src/pages/`**: Contains the web pages to tables (of manuscripts, works etc.) or detail view of single items (manuscripts, works etc).
+-   **`src/lib/`**: Contains scripts for the advanced search, and the [Tabulator library](https://tabulator.info/) used to display JSON data in tables.
+-   `src/lib/advanced search` and `src/pages/search.astro` (search interface): Implements the search page with (Algolia) instant search (using [Typsesence instance search adapter](https://typesense.org/docs/guide/search-ui-components.html#using-instantsearch-js)).
+-   **`scripts/`**: Scripts for fetching data.
 
-## 👀 Want to learn more?
+## License
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+This project is licensed under the MIT License.
