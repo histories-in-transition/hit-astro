@@ -30,7 +30,25 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
 <PageLayout title={manuscript?.shelfmark[0]?.value}>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
+          <div class="flex items-center gap-3 text-brandRed">
+            <NavLink href=`/manuscripts/${manuscript.prev.id}` class="flex items-center">
+              <Icon
+                aria-hidden="true"
+                name="lucide:circle-chevron-left"
+                class="text-3xl" 
+              />
+            </NavLink>
             <h1 class="text-3xl font-semibold py-3 text-brandRed">{manuscript?.shelfmark[0]?.value}</h1>
+            <NavLink href=`/manuscripts/${manuscript.next.id}` class="flex items-center">
+              <Icon
+                aria-hidden="true"
+                name="lucide:circle-chevron-right"
+                class="text-3xl"
+              />
+            </NavLink>
+          </div>
+          
+          
             <div class="flex gap-2 justify-end">
               <Button>TEI-XML</Button>
               <Button>PDF</Button>
@@ -55,52 +73,52 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
 
             <!-- <h2 class="font-semibold px-5">Das Äuseres</h2> -->
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-                <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
-                <dd class="pl-5">
-                    {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
-                    {manuscript?.material?.value.includes("mixed") && <span>Mischung</span>}
-                    {manuscript?.material?.value.includes("paper") && <span>Papier</span>}
-                     {manuscript?.material_spec}</dd>
-                     
-                <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
-                <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
+              <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
+              <dd class="pl-5">
+                  {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
+                  {manuscript?.material?.value.includes("mixed") && <span>Mischung</span>}
+                  {manuscript?.material?.value.includes("paper") && <span>Papier</span>}
+                   {manuscript?.material_spec}</dd>
+                   
+              <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
+              <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
 
-                <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-              <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
+              <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+            <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
 
-              <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-              <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
+            <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
 
-              {manuscript.quiremarks && (
-                <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
-                <dd class="pl-5">{manuscript?.quiremarks}</dd>
-           )} 
-                {manuscript.catchwords && (
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
-                     <dd class="pl-5">{manuscript?.catchwords}</dd>
+            {manuscript.quiremarks && (
+              <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+              <dd class="pl-5">{manuscript?.quiremarks}</dd>
+         )} 
+              {manuscript.catchwords && (
+                   <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
+                   <dd class="pl-5">{manuscript?.catchwords}</dd>
+              )}
+              <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
+              <dd class="pl-5">
+                {manuscript.quire_structure && (
+                   <span set:html={manuscript?.quire_structure}></span>
                 )}
-                <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
-                <dd class="pl-5">
-                  {manuscript.quire_structure && (
-                     <span set:html={manuscript?.quire_structure}></span>
-                  )}
-                </dd>
+              </dd>
 
-                
-                <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
-                <dd class="pl-5">
-                  {manuscript?.binding_date.map(date => (
-                    <span>{date?.value}</span>
-                  ))}
-                  {manuscript?.binding}</dd>
-                
-                  {manuscript?.acc_mat && (
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
-                      <dd class="pl-5">
-                    {manuscript?.acc_mat}
-                  </dd>
-                  )}
-                </dl>
+              
+              <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
+              <dd class="pl-5">
+                {manuscript?.binding_date.map(date => (
+                  <span>{date?.value}</span>
+                ))}
+                {manuscript?.binding}</dd>
+              
+                {manuscript?.acc_mat && (
+                   <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
+                    <dd class="pl-5">
+                  {manuscript?.acc_mat}
+                </dd>
+                )}
+          </dl>
                 <!-- <h2>Geschichte:</h2> -->
 
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
@@ -124,108 +142,75 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                       </>
                     ))
                   }</dd> 
-            <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
-            <dd class="pl-5">
-                {manuscript?.manuscripts_dated.length > 0 &&
-                <ul>
-                  {manuscript.manuscripts_dated.map((date) => (
-                    <li>{date.date[0].label} nach {date.authority[0].name} ({date.authority[0].short_title})</li>
-                  ))}
-                  </ul>}
-            </dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
+              <dd class="pl-5">
+                  {manuscript?.manuscripts_dated.length > 0 &&
+                  <ul>
+                    {manuscript.manuscripts_dated.map((date) => (
+                      <li>{date.date[0].label} nach {date.authority[0].name} ({date.authority[0].short_title})</li>
+                    ))}
+                    </ul>}
+              </dd>
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
               <dd class="pl-5">{manuscript?.bibliography}</dd> 
             </dl>
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-                <dt class="font-semibold border-r border-gray-300 pr-2">Externe Links:</dt>
-                <dd class="pl-5">
-                    <div class="flex flex-col">
-                        {manuscript.digi_url && (
-                             <div class="flex">
-                                <NavLink href={manuscript.digi_url} class="inline-flex hover:text-brandRed">
-                                    <section>Digitalisat</section> 
-                                    
-                                </NavLink>
-                            </div>
-                           
+           
+
+            <div class=" grid grid-cols-1 my-2 gap-y-2">
+              {manuscript.related__cod_units.map(unit => (
+                <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Codicological unit {unit.number}</dt>
+                  <dd class="pl-5"></dd>
+
+                  {Object.values(msItems)
+                    .filter(item => item.cod_unit.some(item_unit => item_unit.hit_id === unit.hit_id))
+                    .sort((a, b) => {
+                      const extractLocusValues = (locusGrp) => {
+                        const match = locusGrp.match(/^(\d+)(r|v)/);
+                        if (!match) return [0, 'z'];  // Default values for invalid format
+
+                        const startNumber = parseInt(match[1], 10);
+                        const startSuffix = match[2];
+
+                        return [startNumber, startSuffix];
+                      };
+
+                      const [startA, suffixA] = extractLocusValues(a.locus_grp);
+                      const [startB, suffixB] = extractLocusValues(b.locus_grp);
+
+                      // Primary sorting by startNumber
+                      if (startA !== startB) return startA - startB;
+
+                      // If start numbers are the same, prioritize "r" over "v"
+                      return suffixA === 'r' ? -1 : (suffixB === 'r' ? 1 : 0);
+                    })
+                    .map(filteredItem => (
+                     
+                        <dt class="border-r border-gray-300 pr-2 justify-self-end">{filteredItem.locus_grp}</dt>
+                        <dd class="pl-5">
+                          {filteredItem.title_work[0]?.title && (
+                            <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
+                              <NavLink href={`/works/${filteredItem.title_work[0].hit_id}`}>
+                                {filteredItem.title_work[0].title}
+                              </NavLink>
+                            </span>
                           )}
-                          
-                        {manuscript.catalog_url && (
-                           <div class="flex">                        
-                                <NavLink href={manuscript.catalog_url} class="inline-flex hover:text-brandRed">
-                                    <section>Katalogisat</section> 
-                                    
-                                </NavLink>
-                            </div>                    
-                        )}
-        
-                        {manuscript.manuscripta_url && (
-                             <div class="flex">
-                                <NavLink href={manuscript.manuscripta_url} class="inline-flex hover:text-brandRed">
-                                    <section>Manuscripta.at</section> 
-                                    
-                                </NavLink>
-                            </div>
-                           
-                          )}
-        
-                          {manuscript.handschriftenportal_url && (
-                             <div class="flex">
-                                <NavLink href={manuscript.handschriftenportal_url} class="inline-flex hover:text-brandRed">
-                                    <section>Handschriftenportal</section> 
-                                    
-                                </NavLink>
-                            </div>
-                           
-                          )}
-                        </div>    
-                </dd>
-            </dl>
+                          {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
+                          {filteredItem.rubric && <span class="italic">›{filteredItem.rubric}‹</span>}
+                          {filteredItem.incipit && <span class="italic">{filteredItem.incipit} ... </span>}
+                          {filteredItem.explicit && <span class="italic">{filteredItem.explicit}</span>}
+                          {filteredItem.final_rubric && <span class="italic">›{filteredItem.final_rubric}‹</span>}
+                          {filteredItem.decoration && <span>{filteredItem.decoration}</span>}
+                          {filteredItem.bibl && <span>{filteredItem.bibl}</span>}
+                        </dd>
+                    ))}
+                    </dl>
+              ))}
+          </div>
 
-            
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-              <dt class="font-semibold border-r border-gray-300 pr-2">Inhalt:</dt>
-              <dd class="pl-5">{manuscript?.content_summary}</dd>
-              {matchingMsItems
-                .sort((a, b) => {
-                  // To sort nested msItems - show the 'mother' msItem first, then the children - extract the first and second numbers from the "locus_grp" strings 
-                  const extractNumbers = (locusGrp : string) => {
-                    const match = locusGrp.match(/^(\d+)[^\d]*(\d*)/);
-                    if (!match) {
-                      // Return a default value if match is null (invalid format)
-                      return [0, 0]; // or handle as needed, e.g., return [-1, -1] to push these to the end
-                    }
-                    const startNumber = parseInt(match[1], 10);  // The first number, use parseInt with radix 10
-                    const endNumber = match[2] ? parseInt(match[2], 10) : startNumber;  // The second number if present, otherwise use the startNumber
-                    return [startNumber, endNumber];
-                  };
 
-                  const [startA, endA] = extractNumbers(a.locus_grp);
-                  const [startB, endB] = extractNumbers(b.locus_grp);
-
-                  // Compare first by the starting numbers
-                  if (startA !== startB) return startA - startB;
-
-                  // If starting numbers are the same, compare by the ending numbers (show larger first)
-                  return endB - endA;
-                })
-                .map(item => {
-                return <dt class="border-r border-gray-300 pr-2 justify-self-end">{item.locus_grp}</dt>
-                <dd class="pl-5">
-                {item.title_work[0]?.title && <span class="font-semibold underline underline-offset-4 hover:text-brandRed"><NavLink href=`/works/${item.title_work[0].hit_id}`>{item.title_work[0].title}</NavLink></span>}
-                {item.title_note && <span>({item.title_note})</span>}
-                {item.rubric && <span class="italic">›{item.rubric}‹</span>}
-                {item.incipit && <span class="italic">{item.incipit} ... </span>}                
-                {item.explicit && <span class="italic">{item.explicit}</span>}
-                {item.final_rubric && <span class="italic">›{item.final_rubric}‹</span>}
-                {item.decoration && <span>{item.decoration}</span>}
-                {item.bibl && <span>{item.bibl}</span>}
-
-                </dd>
-                ;
-              })}
-          </dl>   
+           
     </article>
     </div>
 </PageLayout>
