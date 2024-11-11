@@ -91,7 +91,7 @@ import { Icon } from "astro-icon/components";
 		// href to the work detail view page
 		table.on("rowClick", function (e, row) {
 			var data = row.getData();
-			var url = `works/${data["hit_id"]}`;
+			var url = `/works/${data["hit_id"]}`;
 			window.open(url, "_self");
 		});
 	</script>
