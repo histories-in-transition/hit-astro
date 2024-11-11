@@ -99,7 +99,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 			// href to the work detail view page
 			table.on("rowClick", function (e, row) {
 				var data = row.getData();
-				var url = `msitems/${data["hit_id"]}`;
+				var url = `/msitems/${data["hit_id"]}`;
 				window.open(url, "_self");
 			});
 			table.on("cellClick", function (e, cell) {

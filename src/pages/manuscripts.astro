@@ -87,7 +87,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 		// href to the ms detail view page
 		table.on("rowClick", function (e, row) {
 			var data = row.getData();
-			var url = `manuscripts/${data["hit_id"]}`;
+			var url = `/manuscripts/${data["hit_id"]}`;
 			window.open(url, "_self");
 		});
 	</script>
