@@ -23,7 +23,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 			import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 			import data from "../content/data/ms_items.json";
 			import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
-			import NavLink from "../components/nav-link.astro";
+			import { withBasePath } from "../lib/withBasePath";
 
 			var tabledata = [...Object.values(data)];
 
@@ -49,16 +49,6 @@ import DownloadButtons from "../components/download-buttons.astro";
 						},
 						headerFilter: "input",
 					},
-					/*  {
-            title: "Autor",
-            field: "title_work",
-            mutator: jsonpathLookup,
-            mutatorParams: {
-              path: "$[*].author[*].name",
-              separator: "; ",
-            },
-            headerFilter: "input",
-          }, */
 
 					{
 						title: "Dekoration",
@@ -99,7 +89,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 			// href to the work detail view page
 			table.on("rowClick", function (e, row) {
 				var data = row.getData();
-				var url = `/msitems/${data["hit_id"]}`;
+				var url = withBasePath(`/msitems/${data["hit_id"]}`);
 				window.open(url, "_self");
 			});
 			table.on("cellClick", function (e, cell) {

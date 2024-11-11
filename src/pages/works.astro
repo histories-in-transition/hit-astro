@@ -25,6 +25,7 @@ import { Icon } from "astro-icon/components";
 		import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 		import data from "../content/data/works.json";
 		import { jsonpathLookup } from "../lib/tabulator-utils.js";
+		import { withBasePath } from "../lib/withBasePath";
 
 		var tabledata = [...Object.values(data)];
 
@@ -91,7 +92,7 @@ import { Icon } from "astro-icon/components";
 		// href to the work detail view page
 		table.on("rowClick", function (e, row) {
 			var data = row.getData();
-			var url = `/works/${data["hit_id"]}`;
+			var url = withBasePath(`/works/${data["hit_id"]}`);
 			window.open(url, "_self");
 		});
 	</script>
