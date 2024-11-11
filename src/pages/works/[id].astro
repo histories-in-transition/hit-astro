@@ -22,7 +22,24 @@ const { data: work } = Astro.props;
 <PageLayout title={work?.title}>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-        <h1 class="text-3xl font-semibold py-3 text-brandRed">{work?.title}</h1>
+          <div class="flex items-center gap-3 text-brandRed">
+            <NavLink href=`/works/${work.prev.id}` class="flex items-center">
+              <Icon
+                aria-hidden="true"
+                name="lucide:circle-chevron-left"
+                class="text-3xl" 
+              />
+            </NavLink>
+            <h1 class="text-3xl font-semibold py-3 text-brandRed">{work?.title}</h1>
+            <NavLink href=`/works/${work.next.id}` class="flex items-center">
+              <Icon
+                aria-hidden="true"
+                name="lucide:circle-chevron-right"
+                class="text-3xl"
+              />
+            </NavLink>
+          </div>
+        
         <div class="flex gap-2 justify-end">
           <Button>TEI-XML</Button>
           <Button>PDF</Button>
@@ -73,7 +90,9 @@ const { data: work } = Astro.props;
                         return <>
                          <NavLink href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`} class="hover:text-brandRed">
                         {filteredMsItem.manuscript.map(ms => ms.shelfmark[0].value)}
-                      </NavLink> <span>({filteredMsItem.locus_grp}) | </span>
+                      </NavLink> 
+                      <span>
+                        <NavLink class="hover:text-brandRed" href={`/msitems/${filteredMsItem.hit_id}`}>({filteredMsItem.locus_grp})</NavLink> | </span>
                         </>
                     }        
                   )}
