@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import DownloadButtons from "../components/download-buttons.astro";
+import { JSONPath } from "jsonpath-plus";
 ---
 
 <PageLayout title="Hands">
@@ -14,6 +15,9 @@ import DownloadButtons from "../components/download-buttons.astro";
 			<div id="tabulator-table"></div>
 		</div>
 	</div>
+	<script
+		type="text/javascript"
+		src="https://cdn.jsdelivr.net/npm/luxon@2.3.1/build/global/luxon.min.js"></script>
 	<script>
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		// import "tabulator-tables/dist/css/tabulator_bootstrap5.min.css";
@@ -22,7 +26,12 @@ import DownloadButtons from "../components/download-buttons.astro";
 		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
 		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 		import data from "../content/data/hands.json";
-		import { jsonpathLookup, jsonpathDistinctLookup } from "../lib/tabulator-utils.js";
+		import {
+			jsonpathLookup,
+			jsonpathsLookup,
+			jsonpathDistinctLookup,
+			jsonpathGetCentury,
+		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
 		var tabledata = [...Object.values(data)];
@@ -37,7 +46,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 				{
 					title: "ID",
 					field: "hit_id",
-
+					width: 120,
 					headerFilter: "input",
 					formatter: "textarea",
 				},
@@ -84,11 +93,20 @@ import DownloadButtons from "../components/download-buttons.astro";
 				},
 				{
 					title: "Datiert",
-					field: "hands_dated",
+					field: "dating",
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].dated[*].label",
+						path: "$[*].value",
 						separator: "; ",
+					},
+					headerFilter: "input",
+				},
+				{
+					title: "Jahrhundert",
+					field: "hands_dated",
+					mutator: jsonpathGetCentury,
+					mutatorParams: {
+						paths: ["$[*].dated[*].not_before", "$[*].dated[*].not_after"],
 					},
 					headerFilter: "input",
 				},
