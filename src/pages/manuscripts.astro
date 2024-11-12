@@ -21,6 +21,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 		import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 		import data from "../content/data/manuscripts.json";
 		import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
+		import { withBasePath } from "../lib/withBasePath";
 
 		var tabledata = [...Object.values(data)];
 
@@ -87,7 +88,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 		// href to the ms detail view page
 		table.on("rowClick", function (e, row) {
 			var data = row.getData();
-			var url = `/manuscripts/${data["hit_id"]}`;
+			var url = withBasePath(`/manuscripts/${data["hit_id"]}`);
 			window.open(url, "_self");
 		});
 	</script>
