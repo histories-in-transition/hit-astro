@@ -1,0 +1,134 @@
+---
+import PageLayout from "../../layouts/page-layout.astro";
+import Button from "../../components/button.astro";
+import { Icon } from "astro-icon/components";
+import NavLink from "../../components/nav-link.astro";
+import hands from "../../content/data/hands.json";
+
+export async function getStaticPaths() {
+	const paths = Object.values(hands).map((item) => ({
+		params: { id: item.hit_id.toString() },
+		props: { data: item },
+	}));
+
+	return paths;
+}
+
+const { data: item } = Astro.props;
+---
+
+<PageLayout title={item.view_label}>
+	<div>
+		<article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
+			<div class="flex items-center gap-3 text-brandRed">
+				<NavLink href=`/hands/${item.prev.id}` class="flex items-center">
+					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="text-3xl" />
+				</NavLink>
+				<h1 class="text-3xl font-semibold py-3 text-brandRed">
+					{item.view_label}
+				</h1>
+				<NavLink href=`/hands/${item.next.id}` class="flex items-center">
+					<Icon aria-hidden="true" name="lucide:circle-chevron-right" class="text-3xl" />
+				</NavLink>
+			</div>
+
+			<div class="flex gap-2 justify-end">
+				<Button>TEI-XML</Button>
+				<Button>PDF</Button>
+			</div>
+			<dl
+				class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
+			>
+				<dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+				<dd class="pl-5">
+					<NavLink
+						href=`/manuscripts/${item.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`
+						class="hover:text-brandRed"
+					>
+						{item.manuscript[0]?.value}
+					</NavLink>
+				</dd>
+				<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+				<dd class="pl-5">{item?.description}</dd>
+
+                {item.similar_hands.length > 0 &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
+                    <dd class="pl-5">
+                        {item.similar_hands.map((hand, index) => (
+                            <span>
+                                <NavLink href=`/hands/hit_hands__${hand.id}` class="hover:text-brandRed">
+                                {hand.value}
+                                </NavLink>
+                            
+                                {index < item.similar_hands.length - 1 && ' | '}
+                            </span>
+                            ))
+                        }
+                    </dd>
+                }
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
+                     <dd class="pl-5">
+                        {item.hands_dated.map(dating => {
+                            return (
+                                <>
+                                  {dating.dated.map(date => date.label)} 
+                                  ({dating.authority.map(aut => (
+                                    <>
+                                        {aut.name}: <span class="italic">{aut.short_title}</span>
+                                    </>
+                                  ))})  
+                                </>
+                            );
+                        })}
+                    </dd> 
+
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
+                     <dd class="pl-5">
+                        {item.hands_placed.map(placing => {
+                          return (
+                            <>
+                              {placing.place.map(location => location.name)} 
+                              ({placing.authority.map(aut => (
+                                <>
+                                  {aut.name}: <span class="italic"}>{aut.short_title}</span>
+                                </>
+                              ))})
+                            </>
+                          );
+                        })}
+                      </dd>
+                      
+
+                {item.nr_daniel &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
+                    <dd class="pl-5">{item.nr_daniel}</dd>                
+                }
+
+                <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
+                <dd class="pl-5">
+                    {Array.from(new Set(item.hands_role.flatMap(handrole => handrole.role.map(item => item.value)))).join(', ')}
+                  </dd>
+               
+               <dt class="font-semibold border-r border-gray-300 pr-2">Beteiligt in:</dt>
+                <dd class="pl-5">
+                    {item.hands_role.map(role => {
+                        return <ul class="list-disc list-inside">
+                                <li>{role.ms_item.map(item => {
+                                    return (
+                                    <>                                           
+                                        <NavLink class="hover:text-brandRed" href={`/msitems/${item.hit_id}`}>
+                                           ({item.locus_grp})
+                                        </NavLink>
+                                         {item.title_work?.map(work => 
+                                                work.author[0]?.name ? `${work.author[0].name}: ${work.title}` : work.title
+                                            )}
+                                    </>)
+                                } )} ||{role.role.map(eachRole => eachRole.value)} </li>
+                                </ul>
+                })}</dd> 
+                
+			</dl>
+          
+		</article>
+	</div>
+</PageLayout>
