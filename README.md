@@ -31,8 +31,9 @@ To suit the researchers' aim the data is entered in a relational database [baser
 
 3. **Installation**
 	1. Install dependencies:
-	``bash
-	pnpm install``
+	```bash
+	pnpm install
+ 	```
 	2. Configure the application:
 	   Currently the application uses a base path: 'hit-astro' set in `astro.config.mjs` 
     3. To run the project locally:
