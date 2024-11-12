@@ -29,3 +29,24 @@ export function jsonpathsLookup(value, data, type, params, component) {
   
   return allResults.join(separator);
 }
+
+
+export function jsonpathDistinctLookup(value, data, type, params, component) {
+  const path = params.path;
+  const separator = params.separator || ", ";
+  const reverse = params.reverse || false;
+
+  // Step 1: Use JSONPath to retrieve values
+  const result = JSONPath({ path: path, json: value });
+
+  // Step 2: Extract distinct values
+  const distinctValues = [...new Set(result)];
+
+  // Step 3: Apply reverse ordering if specified
+  if (reverse) {
+    distinctValues.reverse();
+  }
+
+  // Step 4: Join the distinct values with the separator
+  return distinctValues.join(separator);
+}

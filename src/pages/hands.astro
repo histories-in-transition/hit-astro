@@ -1,204 +1,141 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
-import handsJson from "../content/data/hands.json";
-import NavLink from "../components/nav-link.astro";
-import Button from "../components/button.astro";
-import { Icon } from "astro-icon/components";
-const hands = Object.values(handsJson);
+import DownloadButtons from "../components/download-buttons.astro";
 ---
 
 <PageLayout title="Hands">
-	<style>
-		/* To make the table rows striped */
-		tr:nth-child(even) {
-			background-color: #fff8f7;
-		}
-		tr:nth-child(odd) {
-			background-color: #fcf1e8;
-		}
-	</style>
-
 	<div class="mx-auto p-4 lg:w-4/5">
-		<div>
-			<div class="flex justify-between align-middle mb-2">
-				<h1 class="text-2xl font-semibold text-brandRed py-2">Schreiberhände</h1>
-				<Button id="download-btn"
-					>CSV <Icon aria-hidden="true" name="lucide:download" class="inline-flex" /></Button
-				>
-			</div>
-			<div class="overflow-y-auto max-h-[1000px]">
-				<table
-					id="hit-hands-table"
-					class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table"
-				>
-					<thead class="sticky top-0">
-						<tr>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Scribe</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Label</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Handschrift</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Rolle</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Text</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Datiert</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-							<th>
-								<form role="search" data-search-form>
-									<label class="flex flex-col items-start p-2">
-										<div>Lokalisiert</div>
-										<input
-											type="search"
-											name="q"
-											placeholder="Suche ..."
-											class="mt-2 w-full p-2 border border-gray-300 rounded font-normal"
-										/>
-									</label>
-								</form>
-							</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						{
-							Object.values(hands).map((hand) => (
-								<tr tabindex="0">
-									<td class="px-3">
-										{/*  <NavLink href=`/scribes/${hand.hit_id}` class="hover:text-brandRed hover:font-semibold">{hand.scribe[0]?.name}</NavLink> */}
-									</td>
-									<td class="px-3">
-										<NavLink
-											href={`/hands/${hand.hit_id}`}
-											class="hover:text-brandRed hover:font-semibold"
-										>
-											{hand.label[0]?.value}
-										</NavLink>
-									</td>
-									<td class="px-3">
-										<NavLink
-											href={`/manuscripts/hit_manuscript__${hand.manuscript[0]?.id}`}
-											class="hover:text-brandRed hover:font-semibold"
-										>
-											{hand.manuscript[0]?.value}
-										</NavLink>
-									</td>
-									<td class="px-3">
-										{[
-											...new Set(
-												hand.hands_role.flatMap((occasion) => {
-													return occasion.role.map((item) => item.value);
-												}),
-											),
-										].join(", ")}
-									</td>
-									<td />
-									{/* Text */}
-									{/* <td class="px-3"> 
-                    {hand.hands_role?.map((role) => {
-                      const works: { id: string; title: string }[] = []; // Declare works array
-
-                      role?.ms_item?.forEach((item) => {
-                        item?.title_work?.forEach((work) => {
-                          works.push({ id: work.hit_id, title: work.title }); // Push id and title to works
-                        });
-                      });
-
-                      return (
-                        <Fragment>
-                          {works.map((work, index) => (
-                            <span>
-                              <NavLink href={`/works/${work.id}`}>{work.title}</NavLink>
-                              {index < works.length - 1 && ' / '}
-                            </span>
-                          ))}
-                        </Fragment>
-                      );
-                    })}
-
-                  </td> */}
-									<td class="px-3">{hand.dating[0]?.value || ""}</td>
-									<td class="px-3">
-										{hand.hands_placed
-											.map((place) => {
-												return place.place[0]?.name;
-											})
-											.join(", ")}
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
+		<div class="flex justify-between align-middle mb-5">
+			<h1 class="text-2xl font-semibold text-brandRed py-2">Schreiberhände</h1>
+			<DownloadButtons />
 		</div>
-		<script src="../lib/table-search.js"></script>
-	</div></PageLayout
->
+
+		<div class="overflow-y-auto max-h-[1000px]">
+			<div id="tabulator-table"></div>
+		</div>
+	</div>
+	<script>
+		import { TabulatorFull as Tabulator } from "tabulator-tables";
+		// import "tabulator-tables/dist/css/tabulator_bootstrap5.min.css";
+		// import "tabulator-tables/dist/css/tabulator_simple.min.css";
+		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
+		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
+		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
+		import data from "../content/data/hands.json";
+		import { jsonpathLookup, jsonpathDistinctLookup } from "../lib/tabulator-utils.js";
+		import { withBasePath } from "../lib/withBasePath";
+
+		var tabledata = [...Object.values(data)];
+
+		var table = new Tabulator("#tabulator-table", {
+			headerFilterLiveFilterDelay: 600,
+			height: 1000,
+			data: tabledata,
+			layout: "fitColumns",
+			responsiveLayout: "collapse",
+			columns: [
+				{
+					title: "ID",
+					field: "hit_id",
+
+					headerFilter: "input",
+					formatter: "textarea",
+				},
+				{
+					title: "Benennung",
+					field: "label",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].value",
+					},
+					headerFilter: "input",
+					formatter: "textarea",
+				},
+				{
+					title: "Handschrift",
+					field: "manuscript",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].value",
+						separator: "; ",
+					},
+					headerFilter: "input",
+				},
+
+				{
+					title: "Rolle",
+					field: "role",
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: {
+						path: "$[*].value[*].value",
+						separator: ", ",
+					},
+					headerFilter: "input",
+				},
+				{
+					title: "Text",
+					field: "texts",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].value",
+						separator: "; ",
+					},
+					headerFilter: "input",
+				},
+				{
+					title: "Datiert",
+					field: "hands_dated",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].dated[*].label",
+						separator: "; ",
+					},
+					headerFilter: "input",
+				},
+				{
+					title: "Lokalisiert",
+					field: "hands_placed",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].place[*].name",
+						separator: "; ",
+					},
+					headerFilter: "input",
+				},
+				{
+					title: "Schreiber",
+					field: "scribe",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].name",
+					},
+					headerFilter: "input",
+					formatter: "textarea",
+				},
+			],
+		});
+
+		//trigger download of data.csv file
+		document.getElementById("download-csv")!.addEventListener("click", function () {
+			table.download("csv", "data.csv");
+		});
+
+		//trigger download of data.json file
+		document.getElementById("download-json")!.addEventListener("click", function () {
+			table.download("json", "data.json");
+		});
+
+		//trigger download of data.html file
+		document.getElementById("download-html")!.addEventListener("click", function () {
+			table.download("html", "data.html", { style: true });
+		});
+
+		// event listeners set:
+		// href to the work detail view page
+		table.on("rowClick", function (e, row) {
+			var data = row.getData();
+			var url = withBasePath(`/hands/${data["hit_id"]}`);
+			window.open(url, "_self");
+		});
+	</script>
+</PageLayout>
