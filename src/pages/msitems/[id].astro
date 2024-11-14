@@ -62,11 +62,27 @@ const { data: item } = Astro.props;
             <dd class="pl-5 italic">{item?.explicit}</dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
             <dd class="pl-5">{item?.decoration.map(deco => deco.value)}</dd>
-            <dt class="font-semibold border-r border-gray-300 pr-2">Hände:</dt>
-            <dd class="pl-5">{item?.hand.map(hand => hand.value).join(' | ')}</dd>
-            
-            
-           
+            <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>          
+            <dd class="pl-5">
+              <ul>
+                {item?.hands_role.map(role => {
+                  return <li class="list-disc">
+                          <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${role.hand[0].id}`>{role.hand[0].value}</NavLink>
+                          {' -> '}
+                          <span>{role.role.map(entry => entry.value)}</span>
+                          {role.locus &&                            
+                          <span>auf fol. {role.locus}</span>
+                          }
+                          {role.locus_layout.length > 0 &&                            
+                          <span> || {role.locus_layout.map(layout => layout.value)}</span>
+                          }
+                          {role.function.length > 0 &&                            
+                          <span> || {role.function.map(func => func.value)}</span>
+                          }
+                        </li>
+                })}
+              </ul>
+            </dd>
           </dl>
         </article>
     </div>

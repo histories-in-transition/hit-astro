@@ -11,16 +11,13 @@ import DownloadButtons from "../components/download-buttons.astro";
 				<DownloadButtons />
 			</div>
 			<div class="overflow-y-auto max-h-[1000px]">
-				<table
-					id="tabulator-table"
-					class="w-full text-brandBrown table-fixed shadow-md border lg:leading-7 text-sm lg:text-base data-table"
-				>
-				</table>
+				<table id="tabulator-table"></table>
 			</div>
 		</div>
 		<script>
 			import { TabulatorFull as Tabulator } from "tabulator-tables";
-			import "tabulator-tables/dist/css/tabulator_materialize.min.css";
+			import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
+			// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 			import data from "../content/data/ms_items.json";
 			import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
 			import { withBasePath } from "../lib/withBasePath";
@@ -31,13 +28,29 @@ import DownloadButtons from "../components/download-buttons.astro";
 				headerFilterLiveFilterDelay: 600,
 				height: 900,
 				data: tabledata,
-				layout: "fitColumns",
+				layout: "fitDataStretch",
 				responsiveLayout: "collapse",
 				columns: [
 					{
 						title: "ID",
 						field: "view_label",
 						formatter: "textarea",
+					},
+					{
+						title: "Handschrift",
+						field: "manuscript",
+						mutator: jsonpathLookup,
+						mutatorParams: {
+							path: "$[*].shelfmark[*].value",
+							separator: "; ",
+						},
+						headerFilter: "input",
+					},
+					{
+						title: "Locus",
+						field: "locus_grp",
+
+						headerFilter: "input",
 					},
 					{
 						title: "Werk",
@@ -49,7 +62,6 @@ import DownloadButtons from "../components/download-buttons.astro";
 						},
 						headerFilter: "input",
 					},
-
 					{
 						title: "Dekoration",
 						field: "decoration",
@@ -58,13 +70,10 @@ import DownloadButtons from "../components/download-buttons.astro";
 						headerFilter: "input",
 					},
 					{
-						title: "Handschrift",
-						field: "manuscript",
+						title: "Schreiberhände",
+						field: "hands_role",
 						mutator: jsonpathLookup,
-						mutatorParams: {
-							path: "$[*].shelfmark[*].value",
-							separator: "; ",
-						},
+						mutatorParams: { path: "$[*].hand[*].value" },
 						headerFilter: "input",
 					},
 				],
@@ -91,10 +100,6 @@ import DownloadButtons from "../components/download-buttons.astro";
 				var data = row.getData();
 				var url = withBasePath(`/msitems/${data["hit_id"]}`);
 				window.open(url, "_self");
-			});
-			table.on("cellClick", function (e, cell) {
-				const data = cell.getData();
-				const url = ``;
 			});
 		</script>
 	</div></PageLayout
