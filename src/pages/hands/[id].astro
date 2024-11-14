@@ -25,7 +25,7 @@ const { data: item } = Astro.props;
 					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="text-3xl" />
 				</NavLink>
 				<h1 class="text-3xl font-semibold py-3 text-brandRed">
-					{item.view_label}
+					Schreiberhand {item.view_label}
 				</h1>
 				<NavLink href=`/hands/${item.next.id}` class="flex items-center">
 					<Icon aria-hidden="true" name="lucide:circle-chevron-right" class="text-3xl" />
@@ -37,173 +37,150 @@ const { data: item } = Astro.props;
 				<Button>PDF</Button>
 			</div>
       <section>
-        <h2 class="text-2xl text-brandRed p-5">General info on the hand</h2>
+        <h2 class="text-2xl text-brandRed p-5 sr-only">Eingaben über die Schreiberhand</h2>
         <dl
 				class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
-			>
-				<dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
-				<dd class="pl-5">
-					<NavLink
-						href=`/manuscripts/${item.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`
-						class="hover:text-brandRed"
-					>
-						{item.manuscript[0]?.value}
-					</NavLink>
-				</dd>
-				<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
-				<dd class="pl-5">{item?.description}</dd>
+			  >
+            <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+            <dd class="pl-5">
+              <NavLink
+                href=`/manuscripts/${item.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`
+                class="hover:text-brandRed"
+              >
+                {item.manuscript[0]?.value}
+              </NavLink>
+            </dd>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+            <dd class="pl-5">{item?.description}</dd>
 
-                {item.similar_hands.length > 0 &&
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
-                    <dd class="pl-5">
-                        {item.similar_hands.map((hand, index) => (
-                            <span>
-                                <NavLink href=`/hands/hit_hands__${hand.id}` class="hover:text-brandRed">
-                                {hand.value}
-                                </NavLink>
-                            
-                                {index < item.similar_hands.length - 1 && ' | '}
-                            </span>
-                            ))
-                        }
-                    </dd>
-                }
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
-                     <dd class="pl-5">
-                        {item.hands_dated.map(dating => {
-                            return (
-                                <>
-                                  {dating.dated.map(date => date.label)} 
-                                  ({dating.authority.map(aut => (
+                    {item.similar_hands.length > 0 &&
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
+                        <dd class="pl-5">
+                            {item.similar_hands.map((hand, index) => (
+                                <span>
+                                    <NavLink href=`/hands/hit_hands__${hand.id}` class="hover:text-brandRed">
+                                    {hand.value}
+                                    </NavLink>
+                                
+                                    {index < item.similar_hands.length - 1 && ' | '}
+                                </span>
+                                ))
+                            }
+                        </dd>
+                    }
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
+                        <dd class="pl-5">
+                            {item.hands_dated.map(dating => {
+                                return (
                                     <>
-                                        {aut.name}: <span class="italic">{aut.short_title}</span>
+                                      {dating.dated.map(date => date.label)} 
+                                      ({dating.authority.map(aut => (
+                                        <>
+                                            {aut.name}: <span class="italic">{aut.short_title}</span>
+                                        </>
+                                      ))})  
                                     </>
-                                  ))})  
-                                </>
-                            );
-                        })}
-                    </dd> 
+                                );
+                            })}
+                        </dd> 
 
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
-                     <dd class="pl-5">
-                        {item.hands_placed.map(placing => {
-                          return (
-                            <>
-                              {placing.place.map(location => location.name)} 
-                              ({placing.authority.map(aut => (
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
+                        <dd class="pl-5">
+                            {item.hands_placed.map(placing => {
+                              return (
                                 <>
-                                  {aut.name}: <span class="italic"}>{aut.short_title}</span>
+                                  {placing.place.map(location => location.name)} 
+                                  ({placing.authority.map(aut => (
+                                    <>
+                                      {aut.name}: <span class="italic"}>{aut.short_title}</span>
+                                    </>
+                                  ))})
                                 </>
-                              ))})
-                            </>
-                          );
-                        })}
-                      </dd>
-                      
+                              );
+                            })}
+                          </dd>
+                          
 
-                {item.nr_daniel &&
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
-                    <dd class="pl-5">{item.nr_daniel}</dd>                
-                }
+                    {item.nr_daniel &&
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
+                        <dd class="pl-5">{item.nr_daniel}</dd>                
+                    }
 
-                <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
-                <dd class="pl-5">
-                    {Array.from(new Set(item.hands_role.flatMap(handrole => handrole.role.map(item => item.value)))).join(', ')}
-                  </dd>
-               
-               <dt class="font-semibold border-r border-gray-300 pr-2">Beteiligt in:</dt>
-               <dd class="pl-5">
-                  {item.hands_role.map(role => {
-                    return  <ul class="list-disc list-inside">
-                              <li>
-                                {role.ms_item.map(msItem => (
-                                  <span>
-                                    <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>
-                                      ({msItem.locus_grp})
-                                    </NavLink>{' '}
-                                    {msItem.title_work?.map(work => {
-                                      
-                                      return  work.author[0]?.name ? `${work.author[0].name}: ${work.title}` : work.title
-                                     
-                                    }).join(', ')}
-                                  </span>
-                                ))}
-                                {' || '}
-                                {role.role.map(eachRole => eachRole.value).join(' und ')}
-                                {role.locus && ` -> fol. ${role.locus}`}
-                                {role.locus_layout.length > 0 && ` -> ${role.locus_layout.map(entry => entry.value)}`}
-                              </li>
-                            </ul>
-                  })}
-                </dd>   
-                {item.scribe.length > 0 &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
+                    <dd class="pl-5">
+                        {Array.from(new Set(item.hands_role.flatMap(handrole => handrole.role.map(item => item.value)))).join(', ')}
+                      </dd>   
                     <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
-                    <dd class="pl-5">{item.scribe.map(scrib => scrib.name)}</dd>                
-                }            
-			</dl>
+                    <dd class="pl-5">
+                      {item.scribe.length > 0 
+                        ? item.scribe.map(scrib => scrib.name)  
+                        : 'N/A'
+                      }           
+                    </dd>                
+			  </dl>
       </section>
 			
       <section>
         <h2 class="text-2xl text-brandRed p-5">Beteiligung innerhalb der Handschrift</h2>
         <table class="w-full bg-brandRose table-auto shadow-md border lg:leading-7 text-sm lg:text-base data-table">
-        <thead class="sticky top-0">
-          <tr> 
-            <th>                  
+          <thead class="sticky top-0">
+            <tr> 
+              <th>                  
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Locus</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th>
+              <th>                  
                 <form role="search" data-search-form>
                   <label class="flex flex-col items-start p-2">
-                    <div>Locus</div>
+                    <div>Werk</div>
                     <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                   </label>
                 </form>
-              </th>
-            <th>                  
-              <form role="search" data-search-form>
-                <label class="flex flex-col items-start p-2">
-                  <div>Werk</div>
-                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                </label>
-              </form>
-            </th>            
-            <th>              
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Rolle</div>
-                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>
-            <th>             
-              <form role="search" data-search-form >
-                <label class="flex flex-col items-start p-2">
-                  <div>Umfang</div>
-                  <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                </label>
-              </form>
-            </th>            
-            <th>             
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Mise-en-page</div>
-                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th> 
+              </th>            
+              <th>              
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Rolle</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th>
               <th>             
-                <form role="search" data-search-form>
+                <form role="search" data-search-form >
                   <label class="flex flex-col items-start p-2">
-                    <div>Funktion</div>
+                    <div>Umfang</div>
                     <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
                   </label>
                 </form>
-              </th> 
-          </tr>
-        </thead>
-               
-              
-        <tbody>
-          {item.hands_role.map(role => {
-            return  <tr tabindex="0">
-                     {role.ms_item.map(msItem => (
+              </th>            
+              <th>             
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Mise-en-page</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th> 
+                <th>             
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Funktion</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th> 
+            </tr>
+          </thead>
+                
+                
+          <tbody>
+            {item.hands_role.map(role => {
+                      return role.ms_item.map(msItem => {
+                        return <tr>
                           <td class="px-2">
                             <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>
                                       {msItem.locus_grp}
@@ -211,20 +188,20 @@ const { data: item } = Astro.props;
                           <td class="px-2">{msItem.title_work?.map(work => {
                                       
                                       return  work.author[0]?.name ? `${work.author[0].name}: ${work.title}` : work.title
-                                     
+                                    
                                     }).join(', ')}</td>
                           <td class="px-2">{role.role.map(eachRole => eachRole.value).join(' und ')}</td>
-                          <td class="px-2">{role.locus && `fol. ${role.locus}`}</td>
-                          <td class="px-2">{role.locus_layout.length > 0 && role.locus_layout.map(entry => entry.value)}</td>
-                          <td class="px-2">{role.function.length > 0 && role.function.map(entry => entry.value)}</td>
-                          
-                                   
-                                ))}
-                 </tr> 
-                 })}
-        </tbody>
+                          <td class="px-2">{role.locus}</td>
+                          <td class="px-2">{role.locus_layout.map(scope => scope.value)}</td>
+                          <td class="px-2">{role.function.map(func => func.value)}</td>
+                        </tr>
+                      })
+                    })}
+          
+
+          </tbody>
              
-            </table>
+        </table>
       
       </section>
           
