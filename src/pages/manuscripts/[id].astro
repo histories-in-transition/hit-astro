@@ -5,6 +5,7 @@ import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
 import msItems from "../../content/data/ms_items.json";
 import NavLink from "../../components/nav-link.astro";
+import strata from "../../content/data/strata.json"
 
 export async function getStaticPaths() {
     const items = Object.values(msItems);
@@ -32,7 +33,7 @@ const codUnits = manuscript.related__cod_units ;
 <PageLayout title={manuscript?.shelfmark[0]?.value}>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-          <div class="flex items-center gap-3 text-brandRed">
+          <header class="flex items-center gap-3 text-brandRed">
             <NavLink href=`/manuscripts/${manuscript.prev.id}` class="flex items-center">
               <Icon
                 aria-hidden="true"
@@ -48,13 +49,15 @@ const codUnits = manuscript.related__cod_units ;
                 class="text-3xl"
               />
             </NavLink>
+          </header>
+          
+          
+          <div class="flex gap-2 justify-end">
+            <Button>TEI-XML</Button>
+            <Button>PDF</Button>
           </div>
-          
-          
-            <div class="flex gap-2 justify-end">
-              <Button>TEI-XML</Button>
-              <Button>PDF</Button>
-            </div>
+          <section>
+            <h2 class="sr-only">Handschrift Identifier</h2>
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
@@ -72,8 +75,9 @@ const codUnits = manuscript.related__cod_units ;
               <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
               <dd class="pl-5">{manuscript?.idno_former}</dd>}
             </dl>
-
-            <!-- <h2 class="font-semibold px-5">Das Äuseres</h2> -->
+          </section>
+          <section>
+            <h2 class="sr-only">Das Äuseres</h2>
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
               <dd class="pl-5">
@@ -86,15 +90,15 @@ const codUnits = manuscript.related__cod_units ;
               <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-            <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
+              <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
 
-            <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-            <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
+              <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
 
-            {manuscript.quiremarks && (
-              <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
-              <dd class="pl-5">{manuscript?.quiremarks}</dd>
-         )} 
+              {manuscript.quiremarks && (
+                <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+                <dd class="pl-5">{manuscript?.quiremarks}</dd>
+               )} 
               {manuscript.catchwords && (
                    <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
                    <dd class="pl-5">{manuscript?.catchwords}</dd>
@@ -105,7 +109,6 @@ const codUnits = manuscript.related__cod_units ;
                    <span set:html={manuscript?.quire_structure}></span>
                 )}
               </dd>
-
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
               <dd class="pl-5">
@@ -120,46 +123,45 @@ const codUnits = manuscript.related__cod_units ;
                   {manuscript?.acc_mat}
                 </dd>
                 )}
-          </dl>
-                <!-- <h2>Geschichte:</h2> -->
-
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-              <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
-              <dd class="pl-5">{manuscript?.history}</dd> 
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
-              <dd class="pl-5">{manuscript?.orig_place.map(place => {
-                return place.name}).join(', ')</dd> 
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
-              <dd class="pl-5">
-                {
-                    manuscript?.provenance.map((entry, index) => (
-                      <>
-                        <NavLink href="/" class="hover:text-brandRed">
-                          {entry.label}
-                        </NavLink>
-                       
-                        {index < manuscript.provenance.length - 1 && ', '}
-                      </>
-                    ))
-                  }</dd> 
-              <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
-              <dd class="pl-5">
-                  {manuscript?.manuscripts_dated.length > 0 &&
-                  <ul>
-                    {manuscript.manuscripts_dated.map((date) => (
-                      <li>{date.date[0].label} nach {date.authority[0].name} ({date.authority[0].short_title})</li>
-                    ))}
-                    </ul>}
-              </dd>
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-              <dd class="pl-5">{manuscript?.bibliography}</dd> 
             </dl>
-           
+          </section>
+            <section>
+              <h2 class="sr-only">Geschichte</h2>
+              <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+                <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
+                <dd class="pl-5">{manuscript?.history}</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
+                <dd class="pl-5">{manuscript?.orig_place.map(place => {
+                  return place.name}).join(', ')</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                <dd class="pl-5">
+                  {
+                      manuscript?.provenance.map((entry, index) => (
+                        <>
+                          <NavLink href="/" class="hover:text-brandRed">
+                            {entry.label}
+                          </NavLink>
+              
+                          {index < manuscript.provenance.length - 1 && ', '}
+                        </>
+                      ))
+                    }</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
+                <dd class="pl-5">
+                    {manuscript?.manuscripts_dated.length > 0 &&
+                    <ul>
+                      {manuscript.manuscripts_dated.map((date) => (
+                        <li>{date.date[0].label} nach {date.authority[0].name} ({date.authority[0].short_title})</li>
+                      ))}
+                      </ul>}
+                </dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+                <dd class="pl-5">{manuscript?.bibliography}</dd>
+              </dl>
+            </section>          
 
-            <div class=" grid grid-cols-1 my-2 gap-y-2">
+            <section class="grid grid-cols-1 my-2 gap-y-2">
+              <h2 class="sr-only">Inhalt</h2>
               {codUnits.map((unit) => (
                 <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
                   <dt class="font-semibold border-r border-gray-300 pr-2">
@@ -247,8 +249,30 @@ const codUnits = manuscript.related__cod_units ;
                     ))}
                     </dl>
               ))}
-          </div>
+          </section>
+          <section>
+            <h2>Strata</h2>
 
+            {/* Make a table for strata. Each row to represent hand_role; 
+            stratum || werk || fols || hand_role || hand || hand_dated || hand_placed */}
+            {Object.values(strata)
+             .filter(stratum => stratum.manuscript[0].id === manuscript.id)
+             .map(filteredStrata => {
+              return <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Stratum {filteredStrata.number}</dt>
+                <dd></dd>
+                <dt class="border-r border-gray-300 pr-2 justify-self-end">Typ</dt>
+                <dd class="pl-5">{filteredStrata.character.map(char => char.value).join(', ')}</dd>
+                <dt class="border-r border-gray-300 pr-2 justify-self-end">Notiz</dt>
+                <dd class="pl-5">{filteredStrata.note}</dd>
+                {filteredStrata.hand_role.map(entry => (
+                  <dt class="border-r border-gray-300 pr-2 justify-self-end">Text</dt>
+                  <dd class="pl-5">{entry.ms_item.map(item => item.title_work[0].title)}</dd>
+                )
+                )}
+              </dl>
+             })}
+          </section>
 
            
     </article>
