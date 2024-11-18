@@ -1,6 +1,5 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
-import Button from "../../components/button.astro"
 import { Icon } from "astro-icon/components";
 import msitems from "../../content/data/ms_items.json";
 import NavLink from "../../components/nav-link.astro";
@@ -15,6 +14,7 @@ export async function getStaticPaths() {
 }
        
 const { data: item } = Astro.props;
+
 ---
 
 <PageLayout title={item.manuscript[0]?.shelfmark[0].value}>
@@ -39,13 +39,9 @@ const { data: item } = Astro.props;
                 class="text-3xl"
               />
             </NavLink>
-          </div>
+          </div>        
         
-        
-        <div class="flex gap-2 justify-end">
-          <Button>TEI-XML</Button>
-          <Button>PDF</Button>
-        </div>
+       
         <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
 
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
@@ -81,28 +77,113 @@ const { data: item } = Astro.props;
               .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
               .map(filteredRole => {
                 return  <ul>
-                          <li>
-                               
-                                <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
-                                {' -> '}
-                                <span>{filteredRole.role.map(entry => entry.value)}</span>
-                                {filteredRole.locus &&
-                                <span>auf fol. {filteredRole.locus}</span>
-                                }
-                                {filteredRole.locus_layout.length > 0 &&
-                                <span> || {filteredRole.locus_layout.map(layout => layout.value)}</span>
-                                }
-                                {filteredRole.function.length > 0 &&
-                                <span> || {filteredRole.function.map(func => func.value)}</span>
-                                }
+                          <li>                               
+                            <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
+                            {' -> '}
+                            <span>{filteredRole.role.map(entry => entry.value)}</span>
+                            {filteredRole.locus &&
+                            <span>auf fol. {filteredRole.locus}</span>
+                            }
+                            {filteredRole.locus_layout.length > 0 &&
+                            <span> || {filteredRole.locus_layout.map(layout => layout.value)}</span>
+                            }
+                            {filteredRole.function.length > 0 &&
+                            <span> || {filteredRole.function.map(func => func.value)}</span>
+                            }
                             </li>
                     </ul>
                     
                          
               })}
-            </dd>
-          
+            </dd>          
           </dl>
+          <section>
+        <h2 class="text-2xl text-brandRed p-5">Bearbeitungsschritte</h2>
+        <table class="w-full bg-brandRose table-auto shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+          <thead class="sticky top-0">
+            <tr> 
+              <th>              
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Bearbeitungsart</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th>        
+              <th>                  
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Schreiberhand</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th>
+              <th>                  
+                <form role="search" data-search-form>
+                  <label class="flex flex-col items-start p-2">
+                    <div>Schreiber</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>  
+              <th>          
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Datierung</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>
+              <th>          
+                <form role="search" data-search-form >
+                  <label class="flex flex-col items-start p-2">
+                    <div>Umfang</div>
+                    <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                  </label>
+                </form>
+              </th>            
+              <th>             
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Mise-en-page</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th> 
+                <th>             
+                  <form role="search" data-search-form>
+                    <label class="flex flex-col items-start p-2">
+                      <div>Funktion</div>
+                      <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                    </label>
+                  </form>
+                </th> 
+            </tr>
+          </thead>
+                
+                
+          <tbody>
+            {item.hands_role
+              .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
+              .map(filteredRole => {
+                return  <tr>
+                        <td class="p-2">{filteredRole.role.map(rol => rol.value).join(', ')}</td>
+                         <td class="p-2">{filteredRole.hand[0].value}</td>
+                         <td class="p-2"></td>
+                         <td class="p-2"></td>
+                         <td class="p-2">{filteredRole.locus}</td>
+                         <td class="p-2">{filteredRole.locus_layout.map(layout => layout.value).join(', ')}</td>
+                         <td class="p-2">{filteredRole.function.map(func => func.value).join(', ')}</td>
+                        </tr>
+                      })
+                    }
+          
+
+          </tbody>
+             
+        </table>
+      
+      </section>
         </article>
     </div>
 </PageLayout>
