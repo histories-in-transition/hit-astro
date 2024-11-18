@@ -25,6 +25,8 @@ export async function getStaticPaths() {
 
 const { data: manuscript, msItem: matchingMsItems } = Astro.props;
 
+const codUnits = manuscript.related__cod_units ;
+
 ---
 
 <PageLayout title={manuscript?.shelfmark[0]?.value}>
@@ -158,9 +160,10 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
            
 
             <div class=" grid grid-cols-1 my-2 gap-y-2">
-              {manuscript.related__cod_units.map(unit => (
+              {codUnits.map((unit) => (
                 <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Codicological unit {unit.number}</dt>
+                  <dt class="font-semibold border-r border-gray-300 pr-2">
+                    {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
                   <dd class="pl-5"></dd>
 
                   {Object.values(msItems)
@@ -190,19 +193,56 @@ const { data: manuscript, msItem: matchingMsItems } = Astro.props;
                         <dt class="border-r border-gray-300 pr-2 justify-self-end">{filteredItem.locus_grp}</dt>
                         <dd class="pl-5">
                           {filteredItem.title_work[0]?.title && (
-                            <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
+                           <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
                               <NavLink href={`/works/${filteredItem.title_work[0].hit_id}`}>
                                 {filteredItem.title_work[0].title}
                               </NavLink>
                             </span>
                           )}
                           {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
-                          {filteredItem.rubric && <span class="italic">›{filteredItem.rubric}‹</span>}
-                          {filteredItem.incipit && <span class="italic">{filteredItem.incipit} ... </span>}
-                          {filteredItem.explicit && <span class="italic">{filteredItem.explicit}</span>}
-                          {filteredItem.final_rubric && <span class="italic">›{filteredItem.final_rubric}‹</span>}
-                          {filteredItem.decoration && <span>{filteredItem.decoration}</span>}
-                          {filteredItem.bibl && <span>{filteredItem.bibl}</span>}
+                          {filteredItem.rubric && (
+                            <span> 
+                              {/* check for [text] shouldl be not-italic */}
+                              ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part) =>
+                                part.startsWith('[') && part.endsWith(']')
+                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                  : <span class="italic">{part}</span> // Italic for other text
+                              )}‹
+                            </span>
+                          )}                          
+                          
+                          {filteredItem.incipit && (
+                            <span>
+                              {filteredItem.incipit.split(/(\[ *.*?\])/).map((part) =>
+                                part.startsWith('[') && part.endsWith(']')
+                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                  : <span class="italic">{part}</span> // Italic for other text
+                              )}
+                              {filteredItem.incipit.trim().endsWith('…') ? '' : '…'}
+                            </span>
+                          )}
+                         {filteredItem.explicit && (
+                            <span class="italic">
+                              {filteredItem.explicit.split(/(\[.*?\])/).map((part) =>
+                                part.startsWith('[') && part.endsWith(']')
+                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                  : <span>{part}</span> // Italic for other text
+                              )}
+                              {filteredItem.explicit.trim().startsWith('…') ? '' : '…'}
+                            </span>
+                          )}
+
+                          {filteredItem.final_rubric && 
+                          <span class="italic">
+                           ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part) =>
+                                part.startsWith('[') && part.endsWith(']')
+                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                  : <span class="italic">{part}</span> // Italic for other text
+                              )}‹
+                            </span>}
+
+                          {filteredItem.decoration.length > 0 && <span>Ausstattung: {filteredItem.decoration.map(entry => entry.value).join(', ')}</span>}
+                          
                         </dd>
                     ))}
                     </dl>
