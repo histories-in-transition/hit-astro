@@ -60,7 +60,8 @@ export function jsonpathGetCentury(value, data, type, params, component) {
   const getCentury = (year) => {
     if (!year) return "N/A"; // Handle null or undefined dates
     // get the century  by dividing the year by 100 and round it to the nearest integer 
-  const century = Math.ceil(parseInt(year) / 100);
+    // need to add 1 since they use formats 800-899 for 9th c.
+  const century = Math.ceil((parseInt(year) + 1) / 100);
   return `${century} Jh.`;
 };
 
