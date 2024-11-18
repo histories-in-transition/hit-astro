@@ -3,9 +3,7 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro"
 import { Icon } from "astro-icon/components";
 import msitems from "../../content/data/ms_items.json";
-const msItems = Object.values(msitems);
 import NavLink from "../../components/nav-link.astro";
-import works from "../../content/data/works.json";
 
 export async function getStaticPaths() {  
   const paths = Object.values(msitems).map((item) => ({
@@ -52,6 +50,8 @@ const { data: item } = Astro.props;
 
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
             <dd class="pl-5">{item.title_work?.map(title => <NavLink href=`/works/${title?.hit_id}` class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+            <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>
             {item.title_note && 
             <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
             <dd class="pl-5">{item?.title_note}</dd>
@@ -64,25 +64,44 @@ const { data: item } = Astro.props;
             <dd class="pl-5">{item?.decoration.map(deco => deco.value)}</dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>          
             <dd class="pl-5">
-              <ul>
-                {item?.hands_role.map(role => {
-                  return <li class="list-disc">
-                          <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${role.hand[0].id}`>{role.hand[0].value}</NavLink>
-                          {' -> '}
-                          <span>{role.role.map(entry => entry.value)}</span>
-                          {role.locus &&                            
-                          <span>auf fol. {role.locus}</span>
-                          }
-                          {role.locus_layout.length > 0 &&                            
-                          <span> || {role.locus_layout.map(layout => layout.value)}</span>
-                          }
-                          {role.function.length > 0 &&                            
-                          <span> || {role.function.map(func => func.value)}</span>
-                          }
+              {item.hands_role
+              .filter(hand_role => hand_role.role.some(ro => ro.value == 'Schreiber'))
+              .map(filteredRole => {
+                return <ul>
+                        <li>
+                          <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
                         </li>
-                })}
-              </ul>
+                </ul>
+                          
+              })}
             </dd>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Textbearbeitung:</dt>          
+            <dd class="pl-5">
+              {item.hands_role
+              .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
+              .map(filteredRole => {
+                return  <ul>
+                          <li>
+                               
+                                <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
+                                {' -> '}
+                                <span>{filteredRole.role.map(entry => entry.value)}</span>
+                                {filteredRole.locus &&
+                                <span>auf fol. {filteredRole.locus}</span>
+                                }
+                                {filteredRole.locus_layout.length > 0 &&
+                                <span> || {filteredRole.locus_layout.map(layout => layout.value)}</span>
+                                }
+                                {filteredRole.function.length > 0 &&
+                                <span> || {filteredRole.function.map(func => func.value)}</span>
+                                }
+                            </li>
+                    </ul>
+                    
+                         
+              })}
+            </dd>
+          
           </dl>
         </article>
     </div>

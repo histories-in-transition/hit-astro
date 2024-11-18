@@ -28,7 +28,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 				headerFilterLiveFilterDelay: 600,
 				height: 900,
 				data: tabledata,
-				layout: "fitDataStretch",
+				layout: "fitColumns",
 				responsiveLayout: "collapse",
 				columns: [
 					{
@@ -72,8 +72,10 @@ import DownloadButtons from "../components/download-buttons.astro";
 					{
 						title: "Schreiberhände",
 						field: "hands_role",
-						mutator: jsonpathLookup,
-						mutatorParams: { path: "$[*].hand[*].value" },
+						mutator: jsonpathsLookup,
+						mutatorParams: {
+							paths: ["$[*].hand[*].value", "$[*].role[*].value"],
+						},
 						headerFilter: "input",
 					},
 				],
