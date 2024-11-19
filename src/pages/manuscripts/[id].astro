@@ -4,35 +4,53 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
 import msItems from "../../content/data/ms_items.json";
+import handsJson from "../../content/data/hands.json"
 import NavLink from "../../components/nav-link.astro";
+import strata from "../../content/data/strata.json"
 
 export async function getStaticPaths() {
-    const items = Object.values(msItems);
-    
-    const paths = Object.values(manuscripts).map((manuscript) => {
-      const id = manuscript.hit_id
-      const matchingMsItems = items.filter((item) => {
-      return item.manuscript.some((ms) => ms.hit_id === id);
-    });
-      return {
-        params: {id: manuscript.hit_id},
-        props: {data: manuscript, msItem: matchingMsItems}
-      }
+  const manuscriptsList = Object.values(manuscripts);
+  const msItemsList = Object.values(msItems);
+  const handsList = Object.values(handsJson);
+
+  const paths = manuscriptsList.map((manuscript) => {
+    const manuscriptId = manuscript.hit_id;
+
+    // Find matching hands based on the manuscript ID
+    const matchingHands = handsList.filter((hand) => {
+      return hand.hands_role.some((handRole) =>
+        handRole.ms_item.some((item) =>
+          item.manuscript.some((ms) => ms.hit_id === manuscriptId)
+        )
+      );
     });
 
-    return paths; 
+    // Find matching manuscript items based on the manuscript ID
+    const matchingMsItems = msItemsList.filter((item) =>
+      item.manuscript.some((ms) => ms.hit_id === manuscriptId)
+    );
+
+    return {
+      params: { id: manuscriptId },
+      props: { data: manuscript, msItems: matchingMsItems, hands: matchingHands },
+    };
+  });
+
+  return paths;
 }
 
-const { data: manuscript, msItem: matchingMsItems } = Astro.props;
+const { data: manuscript, msItems: matchingMsItems, hands: matchingHands } = Astro.props;
+
 
 const codUnits = manuscript.related__cod_units ;
+
 
 ---
 
 <PageLayout title={manuscript?.shelfmark[0]?.value}>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-          <div class="flex items-center gap-3 text-brandRed">
+          <header class="flex items-center gap-3 text-brandRed">
             <NavLink href=`/manuscripts/${manuscript.prev.id}` class="flex items-center">
               <Icon
                 aria-hidden="true"
@@ -48,13 +66,15 @@ const codUnits = manuscript.related__cod_units ;
                 class="text-3xl"
               />
             </NavLink>
+          </header>
+          
+          
+          <div class="flex gap-2 justify-end">
+            <Button>TEI-XML</Button>
+            <Button>PDF</Button>
           </div>
-          
-          
-            <div class="flex gap-2 justify-end">
-              <Button>TEI-XML</Button>
-              <Button>PDF</Button>
-            </div>
+          <section>
+            <h2 class="sr-only">Handschrift Identifier</h2>
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
@@ -72,8 +92,9 @@ const codUnits = manuscript.related__cod_units ;
               <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
               <dd class="pl-5">{manuscript?.idno_former}</dd>}
             </dl>
-
-            <!-- <h2 class="font-semibold px-5">Das Äuseres</h2> -->
+          </section>
+          <section>
+            <h2 class="sr-only">Das Äuseres</h2>
             <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
               <dd class="pl-5">
@@ -86,15 +107,15 @@ const codUnits = manuscript.related__cod_units ;
               <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-            <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
+              <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
 
-            <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-            <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
+              <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
 
-            {manuscript.quiremarks && (
-              <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
-              <dd class="pl-5">{manuscript?.quiremarks}</dd>
-         )} 
+              {manuscript.quiremarks && (
+                <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+                <dd class="pl-5">{manuscript?.quiremarks}</dd>
+               )} 
               {manuscript.catchwords && (
                    <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
                    <dd class="pl-5">{manuscript?.catchwords}</dd>
@@ -105,7 +126,6 @@ const codUnits = manuscript.related__cod_units ;
                    <span set:html={manuscript?.quire_structure}></span>
                 )}
               </dd>
-
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
               <dd class="pl-5">
@@ -120,46 +140,45 @@ const codUnits = manuscript.related__cod_units ;
                   {manuscript?.acc_mat}
                 </dd>
                 )}
-          </dl>
-                <!-- <h2>Geschichte:</h2> -->
-
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-              <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
-              <dd class="pl-5">{manuscript?.history}</dd> 
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
-              <dd class="pl-5">{manuscript?.orig_place.map(place => {
-                return place.name}).join(', ')</dd> 
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
-              <dd class="pl-5">
-                {
-                    manuscript?.provenance.map((entry, index) => (
-                      <>
-                        <NavLink href="/" class="hover:text-brandRed">
-                          {entry.label}
-                        </NavLink>
-                       
-                        {index < manuscript.provenance.length - 1 && ', '}
-                      </>
-                    ))
-                  }</dd> 
-              <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
-              <dd class="pl-5">
-                  {manuscript?.manuscripts_dated.length > 0 &&
-                  <ul>
-                    {manuscript.manuscripts_dated.map((date) => (
-                      <li>{date.date[0].label} nach {date.authority[0].name} ({date.authority[0].short_title})</li>
-                    ))}
-                    </ul>}
-              </dd>
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-              <dd class="pl-5">{manuscript?.bibliography}</dd> 
             </dl>
-           
+          </section>
+            <section>
+              <h2 class="sr-only">Geschichte</h2>
+              <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+                <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
+                <dd class="pl-5">{manuscript?.history}</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
+                <dd class="pl-5">{manuscript?.orig_place.map(place => {
+                  return place.name}).join(', ')</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                <dd class="pl-5">
+                  {
+                      manuscript?.provenance.map((entry, index) => (
+                        <>
+                          <NavLink href="/" class="hover:text-brandRed">
+                            {entry.label}
+                          </NavLink>
+              
+                          {index < manuscript.provenance.length - 1 && ', '}
+                        </>
+                      ))
+                    }</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
+                <dd class="pl-5">
+                    {manuscript?.manuscripts_dated.length > 0 &&
+                    <ul>
+                      {manuscript.manuscripts_dated.map((date) => (
+                        <li>{date.date[0].label} nach {date.authority[0].name} ({date.authority[0].short_title})</li>
+                      ))}
+                      </ul>}
+                </dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+                <dd class="pl-5">{manuscript?.bibliography}</dd>
+              </dl>
+            </section>          
 
-            <div class=" grid grid-cols-1 my-2 gap-y-2">
+            <section class="grid grid-cols-1 my-2 gap-y-2">
+              <h2 class="sr-only">Inhalt</h2>
               {codUnits.map((unit) => (
                 <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
                   <dt class="font-semibold border-r border-gray-300 pr-2">
@@ -190,15 +209,20 @@ const codUnits = manuscript.related__cod_units ;
                     })
                     .map(filteredItem => (
                      
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">{filteredItem.locus_grp}</dt>
+                        <dt class="border-r border-gray-300 pr-2 justify-self-end"><NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus_grp}</NavLink></dt>
                         <dd class="pl-5">
-                          {filteredItem.title_work[0]?.title && (
-                           <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
-                              <NavLink href={`/works/${filteredItem.title_work[0].hit_id}`}>
-                                {filteredItem.title_work[0].title}
-                              </NavLink>
-                            </span>
-                          )}
+                          {filteredItem.title_work.map(work => (
+                              <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
+                                {work.author.length > 0 ? (
+                                  <NavLink href={`/works/${work.hit_id}`}>
+                                    {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                                  </NavLink>
+                                ) : (
+                                  <NavLink href={`/works/${work.hit_id}`}>{work.title}</NavLink>
+                                )}
+                              </span>
+                            ))}
+
                           {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
                           {filteredItem.rubric && (
                             <span> 
@@ -247,10 +271,130 @@ const codUnits = manuscript.related__cod_units ;
                     ))}
                     </dl>
               ))}
-          </div>
-
-
+          </section>
+          <section>
+            <h2 class="sr-only">Strata</h2>
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5 my-5">
+                  {Object.values(strata)
+                    .filter(stratum => stratum.manuscript[0].id === manuscript.id)
+                    .map(filteredStrata => {
+                      return <>
+                      <dt class="font-semibold border-r border-gray-300 pr-2">Stratum {filteredStrata.number}: {filteredStrata.character.map(char => char.value).join(', ')}</dt>
+                      <dd class="pl-5">{filteredStrata.note}</dd>
+                        </>
+            
+                  })}
+            </dl>
+          
+            <table class="w-full bg-brandRose table-auto shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+              <thead>
+                <tr> 
+                  <th>                  
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Stratum</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th>
+                    <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Datierung</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>   
+                  <th>                  
+                    <form role="search" data-search-form>
+                      <label class="flex flex-col items-start p-2">
+                        <div>Werk</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>   
+                  <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Locus</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>  
+                  <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Hand</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>             
+                  <th>              
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Rolle</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th>
+                  <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Umfang</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>            
+                  <th>             
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Mise-en-page</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th> 
+                    <th>             
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Funktion</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th> 
+                </tr>
+              </thead>   
+              <tbody>
+                {matchingHands.map(hand=> hand.hands_role.map(role => (
+                  <tr>
+                    <td class="text-center">{Object.values(strata)
+                      .filter(stratum => stratum.hand_role.some(handRole => 
+                        handRole.hit_id === role.hit_id
+                      )).map(filteredStratum => filteredStratum.number)}</td>
+                    <td class="px-2">{hand.hands_dated.map(date => date.dated.map(i => i.label))}</td>
+                    <td class="px-2">{role.ms_item.map(msItem => msItem.title_work
+                        .map(work => {
+                                      return  work.author[0]?.name ? `${work.author
+                                        .map(aut => aut.name)
+                                        .join(', ')}: ${work.title}` : work.title
+                                            
+                                            }).join(', '))}</td>
+                      
+                    <td class="px-2">{role.ms_item.map(msItem => <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink>)}</td>
+                    <td class="px-2"><NavLink class="hover:text-brandRed" href=`/hands/${hand.hit_id}`>{hand.label.map(l => l.value)}</NavLink></td>
+                    <td class="px-2">{role.role.map(ro => ro.value).join(', ')}</td>
+                    <td class="px-2">{role.locus}</td>
+                    <td class="px-2">{role.locus_layout.map(scope => scope.value)}</td>
+                    <td class="px-2">{role.function.map(func => func.value).join(', ')}</td>
+                  </tr>
+                )))}
+              </tbody>
+             
+            </table>
+         
+          </section>
+        
            
     </article>
     </div>
+    <script src="../../lib/table-search.js"></script>
 </PageLayout>
