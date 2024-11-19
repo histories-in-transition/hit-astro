@@ -4,29 +4,46 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
 import msItems from "../../content/data/ms_items.json";
+import handsJson from "../../content/data/hands.json"
 import NavLink from "../../components/nav-link.astro";
 import strata from "../../content/data/strata.json"
 
 export async function getStaticPaths() {
-    const items = Object.values(msItems);
-    
-    const paths = Object.values(manuscripts).map((manuscript) => {
-      const id = manuscript.hit_id
-      const matchingMsItems = items.filter((item) => {
-      return item.manuscript.some((ms) => ms.hit_id === id);
-    });
-      return {
-        params: {id: manuscript.hit_id},
-        props: {data: manuscript, msItem: matchingMsItems}
-      }
+  const manuscriptsList = Object.values(manuscripts);
+  const msItemsList = Object.values(msItems);
+  const handsList = Object.values(handsJson);
+
+  const paths = manuscriptsList.map((manuscript) => {
+    const manuscriptId = manuscript.hit_id;
+
+    // Find matching hands based on the manuscript ID
+    const matchingHands = handsList.filter((hand) => {
+      return hand.hands_role.some((handRole) =>
+        handRole.ms_item.some((item) =>
+          item.manuscript.some((ms) => ms.hit_id === manuscriptId)
+        )
+      );
     });
 
-    return paths; 
+    // Find matching manuscript items based on the manuscript ID
+    const matchingMsItems = msItemsList.filter((item) =>
+      item.manuscript.some((ms) => ms.hit_id === manuscriptId)
+    );
+
+    return {
+      params: { id: manuscriptId },
+      props: { data: manuscript, msItems: matchingMsItems, hands: matchingHands },
+    };
+  });
+
+  return paths;
 }
 
-const { data: manuscript, msItem: matchingMsItems } = Astro.props;
+const { data: manuscript, msItems: matchingMsItems, hands: matchingHands } = Astro.props;
+
 
 const codUnits = manuscript.related__cod_units ;
+
 
 ---
 
@@ -192,15 +209,20 @@ const codUnits = manuscript.related__cod_units ;
                     })
                     .map(filteredItem => (
                      
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">{filteredItem.locus_grp}</dt>
+                        <dt class="border-r border-gray-300 pr-2 justify-self-end"><NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus_grp}</NavLink></dt>
                         <dd class="pl-5">
-                          {filteredItem.title_work[0]?.title && (
-                           <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
-                              <NavLink href={`/works/${filteredItem.title_work[0].hit_id}`}>
-                                {filteredItem.title_work[0].title}
-                              </NavLink>
-                            </span>
-                          )}
+                          {filteredItem.title_work.map(work => (
+                              <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
+                                {work.author.length > 0 ? (
+                                  <NavLink href={`/works/${work.hit_id}`}>
+                                    {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                                  </NavLink>
+                                ) : (
+                                  <NavLink href={`/works/${work.hit_id}`}>{work.title}</NavLink>
+                                )}
+                              </span>
+                            ))}
+
                           {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
                           {filteredItem.rubric && (
                             <span> 
@@ -251,30 +273,128 @@ const codUnits = manuscript.related__cod_units ;
               ))}
           </section>
           <section>
-            <h2>Strata</h2>
-
-            {/* Make a table for strata. Each row to represent hand_role; 
-            stratum || werk || fols || hand_role || hand || hand_dated || hand_placed */}
-            {Object.values(strata)
-             .filter(stratum => stratum.manuscript[0].id === manuscript.id)
-             .map(filteredStrata => {
-              return <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Stratum {filteredStrata.number}</dt>
-                <dd></dd>
-                <dt class="border-r border-gray-300 pr-2 justify-self-end">Typ</dt>
-                <dd class="pl-5">{filteredStrata.character.map(char => char.value).join(', ')}</dd>
-                <dt class="border-r border-gray-300 pr-2 justify-self-end">Notiz</dt>
-                <dd class="pl-5">{filteredStrata.note}</dd>
-                {filteredStrata.hand_role.map(entry => (
-                  <dt class="border-r border-gray-300 pr-2 justify-self-end">Text</dt>
-                  <dd class="pl-5">{entry.ms_item.map(item => item.title_work[0].title)}</dd>
-                )
-                )}
-              </dl>
-             })}
+            <h2 class="sr-only">Strata</h2>
+            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5 my-5">
+                  {Object.values(strata)
+                    .filter(stratum => stratum.manuscript[0].id === manuscript.id)
+                    .map(filteredStrata => {
+                      return <>
+                      <dt class="font-semibold border-r border-gray-300 pr-2">Stratum {filteredStrata.number}: {filteredStrata.character.map(char => char.value).join(', ')}</dt>
+                      <dd class="pl-5">{filteredStrata.note}</dd>
+                        </>
+            
+                  })}
+            </dl>
+          
+            <table class="w-full bg-brandRose table-auto shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+              <thead>
+                <tr> 
+                  <th>                  
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Stratum</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th>
+                    <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Datierung</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>   
+                  <th>                  
+                    <form role="search" data-search-form>
+                      <label class="flex flex-col items-start p-2">
+                        <div>Werk</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>   
+                  <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Locus</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>  
+                  <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Hand</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>             
+                  <th>              
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Rolle</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th>
+                  <th>             
+                    <form role="search" data-search-form >
+                      <label class="flex flex-col items-start p-2">
+                        <div>Umfang</div>
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                      </label>
+                    </form>
+                  </th>            
+                  <th>             
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Mise-en-page</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th> 
+                    <th>             
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Funktion</div>
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        </label>
+                      </form>
+                    </th> 
+                </tr>
+              </thead>   
+              <tbody>
+                {matchingHands.map(hand=> hand.hands_role.map(role => (
+                  <tr>
+                    <td class="text-center">{Object.values(strata)
+                      .filter(stratum => stratum.hand_role.some(handRole => 
+                        handRole.hit_id === role.hit_id
+                      )).map(filteredStratum => filteredStratum.number)}</td>
+                    <td class="px-2">{hand.hands_dated.map(date => date.dated.map(i => i.label))}</td>
+                    <td class="px-2">{role.ms_item.map(msItem => msItem.title_work
+                        .map(work => {
+                                      return  work.author[0]?.name ? `${work.author
+                                        .map(aut => aut.name)
+                                        .join(', ')}: ${work.title}` : work.title
+                                            
+                                            }).join(', '))}</td>
+                      
+                    <td class="px-2">{role.ms_item.map(msItem => <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink>)}</td>
+                    <td class="px-2"><NavLink class="hover:text-brandRed" href=`/hands/${hand.hit_id}`>{hand.label.map(l => l.value)}</NavLink></td>
+                    <td class="px-2">{role.role.map(ro => ro.value).join(', ')}</td>
+                    <td class="px-2">{role.locus}</td>
+                    <td class="px-2">{role.locus_layout.map(scope => scope.value)}</td>
+                    <td class="px-2">{role.function.map(func => func.value).join(', ')}</td>
+                  </tr>
+                )))}
+              </tbody>
+             
+            </table>
+         
           </section>
-
+        
            
     </article>
     </div>
+    <script src="../../lib/table-search.js"></script>
 </PageLayout>
