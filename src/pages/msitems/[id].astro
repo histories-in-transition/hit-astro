@@ -1,29 +1,52 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
-import Button from "../../components/button.astro"
 import { Icon } from "astro-icon/components";
 import msitems from "../../content/data/ms_items.json";
-const msItems = Object.values(msitems);
+import handsJson from "../../content/data/hands.json"
 import NavLink from "../../components/nav-link.astro";
-import works from "../../content/data/works.json";
 
-export async function getStaticPaths() {  
-  const paths = Object.values(msitems).map((item) => ({
-    params: { id: item.hit_id.toString() }, 
-    props: { data: item }
-  }));
+export async function getStaticPaths() { 
+  const handsList = Object.values(handsJson);
+  const msItemsList = Object.values(msitems);
+ 
+  const paths = msItemsList.map((item) => {
+    const msItemId = item.hit_id;
+
+    // Find matching hands based on the msItemId
+    const matchingHands = handsList.filter(hand => {
+      return hand.hands_role.some(handRole =>
+        handRole.ms_item.some(item => item.hit_id === msItemId)
+      )
+    })
+    return {
+      params: { id: msItemId }, 
+      props: { data: item, hands: matchingHands }
+    }
+  });
 
   return paths;
 }
        
-const { data: item } = Astro.props;
+const { data: item, hands: matchingHands } = Astro.props;
+
 ---
 
 <PageLayout title={item.manuscript[0]?.shelfmark[0].value}>
+  <style>
+    /* To make the table rows striped */
+    tbody tr:nth-child(even) {
+      background-color: #fcf1e8;
+    }
+    tbody tr:nth-child(odd) {
+      background-color: #fff8f7;
+    }
+   
+  </style>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
           <div class="flex items-center gap-3 text-brandRed">
             <NavLink href=`/msitems/${item.prev.id}` class="flex items-center">
+              <div class="sr-only">Link zu vorrigem Ms-Item</div>
               <Icon
                 aria-hidden="true"
                 name="lucide:circle-chevron-left"
@@ -35,55 +58,154 @@ const { data: item } = Astro.props;
               <span> ({item?.locus_grp}) </span>
             </h1>
             <NavLink href=`/msitems/${item.next.id}` class="flex items-center">
+              <div class="sr-only">Link zu nächstem Ms-Item</div>
               <Icon
                 aria-hidden="true"
                 name="lucide:circle-chevron-right"
                 class="text-3xl"
               />
             </NavLink>
-          </div>
-        
-        
-        <div class="flex gap-2 justify-end">
-          <Button>TEI-XML</Button>
-          <Button>PDF</Button>
-        </div>
-        <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
-
-            <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
-            <dd class="pl-5">{item.title_work?.map(title => <NavLink href=`/works/${title?.hit_id}` class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
-            {item.title_note && 
-            <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
-            <dd class="pl-5">{item?.title_note}</dd>
-            }
-            <dt class="font-semibold border-r border-gray-300 pr-2">Incipit:</dt>
-            <dd class="pl-5 italic">{item?.incipit}</dd>
-            <dt class="font-semibold border-r border-gray-300 pr-2">Explicit:</dt>
-            <dd class="pl-5 italic">{item?.explicit}</dd>
-            <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-            <dd class="pl-5">{item?.decoration.map(deco => deco.value)}</dd>
-            <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>          
-            <dd class="pl-5">
-              <ul>
-                {item?.hands_role.map(role => {
-                  return <li class="list-disc">
-                          <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${role.hand[0].id}`>{role.hand[0].value}</NavLink>
-                          {' -> '}
-                          <span>{role.role.map(entry => entry.value)}</span>
-                          {role.locus &&                            
-                          <span>auf fol. {role.locus}</span>
-                          }
-                          {role.locus_layout.length > 0 &&                            
-                          <span> || {role.locus_layout.map(layout => layout.value)}</span>
-                          }
-                          {role.function.length > 0 &&                            
-                          <span> || {role.function.map(func => func.value)}</span>
-                          }
-                        </li>
+          </div>        
+        <section>
+          <h2 class="sr-only">Beschreibung des Ms-items</h2>
+          <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+              <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
+              <dd class="pl-5">{item.title_work?.map(title => <NavLink href=`/works/${title?.hit_id}` class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+              <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>
+              {item.title_note &&
+              <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
+              <dd class="pl-5">{item?.title_note}</dd>
+              }
+              {item?.rubric &&
+              <dt class="font-semibold border-r border-gray-300 pr-2">Rubrik:</dt>
+               <dd class="pl-5">
+                  {/* check for [text] shouldl be not-italic */}
+                  ›{item.rubric.split(/(\[ *.*?\])/).map((part) =>
+                    part.startsWith('[') && part.endsWith(']')
+                      ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                      : <span class="italic">{part}</span> // Italic for other text
+                  )}‹
+                </dd>}
+              <dt class="font-semibold border-r border-gray-300 pr-2">Incipit:</dt>
+              {item.incipit
+                  ? <dd class="pl-5 italic">
+                    {item.incipit.split(/(\[ *.*?\])/).map((part) =>
+                      part.startsWith('[') && part.endsWith(']')
+                        ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                        : <span class="italic">{part}</span> // Italic for other text
+                    )}
+                    {item.incipit.trim().endsWith('…') ? '' : '…'}
+                  </dd>
+                  : <dd/>}
+              <dt class="font-semibold border-r border-gray-300 pr-2">Explicit:</dt>
+              {item.explicit
+              ? <dd class="pl-5 italic">
+                {item.explicit.split(/(\[.*?\])/).map((part) =>
+                  part.startsWith('[') && part.endsWith(']')
+                    ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                    : <span>{part}</span> // Italic for other text
+                )}
+                {item.explicit.trim().startsWith('…') ? '' : '…'}
+              </dd>
+              : <dd class="pl-5"></dd>}
+              {item?.final_rubric &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Final Rubrik:</dt>
+                 <dd class="pl-5">
+                    {/* check for [text] shouldl be not-italic */}
+                    ›{item.final_rubric.split(/(\[ *.*?\])/).map((part) =>
+                      part.startsWith('[') && part.endsWith(']')
+                        ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                        : <span class="italic">{part}</span> // Italic for other text
+                    )}‹
+                  </dd>}
+              <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
+              <dd class="pl-5">{item?.decoration.map(deco => deco.value)}</dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
+              <dd class="pl-5">
+                {item.hands_role
+                .filter(hand_role => hand_role.role.some(ro => ro.value == 'Schreiber'))
+                .map(filteredRole => {
+                  return <ul>
+                          <li>
+                            <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
+                          </li>
+                  </ul>
+          
                 })}
-              </ul>
-            </dd>
-          </dl>
+              </dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Textbearbeitung:</dt>
+              <dd class="pl-5">
+                {item.hands_role
+                .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
+                .map(filteredRole => {
+                  return  <ul>
+                            <li>
+                              <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
+                              {' -> '}
+                              <span>{filteredRole.role.map(entry => entry.value)}</span>
+                              {filteredRole.locus &&
+                              <span>auf fol. {filteredRole.locus}</span>
+                              }
+                              {filteredRole.locus_layout.length > 0 &&
+                              <span> || {filteredRole.locus_layout.map(layout => layout.value)}</span>
+                              }
+                              {filteredRole.function.length > 0 &&
+                              <span> || {filteredRole.function.map(func => func.value)}</span>
+                              }
+                              </li>
+                      </ul>
+          
+          
+                })}
+              </dd>
+            </dl>
+        </section>
+          <section>
+        <h2 class="text-2xl text-brandRed p-5">Bearbeitungsschritte</h2>
+        <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table">
+          <thead>
+            <tr> 
+              <th class="text-start p-2 font-semibold border border-gray-300">Bearbeitungsart</th>
+              <th class="text-start p-2 font-semibold border border-gray-300">Schreiberhand</th>    
+              <th class="text-start p-2 font-semibold border border-gray-300">Schreiber</th> 
+              <th class="text-start p-2 font-semibold border border-gray-300">Datierung</th> 
+              <th class="text-start p-2 font-semibold border border-gray-300">Umfang</th> 
+              <th class="text-start p-2 font-semibold border border-gray-300">Mise-en-page</th> 
+              <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th> 
+            </tr>
+          </thead>
+          <tbody>
+            {item.hands_role
+              .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
+              .map(filteredRole => {
+                return  <tr>
+                            <td class="p-2 border border-gray-300">{filteredRole.role.map(rol => rol.value).join(', ')}</td>
+                            <td class="p-2 border border-gray-300">
+                              <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>
+                              {filteredRole.hand[0].value}</NavLink>
+                            </td>
+                            <td class="p-2 border border-gray-300">{matchingHands
+                                  .filter(hand => hand.hands_role
+                                      .some(role => role.hit_id === filteredRole.hit_id))
+                                  .map(hand => hand.scribe.map(scr => scr.name))}
+                            </td>
+                            <td class="p-2 border border-gray-300">{matchingHands
+                                  .filter(hand => hand.hands_role
+                                      .some(role => role.hit_id === filteredRole.hit_id))
+                                  .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}
+                            </td>
+                            <td class="p-2 border border-gray-300">{filteredRole.locus}</td>
+                            <td class="p-2 border border-gray-300">{filteredRole.locus_layout.map(layout => layout.value).join(', ')}</td>
+                            <td class="p-2 border border-gray-300">{filteredRole.function.map(func => func.value).join(', ')}</td>
+                        </tr>
+                      })
+                    }         
+
+          </tbody>
+             
+        </table>
+      </section>
         </article>
     </div>
 </PageLayout>
