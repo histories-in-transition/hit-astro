@@ -48,6 +48,16 @@ const codUnits = manuscript.related__cod_units ;
 ---
 
 <PageLayout title={manuscript?.shelfmark[0]?.value}>
+  <style>
+    /* To make the table rows striped */
+    tbody tr:nth-child(even) {
+      background-color: #fcf1e8;
+    }
+    tbody tr:nth-child(odd) {
+      background-color: #fff8f7;
+    }
+   
+  </style>
     <div>
         <article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
           <header class="flex items-center gap-3 text-brandRed">
@@ -75,7 +85,7 @@ const codUnits = manuscript.related__cod_units ;
           </div>
           <section>
             <h2 class="sr-only">Handschrift Identifier</h2>
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
               <dd class="pl-5">{manuscript?.library_full[0]?.settlement[0]?.name}</dd>
@@ -95,7 +105,7 @@ const codUnits = manuscript.related__cod_units ;
           </section>
           <section>
             <h2 class="sr-only">Das Äuseres</h2>
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+            <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
               <dd class="pl-5">
                   {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
@@ -144,7 +154,7 @@ const codUnits = manuscript.related__cod_units ;
           </section>
             <section>
               <h2 class="sr-only">Geschichte</h2>
-              <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+              <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
                 <dd class="pl-5">{manuscript?.history}</dd>
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
@@ -180,7 +190,7 @@ const codUnits = manuscript.related__cod_units ;
             <section class="grid grid-cols-1 my-2 gap-y-2">
               <h2 class="sr-only">Inhalt</h2>
               {codUnits.map((unit) => (
-                <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+                <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
                   <dt class="font-semibold border-r border-gray-300 pr-2">
                     {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
                   <dd class="pl-5"></dd>
@@ -274,7 +284,7 @@ const codUnits = manuscript.related__cod_units ;
           </section>
           <section>
             <h2 class="sr-only">Strata</h2>
-            <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5 my-5">
+            <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5 my-5">
                   {Object.values(strata)
                     .filter(stratum => stratum.manuscript[0].id === manuscript.id)
                     .map(filteredStrata => {
@@ -286,14 +296,14 @@ const codUnits = manuscript.related__cod_units ;
                   })}
             </dl>
           
-            <table class="w-full bg-brandRose table-auto shadow-md border lg:leading-7 text-sm lg:text-base data-table">
+            <table class="w-full bg-brandRose table-auto rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
               <thead>
                 <tr> 
                   <th>                  
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Stratum</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th>
@@ -301,7 +311,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Datierung</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>   
@@ -309,7 +319,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form>
                       <label class="flex flex-col items-start p-2">
                         <div>Werk</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>   
@@ -317,7 +327,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Locus</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>  
@@ -325,7 +335,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Hand</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>             
@@ -333,7 +343,7 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Rolle</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th>
@@ -341,7 +351,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Umfang</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>            
@@ -349,7 +359,7 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Mise-en-page</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th> 
@@ -357,7 +367,7 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Funktion</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
+                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th> 
@@ -380,7 +390,7 @@ const codUnits = manuscript.related__cod_units ;
                                             }).join(', '))}</td>
                       
                     <td class="px-2">{role.ms_item.map(msItem => <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink>)}</td>
-                    <td class="px-2"><NavLink class="hover:text-brandRed" href=`/hands/${hand.hit_id}`>{hand.label.map(l => l.value)}</NavLink></td>
+                    <td class="px-2"><NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink></td>
                     <td class="px-2">{role.role.map(ro => ro.value).join(', ')}</td>
                     <td class="px-2">{role.locus}</td>
                     <td class="px-2">{role.locus_layout.map(scope => scope.value)}</td>

@@ -68,9 +68,9 @@ const { data: item, hands: matchingHands } = Astro.props;
           </div>        
         <section>
           <h2 class="sr-only">Beschreibung des Ms-items</h2>
-          <dl class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+          <dl class=" border border-gray-300 shadow-sm rounded-sm bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
-              <dd class="pl-5">{item.title_work?.map(title => <NavLink href=`/works/${title?.hit_id}` class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
+              <dd class="pl-5">{item.title_work?.map(title => <NavLink href={`/works/${title?.hit_id}`} class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
               <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
               <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>
               {item.title_note &&
@@ -128,7 +128,7 @@ const { data: item, hands: matchingHands } = Astro.props;
                 .map(filteredRole => {
                   return <ul>
                           <li>
-                            <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
+                            <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}</NavLink>
                           </li>
                   </ul>
           
@@ -141,7 +141,7 @@ const { data: item, hands: matchingHands } = Astro.props;
                 .map(filteredRole => {
                   return  <ul>
                             <li>
-                              <NavLink class="hover:text-brandRed" href=`/hands/hit_hands__${filteredRole.hand[0].id}`>{filteredRole.hand[0].value}</NavLink>
+                              <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}</NavLink>
                               {' -> '}
                               <span>{filteredRole.role.map(entry => entry.value)}</span>
                               {filteredRole.locus &&
