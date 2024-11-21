@@ -622,6 +622,15 @@ export function getMsItems() {
   }>;
 }
 
+export function getScribes() {
+  return request(new URL("scribes.json", baseUrl), {
+    responseType: "json",
+  }).then((data) => ({ fileName: "scribes.json", data })) as Promise<{
+    fileName: string;
+    data: Array<MSItem>;
+  }>;
+}
+
 export function getStrata() {
   return request(new URL("strata.json", baseUrl), {
     responseType: "json",

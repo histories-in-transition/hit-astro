@@ -1,0 +1,239 @@
+---
+import PageLayout from "../../layouts/page-layout.astro";
+import Button from "../../components/button.astro";
+import { Icon } from "astro-icon/components";
+import NavLink from "../../components/nav-link.astro";
+import scribesJson from "../../content/data/scribes.json";
+
+export async function getStaticPaths() {
+	const scribes = Object.values(scribesJson);
+
+	const paths = scribes.map((scribe) => {		
+		return {
+			params: { id: scribe.hit_id },
+			props: { data: scribe},
+		};
+	});
+	return paths;
+}
+
+const { data: scribe } = Astro.props;
+---
+
+<PageLayout title={scribe.name}>
+	<style>
+		/* To make the table rows striped */
+		tbody tr:nth-child(even) {
+			background-color: #fcf1e8;
+		}
+		tbody tr:nth-child(odd) {
+			background-color: #fff8f7;
+		}
+	</style>
+	<div>
+		<article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
+            <div class="flex items-center gap-3 text-brandRed">
+                <NavLink href=`/scribes/${scribe.prev.id}` class="flex items-center">
+                  <div class="sr-only">Link zu vorrigem Schreiber</div>
+                  <Icon
+                    aria-hidden="true"
+                    name="lucide:circle-chevron-left"
+                    class="text-3xl" 
+                  />
+                </NavLink>
+                <h1 class="text-3xl font-semibold py-3 text-brandRed">
+                    Schreiber: {scribe.name}
+                </h1>
+                <NavLink href=`/scribes/${scribe.next.id}` class="flex items-center">
+                  <div class="sr-only">Link zu nächstem Schreiber</div>
+                  <Icon
+                    aria-hidden="true"
+                    name="lucide:circle-chevron-right"
+                    class="text-3xl"
+                  />
+                </NavLink>
+              </div> 
+            
+
+			<div class="flex gap-2 justify-end">
+				<Button>TEI-XML</Button>
+				<Button>PDF</Button>
+			</div>
+			<section>
+				<h2 class="text-2xl text-brandRed p-5 sr-only">Eingaben über den/die SchreiberIn</h2>
+				<dl
+					class="border-2 rounded-sm shadow-sm border-gray-200 bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
+				>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+					<dd class="pl-5">{scribe?.description}</dd>
+					
+					<dt class="font-semibold border-r border-gray-300 pr-2">Datierung der Hände:</dt>
+					<dd class="pl-5">
+                        <ul>
+                            {scribe.hands.map(hand => hand.hands_dated.map(dating => {
+                                return (
+                                    <li>
+                                    {dating.dated.map(date => date.label)} 
+                                    ({dating.authority.map(aut => (
+                                        <>
+                                            {aut.name}: <span class="italic">{aut.short_title}</span>
+                                        </>
+                                    ))})  
+                                    </li>
+                                );
+                            }))}
+                        </ul>
+                    </dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Lokalisierung:</dt>
+					<dd class="pl-5">
+                        <ul>
+                            {scribe.hands.map(hand => hand.hands_placed.map(placement => {
+                                return (
+                                    <li>
+                                        {placement.place.map(place => place.name)}
+                                        ({placement.authority.map(aut => `${aut.name}: ${aut.short_title}`)})
+                                    </li>
+                                )
+                            }))}
+                        </ul>
+                    </dd>
+				</dl>
+                <div>
+                    <h2 class="sr-only">Zugewiesene Schreiberhände</h2>
+                    {scribe.hands.map((hand) => {
+						return (
+							<section class="border-2 rounded-sm shadow-sm border-gray-200 bg-brandRose my-5">
+								<h3 class="text-xl font-semibold py-3 text-brandRed p-5">
+									<NavLink href={`/hands/${hand.hit_id}`}>Schreiberhand {hand.label[0].value}</NavLink>
+								</h3>
+                                <section>
+                            <h4 class="sr-only">Eingaben über die Schreiberhand</h4>
+                            <dl class="grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+                                <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+                                <dd class="pl-5">
+                                <NavLink
+                                    href={`/manuscripts/${hand.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`}
+                                    class="hover:text-brandRed"
+                                >
+                                    {hand.manuscript[0]?.value}
+                                </NavLink>
+                                </dd>
+                                <dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+                                <dd class="pl-5">{hand?.description}</dd>
+
+                                {hand.similar_hands.length > 0 &&
+                                    <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
+                                    <dd class="pl-5">
+                                        {hand.similar_hands.map((hand, index) => (
+                                            <span>
+                                                <NavLink href={`/hands/hit_hands__${hand.id}`} class="hover:text-brandRed">
+                                                {hand.value}
+                                                </NavLink>
+                                            
+                                                {index < hand.similar_hands.length - 1 && ' | '}
+                                            </span>
+                                            ))
+                                        }
+                                    </dd>
+                                }
+                                <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
+                                <dd class="pl-5">
+                                    {hand.hands_dated.map(dating => {
+                                        return (
+                                            <>
+                                            {dating.dated.map(date => date.label)} 
+                                            ({dating.authority.map(aut => (
+                                                <>
+                                                    {aut.name}: <span class="italic">{aut.short_title}</span>
+                                                </>
+                                            ))})  
+                                            </>
+                                        );
+                                    })}
+                                </dd> 
+
+                                <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
+                                <dd class="pl-5">
+                                    {hand.hands_placed.map(placing => {
+                                    return (
+                                        <>
+                                        {placing.place.map(location => location.name)} 
+                                        ({placing.authority.map(aut => (
+                                            <>
+                                            {aut.name}: <span class="italic"}>{aut.short_title}</span>
+                                            </>
+                                        ))})
+                                        </>
+                                    );
+                                    })}
+                                </dd>
+                                            
+
+                                {hand.nr_daniel &&
+                                    <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
+                                    <dd class="pl-5">{hand.nr_daniel}</dd>                
+                                }
+
+                                <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
+                                <dd class="pl-5">
+                                    {Array.from(new Set(hand.hands_role.flatMap(handrole => handrole.role.map(rol => rol.value)))).join(', ')}
+                                </dd>   
+                                            
+                            </dl>
+                        </section>
+			
+                        <section>
+                            <h2 class="sr-only">Beteiligung innerhalb der Handschrift</h2>
+                            <table class="w-full bg-brandRose table-fixed shadow-sm border-t border-gray-200 lg:leading-7 text-sm lg:text-base data-table p-10">
+                                <thead>
+                                    <tr> 
+                                        <th class="text-start pl-5 py-2 font-semibold">Locus</th>
+                                        <th class="text-start py-2 font-semibold">Werk</th>
+                                        <th class="text-start py-2 font-semibold">Rolle</th>
+                                        <th class="text-start py-2 font-semibold">Umfang</th>
+                                        <th class="text-start py-2 font-semibold">Mise-en-page</th>
+                                        <th class="text-start py-2 font-semibold">Funktion</th>              
+                                    
+                                    </tr>
+                                </thead>                                    
+                                    
+                                <tbody>
+                                    {hand.hands_role.map(role => {
+                                            return role.ms_item.map(msItem => {
+                                                return (
+                                                    <tr>
+                                                        
+                                                            <td class="pl-5">
+                                                                <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>
+                                                                    {msItem.locus_grp}
+                                                                </NavLink>
+                                                            </td>
+                                                            <td>{msItem.title_work?.map(work => {                                                            
+                                                                return  work.author[0]?.name ? `${work.author[0].name}: ${work.title}` : work.title                                                            
+                                                                }).join(', ')}</td>
+                                                            <td>{role.role.map(eachRole => eachRole.value).join(' und ')}</td>
+                                                            <td>{role.locus}</td>
+                                                            <td>{role.locus_layout.map(scope => scope.value)}</td>
+                                                            <td>{role.function.map(func => func.value)}</td>
+                                                        
+                                                    </tr>)
+                                            })
+                                            })}
+                                
+
+                                </tbody>
+                                
+                            </table>
+                        
+                        </section>
+                    </section>
+						);
+					})
+				}
+                </div>
+				
+				
+			</section>
+		</article>
+	</div>
+    </PageLayout>
