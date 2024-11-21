@@ -54,7 +54,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 				},
 				{
 					title: "Hand",
-					field: "hands",
+					field: "hand",
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].value",
@@ -62,7 +62,16 @@ import DownloadButtons from "../components/download-buttons.astro";
 					},
 					headerFilter: "input",
 				},
-
+				{
+					title: "Datierung",
+					field: "hands",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].hands_dated[*].dated[*].label",
+						separator: "; ",
+					},
+					headerFilter: "input",
+				},
 				{
 					title: "Gruppe",
 					field: "group",
