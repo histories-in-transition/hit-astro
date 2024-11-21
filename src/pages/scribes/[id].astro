@@ -4,25 +4,20 @@ import Button from "../../components/button.astro";
 import { Icon } from "astro-icon/components";
 import NavLink from "../../components/nav-link.astro";
 import scribesJson from "../../content/data/scribes.json";
-import handsJson from "../../content/data/hands.json";
 
 export async function getStaticPaths() {
 	const scribes = Object.values(scribesJson);
-	const handsList = Object.values(handsJson);
 
-	const paths = scribes.map((scribe) => {
-		const scribHands = scribe.hands.map((hand) => hand.value);
-		// Find matching hands based on view_label in ScribHands array
-		const matchingHands = handsList.filter((hand) => scribHands.includes(hand.view_label));
+	const paths = scribes.map((scribe) => {		
 		return {
 			params: { id: scribe.hit_id },
-			props: { data: scribe, hands: matchingHands },
+			props: { data: scribe},
 		};
 	});
 	return paths;
 }
 
-const { data: scribe, hands: matchingHands } = Astro.props;
+const { data: scribe } = Astro.props;
 ---
 
 <PageLayout title={scribe.name}>
@@ -37,9 +32,28 @@ const { data: scribe, hands: matchingHands } = Astro.props;
 	</style>
 	<div>
 		<article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-			<h1 class="text-3xl font-semibold py-3 text-brandRed">
-				Schreiber: {scribe.name}
-			</h1>
+            <div class="flex items-center gap-3 text-brandRed">
+                <NavLink href=`/scribes/${scribe.prev.id}` class="flex items-center">
+                  <div class="sr-only">Link zu vorrigem Schreiber</div>
+                  <Icon
+                    aria-hidden="true"
+                    name="lucide:circle-chevron-left"
+                    class="text-3xl" 
+                  />
+                </NavLink>
+                <h1 class="text-3xl font-semibold py-3 text-brandRed">
+                    Schreiber: {scribe.name}
+                </h1>
+                <NavLink href=`/scribes/${scribe.next.id}` class="flex items-center">
+                  <div class="sr-only">Link zu nächstem Schreiber</div>
+                  <Icon
+                    aria-hidden="true"
+                    name="lucide:circle-chevron-right"
+                    class="text-3xl"
+                  />
+                </NavLink>
+              </div> 
+            
 
 			<div class="flex gap-2 justify-end">
 				<Button>TEI-XML</Button>
@@ -52,24 +66,11 @@ const { data: scribe, hands: matchingHands } = Astro.props;
 				>
 					<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
 					<dd class="pl-5">{scribe?.description}</dd>
-					<!-- <dt class="font-semibold border-r border-gray-300 pr-2">Hände:</dt>
-					<dd class="pl-5">
-						<ul>
-							{
-								scribe?.hands.map((hand) => (
-									<li>
-										<NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${hand.id}`}>
-											{hand.value}
-										</NavLink>
-									</li>
-								))
-							}
-						</ul>
-					</dd> -->
+					
 					<dt class="font-semibold border-r border-gray-300 pr-2">Datierung der Hände:</dt>
 					<dd class="pl-5">
                         <ul>
-                            {matchingHands.map(hand => hand.hands_dated.map(dating => {
+                            {scribe.hands.map(hand => hand.hands_dated.map(dating => {
                                 return (
                                     <li>
                                     {dating.dated.map(date => date.label)} 
@@ -84,15 +85,26 @@ const { data: scribe, hands: matchingHands } = Astro.props;
                         </ul>
                     </dd>
 					<dt class="font-semibold border-r border-gray-300 pr-2">Lokalisierung:</dt>
-					<dd class="pl-5"></dd>
+					<dd class="pl-5">
+                        <ul>
+                            {scribe.hands.map(hand => hand.hands_placed.map(placement => {
+                                return (
+                                    <li>
+                                        {placement.place.map(place => place.name)}
+                                        ({placement.authority.map(aut => `${aut.name}: ${aut.short_title}`)})
+                                    </li>
+                                )
+                            }))}
+                        </ul>
+                    </dd>
 				</dl>
                 <div>
                     <h2 class="sr-only">Zugewiesene Schreiberhände</h2>
-                    {matchingHands.map((hand) => {
+                    {scribe.hands.map((hand) => {
 						return (
 							<section class="border-2 rounded-sm shadow-sm border-gray-200 bg-brandRose my-5">
 								<h3 class="text-xl font-semibold py-3 text-brandRed p-5">
-									<NavLink href={`/hands/${hand.hit_id}`}>Schreiberhand {hand.view_label}</NavLink>
+									<NavLink href={`/hands/${hand.hit_id}`}>Schreiberhand {hand.label[0].value}</NavLink>
 								</h3>
                                 <section>
                             <h4 class="sr-only">Eingaben über die Schreiberhand</h4>

@@ -6,6 +6,7 @@ import {
   getMsItems,
   getStrata,
   getWorks,
+  getScribes,
 } from "./api-client.js";
 
 async function fetchAllData() {
@@ -18,6 +19,7 @@ async function fetchAllData() {
     getMsItems(),
     getStrata(),
     getWorks(),
+    getScribes(),
   ]);
   data.forEach(({ fileName, data }) => {
     writeFileSync(join(folderPath, fileName), JSON.stringify(data, null, 2), {
