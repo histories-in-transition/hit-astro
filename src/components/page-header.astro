@@ -4,7 +4,7 @@ const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
 ---
 
-<header class="sticky top-0">
+<header class="sticky top-0 z-50">
 	<div class="bg-brandRed p-3 align-center flex justify-between">
 		<div
 			class="md:px-10 text-xl md:text-3xl text-brandIvory self-center tracking-wide uppercase underline-offset-8 decoration-brandRose py-2"
@@ -42,7 +42,7 @@ const base = import.meta.env.BASE_URL;
 		</nav>
 		<nav
 			aria-labelledby="primary-navigation"
-			class="hidden md:flex items-center gap-x-4 text-brandIvory"
+			class="hidden md:flex items-center gap-x-4 text-brandIvory p-5"
 		>
 			<ul class="flex place-content-start gap-x-8 text-lg text-brandIvory">
 				<li

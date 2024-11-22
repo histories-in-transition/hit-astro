@@ -1,16 +1,132 @@
 ---
 import { Icon } from "astro-icon/components";
+import NavLink from "./nav-link.astro";
+import { Image } from "astro:assets";
+import oeawLogo from "../../public/images/oeaw-logo.png";
+import imafoLogo from "../../public/images/imafo_logo_web.png";
+import acdhLogo from "../../public/images/acdh-ch-logo-light.svg";
+import fwfLogo from "../../public/images/fwf-logo.png";
+import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 ---
 
-<footer class="flex items-center gap-3 justify-center bg-brandRed text-brandIvory p-3">
-	<span>© Copyright OEAW</span>
-	<span>|</span>
-	<span><a href="/imprint.html" class="underline decoration-dotted">Imprint</a></span>
-	<span>|</span>
-	<span>
-		<a class="flex items-center" href="https://github.com/histories-in-transition/hit-astro">
-			<span class="sr-only">Code Repo</span>
-			<Icon aria-hidden="true" name="lucide:github" />
-		</a>
-	</span>
+<footer class="bg-brandRose border-t border-gray-300">
+	<div class="mx-auto grid max-w-screen-xl gap-6 px-4 py-12 text-[#444]">
+		<div class="flex items-center gap-x-1.5 border-b border-gray-300 pb-4">
+			<Icon aria-hidden="true" class="size-4.5" name="lucide:message-circle" />
+			<span class="text-sm font-medium">Kontakt</span>
+		</div>
+		<div class="mx-auto grid md:flex gap-6">
+			<div class="flex gap-4">
+				<div class="grid">
+					<!-- <div class="hidden md:block">
+						<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
+							<Image src={imafoLogo} alt="" class="h-auto w-60" />
+							<span class="sr-only"> Institut für Mittelalterforschung (IMAFO) </span>
+						</a>
+					</div> -->
+					<div class="hidden md:block">
+						<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
+							<Image src={oeawLogo} alt="" class="h-auto w-32" />
+							<span class="sr-only"> Österreichische Akademie der Wissenschaften </span>
+						</a>
+					</div>
+				</div>
+				<div class="grid gap-2">
+					<p>
+						<span class="font-semibold">Forschungseinrichtung:</span>
+						<br />
+						<NavLink href="https://www.oeaw.ac.at/en/imafo/home"
+							>Institut für Mittelalterforschung (IMAFO)</NavLink
+						>
+						<br />
+						Österreichische Akademie der Wissenschaften
+					</p>
+					<p>
+						Dominikanerbastei 16 (Eingang Wiesingerstraße 4)
+						<br />
+						1010 Wien
+					</p>
+					<p>
+						E:
+						<a
+							class="underline decoration-dotted underline-offset-4 hover:no-underline"
+							href="mailto:imafo.office@oeaw.ac.at"
+						>
+							imafo@oeaw.ac.at
+						</a>
+					</p>
+				</div>
+			</div>
+
+			<div class="flex gap-4">
+				<div class="hidden md:block">
+					<a class="inline-flex py-1" href="https://www.oeaw.ac.at/acdh/">
+						<Image src={acdhLogo} alt="" />
+						<span class="sr-only">
+							Austrian Centre for Digital Humanities and Cultural Heritage
+						</span>
+					</a>
+				</div>
+				<div class="grid gap-2">
+					<p>
+						<span class="font-semibold">Technische Umsetzung:</span>
+						<br />
+						<NavLink href="https://www.oeaw.ac.at/acdh/"
+							>ACDH-CH Austrian Centre for Digital Humanities and Cultural Heritage</NavLink
+						>
+						<br />
+						Österreichische Akademie der Wissenschaften
+					</p>
+
+					<p>Bäckerstraße 13, 1010 Wien</p>
+					<p>
+						T:
+						<a
+							class="underline decoration-dotted underline-offset-4 hover:no-underline"
+							href="tel:+43 1 51581-2200"
+						>
+							+43 1 51581-2200
+						</a>
+						<br />
+
+						E:
+						<a
+							class="underline decoration-dotted underline-offset-4 hover:no-underline"
+							href="mailto:acdh-ch@oeaw.ac.at">acdh-ch@oeaw.ac.at</a
+						>
+					</p>
+				</div>
+			</div>
+
+			<div class="grid gap-y-2">
+				<div class="font-semibold">Gefördert von:</div>
+				<a
+					href="https://karten-t.dfg.de/gepris/projekt/524671186?context=projekt&task=showDetail&id=524671186&"
+				>
+					<Image src={dfgLogo} alt="der Deutschen Forschungsgemeinschaft" class="h-auto w-60" />
+				</a>
+
+				<a href="https://www.fwf.ac.at/forschungsradar/10.55776/I6576">
+					<Image src={fwfLogo} alt="dem Österreichischen Wissenschaftsfonds" class="h-auto w-60" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="bg-brandRed py-2 text-center text-brandIvory">
+		&copy; Copyright OEAW |
+		<NavLink
+			class="underline decoration-dotted underline-offset-4 hover:no-underline"
+			href="/imprint"
+		>
+			Imprint
+		</NavLink>
+		|
+		<NavLink
+			class="underline decoration-dotted underline-offset-4 hover:no-underline"
+			href="https://github.com/histories-in-transition/hit-astro"
+		>
+			Code Repo
+			<Icon class="inline-flex" aria-hidden="true" name="lucide:github" />
+		</NavLink>
+	</div>
 </footer>

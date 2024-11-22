@@ -12,7 +12,7 @@ interface Props {
 const { title = "Histories in transition" } = Astro.props;
 ---
 
-<html class="h-full">
+<html class="h-full" lang="de">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="light" />
@@ -22,7 +22,9 @@ const { title = "Histories in transition" } = Astro.props;
 	</head>
 	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brandIvory">
 		<PageHeader />
-		<slot />
+		<main>
+			<slot />
+		</main>
 		<PageFooter />
 	</body>
 </html>

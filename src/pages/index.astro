@@ -1,13 +1,12 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
-import Button from "../components/button.astro";
 import NavLink from "../components/nav-link.astro";
 import { Image } from "astro:assets";
-import clm210 from "../../public/assets/images/clm210.jpg";
+import clm210 from "../../public/images/clm210.jpg";
 ---
 
 <PageLayout title="Home">
-	<div class="md:grid mx-auto md:w-3/4 grid-cols-2 py-4 px-10 place-content-center gap-10">
+	<div class="md:grid mx-auto md:w-3/4 grid-cols-2 py-10 px-10 place-content-center gap-10">
 		<div class="self-center">
 			<div class="grid gap-2">
 				<h1 class="self-center text-4xl font-semibold">
@@ -27,12 +26,21 @@ import clm210 from "../../public/assets/images/clm210.jpg";
 					relational database, which will allow users to analyze and visualize the chronological
 					layers and connections between manuscripts.
 				</p>
-				<Button><NavLink href="/about">About the project</NavLink></Button>
-				<Button><NavLink href="/search">Explore the database</NavLink></Button>
+				<NavLink
+					class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition text-center"
+					href="/about">About the project</NavLink
+				>
+				<NavLink
+					class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition text-center"
+					href="/search">Explore the database</NavLink
+				>
 			</div>
 		</div>
 		<figure class="md:grid gap-2 content-start hidden">
-			<!-- <Image alt="Image from the manuscript BSB Clm 210, fol. 91v, showing personification of the months." src={clm210}></Image> -->
+			<Image
+				alt="Abbildung aus dem Manuskript BSB Clm 210, fol. 91v, mit der Personifizierung der Monate."
+				src={clm210}
+			/>
 			<figcaption class="font-extralight text-xs text-right">BSB, Clm. 210, fol. 91v</figcaption>
 		</figure>
 	</div>

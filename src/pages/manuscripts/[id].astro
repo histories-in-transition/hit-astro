@@ -67,6 +67,7 @@ const codUnits = manuscript.related__cod_units ;
                 name="lucide:circle-chevron-left"
                 class="text-3xl" 
               />
+              <span class="sr-only">zum vorherigen Eintrag</span>
             </NavLink>
             <h1 class="text-3xl font-semibold py-3 text-brandRed">{manuscript?.shelfmark[0]?.value}</h1>
             <NavLink href=`/manuscripts/${manuscript.next.id}` class="flex items-center">
@@ -75,6 +76,7 @@ const codUnits = manuscript.related__cod_units ;
                 name="lucide:circle-chevron-right"
                 class="text-3xl"
               />
+              <span class="sr-only">zum nächsten Eintrag</span>
             </NavLink>
           </header>
           
