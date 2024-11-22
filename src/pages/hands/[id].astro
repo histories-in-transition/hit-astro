@@ -123,7 +123,7 @@ const { data: item } = Astro.props;
                     <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
                     <dd class="pl-5">
                       {item.scribe.length > 0 
-                        ? item.scribe.map(scrib => scrib.name)  
+                        ? item.scribe.map(scrib => <NavLink class="hover:text-brandRed" href={`/scribes/${scrib.hit_id}`}>{scrib.name}</NavLink>)  
                         : 'N/A'
                       }           
                     </dd>                
