@@ -94,7 +94,12 @@ const codUnits = manuscript.related__cod_units ;
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-              <dd class="pl-5"><NavLink href={manuscript?.library_full[0]?.gnd_url} target="_blank" class="hover:text-brandRed">{manuscript.library_full[0]?.library_full} <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon></NavLink></dd>
+              <dd class="pl-5">
+                <NavLink href={manuscript?.library_full[0]?.gnd_url} target="_blank" class="hover:text-brandRed">
+                  {manuscript.library_full[0]?.library_full} 
+                  <Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:external-link"></Icon>
+                </NavLink>
+              </dd>
               
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
