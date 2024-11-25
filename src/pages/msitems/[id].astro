@@ -54,7 +54,9 @@ const { data: item, hands: matchingHands } = Astro.props;
               />
             </NavLink>
             <h1 class="text-3xl font-semibold py-3 text-brandRed">
-              <NavLink href=`/manuscripts/${item.manuscript[0]?.hit_id}` class="underline underline-offset-2">{item.manuscript[0]?.shelfmark[0].value}</NavLink>
+              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} class="underline underline-offset-2">
+                {item.manuscript[0]?.shelfmark[0].value}
+              </NavLink>
               <span> ({item?.locus_grp}) </span>
             </h1>
             <NavLink href=`/msitems/${item.next.id}` class="flex items-center">
@@ -129,6 +131,16 @@ const { data: item, hands: matchingHands } = Astro.props;
                   return <ul>
                           <li>
                             <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}</NavLink>
+                            <span>
+                              <Icon
+                                class="inline-flex align-middle"
+                                aria-hidden="true"
+                                name="lucide:arrow-right"
+                              />
+                              {matchingHands
+                                  .filter(hand => hand.hands_role
+                                      .some(role => role.hit_id === filteredRole.hit_id))
+                                  .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}</span>
                           </li>
                   </ul>
           
@@ -142,7 +154,11 @@ const { data: item, hands: matchingHands } = Astro.props;
                   return  <ul>
                             <li>
                               <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}</NavLink>
-                              {' -> '}
+                              <Icon
+                                class="inline-flex align-middle"
+                                aria-hidden="true"
+                                name="lucide:arrow-right"
+                              />
                               <span>{filteredRole.role.map(entry => entry.value)}</span>
                               {filteredRole.locus &&
                               <span>auf fol. {filteredRole.locus}</span>

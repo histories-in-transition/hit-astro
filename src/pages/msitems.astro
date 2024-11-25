@@ -17,12 +17,39 @@ import DownloadButtons from "../components/download-buttons.astro";
 		<script>
 			import { TabulatorFull as Tabulator } from "tabulator-tables";
 			import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-			// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 			import data from "../content/data/ms_items.json";
-			import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
-			import { withBasePath } from "../lib/withBasePath";
+			import handsJson from "../content/data/hands.json";
 
-			var tabledata = [...Object.values(data)];
+			// Combine the two datasets
+			const tabledata = Object.values(data).map((msItem) => {
+				const matchingOrigHands = Object.values(handsJson).filter((hand) =>
+					hand.hands_role.some(
+						(handRole) =>
+							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+							handRole.role.some((role) => role.value === "Schreiber"),
+					),
+				);
+				const matchingEditHands = Object.values(handsJson).filter((hand) =>
+					hand.hands_role.some(
+						(handRole) =>
+							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+							handRole.role.some((role) => role.value != "Schreiber"),
+					),
+				);
+				return {
+					...msItem,
+					origHands: matchingOrigHands,
+					editHands: matchingEditHands, // Add matching hands to each ms_item entry
+				};
+			});
+
+			import {
+				jsonpathLookup,
+				jsonpathsLookup,
+				jsonpathDistinctLookup,
+				jsonpathsDistinctLookup,
+			} from "../lib/tabulator-utils.js";
+			import { withBasePath } from "../lib/withBasePath";
 
 			var table = new Tabulator("#tabulator-table", {
 				headerFilterLiveFilterDelay: 600,
@@ -75,6 +102,25 @@ import DownloadButtons from "../components/download-buttons.astro";
 						mutator: jsonpathsLookup,
 						mutatorParams: {
 							paths: ["$[*].hand[*].value", "$[*].role[*].value"],
+						},
+						headerFilter: "input",
+					},
+					{
+						title: "Datum der Niederschrift",
+						field: "origHands",
+						mutator: jsonpathsDistinctLookup,
+						mutatorParams: {
+							paths: ["$[*].hands_dated[*].dated[*].label"],
+						},
+						headerFilter: "input",
+					},
+
+					{
+						title: "Datum der Bearbeitung",
+						field: "editHands",
+						mutator: jsonpathsDistinctLookup,
+						mutatorParams: {
+							paths: ["$[*].hands_dated[*].dated[*].label"],
 						},
 						headerFilter: "input",
 					},

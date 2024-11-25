@@ -30,6 +30,23 @@ export function jsonpathsLookup(value, data, type, params, component) {
   return allResults.join(separator);
 }
 
+/* for several paths from one field joined in one column */
+export function jsonpathsDistinctLookup(value, data, type, params, component) {
+  const paths = params.paths;  // Assume `paths` is an array
+  const separator = params.separator || ", ";
+  const reverse = params.reverse || false;
+  
+  // Collect results from each path
+  let allResults = [...new Set(paths.flatMap(path => JSONPath({ path: path, json: value })))];
+
+  // Optionally reverse the results and join them
+  if (reverse) {
+    allResults = allResults.reverse();
+  }
+  
+  return allResults.join(separator);
+}
+
 
 export function jsonpathDistinctLookup(value, data, type, params, component) {
   const path = params.path;
