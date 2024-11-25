@@ -298,7 +298,7 @@ const codUnits = manuscript.related__cod_units ;
                   })}
             </dl>
           
-            <table class="w-full bg-brandRose table-auto rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
+            <table class="w-full bg-brandRose table-fixed rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
               <thead>
                 <tr> 
                   <th>                  
@@ -317,7 +317,7 @@ const codUnits = manuscript.related__cod_units ;
                       </label>
                     </form>
                   </th>   
-                  <th>                  
+                  <th class="w-80">                  
                     <form role="search" data-search-form>
                       <label class="flex flex-col items-start p-2">
                         <div>Werk</div>
@@ -383,15 +383,28 @@ const codUnits = manuscript.related__cod_units ;
                         handRole.hit_id === role.hit_id
                       )).map(filteredStratum => filteredStratum.number)}</td>
                     <td class="px-2">{hand.hands_dated.map(date => date.dated.map(i => i.label))}</td>
-                    <td class="px-2">{role.ms_item.map(msItem => msItem.title_work
-                        .map(work => {
-                                      return  work.author[0]?.name ? `${work.author
-                                        .map(aut => aut.name)
-                                        .join(', ')}: ${work.title}` : work.title
-                                            
-                                            }).join(', '))}</td>
+                    <td class="px-2">
+                        {role.ms_item.map(msItem =>
+                          <ul class="list-disc">
+                            {msItem.title_work.map(work => (
+                            <li>
+                              {work.author[0]?.name
+                                ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
+                                : work.title}
+                              <br />
+                            </li>
+                          ))}
+                            </ul>
+                        )}
+                      </td>
+
                       
-                    <td class="px-2">{role.ms_item.map(msItem => <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink>)}</td>
+                    <td class="px-2">{role.ms_item.map((msItem, index) => 
+                      <>
+                        {index > 0 && ' | '}
+                      <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
+                      </>)}
+                      </td>
                     <td class="px-2"><NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink></td>
                     <td class="px-2">{role.role.map(ro => ro.value).join(', ')}</td>
                     <td class="px-2">{role.locus}</td>

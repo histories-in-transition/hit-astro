@@ -58,7 +58,7 @@ function reapplyRowStriping(rows) {
 const tableRows = document.querySelectorAll("tbody tr");
 tableRows.forEach((row) => {
   row.addEventListener("mouseenter", () => {
-    row.style.backgroundColor = "#ffc08c";
+    row.style.backgroundColor = "#e5d9cf";
     row.style.color = "black";
   });
   row.addEventListener("mouseleave", () => {

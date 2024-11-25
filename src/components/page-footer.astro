@@ -17,19 +17,15 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 		</div>
 		<div class="mx-auto grid md:flex gap-6">
 			<div class="flex gap-4">
-				<div class="grid">
-					<div class="hidden md:block">
-						<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
-							<Image src={imafoLogo} alt="" class="h-auto w-60" />
-							<span class="sr-only"> Institut für Mittelalterforschung (IMAFO) </span>
-						</a>
-					</div>
-					<div class="hidden md:block">
-						<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
-							<Image src={oeawLogo} alt="" class="h-auto w-32" />
-							<span class="sr-only"> Österreichische Akademie der Wissenschaften </span>
-						</a>
-					</div>
+				<div class="md:grid hidden">
+					<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
+						<Image src={imafoLogo} alt="" class="h-auto w-60" />
+						<span class="sr-only"> Institut für Mittelalterforschung (IMAFO) </span>
+					</a>
+					<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
+						<Image src={oeawLogo} alt="" class="h-auto w-32" />
+						<span class="sr-only"> Österreichische Akademie der Wissenschaften </span>
+					</a>
 				</div>
 				<div class="grid gap-2">
 					<p>
@@ -59,14 +55,12 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 			</div>
 
 			<div class="flex gap-4">
-				<div class="hidden md:block">
-					<a class="inline-flex py-1" href="https://www.oeaw.ac.at/acdh/">
-						<Image src={acdhLogo} alt="" />
-						<span class="sr-only">
-							Austrian Centre for Digital Humanities and Cultural Heritage
-						</span>
-					</a>
-				</div>
+				<a class="hidden md:inline-flex py-1" href="https://www.oeaw.ac.at/acdh/">
+					<Image src={acdhLogo} alt="" />
+					<span class="sr-only">
+						Austrian Centre for Digital Humanities and Cultural Heritage
+					</span>
+				</a>
 				<div class="grid gap-2">
 					<p>
 						<span class="font-semibold">Technische Umsetzung:</span>
@@ -103,11 +97,11 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 				<a
 					href="https://karten-t.dfg.de/gepris/projekt/524671186?context=projekt&task=showDetail&id=524671186&"
 				>
-					<Image src={dfgLogo} alt="der Deutschen Forschungsgemeinschaft" class="h-auto w-60" />
+					<Image src={dfgLogo} alt="Deutsche Forschungsgemeinschaft" class="h-auto w-60" />
 				</a>
 
 				<a href="https://www.fwf.ac.at/forschungsradar/10.55776/I6576">
-					<Image src={fwfLogo} alt="dem Österreichischen Wissenschaftsfonds" class="h-auto w-60" />
+					<Image src={fwfLogo} alt="Österreichischer Wissenschaftsfonds" class="h-auto w-60" />
 				</a>
 			</div>
 		</div>
