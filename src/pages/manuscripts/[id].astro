@@ -384,26 +384,34 @@ const codUnits = manuscript.related__cod_units ;
                       )).map(filteredStratum => filteredStratum.number)}</td>
                     <td class="px-2">{hand.hands_dated.map(date => date.dated.map(i => i.label))}</td>
                     <td class="px-2">
-                        {role.ms_item.map(msItem =>
-                          <ul class="list-disc">
-                            {msItem.title_work.map(work => (
-                            <li>
-                              {work.author[0]?.name
-                                ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
-                                : work.title}
-                              <br />
-                            </li>
-                          ))}
-                            </ul>
+                      {role.ms_item.length > 1 
+                      ? (<ul class="list-disc">
+                          {role.ms_item.map(msItem =>
+                             msItem.title_work.map(work => (
+                              <li>
+                                {work.author[0]?.name
+                                  ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
+                                  : work.title}
+                              </li>
+                            ))
+                          )}
+                        </ul>) 
+                      : (role.ms_item.map(msItem =>
+                        msItem.title_work.map(work => (
+                              <>
+                                {work.author[0]?.name
+                                  ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
+                                      : work.title}
+                                    <br />
+                              </>
+                            ))
+                          )
                         )}
-                      </td>
-
+                    </td>
                       
-                    <td class="px-2">{role.ms_item.map((msItem, index) => 
-                      <>
-                        {index > 0 && ' | '}
+                    <td class="px-2">{role.ms_item.map((msItem) =>                         
                       <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
-                      </>)}
+                     )}
                       </td>
                     <td class="px-2"><NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink></td>
                     <td class="px-2">{role.role.map(ro => ro.value).join(', ')}</td>

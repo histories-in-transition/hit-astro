@@ -1,8 +1,6 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import DownloadButtons from "../components/download-buttons.astro";
-const pathname = Astro.url.pathname;
-const base = import.meta.env.BASE_URL;
 ---
 
 <PageLayout title="Works">
@@ -10,8 +8,6 @@ const base = import.meta.env.BASE_URL;
 		<div>
 			<div class="flex justify-between align-middle mb-2">
 				<h1 class="text-2xl font-semibold text-brandRed py-2">Werke</h1>
-				<p>Current Pathname: {pathname})}</p>
-				<p>Current base: {base})}</p>
 				<DownloadButtons />
 			</div>
 		</div>

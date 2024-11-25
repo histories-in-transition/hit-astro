@@ -2,8 +2,6 @@
 import NavLink from "./nav-link.astro";
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
-console.log("Current Pathname:", pathname);
-console.log("Base Path:", base);
 ---
 
 <header class="sticky top-0 z-50">
@@ -48,7 +46,7 @@ console.log("Base Path:", base);
 		>
 			<ul class="flex place-content-start gap-x-8 text-lg text-brandIvory">
 				<li
-					class={`${pathname === base + "/manuscripts" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
+					class={`${pathname === base + "manuscripts" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
 					<NavLink href="/manuscripts">Handschriften</NavLink>
 				</li>
