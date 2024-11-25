@@ -2,6 +2,8 @@
 import NavLink from "./nav-link.astro";
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
+console.log("Current Pathname:", pathname);
+console.log("Base Path:", base);
 ---
 
 <header class="sticky top-0 z-50">
@@ -11,8 +13,8 @@ const base = import.meta.env.BASE_URL;
 		>
 			<NavLink href="/index.html"
 				>Histories in transition
-				<span class="hidden md:flex normal-case italic text-xl"
-					>The Case of Freising and Salzburg (9th – 12th c.)</span
+				<span class="hidden md:flex normal-case italic text-xl">
+					The Case of Freising and Salzburg (9th – 12th c.)</span
 				>
 			</NavLink>
 		</div>
