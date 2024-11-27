@@ -107,15 +107,12 @@ export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
   let startYears = [];
   let endYears = [];
 
-  // Case 1: If rowValue is a string (e.g., "821-930"), handle it directly
+  // rowValue is a string (e.g., "821-930")
   if (typeof rowValue === 'string' && rowValue.includes('-')) {
     const [start, end] = rowValue.split('-').map(Number);
     startYears = [start];
     endYears = [end];
   }
-
-  console.log("Start Years:", startYears);
-  console.log("End Years:", endYears);
 
   if (startYears.length === 0 || endYears.length === 0) {
     console.warn("No start or end years found for this row:", rowValue);
@@ -130,31 +127,65 @@ export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
 
 
 
-export function customYearFilterEditor(cell, onRendered, success, cancel) {
-  // Create input element
-  console.log("Custom Filter Editor Rendered"); // Debugging
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = "Enter year...";
-  input.style.width = "100%";
+/* NOT FOR NOW - HEADER FOR DATE WITH TWO INPUT FIELDS 'FROM' AND 'TO'
+export function dateRangeHeaderFilter(cell, onRendered, success, cancel, editorParams) {
+  // Create a container for the inputs
+  const container = document.createElement("span");
 
-  // Set initial value from the filter
-  input.value = cell.getValue() || "";
+  // Create and style start and end input fields
+  const start = document.createElement("input");
+  start.type = "number";
+  start.placeholder = "Start Year";
+  start.style.padding = "4px";
+  start.style.width = "50%";
+  start.style.boxSizing = "border-box";
 
-  // Trigger success on Enter
-  input.addEventListener("keydown", function (e) {
+  const end = document.createElement("input");
+  end.type = "number";
+  end.placeholder = "End Year";
+  end.style.padding = "4px";
+  end.style.width = "50%";
+  end.style.boxSizing = "border-box";
+
+  container.appendChild(start);
+  container.appendChild(end);
+
+  // Helper function to build the date range object
+  const buildDateRange = () => ({
+    start: parseInt(start.value, 10) || null,
+    end: parseInt(end.value, 10) || null,
+  });
+
+  // Submit new value on blur or change
+  [start, end].forEach(input => {
+    input.addEventListener("change", () => success(buildDateRange()));
+    input.addEventListener("blur", () => success(buildDateRange()));
+  });
+
+  // Submit new value on Enter, cancel on Esc
+  container.addEventListener("keydown", e => {
     if (e.key === "Enter") {
-      success(input.value); // Submit value to filter
+      success(buildDateRange());
     } else if (e.key === "Escape") {
-      cancel(); // Cancel filter on Escape
+      cancel();
     }
   });
 
-  // Focus input on render
-  onRendered(() => {
-    input.focus();
-    input.select();
-  });
+  return container;
+}; 
 
-  return input;
+
+export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
+  if (!headerValue || (!headerValue.start && !headerValue.end)) {
+    return true; // If no filter is set, show all rows
+  }
+
+  const [startYear, endYear] = rowValue.split("-").map(Number); // Assuming "821-930" format
+
+  const filterStart = headerValue.start || -Infinity; // Use -Infinity if no start year
+  const filterEnd = headerValue.end || Infinity; // Use Infinity if no end year
+
+  // Check if the row range overlaps with the filter range
+  return !(startYear > filterEnd || endYear < filterStart);
 }
+*/

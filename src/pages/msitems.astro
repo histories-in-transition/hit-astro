@@ -45,6 +45,14 @@ import DownloadButtons from "../components/download-buttons.astro";
 							handRole.role.some((role) => role.value === "Schreiber"),
 					),
 				);
+				// get the scribe hands again for using in column Schreiberort:
+				const matchingPlaces = handsJson.filter((hand) =>
+					hand.hands_role.some(
+						(handRole) =>
+							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+							handRole.role.some((role) => role.value === "Schreiber"),
+					),
+				);
 				const matchingEditHands = Object.values(handsJson).filter((hand) =>
 					hand.hands_role.some(
 						(handRole) =>
@@ -56,6 +64,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 					...msItem,
 					origHands: matchingOrigHands,
 					editHands: matchingEditHands,
+					origPlaces: matchingPlaces,
 				};
 			});
 
@@ -63,7 +72,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 				jsonpathLookup,
 				jsonpathsLookup,
 				dateRangeFilter,
-				customYearFilterEditor,
+				jsonpathDistinctLookup,
 				jsonpathsDistinctLookup,
 			} from "../lib/tabulator-utils.js";
 			import { withBasePath } from "../lib/withBasePath";
@@ -74,12 +83,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 				data: tabledata,
 				layout: "fitColumns",
 				responsiveLayout: "collapse",
-				columns: [
-					{
-						title: "ID",
-						field: "view_label",
-						formatter: "textarea",
-					},
+				columns: [					
 					{
 						title: "Handschrift",
 						field: "manuscript",
@@ -114,12 +118,10 @@ import DownloadButtons from "../components/download-buttons.astro";
 						headerFilter: "input",
 					},
 					{
-						title: "Schreiberhände",
-						field: "hands_role",
-						mutator: jsonpathsLookup,
-						mutatorParams: {
-							paths: ["$[*].hand[*].value", "$[*].role[*].value"],
-						},
+						title: "Schreiberort",
+						field: "origPlaces",
+						mutator: jsonpathDistinctLookup,
+						mutatorParams: { path: "$[*].hands_placed[*].place[*].name" },
 						headerFilter: "input",
 					},
 					{
@@ -133,8 +135,8 @@ import DownloadButtons from "../components/download-buttons.astro";
 							],
 							separator: "-",
 						},
-						headerFilter: customYearFilterEditor,
-						headerFilterFunc: dateRangeFilter, // Use the custom filter function
+						headerFilter: "input",
+						headerFilterFunc: dateRangeFilter,
 						headerFilterFuncParams: {
 							paths: [
 								"$[*].hands_dated[*].dated[*].yearRange.start",
@@ -155,6 +157,13 @@ import DownloadButtons from "../components/download-buttons.astro";
 							separator: "-",
 						},
 						headerFilter: "input",
+						headerFilterFunc: dateRangeFilter,
+						headerFilterFuncParams: {
+							paths: [
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
+							],
+						},
 					},
 				],
 			});
