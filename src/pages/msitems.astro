@@ -18,11 +18,27 @@ import DownloadButtons from "../components/download-buttons.astro";
 			import { TabulatorFull as Tabulator } from "tabulator-tables";
 			import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 			import data from "../content/data/ms_items.json";
-			import handsJson from "../content/data/hands.json";
+			import hands_Json from "../content/data/hands.json";
+
+			// Preprocessing data from json
+			//  replacing the hands_dated property with a new, processed version
+			const handsJson = Object.values(hands_Json).map((hand) => ({
+				...hand,
+				hands_dated: hand.hands_dated.map((date) => ({
+					...date,
+					dated: date.dated.map((i) => ({
+						...i,
+						yearRange: {
+							start: i.not_before ? new Date(i.not_before).getFullYear() : null,
+							end: i.not_after ? new Date(i.not_after).getFullYear() : null,
+						},
+					})),
+				})),
+			}));
 
 			// Combine the two datasets
 			const tabledata = Object.values(data).map((msItem) => {
-				const matchingOrigHands = Object.values(handsJson).filter((hand) =>
+				const matchingOrigHands = handsJson.filter((hand) =>
 					hand.hands_role.some(
 						(handRole) =>
 							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
@@ -39,14 +55,15 @@ import DownloadButtons from "../components/download-buttons.astro";
 				return {
 					...msItem,
 					origHands: matchingOrigHands,
-					editHands: matchingEditHands, // Add matching hands to each ms_item entry
+					editHands: matchingEditHands,
 				};
 			});
 
 			import {
 				jsonpathLookup,
 				jsonpathsLookup,
-				jsonpathDistinctLookup,
+				dateRangeFilter,
+				customYearFilterEditor,
 				jsonpathsDistinctLookup,
 			} from "../lib/tabulator-utils.js";
 			import { withBasePath } from "../lib/withBasePath";
@@ -110,9 +127,20 @@ import DownloadButtons from "../components/download-buttons.astro";
 						field: "origHands",
 						mutator: jsonpathsDistinctLookup,
 						mutatorParams: {
-							paths: ["$[*].hands_dated[*].dated[*].label"],
+							paths: [
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
+							],
+							separator: "-",
 						},
-						headerFilter: "input",
+						headerFilter: customYearFilterEditor,
+						headerFilterFunc: dateRangeFilter, // Use the custom filter function
+						headerFilterFuncParams: {
+							paths: [
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
+							],
+						},
 					},
 
 					{
@@ -120,7 +148,11 @@ import DownloadButtons from "../components/download-buttons.astro";
 						field: "editHands",
 						mutator: jsonpathsDistinctLookup,
 						mutatorParams: {
-							paths: ["$[*].hands_dated[*].dated[*].label"],
+							paths: [
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
+							],
+							separator: "-",
 						},
 						headerFilter: "input",
 					},

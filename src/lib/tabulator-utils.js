@@ -92,3 +92,69 @@ export function jsonpathGetCentury(value, data, type, params, component) {
 
   return [...new Set(allResults)].join(separator); // Remove duplicates
 }
+
+
+export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
+  console.log("Filter Invoked with Value:", headerValue);
+  console.log("Row Value:", JSON.stringify(rowValue, null, 2));
+
+  if (!headerValue || isNaN(headerValue)) {
+    return true; // Allow all rows if the filter is empty or invalid
+  }
+
+  const filterYear = parseInt(headerValue, 10);
+
+  let startYears = [];
+  let endYears = [];
+
+  // Case 1: If rowValue is a string (e.g., "821-930"), handle it directly
+  if (typeof rowValue === 'string' && rowValue.includes('-')) {
+    const [start, end] = rowValue.split('-').map(Number);
+    startYears = [start];
+    endYears = [end];
+  }
+
+  console.log("Start Years:", startYears);
+  console.log("End Years:", endYears);
+
+  if (startYears.length === 0 || endYears.length === 0) {
+    console.warn("No start or end years found for this row:", rowValue);
+  }
+
+  // Check if filterYear is within any range
+  return startYears.some((start, index) => {
+    const end = endYears[index];
+    return filterYear >= start && filterYear <= end;
+  });
+}
+
+
+
+export function customYearFilterEditor(cell, onRendered, success, cancel) {
+  // Create input element
+  console.log("Custom Filter Editor Rendered"); // Debugging
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Enter year...";
+  input.style.width = "100%";
+
+  // Set initial value from the filter
+  input.value = cell.getValue() || "";
+
+  // Trigger success on Enter
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      success(input.value); // Submit value to filter
+    } else if (e.key === "Escape") {
+      cancel(); // Cancel filter on Escape
+    }
+  });
+
+  // Focus input on render
+  onRendered(() => {
+    input.focus();
+    input.select();
+  });
+
+  return input;
+}
