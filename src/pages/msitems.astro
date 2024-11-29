@@ -67,13 +67,13 @@ import DownloadButtons from "../components/download-buttons.astro";
 					origPlaces: matchingPlaces,
 				};
 			});
-
+			console.log(tabledata.map((item) => item.editHands));
 			import {
 				jsonpathLookup,
 				jsonpathsLookup,
 				dateRangeFilter,
 				jsonpathDistinctLookup,
-				jsonpathsDistinctLookup,
+				jsonpathsDistinctRanges,
 			} from "../lib/tabulator-utils.js";
 			import { withBasePath } from "../lib/withBasePath";
 
@@ -83,7 +83,7 @@ import DownloadButtons from "../components/download-buttons.astro";
 				data: tabledata,
 				layout: "fitColumns",
 				responsiveLayout: "collapse",
-				columns: [					
+				columns: [
 					{
 						title: "Handschrift",
 						field: "manuscript",
@@ -127,13 +127,10 @@ import DownloadButtons from "../components/download-buttons.astro";
 					{
 						title: "Datum der Niederschrift",
 						field: "origHands",
-						mutator: jsonpathsDistinctLookup,
+						mutator: jsonpathsDistinctRanges,
 						mutatorParams: {
-							paths: [
-								"$[*].hands_dated[*].dated[*].yearRange.start",
-								"$[*].hands_dated[*].dated[*].yearRange.end",
-							],
-							separator: "-",
+							paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+							separator: ", ",
 						},
 						headerFilter: "input",
 						headerFilterFunc: dateRangeFilter,
@@ -148,13 +145,10 @@ import DownloadButtons from "../components/download-buttons.astro";
 					{
 						title: "Datum der Bearbeitung",
 						field: "editHands",
-						mutator: jsonpathsDistinctLookup,
+						mutator: jsonpathsDistinctRanges,
 						mutatorParams: {
-							paths: [
-								"$[*].hands_dated[*].dated[*].yearRange.start",
-								"$[*].hands_dated[*].dated[*].yearRange.end",
-							],
-							separator: "-",
+							paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+							separator: ", ",
 						},
 						headerFilter: "input",
 						headerFilterFunc: dateRangeFilter,
