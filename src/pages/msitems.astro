@@ -1,189 +1,191 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
-import DownloadButtons from "../components/download-buttons.astro";
+import TableHead from "../components/table-head.astro";
 ---
 
 <PageLayout title="MS-Items">
-	<div class="mx-auto p-4 lg:w-4/5">
-		<div>
-			<div class="flex justify-between align-middle mb-2">
-				<h1 class="text-2xl font-semibold text-brandRed py-2">MS-Items</h1>
-				<DownloadButtons />
-			</div>
-			<div class="overflow-y-auto max-h-[1000px]">
-				<table id="tabulator-table"></table>
-			</div>
-		</div>
-		<script>
-			import { TabulatorFull as Tabulator } from "tabulator-tables";
-			import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-			import data from "../content/data/ms_items.json";
-			import hands_Json from "../content/data/hands.json";
+	<TableHead title="Ms-Items" />
+	<script>
+		import { TabulatorFull as Tabulator } from "tabulator-tables";
+		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
+		import data from "../content/data/ms_items.json";
+		import hands_Json from "../content/data/hands.json";
 
-			// Preprocessing data from json
-			//  replacing the hands_dated property with a new, processed version
-			const handsJson = Object.values(hands_Json).map((hand) => ({
-				...hand,
-				hands_dated: hand.hands_dated.map((date) => ({
-					...date,
-					dated: date.dated.map((i) => ({
-						...i,
-						yearRange: {
-							start: i.not_before ? new Date(i.not_before).getFullYear() : null,
-							end: i.not_after ? new Date(i.not_after).getFullYear() : null,
-						},
-					})),
+		// Preprocessing data from json
+		//  replacing the hands_dated property with a new, processed version
+		const handsJson = Object.values(hands_Json).map((hand) => ({
+			...hand,
+			hands_dated: hand.hands_dated.map((date) => ({
+				...date,
+				dated: date.dated.map((i) => ({
+					...i,
+					yearRange: {
+						start: i.not_before ? new Date(i.not_before).getFullYear() : null,
+						end: i.not_after ? new Date(i.not_after).getFullYear() : null,
+					},
 				})),
-			}));
+			})),
+		}));
 
-			// Combine the two datasets
-			const tabledata = Object.values(data).map((msItem) => {
-				const matchingOrigHands = handsJson.filter((hand) =>
-					hand.hands_role.some(
-						(handRole) =>
-							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-							handRole.role.some((role) => role.value === "Schreiber"),
-					),
-				);
-				// get the scribe hands again for using in column Schreiberort:
-				const matchingPlaces = handsJson.filter((hand) =>
-					hand.hands_role.some(
-						(handRole) =>
-							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-							handRole.role.some((role) => role.value === "Schreiber"),
-					),
-				);
-				const matchingEditHands = Object.values(handsJson).filter((hand) =>
-					hand.hands_role.some(
-						(handRole) =>
-							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-							handRole.role.some((role) => role.value != "Schreiber"),
-					),
-				);
-				return {
-					...msItem,
-					origHands: matchingOrigHands,
-					editHands: matchingEditHands,
-					origPlaces: matchingPlaces,
-				};
-			});
-			console.log(tabledata.map((item) => item.editHands));
-			import {
-				jsonpathLookup,
-				jsonpathsLookup,
-				dateRangeFilter,
-				jsonpathDistinctLookup,
-				jsonpathsDistinctRanges,
-			} from "../lib/tabulator-utils.js";
-			import { withBasePath } from "../lib/withBasePath";
+		// Combine the two datasets
+		const tabledata = Object.values(data).map((msItem) => {
+			const matchingOrigHands = handsJson.filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value === "Schreiber"),
+				),
+			);
+			// get the scribe hands again for using in column Schreiberort:
+			const matchingPlaces = handsJson.filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value === "Schreiber"),
+				),
+			);
+			const matchingEditHands = Object.values(handsJson).filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value != "Schreiber"),
+				),
+			);
+			return {
+				...msItem,
+				origHands: matchingOrigHands,
+				editHands: matchingEditHands,
+				origPlaces: matchingPlaces,
+			};
+		});
+		console.log(tabledata.map((item) => item.editHands));
+		import {
+			jsonpathLookup,
+			jsonpathsLookup,
+			dateRangeFilter,
+			jsonpathDistinctLookup,
+			jsonpathsDistinctRanges,
+		} from "../lib/tabulator-utils.js";
+		import { withBasePath } from "../lib/withBasePath";
 
-			var table = new Tabulator("#tabulator-table", {
-				headerFilterLiveFilterDelay: 600,
-				height: 900,
-				data: tabledata,
-				layout: "fitColumns",
-				responsiveLayout: "collapse",
-				columns: [
-					{
-						title: "Handschrift",
-						field: "manuscript",
-						mutator: jsonpathLookup,
-						mutatorParams: {
-							path: "$[*].shelfmark[*].value",
-							separator: "; ",
-						},
-						headerFilter: "input",
+		var table = new Tabulator("#tabulator-table", {
+			headerFilterLiveFilterDelay: 600,
+			height: 900,
+			data: tabledata,
+			layout: "fitColumns",
+			responsiveLayout: "collapse",
+			columns: [
+				{
+					title: "Handschrift",
+					field: "manuscript",
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].shelfmark[*].value",
+						separator: "; ",
 					},
-					{
-						title: "Locus",
-						field: "locus_grp",
+					headerFilter: "input",
+				},
+				{
+					title: "Locus",
+					field: "locus_grp",
 
-						headerFilter: "input",
+					headerFilter: "input",
+				},
+				{
+					title: "Werk",
+					field: "title_work",
+					mutator: jsonpathsLookup,
+					mutatorParams: {
+						paths: ["$[*].author[*].name", "$[*].title"],
+						separator: ": ",
 					},
-					{
-						title: "Werk",
-						field: "title_work",
-						mutator: jsonpathsLookup,
-						mutatorParams: {
-							paths: ["$[*].author[*].name", "$[*].title"],
-							separator: ": ",
-						},
-						headerFilter: "input",
+					headerFilter: "input",
+				},
+				{
+					title: "Dekoration",
+					field: "decoration",
+					mutator: jsonpathLookup,
+					mutatorParams: { path: "$[*].value" },
+					headerFilter: "input",
+				},
+				{
+					title: "Schreiberort",
+					field: "origPlaces",
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: { path: "$[*].hands_placed[*].place[*].name" },
+					headerFilter: "input",
+				},
+				{
+					title: "Datum der Niederschrift",
+					field: "origHands",
+					mutator: jsonpathsDistinctRanges,
+					mutatorParams: {
+						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+						separator: ", ",
 					},
-					{
-						title: "Dekoration",
-						field: "decoration",
-						mutator: jsonpathLookup,
-						mutatorParams: { path: "$[*].value" },
-						headerFilter: "input",
+					headerFilter: "input",
+					headerFilterFunc: dateRangeFilter,
+					headerFilterFuncParams: {
+						paths: [
+							"$[*].hands_dated[*].dated[*].yearRange.start",
+							"$[*].hands_dated[*].dated[*].yearRange.end",
+						],
 					},
-					{
-						title: "Schreiberort",
-						field: "origPlaces",
-						mutator: jsonpathDistinctLookup,
-						mutatorParams: { path: "$[*].hands_placed[*].place[*].name" },
-						headerFilter: "input",
-					},
-					{
-						title: "Datum der Niederschrift",
-						field: "origHands",
-						mutator: jsonpathsDistinctRanges,
-						mutatorParams: {
-							paths: ["$[*].hands_dated[*].dated[*].yearRange"],
-							separator: ", ",
-						},
-						headerFilter: "input",
-						headerFilterFunc: dateRangeFilter,
-						headerFilterFuncParams: {
-							paths: [
-								"$[*].hands_dated[*].dated[*].yearRange.start",
-								"$[*].hands_dated[*].dated[*].yearRange.end",
-							],
-						},
-					},
+				},
 
-					{
-						title: "Datum der Bearbeitung",
-						field: "editHands",
-						mutator: jsonpathsDistinctRanges,
-						mutatorParams: {
-							paths: ["$[*].hands_dated[*].dated[*].yearRange"],
-							separator: ", ",
-						},
-						headerFilter: "input",
-						headerFilterFunc: dateRangeFilter,
-						headerFilterFuncParams: {
-							paths: [
-								"$[*].hands_dated[*].dated[*].yearRange.start",
-								"$[*].hands_dated[*].dated[*].yearRange.end",
-							],
-						},
+				{
+					title: "Datum der Bearbeitung",
+					field: "editHands",
+					mutator: jsonpathsDistinctRanges,
+					mutatorParams: {
+						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+						separator: ", ",
 					},
-				],
-			});
+					headerFilter: "input",
+					headerFilterFunc: dateRangeFilter,
+					headerFilterFuncParams: {
+						paths: [
+							"$[*].hands_dated[*].dated[*].yearRange.start",
+							"$[*].hands_dated[*].dated[*].yearRange.end",
+						],
+					},
+				},
+			],
+		});
 
-			//trigger download of data.csv file
-			document.getElementById("download-csv")!.addEventListener("click", function () {
-				table.download("csv", "data.csv");
-			});
+		//trigger download of data.csv file
+		document.getElementById("download-csv")!.addEventListener("click", function () {
+			table.download("csv", "data.csv");
+		});
 
-			//trigger download of data.json file
-			document.getElementById("download-json")!.addEventListener("click", function () {
-				table.download("json", "data.json");
-			});
+		//trigger download of data.json file
+		document.getElementById("download-json")!.addEventListener("click", function () {
+			table.download("json", "data.json");
+		});
 
-			//trigger download of data.html file
-			document.getElementById("download-html")!.addEventListener("click", function () {
-				table.download("html", "data.html", { style: true });
-			});
+		//trigger download of data.html file
+		document.getElementById("download-html")!.addEventListener("click", function () {
+			table.download("html", "data.html", { style: true });
+		});
 
-			// event listeners set:
-			// href to the work detail view page
-			table.on("rowClick", function (e, row) {
-				var data = row.getData();
-				var url = withBasePath(`/msitems/${data["hit_id"]}`);
-				window.open(url, "_self");
-			});
-		</script>
-	</div></PageLayout
->
+		// event listeners set:
+		// href to the work detail view page
+		table.on("rowClick", function (e, row) {
+			var data = row.getData();
+			var url = withBasePath(`/msitems/${data["hit_id"]}`);
+			window.open(url, "_self");
+		});
+
+		table.on("dataLoaded", function (data) {
+			var el = document.getElementById("counter1");
+			el.innerHTML = `${data.length}`;
+			var el = document.getElementById("counter2");
+			el.innerHTML = `${data.length}`;
+		});
+
+		table.on("dataFiltered", function (filters, data) {
+			var el = document.getElementById("counter1");
+			el.innerHTML = `${data.length}`;
+		});
+	</script>
+</PageLayout>
