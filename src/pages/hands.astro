@@ -84,7 +84,7 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].value",
-						separator: "; ",
+						separator: ", ",
 					},
 					headerFilter: "input",
 				},
@@ -94,7 +94,7 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathsDateRanges,
 					mutatorParams: {
 						paths: ["$[*].dated[*]"],
-						separator: "; ",
+						separator: ", ",
 					},
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,

@@ -152,33 +152,31 @@ export function jsonpathGetCentury(value, data, type, params, component) {
 
   return [...new Set(allResults)].join(separator); // Remove duplicates
 } */
-
-
-export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
-  // Allow all rows if the filter is empty or invalid
-  if (!headerValue || isNaN(headerValue)) {
-    return true;
-  }
-
-  const filterYear = parseInt(headerValue, 10);
-
-  // Ensure rowValue is a string and process multiple ranges (e.g., "821-930, 950-999")
-  if (typeof rowValue === 'string') {
-    const ranges = rowValue.split(',').map(range => range.trim()); // Split and trim multiple ranges
-
-    // Iterate over all ranges and check if filterYear falls within any of them
-    return ranges.some(range => {
-      const [start, end] = range.split('-').map(Number); // Parse start and end years
-      if (!isNaN(start) && !isNaN(end)) {
-        return filterYear >= start && filterYear <= end;
-      }
-      return false; // Skip invalid ranges
-    });
-  }
-
-  console.warn("Row value is not a valid string:", rowValue);
-  return false; // Filter out rows with invalid rowValue
-}
+  export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
+    // Allow all rows if the filter is empty or invalid
+    if (!headerValue || isNaN(headerValue)) {
+      return true;
+    }
+  
+    const filterYear = parseInt(headerValue, 10);
+  
+    // Ensure rowValue is a string and process multiple ranges (e.g., "821-930, 950-999")
+    if (typeof rowValue === 'string') {
+      const ranges = rowValue.split(',').map(range => range.trim()); // Split and trim multiple ranges
+  
+      // Iterate over all ranges and check if filterYear falls within any of them
+      return ranges.some(range => {
+        const [start, end] = range.split('-').map(Number); // Parse start and end years
+        if (!isNaN(start) && !isNaN(end)) {
+          return filterYear >= start && filterYear <= end;
+        }
+        return false; // Skip invalid ranges
+      });
+    }
+  
+    console.warn("Row value is not a valid string:", rowValue);
+    return false; // Filter out rows with invalid rowValue
+  }  
 
 
 

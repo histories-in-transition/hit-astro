@@ -52,7 +52,7 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathsDateRanges,
 					mutatorParams: {
 						paths: ["$[*].hands_dated[*].dated[*]"],
-						separator: "; ",
+						separator: ", ",
 					},
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
