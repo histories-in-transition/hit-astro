@@ -16,9 +16,8 @@ import TableHead from "../components/table-head.astro";
 		import data from "../content/data/scribes.json";
 		import {
 			jsonpathLookup,
-			jsonpathsLookup,
-			jsonpathDistinctLookup,
-			jsonpathGetCentury,
+			jsonpathsDateRanges,
+			dateRangeFilter,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
@@ -50,18 +49,27 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Datierung",
 					field: "hands",
-					mutator: jsonpathLookup,
+					mutator: jsonpathsDateRanges,
 					mutatorParams: {
-						path: "$[*].hands_dated[*].dated[*].label",
+						paths: ["$[*].hands_dated[*].dated[*]"],
 						separator: "; ",
 					},
 					headerFilter: "input",
+					headerFilterFunc: dateRangeFilter,
+					headerFilterFuncParams: {
+						paths: [
+							"$[*].hands_dated[*].dated[*].not_before",
+							"$[*].hands_dated[*].dated[*].not_after",
+						],
+					},
 				},
 				{
 					title: "Gruppe",
 					field: "group",
 					sorter: "boolean",
 					formatter: "tickCross",
+					//headerFilter: true,
+					width: 120,
 				},
 			],
 		});

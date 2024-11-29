@@ -86,9 +86,49 @@ export function jsonpathsDistinctRanges(value, data, type, params, component) {
   // Return distinct year ranges joined by the separator
   return [...new Set(yearRanges)].join(separator);
 }
+// for original nested date range with not_before, not_after 
+export function jsonpathsDateRangles(value, data, type, params, component) {
+  const separator = params.separator || ", ";
+
+  // Extract year ranges from the `dated` arrays in `hands_dated`
+  const yearRanges = value
+    .flatMap(hand => hand.dated) // Flatten the `dated` arrays
+    .map(item => {
+      if (item.not_before && item.not_after) {
+        const start = new Date(item.not_before).getFullYear(); // Extract start year
+        const end = new Date(item.not_after).getFullYear();   // Extract end year
+        return `${start}-${end}`; // Format as "start-end"
+      }
+      return null; // Skip invalid entries
+    })
+    .filter(Boolean); // Remove null values
+
+  // Ensure distinct values and join them with the separator
+  return [...new Set(yearRanges)].join(separator);
+}
+
+export function jsonpathsDateRanges(value, data, type, params, component) {
+  const paths = params.paths; // Array of JSONPath queries
+  const separator = params.separator || ", ";
+
+  // Collect all year ranges from each path
+  let yearRanges = paths.flatMap(path =>
+    JSONPath({ path: path, json: value }).map(item => {
+      if (item.not_before && item.not_after) {
+        const start = new Date(item.not_before).getFullYear(); // Extract start year
+        const end = new Date(item.not_after).getFullYear();   // Extract end year
+        return `${start}-${end}`; // Format as "start-end"
+      }
+      return null; // Skip invalid ranges
+    })
+  ).filter(Boolean); // Remove null values 
+
+  // Return distinct year ranges joined by the separator
+  return [...new Set(yearRanges)].join(separator);
+}
 
 
-// To get the century of not_before not_after dates
+/* // To get the century of not_before not_after dates
 export function jsonpathGetCentury(value, data, type, params, component) {
   const paths = params.paths;
   const separator = params.separator || ", ";
@@ -111,7 +151,7 @@ export function jsonpathGetCentury(value, data, type, params, component) {
   });
 
   return [...new Set(allResults)].join(separator); // Remove duplicates
-}
+} */
 
 
 export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
