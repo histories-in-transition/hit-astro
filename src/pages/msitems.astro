@@ -17,12 +17,65 @@ import DownloadButtons from "../components/download-buttons.astro";
 		<script>
 			import { TabulatorFull as Tabulator } from "tabulator-tables";
 			import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-			// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 			import data from "../content/data/ms_items.json";
-			import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
-			import { withBasePath } from "../lib/withBasePath";
+			import hands_Json from "../content/data/hands.json";
 
-			var tabledata = [...Object.values(data)];
+			// Preprocessing data from json
+			//  replacing the hands_dated property with a new, processed version
+			const handsJson = Object.values(hands_Json).map((hand) => ({
+				...hand,
+				hands_dated: hand.hands_dated.map((date) => ({
+					...date,
+					dated: date.dated.map((i) => ({
+						...i,
+						yearRange: {
+							start: i.not_before ? new Date(i.not_before).getFullYear() : null,
+							end: i.not_after ? new Date(i.not_after).getFullYear() : null,
+						},
+					})),
+				})),
+			}));
+
+			// Combine the two datasets
+			const tabledata = Object.values(data).map((msItem) => {
+				const matchingOrigHands = handsJson.filter((hand) =>
+					hand.hands_role.some(
+						(handRole) =>
+							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+							handRole.role.some((role) => role.value === "Schreiber"),
+					),
+				);
+				// get the scribe hands again for using in column Schreiberort:
+				const matchingPlaces = handsJson.filter((hand) =>
+					hand.hands_role.some(
+						(handRole) =>
+							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+							handRole.role.some((role) => role.value === "Schreiber"),
+					),
+				);
+				const matchingEditHands = Object.values(handsJson).filter((hand) =>
+					hand.hands_role.some(
+						(handRole) =>
+							handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+							handRole.role.some((role) => role.value != "Schreiber"),
+					),
+				);
+				return {
+					...msItem,
+					origHands: matchingOrigHands,
+					editHands: matchingEditHands,
+					origPlaces: matchingPlaces,
+				};
+			});
+			console.log(tabledata.map((item) => item.editHands));
+			import {
+				jsonpathLookup,
+				jsonpathsLookup,
+				dateRangeFilter,
+				jsonpathDistinctLookup,
+				jsonpathsDistinctRanges,
+			} from "../lib/tabulator-utils.js";
+			import { withBasePath } from "../lib/withBasePath";
 
 			var table = new Tabulator("#tabulator-table", {
 				headerFilterLiveFilterDelay: 600,
@@ -31,11 +84,6 @@ import DownloadButtons from "../components/download-buttons.astro";
 				layout: "fitColumns",
 				responsiveLayout: "collapse",
 				columns: [
-					{
-						title: "ID",
-						field: "view_label",
-						formatter: "textarea",
-					},
 					{
 						title: "Handschrift",
 						field: "manuscript",
@@ -70,13 +118,46 @@ import DownloadButtons from "../components/download-buttons.astro";
 						headerFilter: "input",
 					},
 					{
-						title: "Schreiberhände",
-						field: "hands_role",
-						mutator: jsonpathsLookup,
+						title: "Schreiberort",
+						field: "origPlaces",
+						mutator: jsonpathDistinctLookup,
+						mutatorParams: { path: "$[*].hands_placed[*].place[*].name" },
+						headerFilter: "input",
+					},
+					{
+						title: "Datum der Niederschrift",
+						field: "origHands",
+						mutator: jsonpathsDistinctRanges,
 						mutatorParams: {
-							paths: ["$[*].hand[*].value", "$[*].role[*].value"],
+							paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+							separator: ", ",
 						},
 						headerFilter: "input",
+						headerFilterFunc: dateRangeFilter,
+						headerFilterFuncParams: {
+							paths: [
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
+							],
+						},
+					},
+
+					{
+						title: "Datum der Bearbeitung",
+						field: "editHands",
+						mutator: jsonpathsDistinctRanges,
+						mutatorParams: {
+							paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+							separator: ", ",
+						},
+						headerFilter: "input",
+						headerFilterFunc: dateRangeFilter,
+						headerFilterFuncParams: {
+							paths: [
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
+							],
+						},
 					},
 				],
 			});

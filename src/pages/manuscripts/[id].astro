@@ -387,7 +387,15 @@ const codUnits = manuscript.related__cod_units ;
                       .filter(stratum => stratum.hand_role.some(handRole => 
                         handRole.hit_id === role.hit_id
                       )).map(filteredStratum => filteredStratum.number)}</td>
-                    <td class="px-2">{hand.hands_dated.map(date => date.dated.map(i => i.label))}</td>
+                    <td class="px-2">
+                      {hand.hands_dated.map(date => 
+                        date.dated.map(i => {
+                          const perStart = i.not_before ? new Date(i.not_before).getFullYear() :  null;
+                          const perEnd = i.not_after ? new Date(i.not_after).getFullYear() : null;
+                          return `${perStart}-${perEnd}`;
+                        })
+                      )}
+                    </td>
                     <td class="px-2">
                       {role.ms_item.length > 1 
                       ? (<ul class="list-disc">
