@@ -21,7 +21,7 @@ const { data: work } = Astro.props;
 
 <PageLayout title={work?.title}>
 	<div>
-		<article class="w-full md:w-3/4 grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
+		<article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
 			<div class="flex items-center gap-3 text-brandRed">
 				<NavLink href=`/works/${work.prev.id}` class="flex items-center">
 					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="text-3xl" />

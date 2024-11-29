@@ -175,7 +175,7 @@ import TableHead from "../components/table-head.astro";
 			var url = withBasePath(`/msitems/${data["hit_id"]}`);
 			window.open(url, "_self");
 		});
-
+		// trigger counter of hits
 		table.on("dataLoaded", function (data) {
 			var el = document.getElementById("counter1");
 			el.innerHTML = `${data.length}`;

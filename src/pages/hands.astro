@@ -19,9 +19,9 @@ import TableHead from "../components/table-head.astro";
 		import data from "../content/data/hands.json";
 		import {
 			jsonpathLookup,
-			jsonpathsLookup,
+			jsonpathsDateRanges,
 			jsonpathDistinctLookup,
-			jsonpathGetCentury,
+			dateRangeFilter,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
@@ -84,11 +84,28 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].value",
-						separator: "; ",
+						separator: ", ",
 					},
 					headerFilter: "input",
 				},
 				{
+					title: "Datiert2",
+					field: "hands_dated",
+					mutator: jsonpathsDateRanges,
+					mutatorParams: {
+						paths: ["$[*].dated[*]"],
+						separator: ", ",
+					},
+					headerFilter: "input",
+					headerFilterFunc: dateRangeFilter,
+					headerFilterFuncParams: {
+						paths: [
+							"$[*].hands_dated[*].dated[*].not_before",
+							"$[*].hands_dated[*].dated[*].not_after",
+						],
+					},
+				},
+				/* {
 					title: "Jahrhundert",
 					field: "hands_dated",
 					mutator: jsonpathGetCentury,
@@ -96,7 +113,7 @@ import TableHead from "../components/table-head.astro";
 						paths: ["$[*].dated[*].not_before", "$[*].dated[*].not_after"],
 					},
 					headerFilter: "input",
-				},
+				}, */
 				{
 					title: "Lokalisiert",
 					field: "hands_placed",
