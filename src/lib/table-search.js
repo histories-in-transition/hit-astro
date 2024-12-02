@@ -1,58 +1,77 @@
+// Attach event listeners for search forms
 document.querySelectorAll("form[data-search-form]").forEach((input, index) => {
   input.addEventListener("input", (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const searchValue = formData.get("q");
-    searchTable(index, searchValue);
+    filterTable(index, searchValue);
   });
 });
 
-// Filter table based on input values from all columns
-function searchTable() {
+// Filter the table by user's input
+function filterTable() {
   const table = document.querySelector(".data-table");
   const rows = table.querySelectorAll("tbody tr");
-  const inputs = document.querySelectorAll("input");
+  const inputs = document.querySelectorAll("[data-filter]");
 
   rows.forEach((row) => {
     let shouldShow = true;
 
-    // Loop through each input field and check if the cell matches
-    inputs.forEach((input, index) => {
-      const searchValue = input.value.trim().toLowerCase();
-      const cellValue = row.children[index].textContent.toLowerCase();
+    inputs.forEach((input) => {
+      const filterType = input.dataset.filter;
+      const value = input.value.trim().toLowerCase();
 
-      // If search value exists and doesn't match the cell, hide the row
-      if (searchValue && !cellValue.includes(searchValue)) {
-        shouldShow = false;
+      if (filterType === "year") {
+        // Handle date filtering with `data-bound`
+        const bound = input.dataset.bound;
+        const yearRangeCell = row.children[1]; // "Datierung" is the 2nd column
+        const yearRanges = yearRangeCell.textContent
+          .split(",") // for ranges if comma-separated
+          .map(range => range.split("-").map(year => parseInt(year, 10)));
+
+        const min = bound === "min" ? parseInt(value, 10) : null;
+        const max = bound === "max" ? parseInt(value, 10) : null;
+
+        if (min || max) {
+          shouldShow = yearRanges.some(([start, end]) => {
+            const matchesMin = min ? start <= min && end >= min : true;
+            const matchesMax = max ? end >= max && start <= max : true;
+            return matchesMin && matchesMax;
+          });
+        }
+      } else {
+        // Handle simple string filtering for other columns
+        const columnIndex = Array.from(inputs).indexOf(input);
+        const cellValue = row.children[columnIndex]?.textContent.toLowerCase();
+
+        if (value && (!cellValue || !cellValue.includes(value))) {
+          shouldShow = false;
+        }
       }
     });
 
-    // Toggle row visibility based on whether all input criteria are met
+    // Show or hide the row based on filters
     row.style.display = shouldShow ? "" : "none";
   });
 
-  // Reapply row striping to visible rows after search
+ 
+  // Reapply row striping
   reapplyRowStriping(rows);
+  
 }
 
-// Function to reapply row striping
+// Reapply row striping for visible rows
 function reapplyRowStriping(rows) {
-  let visibleRowIndex = 0; // to store number of visible rows - the ones filtered after the search
-
+  let index = 0;
   rows.forEach((row) => {
-    // iterate through all rows
-    if (row.style.display === "") {
-      // if the row is visible , check the visibleRow Index which increments each time a visible row is found
-      if (visibleRowIndex % 2 === 0) {
-        // computes the remainder of the division by 2 - if 0 the number of the row is even - apply one color, else (% 2 = 1) apply the other color for odd
-        row.style.backgroundColor = "#fff8f7"; // Color for even rows
-      } else {
-        row.style.backgroundColor = "#fcf1e8"; // Color for odd rows
-      }
-      visibleRowIndex++; // Increment visible row counter with every loop; by the first visible row index is 0, by the next 1 etc.
+    if (row.style.display !== "none") {
+      row.classList.toggle("odd", index % 2 === 0);
+      index++;
     }
   });
 }
+
+
 
 // Function to add highlight when hovered with mouse
 const tableRows = document.querySelectorAll("tbody tr");

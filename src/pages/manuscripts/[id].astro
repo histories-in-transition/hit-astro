@@ -310,23 +310,43 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Stratum</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th>
-                    <th>             
-                    <form role="search" data-search-form >
-                      <label class="flex flex-col items-start p-2">
+                    
+                    <th>
+                      <form role="search" data-search-form>
                         <div>Datierung</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
-                      </label>
-                    </form>
-                  </th>   
+                        <div class="flex">
+                          <label class="flex flex-col items-start p-2">
+                            <div class="sr-only">Datierung nach</div>
+                            <input
+                              type="number"
+                              data-filter="year"
+                              data-bound="min"
+                              placeholder="nach ..."
+                              class="filter-input mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          </label>
+                          <label class="flex flex-col items-start p-2">
+                            <div class="sr-only">Datierung vor</div>
+                            <input
+                              type="number"
+                              data-filter="year"
+                              data-bound="max"
+                              placeholder="vor ..."
+                              class="filter-input mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          </label>
+                        </div>
+                      </form>
+                    </th>
+
                   <th class="w-80">                  
                     <form role="search" data-search-form>
                       <label class="flex flex-col items-start p-2">
                         <div>Werk</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                        <input type="search" name="q"  
+                            data-filter="string" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>   
@@ -334,7 +354,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Locus</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                        <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>  
@@ -342,7 +362,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Hand</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                        <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>             
@@ -350,7 +370,7 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Rolle</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th>
@@ -358,7 +378,7 @@ const codUnits = manuscript.related__cod_units ;
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Umfang</div>
-                        <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                        <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                       </label>
                     </form>
                   </th>            
@@ -366,7 +386,7 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Mise-en-page</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th> 
@@ -374,7 +394,7 @@ const codUnits = manuscript.related__cod_units ;
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Funktion</div>
-                          <input type="search" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
                       </form>
                     </th> 
