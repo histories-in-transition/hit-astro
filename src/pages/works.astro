@@ -8,16 +8,54 @@ import TableHead from "../components/table-head.astro";
 
 	<script>
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		// import "tabulator-tables/dist/css/tabulator_bootstrap5.min.css";
-		// import "tabulator-tables/dist/css/tabulator_simple.min.css";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
-		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 		import data from "../content/data/works.json";
-		import { jsonpathLookup } from "../lib/tabulator-utils.js";
+		import {
+			jsonpathLookup,
+			dateRangeFilter,
+			jsonpathDistinctLookup,
+			jsonpathsDistinctRanges,
+		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
+		import hands_Json from "../content/data/hands.json";
+		// preprocess works.json and hands.json to get all necessary data for fields
+		// add yearRange to handsJson to easy handle dates as numbers
+		const handsJson = Object.values(hands_Json).map((hand) => ({
+			...hand,
+			hands_dated: hand.hands_dated.map((date) => ({
+				...date,
+				dated: date.dated.map((i) => ({
+					...i,
+					yearRange: {
+						start: i.not_before ? new Date(i.not_before).getFullYear() : null,
+						end: i.not_after ? new Date(i.not_after).getFullYear() : null,
+					},
+				})),
+			})),
+		}));
+		// hands -> hands_dated. Need matchedHands - hands with role Schreiber to msItem with
+		// titlework id === work.id
+		// Combine the two datasets
+		const tabledata = Object.values(data).map((work) => {
+			const matchingOrigHands = handsJson.filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) =>
+							item.title_work.some((titleWork) => titleWork.hit_id === work.hit_id),
+						) && handRole.role.some((ro) => ro.value === "Schreiber"),
+				),
+			);
+			// get the scribe hands again for using in column Schreiberort:
+			const matchingPlaces = matchingOrigHands.flatMap(
+				(hand) => hand.hands_placed?.flatMap((place) => place.place.map((p) => p.name)) || [],
+			);
 
-		var tabledata = [...Object.values(data)];
+			return {
+				...work,
+				origHands: matchingOrigHands,
+				origPlaces: [...new Set(matchingPlaces)], // get rid of duplicates
+			};
+		});
 
 		var table = new Tabulator("#tabulator-table", {
 			headerFilterLiveFilterDelay: 600,
@@ -59,6 +97,30 @@ import TableHead from "../components/table-head.astro";
 						separator: "; ",
 					},
 					headerFilter: "input",
+				},
+				{
+					title: "Schreibort",
+					field: "origPlaces",
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: { path: "$[*]" },
+					headerFilter: "input",
+				},
+				{
+					title: "Datum der Niederschrift",
+					field: "origHands",
+					mutator: jsonpathsDistinctRanges,
+					mutatorParams: {
+						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+						separator: ", ",
+					},
+					headerFilter: "input",
+					headerFilterFunc: dateRangeFilter,
+					headerFilterFuncParams: {
+						paths: [
+							"$[*].hands_dated[*].dated[*].yearRange.start",
+							"$[*].hands_dated[*].dated[*].yearRange.end",
+						],
+					},
 				},
 			],
 		});
