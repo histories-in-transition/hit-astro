@@ -122,7 +122,7 @@ const { data: item, hands: matchingHands } = Astro.props;
                     )}‹
                   </dd>}
               <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-              <dd class="pl-5">{item?.decoration.map(deco => deco.value)}</dd>
+              <dd class="pl-5">{item?.decoration.map(deco => deco.value).join(', ')}</dd>
               <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
               <dd class="pl-5">
                 {item.hands_role
@@ -146,82 +146,57 @@ const { data: item, hands: matchingHands } = Astro.props;
           
                 })}
               </dd>
-              <dt class="font-semibold border-r border-gray-300 pr-2">Textbearbeitung:</dt>
-              <dd class="pl-5">
-                {item.hands_role
-                .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
-                .map(filteredRole => {
-                  return  <ul>
-                            <li>
-                              <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}</NavLink>
-                              <Icon
-                                class="inline-flex align-middle"
-                                aria-hidden="true"
-                                name="lucide:arrow-right"
-                              />
-                              <span>{filteredRole.role.map(entry => entry.value)}</span>
-                              {filteredRole.locus &&
-                              <span>auf fol. {filteredRole.locus}</span>
-                              }
-                              {filteredRole.locus_layout.length > 0 &&
-                              <span> || {filteredRole.locus_layout.map(layout => layout.value)}</span>
-                              }
-                              {filteredRole.function.length > 0 &&
-                              <span> || {filteredRole.function.map(func => func.value)}</span>
-                              }
-                              </li>
-                      </ul>
-          
-          
-                })}
-              </dd>
+              
             </dl>
         </section>
+        {item.hands_role
+              .some(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber')) &&
           <section>
-        <h2 class="text-2xl text-brandRed p-5">Bearbeitungsschritte</h2>
-        <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table">
-          <thead>
-            <tr> 
-              <th class="text-start p-2 font-semibold border border-gray-300">Bearbeitungsart</th>
-              <th class="text-start p-2 font-semibold border border-gray-300">Schreiberhand</th>    
-              <th class="text-start p-2 font-semibold border border-gray-300">Schreiber</th> 
-              <th class="text-start p-2 font-semibold border border-gray-300">Datierung</th> 
-              <th class="text-start p-2 font-semibold border border-gray-300">Umfang</th> 
-              <th class="text-start p-2 font-semibold border border-gray-300">Mise-en-page</th> 
-              <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th> 
-            </tr>
-          </thead>
-          <tbody>
-            {item.hands_role
-              .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
-              .map(filteredRole => {
-                return  <tr>
-                            <td class="p-2 border border-gray-300">{filteredRole.role.map(rol => rol.value).join(', ')}</td>
-                            <td class="p-2 border border-gray-300">
-                              <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>
-                              {filteredRole.hand[0].value}</NavLink>
-                            </td>
-                            <td class="p-2 border border-gray-300">{matchingHands
-                                  .filter(hand => hand.hands_role
-                                      .some(role => role.hit_id === filteredRole.hit_id))
-                                  .map(hand => hand.scribe.map(scr => scr.name))}
-                            </td>
-                            <td class="p-2 border border-gray-300">{matchingHands
-                                  .filter(hand => hand.hands_role
-                                      .some(role => role.hit_id === filteredRole.hit_id))
-                                  .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}
-                            </td>
-                            <td class="p-2 border border-gray-300">{filteredRole.locus}</td>
-                            <td class="p-2 border border-gray-300">{filteredRole.locus_layout.map(layout => layout.value).join(', ')}</td>
-                            <td class="p-2 border border-gray-300">{filteredRole.function.map(func => func.value).join(', ')}</td>
-                        </tr>
-                      })
-                    }         
+            <h2 class="text-2xl text-brandRed p-5">Bearbeitungsschritte</h2>
+            <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table">
+              <thead>
+                <tr> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Bearbeitungsart</th>
+                  <th class="text-start p-2 font-semibold border border-gray-300">Schreiberhand</th>    
+                  <th class="text-start p-2 font-semibold border border-gray-300">Schreiber</th> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Datierung</th> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Umfang</th> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Mise-en-page</th> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th> 
+                </tr>
+              </thead>
+              <tbody>
+                {item.hands_role
+                  .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
+                  .map(filteredRole => {
+                    return  <tr>
+                                <td class="p-2 border border-gray-300">{filteredRole.role.map(rol => rol.value).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">
+                                  <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>
+                                  {filteredRole.hand[0].value}</NavLink>
+                                </td>
+                                <td class="p-2 border border-gray-300">{matchingHands
+                                      .filter(hand => hand.hands_role
+                                          .some(role => role.hit_id === filteredRole.hit_id))
+                                      .map(hand => hand.scribe.map(scr => scr.name))}
+                                </td>
+                                <td class="p-2 border border-gray-300">{matchingHands
+                                      .filter(hand => hand.hands_role
+                                          .some(role => role.hit_id === filteredRole.hit_id))
+                                      .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}
+                                </td>
+                                <td class="p-2 border border-gray-300">{filteredRole.locus}</td>
+                                <td class="p-2 border border-gray-300">{filteredRole.locus_layout.map(layout => layout.value).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredRole.function.map(func => func.value).join(', ')}</td>
+                            </tr>
+                          })
+                        }         
 
-          </tbody>
-             
-        </table>
-      </section>
+              </tbody>
+                
+            </table>
+          </section>
+      }
         </article>
     </div>
 </PageLayout>

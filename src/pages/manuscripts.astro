@@ -11,10 +11,31 @@ import TableHead from "../components/table-head.astro";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 		import data from "../content/data/manuscripts.json";
-		import { jsonpathLookup, jsonpathsLookup } from "../lib/tabulator-utils.js";
+		import msitems from "../content/data/ms_items.json";
+		import {
+			jsonpathLookup,
+			jsonpathsLookup,
+			jsonpathDistinctLookup,
+		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
+		// preprocess tabledata
+		// merge two datasets manuscripts.json + msitems.json
+		const tabledata = Object.values(data).map((ms) => {
+			const matchingMsItems = Object.values(msitems).filter((item) =>
+				item.manuscript.some((man) => man.hit_id === ms.hit_id),
+			);
+			// Map decorations from matching items into a single array for decoItems
+			const decoItems = matchingMsItems.flatMap((item) => item.decoration || []);
 
-		var tabledata = [...Object.values(data)];
+			// Map decorations from matching items into a single array for decoItems
+			const annotations = matchingMsItems.flatMap((item) => item.hands_role || []);
+
+			return {
+				...ms,
+				decoItems,
+				annotations,
+			};
+		});
 
 		var table = new Tabulator("#tabulator-table", {
 			headerFilterLiveFilterDelay: 600,
@@ -39,7 +60,6 @@ import TableHead from "../components/table-head.astro";
 					},
 					headerFilter: "input",
 				},
-
 				{
 					title: "Entstehungsort",
 					field: "orig_place",
@@ -55,6 +75,20 @@ import TableHead from "../components/table-head.astro";
 						path: "$[*].date[*].label",
 						separator: "; ",
 					},
+					headerFilter: "input",
+				},
+				{
+					title: "Dekoration",
+					field: "decoItems",
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: { path: "$[*].value", separator: " | " },
+					headerFilter: "input",
+				},
+				{
+					title: "Annotationen",
+					field: "annotations",
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: { path: "$[*].role[*].value", separator: " | " },
 					headerFilter: "input",
 				},
 			],
