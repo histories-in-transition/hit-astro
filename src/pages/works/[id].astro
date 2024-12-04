@@ -5,10 +5,51 @@ import NavLink from "../../components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import worksJson from "../../content/data/works.json";
 import msitemsJson from "../../content/data/ms_items.json";
+import handsJson from "../../content/data/hands.json";
 
 export async function getStaticPaths() {
 	const workList = Object.values(worksJson);
-	const msItemsList = Object.values(msitemsJson);
+	//const msItemsList = Object.values(msitemsJson);
+	const matchingHands = Object.values(handsJson);
+	const msItemsList = Object.values(msitemsJson).map((msItem) => {
+			const matchingOrigHands = matchingHands.filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value === "Schreiber"),
+				),
+			);
+			// get the scribe hands again for using in column Schreiberort:
+			const matchingPlaces = matchingHands
+				.filter((hand) =>
+					hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value === "Schreiber")
+					)
+				)
+				.flatMap((hand) => hand.hands_placed.map((placement) => placement.place[0]?.name))
+				.filter(Boolean); // Remove null/undefined values
+
+				// Remove duplicates and join with ', '
+			const scribePlaces = [...new Set(matchingPlaces)].join(', ');
+
+				
+			const matchingEditHands = matchingHands.filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value != "Schreiber"),
+				),
+			)
+			return {
+				...msItem,
+				origHands: matchingOrigHands,
+				editHands: matchingEditHands,
+				origPlaces: scribePlaces,
+			};
+		});
+
 
 	const paths = workList.map((work) => {
 		const workId = work.hit_id;
@@ -179,7 +220,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 								<tr>
 									<td class="p-2 border border-gray-300">{item.manuscript[0].shelfmark[0].value}</td>
 									<td class="p-2 border border-gray-300">{item.locus_grp}</td>
-									<td class="p-2 border border-gray-300">{}</td>
+									<td class="p-2 border border-gray-300">{[(item.origPlaces)]}</td>
 									<td class="p-2 border border-gray-300">{}</td>
 									<td class="p-2 border border-gray-300">{item.decoration.map(deco => deco.value)}</td>
 									<td class="p-2 border border-gray-300">{}</td>
