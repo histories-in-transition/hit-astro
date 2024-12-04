@@ -49,11 +49,16 @@ import TableHead from "../components/table-head.astro";
 			const matchingPlaces = matchingOrigHands.flatMap(
 				(hand) => hand.hands_placed?.flatMap((place) => place.place.map((p) => p.name)) || [],
 			);
+			// duplicate object 'decoration' from works.json to use as separate field
+			const decoration = work.related__ms_items.map((relItem) =>
+				relItem.decoration.map((deco) => deco.value).join(" | "),
+			);
 
 			return {
 				...work,
 				origHands: matchingOrigHands,
 				origPlaces: [...new Set(matchingPlaces)], // get rid of duplicates
+				decoWork: [...new Set(decoration)],
 			};
 		});
 
@@ -91,7 +96,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Überlieferung",
 					field: "related__ms_items",
-					mutator: jsonpathLookup,
+					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
 						path: "$..manuscript..shelfmark..value",
 						separator: "; ",
@@ -121,6 +126,13 @@ import TableHead from "../components/table-head.astro";
 							"$[*].hands_dated[*].dated[*].yearRange.end",
 						],
 					},
+				},
+				{
+					title: "Dekoration",
+					field: "decoWork",
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: { path: "$[*]", separator: " | " },					
+					headerFilter: "input",					
 				},
 			],
 		});
