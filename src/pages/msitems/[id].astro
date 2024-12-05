@@ -151,8 +151,8 @@ const { data: item, hands: matchingHands } = Astro.props;
         </section>
         {item.hands_role
               .some(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber')) &&
-          <section>
-            <h2 class="text-2xl text-brandRed p-5">Bearbeitungsschritte</h2>
+          <section class="overflow-x-auto">
+            <h2 class="text-xl font-semibold text-brandRed py-5">Bearbeitungsschritte</h2>
             <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table">
               <thead>
                 <tr> 

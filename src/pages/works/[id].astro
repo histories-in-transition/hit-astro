@@ -3,23 +3,86 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro";
 import NavLink from "../../components/nav-link.astro";
 import { Icon } from "astro-icon/components";
-import msitems from "../../content/data/ms_items.json";
-const msItems = Object.values(msitems);
-import works from "../../content/data/works.json";
+import worksJson from "../../content/data/works.json";
+import msitemsJson from "../../content/data/ms_items.json";
+import handsJson from "../../content/data/hands.json";
 
 export async function getStaticPaths() {
-	const paths = Object.values(works).map((work) => ({
-		params: { id: work.hit_id.toString() },
-		props: { data: work },
-	}));
+	const workList = Object.values(worksJson);
+	//const msItemsList = Object.values(msitemsJson);
+	const matchingHands = Object.values(handsJson);
+	const msItemsList = Object.values(msitemsJson).map((msItem) => {
+		const matchingOrigHands = matchingHands.filter((hand) =>
+			hand.hands_role.some(
+				(handRole) =>
+					handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+					handRole.role.some((role) => role.value === "Schreiber"),
+			),
+		);
+		// get the scribe hands, extract only place again for using in column Schreiberort:
+		const matchingPlaces = matchingHands
+			.filter((hand) =>
+				hand.hands_role.some(
+					(handRole) =>
+						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+						handRole.role.some((role) => role.value === "Schreiber"),
+				),
+			)
+			.flatMap((hand) => hand.hands_placed.map((placement) => placement.place[0]?.name))
+			.filter(Boolean); // Remove null/undefined values
+
+		// Remove duplicates and join with ', '
+		const scribePlaces = [...new Set(matchingPlaces)].join(", ");
+
+		// finds all hands objects working on this msItem with role other than 'Schreiber'
+		const matchingEditHands = matchingHands.filter((hand) =>
+			hand.hands_role.some((handRole) =>
+				handRole.ms_item.some(
+					(item) =>
+						item.hit_id === msItem.hit_id &&
+						item.hands_role.some((h_role) => h_role.role.some((role) => role.value != "Schreiber")),
+				),
+			),
+		);
+		return {
+			...msItem,
+			origHands: matchingOrigHands,
+			editHands: matchingEditHands,
+			origPlaces: scribePlaces,
+		};
+	});
+
+	const paths = workList.map((work) => {
+		const workId = work.hit_id;
+
+		// Find matching msItems for the work
+		const matchingItems = msItemsList.filter((item) =>
+			item.title_work.some((title) => title.hit_id === workId),
+		);
+
+		// Return a params object for each path
+		return {
+			params: { id: workId },
+			props: { data: work, manItems: matchingItems }, // This belongs in getStaticProps
+		};
+	});
 
 	return paths;
 }
 
-const { data: work } = Astro.props;
+const { data: work, manItems: matchingItems } = Astro.props;
 ---
 
 <PageLayout title={work?.title}>
+	<style>
+		/* To make the table rows striped */
+		tbody tr:nth-child(even) {
+			background-color: #fcf1e8;
+		}
+		tbody tr:nth-child(odd) {
+			background-color: #fff8f7;
+		}
+	</style>
 	<div>
 		<article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
 			<div class="flex items-center gap-3 text-brandRed">
@@ -36,116 +99,193 @@ const { data: work } = Astro.props;
 				<Button>TEI-XML</Button>
 				<Button>PDF</Button>
 			</div>
-			<dl
-				class="border-2 rounded-sm border-brandBrown bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
+			<div
+				class="border-2 rounded-sm border-brandBrown bg-brandRose
+			text-sm md:leading-7 md:text-base"
 			>
-				<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-				<dd class="pl-5">
-					{
-						work?.author.length > 1
-							? work.author.map((item) => (
-									<>
+				<dl class="grid grid-cols-[1fr_6fr] m-5">
+					<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+					<dd class="pl-5">
+						{
+							work?.author.length > 1
+								? work.author.map((item) => (
+										<>
+											<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed">
+												{item.name}
+											</NavLink>
+											<br />
+										</>
+									))
+								: work.author.map((item) => (
 										<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed">
 											{item.name}
 										</NavLink>
-										<br />
-									</>
-								))
-							: work.author.map((item) => (
-									<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed">
-										{item.name}
-									</NavLink>
-								))
-					}
-				</dd>
-
-				<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-				<dd class="pl-5">
-					{work.bibliography.length > 0 ? work.bibliography.map((item) => item) : "N/A"}
-				</dd>
-				<dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
-				<dd class="pl-5">
-					{
-						work?.gnd_url ? (
-							<NavLink href={work.gnd_url} class="hover:text-brandRed">
-								{work.gnd_url.split("gnd/")[1]}
-								<Icon
-									class="inline-flex align-baseline"
-									aria-hidden="true"
-									name="lucide:external-link"
-								/>
-							</NavLink>
-						) : (
-							"N/A"
-						)
-					}
-				</dd>
-				<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
-				<dd class="pl-5">
-					{
-						work.source_text.length > 0
-							? work.source_text.map((text) => (
-									<NavLink href={`/works/${text.hit_id}`} class="hover:text-brandRed">
-										{text.title}
-									</NavLink>
-								))
-							: "N/A"
-					}
-					{work.note_source ? <span>({work.note_source})</span> : ""}
-				</dd>
-
-				<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
-				<dd class="pl-5">
-					{
-						work.genre.length > 0
-							? work.genre.map((item, index) => {
+									))
+						}
+					</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+					<dd class="pl-5">
+						{work.bibliography.length > 0 ? work.bibliography.map((item) => item) : "N/A"}
+					</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
+					<dd class="pl-5">
+						{
+							work?.gnd_url ? (
+								<NavLink href={work.gnd_url} class="hover:text-brandRed">
+									{work.gnd_url.split("gnd/")[1]}
+									<Icon
+										class="inline-flex align-baseline"
+										aria-hidden="true"
+										name="lucide:external-link"
+									/>
+								</NavLink>
+							) : (
+								"N/A"
+							)
+						}
+					</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
+					<dd class="pl-5">
+						{
+							work.source_text.length > 0
+								? work.source_text.map((text) => (
+										<NavLink href={`/works/${text.hit_id}`} class="hover:text-brandRed">
+											{text.title}
+										</NavLink>
+									))
+								: "N/A"
+						}
+						{work.note_source ? <span>({work.note_source})</span> : ""}
+					</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
+					<dd class="pl-5">
+						{
+							work.genre.length > 0
+								? work.genre.map((item, index) => {
+										return (
+											<>
+												{item.main_genre.length > 0 &&
+													item.main_genre.map((item) => `${item.genre}: `)}
+												{item.genre}
+												{index < work.genre.length - 1 && " | "}
+											</>
+										);
+									})
+								: "N/A"
+						}
+					</dd>
+					<!-- <dt class="font-semibold border-r border-gray-300 pr-2">Überlieferung:</dt>
+					<dd class="pl-5">
+						{
+							msItems
+								.filter((msItem) => msItem.title_work.some((title) => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
+								.map((filteredMsItem) => {
 									return (
 										<>
-											{item.main_genre.length > 0 &&
-												item.main_genre.map((item) => `${item.genre}: `)}
-											{item.genre}
-											{index < work.genre.length - 1 && " | "}
+											<NavLink
+												href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`}
+												class="hover:text-brandRed"
+											>
+												{filteredMsItem.manuscript.map((ms) => ms.shelfmark[0].value)}
+											</NavLink>
+											<span>
+												<Icon
+													class="inline-flex align-middle"
+													aria-hidden="true"
+													name="lucide:arrow-right"
+												/>
+												<NavLink
+													class="hover:text-brandRed"
+													href={`/msitems/${filteredMsItem.hit_id}`}
+												>
+													({filteredMsItem.locus_grp})
+												</NavLink>
+												<br />
+											</span>
 										</>
 									);
 								})
-							: "N/A"
-					}
-				</dd>
+						}
+					</dd> -->
+				</dl>
 
-				<dt class="font-semibold border-r border-gray-300 pr-2">Überlieferung:</dt>
-				<dd class="pl-5">
-					{
-						msItems
-							.filter((msItem) => msItem.title_work.some((title) => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
-							.map((filteredMsItem) => {
-								return (
-									<>
-										<NavLink
-											href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`}
-											class="hover:text-brandRed"
-										>
-											{filteredMsItem.manuscript.map((ms) => ms.shelfmark[0].value)}
-										</NavLink>
-										<span>
-											<Icon
-												class="inline-flex align-middle"
-												aria-hidden="true"
-												name="lucide:arrow-right"
-											/>
+				<section class="m-5 overflow-x-auto">
+					<h2 class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
+					<table
+						class="w-full shadow-sm border-1 border-brandRed lg:leading-7 text-sm lg:text-base data-table"
+					>
+						<thead class="bg-brandRoseDark">
+							<tr>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Handschrift</th
+								>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Locus</th
+								>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Schreibort</th
+								>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Datierung</th
+								>
+								<th colspan="2" class="text-center p-2 font-semibold border border-gray-300">
+									Annotationen
+								</th>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Dekoration</th
+								>
+							</tr>
+							<tr>
+								<th class="text-center p-2 font-semibold border border-gray-300">Datierung</th>
+								<th class="text-center p-2 font-semibold border border-gray-300">Typ</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{
+								matchingItems.map((item) => (
+									<tr>
+										<td class="p-2 border border-gray-300">
 											<NavLink
+												href={`/manuscripts/${item.manuscript[0].hit_id}`}
 												class="hover:text-brandRed"
-												href={`/msitems/${filteredMsItem.hit_id}`}
 											>
-												({filteredMsItem.locus_grp})
+												{item.manuscript[0].shelfmark[0].value}
 											</NavLink>
-											<br />
-										</span>
-									</>
-								);
-							})
-					}
-				</dd>
-			</dl>
+										</td>
+										<td class="p-2 border border-gray-300">
+											<NavLink class="hover:text-brandRed" href={`/msitems/${item.hit_id}`}>
+												({item.locus_grp})
+											</NavLink>
+										</td>
+										<td class="p-2 border border-gray-300">{item.origPlaces}</td>
+										<td class="p-2 border border-gray-300">
+											{[...new Set(item.origHands.map((hand) => hand.dating[0]?.value))].join(
+												" | ",
+											)}
+										</td>
+										<td class="p-2 border border-gray-300">
+											{[...new Set(item.editHands.map((hand) => hand.dating[0]?.value))].join(", ")}
+										</td>
+										<td class="p-2 border border-gray-300">
+											{[
+												...new Set(
+													item.hands_role.flatMap((h_role) =>
+														h_role.role.map((r) => r.value).filter((value) => value != "Schreiber"),
+													),
+												),
+											].join(", ")}
+										</td>
+										<td class="p-2 border border-gray-300">
+											{item.decoration.map((deco) => deco?.value).join(", ")}
+										</td>
+									</tr>
+								))
+							}
+						</tbody>
+					</table>
+				</section>
+			</div>
 		</article>
 	</div>
 </PageLayout>
