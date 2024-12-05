@@ -11,6 +11,9 @@ export default defineConfig({
   integrations: [tailwind(), icon()],
   site: "https://histories-in-transition.github.io",
   base: "/hit-astro", //  GitHub repo name
+  server: {
+    open: 'hit-astro', // Automatically open at the correct base path
+  },
   build: {
     format: 'directory',
     cleanUrls: true
