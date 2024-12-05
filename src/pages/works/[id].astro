@@ -12,44 +12,45 @@ export async function getStaticPaths() {
 	//const msItemsList = Object.values(msitemsJson);
 	const matchingHands = Object.values(handsJson);
 	const msItemsList = Object.values(msitemsJson).map((msItem) => {
-			const matchingOrigHands = matchingHands.filter((hand) =>
+		const matchingOrigHands = matchingHands.filter((hand) =>
+			hand.hands_role.some(
+				(handRole) =>
+					handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
+					handRole.role.some((role) => role.value === "Schreiber"),
+			),
+		);
+		// get the scribe hands, extract only place again for using in column Schreiberort:
+		const matchingPlaces = matchingHands
+			.filter((hand) =>
 				hand.hands_role.some(
 					(handRole) =>
 						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
 						handRole.role.some((role) => role.value === "Schreiber"),
 				),
-			);
-			// get the scribe hands again for using in column Schreiberort:
-			const matchingPlaces = matchingHands
-				.filter((hand) =>
-					hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-						handRole.role.some((role) => role.value === "Schreiber")
-					)
-				)
-				.flatMap((hand) => hand.hands_placed.map((placement) => placement.place[0]?.name))
-				.filter(Boolean); // Remove null/undefined values
-
-				// Remove duplicates and join with ', '
-			const scribePlaces = [...new Set(matchingPlaces)].join(', ');
-
-				
-			const matchingEditHands = matchingHands.filter((hand) =>
-				hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-						handRole.role.some((role) => role.value != "Schreiber"),
-				),
 			)
-			return {
-				...msItem,
-				origHands: matchingOrigHands,
-				editHands: matchingEditHands,
-				origPlaces: scribePlaces,
-			};
-		});
+			.flatMap((hand) => hand.hands_placed.map((placement) => placement.place[0]?.name))
+			.filter(Boolean); // Remove null/undefined values
 
+		// Remove duplicates and join with ', '
+		const scribePlaces = [...new Set(matchingPlaces)].join(", ");
+
+		// finds all hands objects working on this msItem with role other than 'Schreiber'
+		const matchingEditHands = matchingHands.filter((hand) =>
+			hand.hands_role.some((handRole) =>
+				handRole.ms_item.some(
+					(item) =>
+						item.hit_id === msItem.hit_id &&
+						item.hands_role.some((h_role) => h_role.role.some((role) => role.value != "Schreiber")),
+				),
+			),
+		);
+		return {
+			...msItem,
+			origHands: matchingOrigHands,
+			editHands: matchingEditHands,
+			origPlaces: scribePlaces,
+		};
+	});
 
 	const paths = workList.map((work) => {
 		const workId = work.hit_id;
@@ -73,6 +74,15 @@ const { data: work, manItems: matchingItems } = Astro.props;
 ---
 
 <PageLayout title={work?.title}>
+	<style>
+		/* To make the table rows striped */
+		tbody tr:nth-child(even) {
+			background-color: #fcf1e8;
+		}
+		tbody tr:nth-child(odd) {
+			background-color: #fff8f7;
+		}
+	</style>
 	<div>
 		<article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
 			<div class="flex items-center gap-3 text-brandRed">
@@ -93,7 +103,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 				class="border-2 rounded-sm border-brandBrown bg-brandRose
 			text-sm md:leading-7 md:text-base"
 			>
-				<dl class="grid grid-cols-[1fr_6fr] p-5">
+				<dl class="grid grid-cols-[1fr_6fr] m-5">
 					<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
 					<dd class="pl-5">
 						{
@@ -199,34 +209,79 @@ const { data: work, manItems: matchingItems } = Astro.props;
 					</dd> -->
 				</dl>
 
-				<section class="p-5">
-					<h2 class="text-2xl text-brandRed py-5">Überlieferung</h2>
+				<section class="m-5 overflow-x-auto">
+					<h2 class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
 					<table
-						class="shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table"
+						class="w-full shadow-sm border-1 border-brandRed lg:leading-7 text-sm lg:text-base data-table"
 					>
-						<thead>
+						<thead class="bg-brandRoseDark">
 							<tr>
-								<th class="text-start p-2 font-semibold border border-gray-300">Handschrift</th>
-								<th class="text-start p-2 font-semibold border border-gray-300">Locus</th>
-								<th class="text-start p-2 font-semibold border border-gray-300">Schreibort</th>
-								<th class="text-start p-2 font-semibold border border-gray-300">Datierung</th>
-								<th class="text-start p-2 font-semibold border border-gray-300">Dekoration</th>
-								<th class="text-start p-2 font-semibold border border-gray-300">Annotationen</th>
-								<th class="text-start p-2 font-semibold border border-gray-300">Funktion</th>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Handschrift</th
+								>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Locus</th
+								>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Schreibort</th
+								>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Datierung</th
+								>
+								<th colspan="2" class="text-center p-2 font-semibold border border-gray-300">
+									Annotationen
+								</th>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+									>Dekoration</th
+								>
+							</tr>
+							<tr>
+								<th class="text-center p-2 font-semibold border border-gray-300">Datierung</th>
+								<th class="text-center p-2 font-semibold border border-gray-300">Typ</th>
 							</tr>
 						</thead>
+
 						<tbody>
-							{matchingItems.map(item => (
-								<tr>
-									<td class="p-2 border border-gray-300">{item.manuscript[0].shelfmark[0].value}</td>
-									<td class="p-2 border border-gray-300">{item.locus_grp}</td>
-									<td class="p-2 border border-gray-300">{[(item.origPlaces)]}</td>
-									<td class="p-2 border border-gray-300">{}</td>
-									<td class="p-2 border border-gray-300">{item.decoration.map(deco => deco.value)}</td>
-									<td class="p-2 border border-gray-300">{}</td>
-									<td class="p-2 border border-gray-300">{}</td>
-								</tr>
-							))}
+							{
+								matchingItems.map((item) => (
+									<tr>
+										<td class="p-2 border border-gray-300">
+											<NavLink
+												href={`/manuscripts/${item.manuscript[0].hit_id}`}
+												class="hover:text-brandRed"
+											>
+												{item.manuscript[0].shelfmark[0].value}
+											</NavLink>
+										</td>
+										<td class="p-2 border border-gray-300">
+											<NavLink class="hover:text-brandRed" href={`/msitems/${item.hit_id}`}>
+												({item.locus_grp})
+											</NavLink>
+										</td>
+										<td class="p-2 border border-gray-300">{item.origPlaces}</td>
+										<td class="p-2 border border-gray-300">
+											{[...new Set(item.origHands.map((hand) => hand.dating[0]?.value))].join(
+												" | ",
+											)}
+										</td>
+										<td class="p-2 border border-gray-300">
+											{[...new Set(item.editHands.map((hand) => hand.dating[0]?.value))].join(", ")}
+										</td>
+										<td class="p-2 border border-gray-300">
+											{[
+												...new Set(
+													item.hands_role.flatMap((h_role) =>
+														h_role.role.map((r) => r.value).filter((value) => value != "Schreiber"),
+													),
+												),
+											].join(", ")}
+										</td>
+										<td class="p-2 border border-gray-300">
+											{item.decoration.map((deco) => deco?.value).join(", ")}
+										</td>
+									</tr>
+								))
+							}
 						</tbody>
 					</table>
 				</section>

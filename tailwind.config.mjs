@@ -8,6 +8,7 @@ export default {
         brandIvory: "#fff8f7",
         brandRose: "#fcf1e8",
         brandRed: "#9c3e03",
+        brandRoseDark: "#fae9db"
       },
     },
   },
