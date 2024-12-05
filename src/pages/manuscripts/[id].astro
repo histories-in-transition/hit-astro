@@ -289,7 +289,7 @@ const codUnits = manuscript.related__cod_units ;
                     </dl>
               ))}
           </section>
-          <section>
+          <section class="overflow-x-auto">
             <h2 class="sr-only">Strata</h2>
             <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5 my-5">
                   {Object.values(strata)
@@ -303,7 +303,7 @@ const codUnits = manuscript.related__cod_units ;
                   })}
             </dl>
           
-            <table class="w-full bg-brandRose table-fixed rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
+            <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
               <thead>
                 <tr> 
                   <th>                  
@@ -318,7 +318,7 @@ const codUnits = manuscript.related__cod_units ;
                     <th>
                       <form role="search" data-search-form>
                         <div>Datierung</div>
-                        <div class="flex">
+                        <div class="md:flex">
                           <label class="flex flex-col items-start p-2">
                             <div class="sr-only">Datierung nach</div>
                             <input
