@@ -3,6 +3,7 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro";
 import NavLink from "../../components/nav-link.astro";
 import { Icon } from "astro-icon/components";
+import ArticleHeader from "../../components/article-nav-header.astro";
 import worksJson from "../../content/data/works.json";
 import msitemsJson from "../../content/data/ms_items.json";
 import handsJson from "../../content/data/hands.json";
@@ -84,16 +85,12 @@ const { data: work, manItems: matchingItems } = Astro.props;
 		}
 	</style>
 	<div>
-		<article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-			<div class="flex items-center gap-3 text-brandRed">
-				<NavLink href=`/works/${work.prev.id}` class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="text-3xl" />
-				</NavLink>
-				<h1 class="text-3xl font-semibold py-3 text-brandRed">{work?.title}</h1>
-				<NavLink href=`/works/${work.next.id}` class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:circle-chevron-right" class="text-3xl" />
-				</NavLink>
-			</div>
+		<article class="w-full grid grid-cols-1 mx-auto p-5 gap-y-2">
+			<ArticleHeader
+				prevLink={`/works/${work.prev.id}`}
+				nextLink={`/works/${work.next.id}`}
+				mainTitle={`${work?.title}`}
+			/>
 
 			<div class="flex gap-2 justify-end">
 				<Button>TEI-XML</Button>
@@ -110,14 +107,14 @@ const { data: work, manItems: matchingItems } = Astro.props;
 							work?.author.length > 1
 								? work.author.map((item) => (
 										<>
-											<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed">
+											<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed underline decoration-dotted underline-offset-4">
 												{item.name}
 											</NavLink>
 											<br />
 										</>
 									))
 								: work.author.map((item) => (
-										<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed">
+										<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed underline decoration-dotted underline-offset-4">
 											{item.name}
 										</NavLink>
 									))

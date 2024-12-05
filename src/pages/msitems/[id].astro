@@ -1,6 +1,7 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
 import { Icon } from "astro-icon/components";
+import ArticleHeader from "../../components/article-nav-header.astro";
 import msitems from "../../content/data/ms_items.json";
 import handsJson from "../../content/data/hands.json"
 import NavLink from "../../components/nav-link.astro";
@@ -44,34 +45,21 @@ const { data: item, hands: matchingHands } = Astro.props;
   </style>
     <div>
         <article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-          <div class="flex items-center gap-3 text-brandRed">
-            <NavLink href=`/msitems/${item.prev.id}` class="flex items-center">
-              <div class="sr-only">Link zu vorrigem Ms-Item</div>
-              <Icon
-                aria-hidden="true"
-                name="lucide:circle-chevron-left"
-                class="text-3xl" 
-              />
-            </NavLink>
-            <h1 class="text-3xl font-semibold py-3 text-brandRed">
-              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} class="underline underline-offset-2">
-                {item.manuscript[0]?.shelfmark[0].value}
-              </NavLink>
-              <span> ({item?.locus_grp}) </span>
-            </h1>
-            <NavLink href=`/msitems/${item.next.id}` class="flex items-center">
-              <div class="sr-only">Link zu nächstem Ms-Item</div>
-              <Icon
-                aria-hidden="true"
-                name="lucide:circle-chevron-right"
-                class="text-3xl"
-              />
-            </NavLink>
-          </div>        
+          <ArticleHeader
+          prevLink={`/msitems/${item.prev.id}`}
+          nextLink={`/msitems/${item.next.id}`}
+          mainTitle={`${item.manuscript[0]?.shelfmark[0].value}, ${item?.locus_grp}`}
+        />             
         <section>
           <h2 class="sr-only">Beschreibung des Ms-items</h2>
           <dl class=" border border-gray-300 shadow-sm rounded-sm bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
-              <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>  
+            <dd class="pl-5">
+              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} class="underline underline-offset-2">
+                {item.manuscript[0]?.shelfmark[0].value}
+              </NavLink>
+            </dd>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
               <dd class="pl-5">{item.title_work?.map(title => <NavLink href={`/works/${title?.hit_id}`} class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
               <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
               <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>

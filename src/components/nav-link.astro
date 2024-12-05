@@ -1,12 +1,12 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import {withBasePath} from "../lib/withBasePath.js";
+import { withBasePath } from "../lib/withBasePath.js";
 
 interface Props extends HTMLAttributes<"a"> {}
 
 const { href, ...rest } = Astro.props; // destructures Astro.props to extract the href property and group the remaining props into rest to be reattached.
 
-const pathname = withBasePath(href)
-
+const pathname = withBasePath(href);
 ---
-<a {...rest} href={pathname} ><slot /></a>
+
+<a {...rest} href={pathname}><slot /></a>

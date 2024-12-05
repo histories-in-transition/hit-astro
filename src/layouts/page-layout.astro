@@ -4,7 +4,7 @@ import "tailwindcss/tailwind.css";
 
 import PageFooter from "../components/page-footer.astro";
 import PageHeader from "../components/page-header.astro";
-
+import BreadCrumbs from "../components/breadcrumbs.astro";
 interface Props {
 	title?: string;
 }
@@ -23,6 +23,7 @@ const { title = "Histories in transition" } = Astro.props;
 	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brandIvory">
 		<PageHeader />
 		<main class="mx-auto p-4 lg:w-4/5">
+			<BreadCrumbs/>
 			<slot />
 		</main>
 		<PageFooter />
