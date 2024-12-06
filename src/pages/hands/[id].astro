@@ -2,6 +2,7 @@
 import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro";
 import { Icon } from "astro-icon/components";
+import ArticleHeader from "../../components/article-nav-header.astro";
 import NavLink from "../../components/nav-link.astro";
 import hands from "../../content/data/hands.json";
 
@@ -29,18 +30,13 @@ const { data: item } = Astro.props;
    
   </style>
 	<div>
-		<article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-			<div class="flex items-center gap-3 text-brandRed">
-				<NavLink href=`/hands/${item.prev.id}` class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="text-3xl" />
-				</NavLink>
-				<h1 class="text-3xl font-semibold py-3 text-brandRed">
-					Schreiberhand {item.view_label}
-				</h1>
-				<NavLink href=`/hands/${item.next.id}` class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:circle-chevron-right" class="text-3xl" />
-				</NavLink>
-			</div>
+		<article class="w-full grid grid-cols-1 mx-auto p-5 gap-y-2">
+      <ArticleHeader
+      prevLink={`/hands/${item.prev.id}`}
+      nextLink={`/hands/${item.next.id}`}
+      mainTitle={`Schreiberhand: ${item.view_label}`}
+    />   
+     
 
 			<div class="flex gap-2 justify-end">
 				<Button>TEI-XML</Button>
@@ -55,7 +51,7 @@ const { data: item } = Astro.props;
             <dd class="pl-5">
               <NavLink
                 href=`/manuscripts/${item.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`
-                class="hover:text-brandRed"
+                class="hover:text-brandRed underline decoration-dotted underline-offset-4"
               >
                 {item.manuscript[0]?.value}
               </NavLink>
@@ -68,7 +64,8 @@ const { data: item } = Astro.props;
                         <dd class="pl-5">
                             {item.similar_hands.map((hand, index) => (
                                 <span>
-                                    <NavLink href=`/hands/hit_hands__${hand.id}` class="hover:text-brandRed">
+                                    <NavLink href=`/hands/hit_hands__${hand.id}` 
+                                    class="hover:text-brandRed underline decoration-dotted underline-offset-4">
                                     {hand.value}
                                     </NavLink>
                                 
@@ -123,7 +120,8 @@ const { data: item } = Astro.props;
                     <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
                     <dd class="pl-5">
                       {item.scribe.length > 0 
-                        ? item.scribe.map(scrib => <NavLink class="hover:text-brandRed" href={`/scribes/${scrib.hit_id}`}>{scrib.name}</NavLink>)  
+                        ? item.scribe.map(scrib => <NavLink class="hover:text-brandRed underline decoration-dotted underline-offset-4" 
+                        href={`/scribes/${scrib.hit_id}`}>{scrib.name}</NavLink>)  
                         : 'N/A'
                       }           
                     </dd>                
@@ -192,7 +190,7 @@ const { data: item } = Astro.props;
                       return role.ms_item.map(msItem => {
                         return <tr>
                           <td class="px-2">
-                            <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>
+                            <NavLink class="hover:text-brandRed underline decoration-dotted underline-offset-4" href={`/msitems/${msItem.hit_id}`}>
                                       {msItem.locus_grp}
                                     </NavLink></td>
                           <td class="px-2">{msItem.title_work?.map(work => {

@@ -1,12 +1,13 @@
 ---
 import {Icon} from "astro-icon/components";
 import PageLayout from "../../layouts/page-layout.astro";
+import ArticleHeader from "../../components/article-nav-header.astro"
 import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
 import msItems from "../../content/data/ms_items.json";
 import handsJson from "../../content/data/hands.json"
 import NavLink from "../../components/nav-link.astro";
-import strata from "../../content/data/strata.json"
+import strata from "../../content/data/strata.json";
 
 export async function getStaticPaths() {
   const manuscriptsList = Object.values(manuscripts);
@@ -59,27 +60,12 @@ const codUnits = manuscript.related__cod_units ;
    
   </style>
     <div>
-        <article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-          <header class="flex items-center gap-3 text-brandRed">
-            <NavLink href=`/manuscripts/${manuscript.prev.id}` class="flex items-center">
-              <Icon
-                aria-hidden="true"
-                name="lucide:circle-chevron-left"
-                class="text-3xl" 
-              />
-              <span class="sr-only">zum vorherigen Eintrag</span>
-            </NavLink>
-            <h1 class="text-3xl font-semibold py-3 text-brandRed">{manuscript?.shelfmark[0]?.value}</h1>
-            <NavLink href=`/manuscripts/${manuscript.next.id}` class="flex items-center">
-              <Icon
-                aria-hidden="true"
-                name="lucide:circle-chevron-right"
-                class="text-3xl"
-              />
-              <span class="sr-only">zum nächsten Eintrag</span>
-            </NavLink>
-          </header>
-          
+        <article class="w-full grid grid-cols-1 mx-auto p-5 lg:my-5 gap-y-2">
+          <ArticleHeader
+            prevLink={`/manuscripts/${manuscript.prev.id}`}
+            nextLink={`/manuscripts/${manuscript.next.id}`}
+            mainTitle={manuscript?.shelfmark[0]?.value}
+          />          
           
           <div class="flex gap-2 justify-end">
             <Button>TEI-XML</Button>
