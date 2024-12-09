@@ -28,7 +28,12 @@ import TableHead from "../components/table-head.astro";
 			const decoItems = matchingMsItems.flatMap((item) => item.decoration || []);
 
 			// Map decorations from matching items into a single array for decoItems
-			const annotations = matchingMsItems.flatMap((item) => item.hands_role || []);
+			const annotations = matchingMsItems.flatMap(
+				(item) =>
+					item.hands_role.filter((h_role) =>
+						h_role.role.some((role) => role.value != "Schreiber"),
+					) || [],
+			);
 
 			return {
 				...ms,
