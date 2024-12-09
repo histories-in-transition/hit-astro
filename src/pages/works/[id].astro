@@ -3,7 +3,7 @@ import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro";
 import NavLink from "../../components/nav-link.astro";
 import { Icon } from "astro-icon/components";
-import ArticleHeader from "../../components/article-nav-header.astro";
+import Article from "../../components/article.astro";
 import worksJson from "../../content/data/works.json";
 import msitemsJson from "../../content/data/ms_items.json";
 import handsJson from "../../content/data/hands.json";
@@ -84,94 +84,98 @@ const { data: work, manItems: matchingItems } = Astro.props;
 			background-color: #fff8f7;
 		}
 	</style>
-	<div>
-		<article class="w-full grid grid-cols-1 mx-auto p-5 gap-y-2">
-			<ArticleHeader
-				prevLink={`/works/${work.prev.id}`}
-				nextLink={`/works/${work.next.id}`}
-				mainTitle={`${work?.title}`}
-			/>
 
-			<div class="flex gap-2 justify-end">
-				<Button>TEI-XML</Button>
-				<Button>PDF</Button>
-			</div>
-			<div
-				class="border-2 rounded-sm border-brandBrown bg-brandRose
+	<Article
+		prevLink={`/works/${work.prev.id}`}
+		nextLink={`/works/${work.next.id}`}
+		mainTitle={`${work?.title}`}
+	>
+		<div class="flex gap-2 justify-end">
+			<Button>TEI-XML</Button>
+			<Button>PDF</Button>
+		</div>
+		<div
+			class="border-2 rounded-sm border-brandBrown bg-brandRose
 			text-sm md:leading-7 md:text-base"
-			>
-				<dl class="grid grid-cols-[1fr_6fr] m-5">
-					<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-					<dd class="pl-5">
-						{
-							work?.author.length > 1
-								? work.author.map((item) => (
-										<>
-											<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed underline decoration-dotted underline-offset-4">
-												{item.name}
-											</NavLink>
-											<br />
-										</>
-									))
-								: work.author.map((item) => (
-										<NavLink href={`/authors/${item.hit_id}`} class="hover:text-brandRed underline decoration-dotted underline-offset-4">
+		>
+			<dl class="grid grid-cols-[1fr_6fr] m-5">
+				<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+				<dd class="pl-5">
+					{
+						work?.author.length > 1
+							? work.author.map((item) => (
+									<>
+										<NavLink
+											href={`/authors/${item.hit_id}`}
+											class="hover:text-brandRed underline decoration-dotted underline-offset-4"
+										>
 											{item.name}
 										</NavLink>
-									))
-						}
-					</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-					<dd class="pl-5">
-						{work.bibliography.length > 0 ? work.bibliography.map((item) => item) : "N/A"}
-					</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
-					<dd class="pl-5">
-						{
-							work?.gnd_url ? (
-								<NavLink href={work.gnd_url} class="hover:text-brandRed">
-									{work.gnd_url.split("gnd/")[1]}
-									<Icon
-										class="inline-flex align-baseline"
-										aria-hidden="true"
-										name="lucide:external-link"
-									/>
-								</NavLink>
-							) : (
-								"N/A"
-							)
-						}
-					</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
-					<dd class="pl-5">
-						{
-							work.source_text.length > 0
-								? work.source_text.map((text) => (
-										<NavLink href={`/works/${text.hit_id}`} class="hover:text-brandRed">
-											{text.title}
-										</NavLink>
-									))
-								: "N/A"
-						}
-						{work.note_source ? <span>({work.note_source})</span> : ""}
-					</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
-					<dd class="pl-5">
-						{
-							work.genre.length > 0
-								? work.genre.map((item, index) => {
-										return (
-											<>
-												{item.main_genre.length > 0 &&
-													item.main_genre.map((item) => `${item.genre}: `)}
-												{item.genre}
-												{index < work.genre.length - 1 && " | "}
-											</>
-										);
-									})
-								: "N/A"
-						}
-					</dd>
-					<!-- <dt class="font-semibold border-r border-gray-300 pr-2">Überlieferung:</dt>
+										<br />
+									</>
+								))
+							: work.author.map((item) => (
+									<NavLink
+										href={`/authors/${item.hit_id}`}
+										class="hover:text-brandRed underline decoration-dotted underline-offset-4"
+									>
+										{item.name}
+									</NavLink>
+								))
+					}
+				</dd>
+				<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+				<dd class="pl-5">
+					{work.bibliography.length > 0 ? work.bibliography.map((item) => item) : "N/A"}
+				</dd>
+				<dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
+				<dd class="pl-5">
+					{
+						work?.gnd_url ? (
+							<NavLink href={work.gnd_url} class="hover:text-brandRed">
+								{work.gnd_url.split("gnd/")[1]}
+								<Icon
+									class="inline-flex align-baseline"
+									aria-hidden="true"
+									name="lucide:external-link"
+								/>
+							</NavLink>
+						) : (
+							"N/A"
+						)
+					}
+				</dd>
+				<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
+				<dd class="pl-5">
+					{
+						work.source_text.length > 0
+							? work.source_text.map((text) => (
+									<NavLink href={`/works/${text.hit_id}`} class="hover:text-brandRed">
+										{text.title}
+									</NavLink>
+								))
+							: "N/A"
+					}
+					{work.note_source ? <span>({work.note_source})</span> : ""}
+				</dd>
+				<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
+				<dd class="pl-5">
+					{
+						work.genre.length > 0
+							? work.genre.map((item, index) => {
+									return (
+										<>
+											{item.main_genre.length > 0 &&
+												item.main_genre.map((item) => `${item.genre}: `)}
+											{item.genre}
+											{index < work.genre.length - 1 && " | "}
+										</>
+									);
+								})
+							: "N/A"
+					}
+				</dd>
+				<!-- <dt class="font-semibold border-r border-gray-300 pr-2">Überlieferung:</dt>
 					<dd class="pl-5">
 						{
 							msItems
@@ -204,85 +208,80 @@ const { data: work, manItems: matchingItems } = Astro.props;
 								})
 						}
 					</dd> -->
-				</dl>
+			</dl>
 
-				<section class="m-5 overflow-x-auto">
-					<h2 class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
-					<table
-						class="w-full shadow-sm border-1 border-brandRed lg:leading-7 text-sm lg:text-base data-table"
-					>
-						<thead class="bg-brandRoseDark">
-							<tr>
-								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
-									>Handschrift</th
-								>
-								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
-									>Locus</th
-								>
-								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
-									>Schreibort</th
-								>
-								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
-									>Datierung</th
-								>
-								<th colspan="2" class="text-center p-2 font-semibold border border-gray-300">
-									Annotationen
-								</th>
-								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
-									>Dekoration</th
-								>
-							</tr>
-							<tr>
-								<th class="text-center p-2 font-semibold border border-gray-300">Datierung</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">Typ</th>
-							</tr>
-						</thead>
+			<section class="m-5 overflow-x-auto">
+				<h2 class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
+				<table
+					class="w-full shadow-sm border-1 border-brandRed lg:leading-7 text-sm lg:text-base data-table"
+				>
+					<thead class="bg-brandRoseDark">
+						<tr>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+								>Handschrift</th
+							>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Locus</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+								>Schreibort</th
+							>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+								>Datierung</th
+							>
+							<th colspan="2" class="text-center p-2 font-semibold border border-gray-300">
+								Annotationen
+							</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300"
+								>Dekoration</th
+							>
+						</tr>
+						<tr>
+							<th class="text-center p-2 font-semibold border border-gray-300">Datierung</th>
+							<th class="text-center p-2 font-semibold border border-gray-300">Typ</th>
+						</tr>
+					</thead>
 
-						<tbody>
-							{
-								matchingItems.map((item) => (
-									<tr>
-										<td class="p-2 border border-gray-300">
-											<NavLink
-												href={`/manuscripts/${item.manuscript[0].hit_id}`}
-												class="hover:text-brandRed"
-											>
-												{item.manuscript[0].shelfmark[0].value}
-											</NavLink>
-										</td>
-										<td class="p-2 border border-gray-300">
-											<NavLink class="hover:text-brandRed" href={`/msitems/${item.hit_id}`}>
-												({item.locus_grp})
-											</NavLink>
-										</td>
-										<td class="p-2 border border-gray-300">{item.origPlaces}</td>
-										<td class="p-2 border border-gray-300">
-											{[...new Set(item.origHands.map((hand) => hand.dating[0]?.value))].join(
-												" | ",
-											)}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{[...new Set(item.editHands.map((hand) => hand.dating[0]?.value))].join(", ")}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{[
-												...new Set(
-													item.hands_role.flatMap((h_role) =>
-														h_role.role.map((r) => r.value).filter((value) => value != "Schreiber"),
-													),
+					<tbody>
+						{
+							matchingItems.map((item) => (
+								<tr>
+									<td class="p-2 border border-gray-300">
+										<NavLink
+											href={`/manuscripts/${item.manuscript[0].hit_id}`}
+											class="hover:text-brandRed"
+										>
+											{item.manuscript[0].shelfmark[0].value}
+										</NavLink>
+									</td>
+									<td class="p-2 border border-gray-300">
+										<NavLink class="hover:text-brandRed" href={`/msitems/${item.hit_id}`}>
+											({item.locus_grp})
+										</NavLink>
+									</td>
+									<td class="p-2 border border-gray-300">{item.origPlaces}</td>
+									<td class="p-2 border border-gray-300">
+										{[...new Set(item.origHands.map((hand) => hand.dating[0]?.value))].join(" | ")}
+									</td>
+									<td class="p-2 border border-gray-300">
+										{[...new Set(item.editHands.map((hand) => hand.dating[0]?.value))].join(", ")}
+									</td>
+									<td class="p-2 border border-gray-300">
+										{[
+											...new Set(
+												item.hands_role.flatMap((h_role) =>
+													h_role.role.map((r) => r.value).filter((value) => value != "Schreiber"),
 												),
-											].join(", ")}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{item.decoration.map((deco) => deco?.value).join(", ")}
-										</td>
-									</tr>
-								))
-							}
-						</tbody>
-					</table>
-				</section>
-			</div>
-		</article>
-	</div>
+											),
+										].join(", ")}
+									</td>
+									<td class="p-2 border border-gray-300">
+										{item.decoration.map((deco) => deco?.value).join(", ")}
+									</td>
+								</tr>
+							))
+						}
+					</tbody>
+				</table>
+			</section>
+		</div>
+	</Article>
 </PageLayout>

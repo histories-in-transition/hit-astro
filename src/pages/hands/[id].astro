@@ -1,8 +1,7 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro";
-import { Icon } from "astro-icon/components";
-import ArticleHeader from "../../components/article-nav-header.astro";
+import Article from "../../components/article.astro";
 import NavLink from "../../components/nav-link.astro";
 import hands from "../../content/data/hands.json";
 
@@ -29,13 +28,12 @@ const { data: item } = Astro.props;
     }
    
   </style>
-	<div>
-		<article class="w-full grid grid-cols-1 mx-auto p-5 gap-y-2">
-      <ArticleHeader
+	
+      <Article
       prevLink={`/hands/${item.prev.id}`}
       nextLink={`/hands/${item.next.id}`}
       mainTitle={`Schreiberhand: ${item.view_label}`}
-    />   
+    >   
      
 
 			<div class="flex gap-2 justify-end">
@@ -213,7 +211,6 @@ const { data: item } = Astro.props;
       
       </section>
           
-		</article>
-	</div>
+		</Article>
   <script src="../../lib/table-search.js"></script>
 </PageLayout>

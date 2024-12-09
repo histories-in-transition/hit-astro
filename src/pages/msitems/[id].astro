@@ -1,7 +1,7 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
 import { Icon } from "astro-icon/components";
-import ArticleHeader from "../../components/article-nav-header.astro";
+import Article from "../../components/article.astro";
 import msitems from "../../content/data/ms_items.json";
 import handsJson from "../../content/data/hands.json"
 import NavLink from "../../components/nav-link.astro";
@@ -43,13 +43,11 @@ const { data: item, hands: matchingHands } = Astro.props;
     }
    
   </style>
-    <div>
-        <article class="w-full grid grid-cols-1 mx-auto p-5 my-10 gap-y-2">
-          <ArticleHeader
+  <Article
           prevLink={`/msitems/${item.prev.id}`}
           nextLink={`/msitems/${item.next.id}`}
           mainTitle={`${item.manuscript[0]?.shelfmark[0].value}, ${item?.locus_grp}`}
-        />             
+        >             
         <section>
           <h2 class="sr-only">Beschreibung des Ms-items</h2>
           <dl class=" border border-gray-300 shadow-sm rounded-sm bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
@@ -185,6 +183,5 @@ const { data: item, hands: matchingHands } = Astro.props;
             </table>
           </section>
       }
-        </article>
-    </div>
+  </Article>
 </PageLayout>

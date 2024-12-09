@@ -1,7 +1,7 @@
 ---
 import {Icon} from "astro-icon/components";
 import PageLayout from "../../layouts/page-layout.astro";
-import ArticleHeader from "../../components/article-nav-header.astro"
+import Article from "../../components/article.astro";
 import Button from "../../components/button.astro"
 import manuscripts from "../../content/data/manuscripts.json";
 import msItems from "../../content/data/ms_items.json";
@@ -48,24 +48,12 @@ const codUnits = manuscript.related__cod_units ;
 
 ---
 
-<PageLayout title={manuscript?.shelfmark[0]?.value}>
-  <style>
-    /* To make the table rows striped */
-    tbody tr:nth-child(even) {
-      background-color: #fcf1e8;
-    }
-    tbody tr:nth-child(odd) {
-      background-color: #fff8f7;
-    }
-   
-  </style>
-    <div>
-        <article class="w-full grid grid-cols-1 mx-auto p-5 lg:my-5 gap-y-2">
-          <ArticleHeader
+<PageLayout title={manuscript?.shelfmark[0]?.value}>    
+    <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
             mainTitle={manuscript?.shelfmark[0]?.value}
-          />          
+          >          
           
           <div class="flex gap-2 justify-end">
             <Button>TEI-XML</Button>
@@ -446,7 +434,6 @@ const codUnits = manuscript.related__cod_units ;
           </section>
         
            
-    </article>
-    </div>
+    </Article>
     <script src="../../lib/table-search.js"></script>
 </PageLayout>

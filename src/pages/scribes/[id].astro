@@ -2,7 +2,7 @@
 import PageLayout from "../../layouts/page-layout.astro";
 import Button from "../../components/button.astro";
 import { Icon } from "astro-icon/components";
-import ArticleHeader from "../../components/article-nav-header.astro";
+import Article from "../../components/article.astro";
 import NavLink from "../../components/nav-link.astro";
 import scribesJson from "../../content/data/scribes.json";
 
@@ -31,13 +31,12 @@ const { data: scribe } = Astro.props;
 			background-color: #fff8f7;
 		}
 	</style>
-	<div>
-		<article class="w-full grid grid-cols-1 mx-auto p-5 gap-y-2">
-            <ArticleHeader
+	
+    <Article
             prevLink={`/scribes/${scribe.prev.id}`}
             nextLink={`/scribes/${scribe.next.id}`}
             mainTitle={`Schreiber: ${scribe.name}`}
-          />          
+          >          
             
 
 			<div class="flex gap-2 justify-end">
@@ -224,6 +223,5 @@ const { data: scribe } = Astro.props;
 				
 				
 			
-		</article>
-	</div>
-    </PageLayout>
+    </Article>
+</PageLayout>
