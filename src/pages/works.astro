@@ -105,14 +105,14 @@ import TableHead from "../components/table-head.astro";
 					headerFilter: "input",
 				},
 				{
-					title: "Überlieferung: Schreibort",
+					title: "Ort der Überlieferung",
 					field: "origPlaces",
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]" },
 					headerFilter: "input",
 				},
 				{
-					title: "Überlieferung: Datum",
+					title: "Datum der Überlieferung",
 					field: "origHands",
 					mutator: jsonpathsDistinctRanges,
 					mutatorParams: {
@@ -129,7 +129,7 @@ import TableHead from "../components/table-head.astro";
 					},
 				},
 				{
-					title: "Überlieferung: Dekoration",
+					title: "HSS Dekoration",
 					field: "decoWork",
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]", separator: " | " },
@@ -141,7 +141,7 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {
 						paths: ["$[*].author[*].value", "$[*].title"],
-						 separator: ": "
+						separator: ": ",
 					},
 					headerFilter: "input",
 				},
