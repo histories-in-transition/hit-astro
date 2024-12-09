@@ -175,39 +175,22 @@ const { data: work, manItems: matchingItems } = Astro.props;
 							: "N/A"
 					}
 				</dd>
-				<!-- <dt class="font-semibold border-r border-gray-300 pr-2">Überlieferung:</dt>
+				{work.source_text.length > 0 &&
+					<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
 					<dd class="pl-5">
-						{
-							msItems
-								.filter((msItem) => msItem.title_work.some((title) => title.hit_id === work.hit_id)) // .some() used here to match the hit_id
-								.map((filteredMsItem) => {
-									return (
-										<>
-											<NavLink
-												href={`/manuscripts/${filteredMsItem.manuscript[0].hit_id}`}
-												class="hover:text-brandRed"
-											>
-												{filteredMsItem.manuscript.map((ms) => ms.shelfmark[0].value)}
-											</NavLink>
-											<span>
-												<Icon
-													class="inline-flex align-middle"
-													aria-hidden="true"
-													name="lucide:arrow-right"
-												/>
-												<NavLink
-													class="hover:text-brandRed"
-													href={`/msitems/${filteredMsItem.hit_id}`}
-												>
-													({filteredMsItem.locus_grp})
-												</NavLink>
-												<br />
-											</span>
-										</>
-									);
-								})
-						}
-					</dd> -->
+						{work.source_text.map((item, index) => {
+										return (
+											<>
+												{item.author.length > 0 &&
+													item.author.map((aut) => `${aut.value}: `)}
+												{item.title}
+												{index < work.genre.length - 1 && " | "}
+											</>
+										);
+									})
+								}
+					</dd>
+							}
 			</dl>
 
 			<section class="m-5 overflow-x-auto">

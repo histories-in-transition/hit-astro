@@ -15,6 +15,7 @@ import TableHead from "../components/table-head.astro";
 			dateRangeFilter,
 			jsonpathDistinctLookup,
 			jsonpathsDistinctRanges,
+			jsonpathsDistinctLookup,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 		import hands_Json from "../content/data/hands.json";
@@ -94,7 +95,7 @@ import TableHead from "../components/table-head.astro";
 					headerFilter: "input",
 				},
 				{
-					title: "Überlieferung",
+					title: "Überlieferung: HSS",
 					field: "related__ms_items",
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
@@ -104,14 +105,14 @@ import TableHead from "../components/table-head.astro";
 					headerFilter: "input",
 				},
 				{
-					title: "Schreibort",
+					title: "Ort der Überlieferung",
 					field: "origPlaces",
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]" },
 					headerFilter: "input",
 				},
 				{
-					title: "Datum der Niederschrift",
+					title: "Datum der Überlieferung",
 					field: "origHands",
 					mutator: jsonpathsDistinctRanges,
 					mutatorParams: {
@@ -128,11 +129,21 @@ import TableHead from "../components/table-head.astro";
 					},
 				},
 				{
-					title: "Dekoration",
+					title: "HSS Dekoration",
 					field: "decoWork",
 					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*]", separator: " | " },					
-					headerFilter: "input",					
+					mutatorParams: { path: "$[*]", separator: " | " },
+					headerFilter: "input",
+				},
+				{
+					title: "Quelle",
+					field: "source_text",
+					mutator: jsonpathsDistinctLookup,
+					mutatorParams: {
+						paths: ["$[*].author[*].value", "$[*].title"],
+						separator: ": ",
+					},
+					headerFilter: "input",
 				},
 			],
 		});
