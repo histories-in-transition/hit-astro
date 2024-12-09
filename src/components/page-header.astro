@@ -1,5 +1,6 @@
 ---
 import NavLink from "./nav-link.astro";
+import { Icon } from "astro-icon/components";
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
 ---
@@ -16,6 +17,11 @@ const base = import.meta.env.BASE_URL;
 					The Case of Freising and Salzburg (9th – 12th c.)</span
 				>
 			</NavLink>
+			<p class="text-yellow-400 font-semibold text-lg normal-case italic">
+				<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
+				Diese Website ist noch im Aufbau und in Bearbeitung.
+				<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
+			</p>
 		</div>
 		<nav aria-labelledby="primary-navigation" class="md:hidden">
 			<button

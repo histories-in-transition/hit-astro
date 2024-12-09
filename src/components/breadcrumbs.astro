@@ -8,29 +8,40 @@ const base = import.meta.env.BASE_URL; // Base URL
 // Remove the base path from the start of the pathname
 const path = pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
 // Split the remaining path into segments
-const segments = path.split("/").filter((segment) => segment); // ['works', 'hit_works__100']
-
-let url = ""; // Accumulated URL
+const segments = path.split("/").filter((segment) => segment);
 ---
 
-<ul class="flex items-center text-brandRed gap-1">
-	<li>
-		<NavLink href={`${base}`} class="flex items-center text-brandRed hover:underline">
-			<span>Home</span>
-		</NavLink>
-	</li>
-	{
-		segments.map((segment, index) => {
-			url += `${segment}/`; // Construct URL step-by-step
-			const displayName = segment.charAt(0) + segment.slice(1); // Capitalize segment
-			return (
-				<li class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:chevron-right" />
-					<NavLink href={`${base}${url}`} class="text-brandRed hover:underline">
-						{displayName}
-					</NavLink>
-				</li>
-			);
-		})
-	}
-</ul>
+{
+	pathname.endsWith("hit-astro/") || pathname.endsWith("index.html") ? (
+		<ul />
+	) : (
+		<ul class="flex items-center text-brandRed gap-1 p-3">
+			<li>
+				<NavLink href="/" class="flex items-center text-brandRed hover:underline">
+					<span>Home</span>
+				</NavLink>
+			</li>
+			{segments.map((segment, index) => {
+				// Rebuild the URL for the current segment without prepending the base
+				// base comes with NavLink
+				const url = `/${segments.slice(0, index + 1).join("/")}/`;
+				const displayName = segment.replace("hit_", " ").replace("__", " #"); // Format the segment name
+				// If it's the last segment, render as plain text
+				const isLastSegment = index === segments.length - 1;
+
+				return (
+					<li class="flex items-center">
+						<Icon aria-hidden="true" name="lucide:chevron-right" />
+						{isLastSegment ? (
+							<span class="text-brandRed">{displayName}</span> // Plain text for the last segment
+						) : (
+							<NavLink href={url} class="text-brandRed hover:underline">
+								{displayName}
+							</NavLink>
+						)}
+					</li>
+				);
+			})}
+		</ul>
+	)
+}

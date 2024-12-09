@@ -2,38 +2,70 @@
 import PageLayout from "../layouts/page-layout.astro";
 import NavLink from "../components/nav-link.astro";
 import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
 import clm210 from "../../public/images/clm210.jpg";
 ---
 
 <PageLayout title="Home">
-	<div class="md:grid mx-auto grid-cols-2 py-10 px-10 place-content-center gap-10">
+	<div class="md:grid grid-cols-2 py-10 px-10 place-content-center gap-10
+	mx-auto md:w-3/4 sm:w-4/5">
 		<div class="self-center">
 			<div class="grid gap-2">
 				<h1 class="self-center text-4xl font-semibold">
 					Geschichte im Wandel | Histories in Transition
 				</h1>
-				<h2 class="self-center text-2xl italic">
-					The Case of Freising and Salzburg (9th – 12th c.)
-				</h2>
+				<h2 class="self-center text-2xl italic">Freising and Salzburg (9th – 12th c.)</h2>
 				<p class="py-3">
-					This project seeks to rethink the cultural history of historiography in the Carolingian
-					and post-Carolingian periods (9th–12th centuries) by focusing on two key centers -
-					Salzburg and Freising. The project explores the evolution of historical thinking and
-					writing, exploring how texts were written, combined, and contextualized in manuscripts,
-					emphasizing the materiality of manuscripts and how medieval historiographers worked with
-					materials like parchment and pen. It also examines the social and intellectual contexts
-					that influenced these works. A central aspect of the project is the creation of a
-					relational database, which will allow users to analyze and visualize the chronological
-					layers and connections between manuscripts.
+					Dieses Projekt versucht, die Kulturgeschichte der Geschichtsschreibung in der
+					karolingischen und nachkarolingischen Zeit (9.-12. Jahrhundert) neu zu überdenken, indem
+					es sich auf zwei Scriptorien - Salzburg und Freising - konzentriert. Das Projekt erforscht
+					die Entwicklung des historischen Denkens und Schreibens und untersucht, wie Texte in
+					Handschriften geschrieben, kombiniert und kontextualisiert wurden.
+					<NavLink class="italic underline underline-offset-4 hover:text-brandRed" href="/about"
+						>Mehr Info
+						<Icon
+							class="inline-flex align-baseline"
+							aria-hidden="true"
+							name="lucide:chevrons-right"
+						/>
+						<span class="sr-only">über das Projekt</span>
+					</NavLink>
 				</p>
-				<NavLink
-					class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition text-center"
-					href="/about">About the project</NavLink
-				>
-				<NavLink
-					class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition text-center"
-					href="/search">Explore the database</NavLink
-				>
+
+				<p>
+					Ein zentraler Aspekt des Projekts ist die Erstellung einer relationalen Datenbank, die es
+					den Nutzern ermöglicht, die chronologischen Schichten und Verbindungen zwischen den
+					Manuskripten zu analysieren und zu visualisieren.
+				</p>
+				<p class="text-brandRed font-semibold">
+					<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
+					Diese Anwendung befindet sich noch in der Entwicklung.
+					<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
+				</p>
+				<p>
+					Aktuell kann man durch die separaten Listen von
+					<NavLink
+						href="/manuscripts"
+						class="underline underline-offset-4 hover:text-brandRed font-medium"
+						>Handschriften</NavLink
+					>,
+					<NavLink
+						href="/works"
+						class="underline underline-offset-4 hover:text-brandRed font-medium">Werken</NavLink
+					>,
+					<NavLink
+						href="/scribes"
+						class="underline underline-offset-4 hover:text-brandRed font-medium">Schreiber</NavLink
+					> und
+					<NavLink
+						href="/hands"
+						class="underline underline-offset-4 hover:text-brandRed font-medium"
+						>Schreiberhänden</NavLink
+					> blättern oder die Manuskriptartikel (msItems) gefiltert <NavLink
+						href="/search"
+						class="underline underline-offset-4 hover:text-brandRed font-semibold">suchen</NavLink
+					>.
+				</p>
 			</div>
 		</div>
 		<figure class="md:grid gap-2 content-start hidden">
