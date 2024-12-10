@@ -94,7 +94,8 @@ import TableHead from "../components/table-head.astro";
 					field: "annotations",
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*].role[*].value", separator: " | " },
-					headerFilter: "input",
+					headerFilter: "list",
+					headerFilterParams: { valuesLookup: true, clearable: true },
 				},
 			],
 		});

@@ -47,20 +47,34 @@ const { data: item, hands: matchingHands } = Astro.props;
           prevLink={`/msitems/${item.prev.id}`}
           nextLink={`/msitems/${item.next.id}`}
           mainTitle={`${item.manuscript[0]?.shelfmark[0].value}, ${item?.locus_grp}`}
-        >             
-        <section>
-          <h2 class="sr-only">Beschreibung des Ms-items</h2>
-          <dl class=" border border-gray-300 shadow-sm rounded-sm bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
+        > 
+      <div
+        class="border-2 rounded-sm border-brandBrown bg-brandRose
+        text-sm md:leading-7 md:text-base"
+      >
+        <section aria-labelledby="msitemInfo" class="m-5">
+          <h2 id="msitemInfo" class="text-xl font-semibold text-brandRed">Allgemeine Info über das Ms-Item
+            
+          </h2>
+          <dl class="grid grid-cols-[1fr_6fr] p-5">
             <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>  
             <dd class="pl-5">
-              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} class="underline underline-offset-2">
+              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} class="underline decoration-dotted underline-offset-4  hover:text-brandRed">
                 {item.manuscript[0]?.shelfmark[0].value}
               </NavLink>
             </dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
-              <dd class="pl-5">{item.title_work?.map(title => <NavLink href={`/works/${title?.hit_id}`} class="hover:text-brandRed">{title.title}</NavLink>)}</dd>
-              <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-              <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>
+              <dd class="pl-5">
+                {item.title_work?.map(title => 
+                  <NavLink href={`/works/${title?.hit_id}`} 
+                      class="hover:text-brandRed underline decoration-dotted underline-offset-4">{title.title}
+                  </NavLink>
+                )}
+              </dd>
+             {item.title_work?.some(title => title.author.length > 0) &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+                <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>
+              }
               {item.title_note &&
               <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
               <dd class="pl-5">{item?.title_note}</dd>
@@ -75,28 +89,26 @@ const { data: item, hands: matchingHands } = Astro.props;
                       : <span class="italic">{part}</span> // Italic for other text
                   )}‹
                 </dd>}
-              <dt class="font-semibold border-r border-gray-300 pr-2">Incipit:</dt>
-              {item.incipit
-                  ? <dd class="pl-5 italic">
+              {item.incipit &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Incipit:</dt>
+                <dd class="pl-5 italic">
                     {item.incipit.split(/(\[ *.*?\])/).map((part) =>
                       part.startsWith('[') && part.endsWith(']')
                         ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
                         : <span class="italic">{part}</span> // Italic for other text
                     )}
                     {item.incipit.trim().endsWith('…') ? '' : '…'}
-                  </dd>
-                  : <dd/>}
-              <dt class="font-semibold border-r border-gray-300 pr-2">Explicit:</dt>
-              {item.explicit
-              ? <dd class="pl-5 italic">
-                {item.explicit.split(/(\[.*?\])/).map((part) =>
-                  part.startsWith('[') && part.endsWith(']')
-                    ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                    : <span>{part}</span> // Italic for other text
-                )}
-                {item.explicit.trim().startsWith('…') ? '' : '…'}
-              </dd>
-              : <dd class="pl-5"></dd>}
+                  </dd>}
+              {item.explicit &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Explicit:</dt>
+                <dd class="pl-5 italic">
+                  {item.explicit.split(/(\[.*?\])/).map((part) =>
+                    part.startsWith('[') && part.endsWith(']')
+                      ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                      : <span>{part}</span> // Italic for other text
+                  )}
+                  {item.explicit.trim().startsWith('…') ? '' : '…'}
+                </dd>}
               {item?.final_rubric &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Final Rubrik:</dt>
                  <dd class="pl-5">
@@ -107,8 +119,10 @@ const { data: item, hands: matchingHands } = Astro.props;
                         : <span class="italic">{part}</span> // Italic for other text
                     )}‹
                   </dd>}
-              <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-              <dd class="pl-5">{item?.decoration.map(deco => deco.value).join(', ')}</dd>
+              { item.decoration.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
+                <dd class="pl-5">{item?.decoration.map(deco => deco.value).join(', ')}</dd>
+              }
               <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
               <dd class="pl-5">
                 {item.hands_role
@@ -116,7 +130,9 @@ const { data: item, hands: matchingHands } = Astro.props;
                 .map(filteredRole => {
                   return <ul>
                           <li>
-                            <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}</NavLink>
+                            <NavLink class="hover:text-brandRed underline decoration-dotted underline-offset-4" 
+                              href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}
+                            </NavLink>
                             <span>
                               <Icon
                                 class="inline-flex align-middle"
@@ -131,16 +147,16 @@ const { data: item, hands: matchingHands } = Astro.props;
                   </ul>
           
                 })}
-              </dd>
-              
+              </dd>              
             </dl>
         </section>
+
         {item.hands_role
               .some(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber')) &&
-          <section class="overflow-x-auto">
-            <h2 class="text-xl font-semibold text-brandRed py-5">Bearbeitungsschritte</h2>
-            <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table">
-              <thead>
+          <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
+             <h2 id="msitemRework" class="text-xl font-semibold text-brandRed mb-5">Bearbeitungsschritte</h2>
+            <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table p-5">
+              <thead class="bg-brandRoseDark">
                 <tr> 
                   <th class="text-start p-2 font-semibold border border-gray-300">Bearbeitungsart</th>
                   <th class="text-start p-2 font-semibold border border-gray-300">Schreiberhand</th>    
@@ -183,5 +199,6 @@ const { data: item, hands: matchingHands } = Astro.props;
             </table>
           </section>
       }
+      </div>
   </Article>
 </PageLayout>

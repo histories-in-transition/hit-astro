@@ -48,7 +48,16 @@ const codUnits = manuscript.related__cod_units ;
 
 ---
 
-<PageLayout title={manuscript?.shelfmark[0]?.value}>    
+<PageLayout title={manuscript?.shelfmark[0]?.value}> 
+  <style>
+		/* To make the table rows striped */
+		tbody tr:nth-child(even) {
+			background-color: #fcf1e8;
+		}
+		tbody tr:nth-child(odd) {
+			background-color: #fff8f7;
+		}
+	</style>   
     <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
@@ -59,13 +68,12 @@ const codUnits = manuscript.related__cod_units ;
             <Button>TEI-XML</Button>
             <Button>PDF</Button>
           </div>
-          <section>
-            <h2 class="sr-only">Handschrift Identifier</h2>
-            <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+          <section aria-labelledby="msInfo" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+            <h2 id="msInfo" class="text-xl font-semibold text-brandRed">Handschrift Signatur:</h2>
+            <dl class=" grid grid-cols-[1fr_5fr] p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-              <dd class="pl-5">{manuscript?.library_full[0]?.settlement[0]?.name}</dd>
-              
+              <dd class="pl-5">{manuscript?.library_full[0]?.settlement[0]?.name}</dd>              
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
               <dd class="pl-5">
@@ -75,7 +83,6 @@ const codUnits = manuscript.related__cod_units ;
                 </NavLink>
               </dd>
               
-              
               <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
               <dd class="pl-5">{manuscript?.idno}</dd>
 
@@ -84,9 +91,9 @@ const codUnits = manuscript.related__cod_units ;
               <dd class="pl-5">{manuscript?.idno_former}</dd>}
             </dl>
           </section>
-          <section>
-            <h2 class="sr-only">Das Äuseres</h2>
-            <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+          <section aria-labelledby="msMaterial" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+            <h2 id="msMaterial" class="text-xl font-semibold text-brandRed">Materialität:</h2>
+            <dl class=" grid grid-cols-[1fr_5fr] p-5">
               <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
               <dd class="pl-5">
                   {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
@@ -133,9 +140,9 @@ const codUnits = manuscript.related__cod_units ;
                 )}
             </dl>
           </section>
-            <section>
-              <h2 class="sr-only">Geschichte</h2>
-              <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+          <section aria-labelledby="msHistory" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+            <h2 id="msHistory" class="text-xl font-semibold text-brandRed">Geschichte:</h2>
+            <dl class=" grid grid-cols-[1fr_5fr] p-5">
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
                 <dd class="pl-5">{manuscript?.history}</dd>
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
@@ -168,10 +175,10 @@ const codUnits = manuscript.related__cod_units ;
               </dl>
             </section>          
 
-            <section class="grid grid-cols-1 my-2 gap-y-2">
-              <h2 class="sr-only">Inhalt</h2>
+            <section aria-labelledby="msContent" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+            <h2 id="msContent" class="text-xl font-semibold text-brandRed">Inhalt:</h2>           
               {codUnits.map((unit) => (
-                <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5">
+                 <dl class="grid grid-cols-[1fr_5fr] p-5">
                   <dt class="font-semibold border-r border-gray-300 pr-2">
                     {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
                   <dd class="pl-5"></dd>
@@ -263,9 +270,9 @@ const codUnits = manuscript.related__cod_units ;
                     </dl>
               ))}
           </section>
-          <section class="overflow-x-auto">
-            <h2 class="sr-only">Strata</h2>
-            <dl class="border rounded-sm border-gray-200 shadow-sm bg-brandRose grid grid-cols-[1fr_5fr] text-sm md:leading-7 md:text-base p-5 my-5">
+           <section aria-labelledby="msStrata" class=" overflow-x-auto border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+            <h2 id="msStrata" class="text-xl font-semibold text-brandRed">Strata:</h2> 
+            <dl class="grid grid-cols-[1fr_5fr] p-5">
                   {Object.values(strata)
                     .filter(stratum => stratum.manuscript[0].id === manuscript.id)
                     .map(filteredStrata => {
@@ -278,9 +285,9 @@ const codUnits = manuscript.related__cod_units ;
             </dl>
           
             <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
-              <thead>
+              <thead class="bg-brandRoseDark">
                 <tr> 
-                  <th>                  
+                  <th class="text-center p-2 font-semibold border border-gray-300">                  
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Stratum</div>
@@ -289,7 +296,7 @@ const codUnits = manuscript.related__cod_units ;
                       </form>
                     </th>
                     
-                    <th>
+                    <th class="text-center p-2 font-semibold border border-gray-300">
                       <form role="search" data-search-form>
                         <div>Datierung</div>
                         <div class="md:flex">
@@ -315,7 +322,7 @@ const codUnits = manuscript.related__cod_units ;
                       </form>
                     </th>
 
-                  <th class="w-80">                  
+                    <th class="text-center p-2 font-semibold border border-gray-300">                  
                     <form role="search" data-search-form>
                       <label class="flex flex-col items-start p-2">
                         <div>Werk</div>
@@ -324,7 +331,7 @@ const codUnits = manuscript.related__cod_units ;
                       </label>
                     </form>
                   </th>   
-                  <th>             
+                  <th class="text-center p-2 font-semibold border border-gray-300">             
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Locus</div>
@@ -332,7 +339,7 @@ const codUnits = manuscript.related__cod_units ;
                       </label>
                     </form>
                   </th>  
-                  <th>             
+                  <th class="text-center p-2 font-semibold border border-gray-300">             
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Hand</div>
@@ -340,7 +347,7 @@ const codUnits = manuscript.related__cod_units ;
                       </label>
                     </form>
                   </th>             
-                  <th>              
+                  <th class="text-center p-2 font-semibold border border-gray-300">              
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Rolle</div>
@@ -348,7 +355,7 @@ const codUnits = manuscript.related__cod_units ;
                         </label>
                       </form>
                     </th>
-                  <th>             
+                  <th class="text-center p-2 font-semibold border border-gray-300">             
                     <form role="search" data-search-form >
                       <label class="flex flex-col items-start p-2">
                         <div>Umfang</div>
@@ -356,7 +363,7 @@ const codUnits = manuscript.related__cod_units ;
                       </label>
                     </form>
                   </th>            
-                  <th>             
+                  <th class="text-center p-2 font-semibold border border-gray-300">             
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Mise-en-page</div>
@@ -364,7 +371,7 @@ const codUnits = manuscript.related__cod_units ;
                         </label>
                       </form>
                     </th> 
-                    <th>             
+                    <th class="text-center p-2 font-semibold border border-gray-300">             
                       <form role="search" data-search-form>
                         <label class="flex flex-col items-start p-2">
                           <div>Funktion</div>
@@ -377,11 +384,13 @@ const codUnits = manuscript.related__cod_units ;
               <tbody>
                 {matchingHands.map(hand=> hand.hands_role.map(role => (
                   <tr>
-                    <td class="text-center">{Object.values(strata)
+                    <td class="p-2 border border-gray-300 text-center">{Object.values(strata)
                       .filter(stratum => stratum.hand_role.some(handRole => 
                         handRole.hit_id === role.hit_id
-                      )).map(filteredStratum => filteredStratum.number)}</td>
-                    <td class="px-2">
+                      )).map(filteredStratum => filteredStratum.number)}
+                    </td>
+
+                    <td class="p-2 border border-gray-300">
                       {hand.hands_dated.map(date => 
                         date.dated.map(i => {
                           const perStart = i.not_before ? new Date(i.not_before).getFullYear() :  null;
@@ -390,7 +399,7 @@ const codUnits = manuscript.related__cod_units ;
                         })
                       )}
                     </td>
-                    <td class="px-2">
+                    <td class="p-2 border border-gray-300">
                       {role.ms_item.length > 1 
                       ? (<ul class="list-disc">
                           {role.ms_item.map(msItem =>
@@ -416,15 +425,15 @@ const codUnits = manuscript.related__cod_units ;
                         )}
                     </td>
                       
-                    <td class="px-2">{role.ms_item.map((msItem) =>                         
+                    <td class="p-2 border border-gray-300">{role.ms_item.map((msItem) =>                         
                       <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
                      )}
                       </td>
-                    <td class="px-2"><NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink></td>
-                    <td class="px-2">{role.role.map(ro => ro.value).join(', ')}</td>
-                    <td class="px-2">{role.locus}</td>
-                    <td class="px-2">{role.locus_layout.map(scope => scope.value)}</td>
-                    <td class="px-2">{role.function.map(func => func.value).join(', ')}</td>
+                    <td class="p-2 border border-gray-300"><NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink></td>
+                    <td class="p-2 border border-gray-300">{role.role.map(ro => ro.value).join(', ')}</td>
+                    <td class="p-2 border border-gray-300">{role.locus}</td>
+                    <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope.value)}</td>
+                    <td class="p-2 border border-gray-300">{role.function.map(func => func.value).join(', ')}</td>
                   </tr>
                 )))}
               </tbody>
