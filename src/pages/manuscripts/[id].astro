@@ -70,7 +70,7 @@ const codUnits = manuscript.related__cod_units ;
           </div>
           <section aria-labelledby="msInfo" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msInfo" class="text-xl font-semibold text-brandRed">Handschrift Signatur:</h2>
-            <dl class=" grid grid-cols-[1fr_5fr] p-5">
+            <dl class="grid grid-cols-[1fr_5fr] p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
               <dd class="pl-5">{manuscript?.library_full[0]?.settlement[0]?.name}</dd>              
@@ -297,26 +297,24 @@ const codUnits = manuscript.related__cod_units ;
                         </form>
                       </th>
               
-                      <th class="text-center p-2 font-semibold border border-gray-300">
+                      <th class="text-center p-2 font-semibold border border-gray-300 min-w-32">
                         <form role="search" data-search-form>
                           <div>Datierung</div>
-                          <div class="md:flex">
+                          <div class="xl:flex">
                             <label class="flex flex-col items-start p-2">
                               <div class="sr-only">Datierung nach</div>
                               <input
-                                type="number"
                                 data-filter="year"
                                 data-bound="min"
-                                placeholder="nach ..."
+                                placeholder="nicht vor ..."
                                 class="filter-input mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                             </label>
                             <label class="flex flex-col items-start p-2">
                               <div class="sr-only">Datierung vor</div>
                               <input
-                                type="number"
                                 data-filter="year"
                                 data-bound="max"
-                                placeholder="vor ..."
+                                placeholder="nicht nach ..."
                                 class="filter-input mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                             </label>
                           </div>
