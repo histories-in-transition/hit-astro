@@ -40,12 +40,14 @@ const { data: item } = Astro.props;
 				<Button>TEI-XML</Button>
 				<Button>PDF</Button>
 			</div>
-      <section>
-        <h2 class="text-2xl text-brandRed p-5 sr-only">Eingaben über die Schreiberhand</h2>
-        <dl
-				class="border-2 rounded-sm shadow-sm border-gray-200 bg-brandRose grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
-			  >
-            <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+      <div
+			class="border-2 rounded-sm border-brandBrown bg-brandRose
+			text-sm md:leading-7 md:text-base"
+		>
+      <section aria-labelledby="handInfo" class="m-5 overflow-x-auto">
+        <h2 id="handInfo" class="text-xl font-semibold text-brandRed">Eingaben über die Schreiberhand:</h2>
+        <dl class="grid grid-cols-[1fr_5fr] p-5">            
+          <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
             <dd class="pl-5">
               <NavLink
                 href=`/manuscripts/${item.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`
@@ -126,12 +128,12 @@ const { data: item } = Astro.props;
 			  </dl>
       </section>
 			
-      <section class="overflow-x-auto">
-        <h2 class="text-2xl text-brandRed p-5">Beteiligung innerhalb der Handschrift</h2>
-        <table class="w-full bg-brandRose table-auto shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
-          <thead class="sticky top-0">
+      <section aria-labelledby="handMS" class="m-5 overflow-x-auto">
+        <h2 id="handMS" class="text-xl font-semibold text-brandRed mb-5">Beteiligung innerhalb der Handschrift:</h2>
+        <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
+          <thead class="bg-brandRoseDark">
             <tr> 
-              <th>                  
+              <th class="text-start font-semibold border border-gray-300">                  
                   <form role="search" data-search-form>
                     <label class="flex flex-col items-start p-2">
                       <div>Locus</div>
@@ -139,7 +141,7 @@ const { data: item } = Astro.props;
                     </label>
                   </form>
                 </th>
-              <th>                  
+              <th class="text-start font-semibold border border-gray-300">                  
                 <form role="search" data-search-form>
                   <label class="flex flex-col items-start p-2">
                     <div>Werk</div>
@@ -147,7 +149,7 @@ const { data: item } = Astro.props;
                   </label>
                 </form>
               </th>            
-              <th>              
+              <th class="text-start font-semibold border border-gray-300">              
                   <form role="search" data-search-form>
                     <label class="flex flex-col items-start p-2">
                       <div>Rolle</div>
@@ -155,7 +157,7 @@ const { data: item } = Astro.props;
                     </label>
                   </form>
                 </th>
-              <th>             
+              <th class="text-start font-semibold border border-gray-300">             
                 <form role="search" data-search-form >
                   <label class="flex flex-col items-start p-2">
                     <div>Umfang</div>
@@ -163,7 +165,7 @@ const { data: item } = Astro.props;
                   </label>
                 </form>
               </th>            
-              <th>             
+              <th class="text-start font-semibold border border-gray-300">             
                   <form role="search" data-search-form>
                     <label class="flex flex-col items-start p-2">
                       <div>Mise-en-page</div>
@@ -171,7 +173,7 @@ const { data: item } = Astro.props;
                     </label>
                   </form>
                 </th> 
-                <th>             
+                <th class="text-start font-semibold border border-gray-300">             
                   <form role="search" data-search-form>
                     <label class="flex flex-col items-start p-2">
                       <div>Funktion</div>
@@ -187,19 +189,19 @@ const { data: item } = Astro.props;
             {item.hands_role.map(role => {
                       return role.ms_item.map(msItem => {
                         return <tr>
-                          <td class="px-2">
+                          <td class="p-2 border border-gray-300">
                             <NavLink class="hover:text-brandRed underline decoration-dotted underline-offset-4" href={`/msitems/${msItem.hit_id}`}>
                                       {msItem.locus_grp}
                                     </NavLink></td>
-                          <td class="px-2">{msItem.title_work?.map(work => {
+                          <td class="p-2 border border-gray-300">{msItem.title_work?.map(work => {
                                       
                                       return  work.author[0]?.name ? `${work.author[0].name}: ${work.title}` : work.title
                                     
                                     }).join(', ')}</td>
-                          <td class="px-2">{role.role.map(eachRole => eachRole.value).join(' und ')}</td>
-                          <td class="px-2">{role.locus}</td>
-                          <td class="px-2">{role.locus_layout.map(scope => scope.value)}</td>
-                          <td class="px-2">{role.function.map(func => func.value)}</td>
+                          <td class="p-2 border border-gray-300">{role.role.map(eachRole => eachRole.value).join(' und ')}</td>
+                          <td class="p-2 border border-gray-300">{role.locus}</td>
+                          <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope.value)}</td>
+                          <td class="p-2 border border-gray-300">{role.function.map(func => func.value)}</td>
                         </tr>
                       })
                     })}
@@ -210,7 +212,7 @@ const { data: item } = Astro.props;
         </table>
       
       </section>
-          
+    </div>
 		</Article>
   <script src="../../lib/table-search.js"></script>
 </PageLayout>

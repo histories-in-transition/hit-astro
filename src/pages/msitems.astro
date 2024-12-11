@@ -97,7 +97,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Locus",
 					field: "locus_grp",
-					minWidth: 100,
+					minWidth: 80,
 					headerFilter: "input",
 				},
 				{
@@ -114,10 +114,11 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Dekoration",
 					field: "decoration",
-					minWidth: 200,
+					minWidth: 100,
 					mutator: jsonpathLookup,
 					mutatorParams: { path: "$[*].value" },
 					headerFilter: "input",
+					responsive: 2,
 				},
 				{
 					title: "Schreiberort",
