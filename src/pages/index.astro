@@ -7,14 +7,16 @@ import clm210 from "../../public/images/clm210.jpg";
 ---
 
 <PageLayout title="Home">
-	<div class="md:grid grid-cols-2 py-10 px-10 place-content-center gap-10
+	<div class="md:grid grid-cols-2 p-5 md:p-10 place-content-center gap-10
 	mx-auto md:w-3/4 sm:w-4/5">
 		<div class="self-center">
 			<div class="grid gap-2">
-				<h1 class="self-center text-4xl font-semibold">
+				<h1 class="self-center text-xl md:text-4xl font-semibold">
 					Geschichte im Wandel | Histories in Transition
 				</h1>
-				<h2 class="self-center text-2xl italic">Freising and Salzburg (9th – 12th c.)</h2>
+				<h2 class="self-center text-lg md:text-2xl italic">
+					Freising and Salzburg (9th – 12th c.)
+				</h2>
 				<p class="py-3">
 					Dieses Projekt versucht, die Kulturgeschichte der Geschichtsschreibung in der
 					karolingischen und nachkarolingischen Zeit (9.-12. Jahrhundert) neu zu überdenken, indem
@@ -49,6 +51,11 @@ import clm210 from "../../public/images/clm210.jpg";
 						class="underline underline-offset-4 hover:text-brandRed font-medium"
 						>Handschriften</NavLink
 					>,
+					<NavLink
+						href="/msitems"
+						class="underline underline-offset-4 hover:text-brandRed font-medium"
+						>einzelnen Texteinträgen</NavLink
+					> (msItems),
 					<NavLink
 						href="/works"
 						class="underline underline-offset-4 hover:text-brandRed font-medium">Werken</NavLink

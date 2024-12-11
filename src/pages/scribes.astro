@@ -33,18 +33,23 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Benennung",
 					field: "name",
+					minWidth: 150,
 					headerFilter: "input",
 					formatter: "textarea",
+					widthGrow: 1,
 				},
 				{
 					title: "Hand",
 					field: "hand",
+					minWidth: 150,
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].value",
-						separator: "; ",
+						separator: "\n",
 					},
 					headerFilter: "input",
+					formatter: "textarea",
+					widthGrow: 1,
 				},
 				{
 					title: "Datierung",

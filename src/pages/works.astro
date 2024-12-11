@@ -65,7 +65,7 @@ import TableHead from "../components/table-head.astro";
 
 		var table = new Tabulator("#tabulator-table", {
 			headerFilterLiveFilterDelay: 600,
-			height: 1000,
+			height: 900,
 			data: tabledata,
 			layout: "fitColumns",
 			responsiveLayout: "collapse",
@@ -75,38 +75,48 @@ import TableHead from "../components/table-head.astro";
 					field: "view_label",
 					headerFilter: "input",
 					formatter: "textarea",
+					minWidth: 150,
+					widthGrow: 3,
 				},
 				{
 					title: "Autor",
 					field: "author",
+					minWidth: 100,
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].name",
 						separator: "; ",
 					},
 					headerFilter: "input",
+					widthGrow: 2,
 				},
 
 				{
 					title: "Genre",
 					field: "genre",
+					minWidth: 150,
 					mutator: jsonpathLookup,
 					mutatorParams: { path: "$..genre", reverse: true },
 					headerFilter: "input",
+					widthGrow: 1,
 				},
 				{
 					title: "Überlieferung: HSS",
 					field: "related__ms_items",
+					minWidth: 150,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
 						path: "$..manuscript..shelfmark..value",
-						separator: "; ",
+						separator: "\n ",
 					},
 					headerFilter: "input",
+					formatter: "textarea",
+					widthGrow: 1,
 				},
 				{
 					title: "Ort der Überlieferung",
 					field: "origPlaces",
+					minWidth: 150,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]" },
 					headerFilter: "input",
@@ -114,6 +124,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Datum der Überlieferung",
 					field: "origHands",
+					minWidth: 150,
 					mutator: jsonpathsDistinctRanges,
 					mutatorParams: {
 						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
@@ -127,10 +138,12 @@ import TableHead from "../components/table-head.astro";
 							"$[*].hands_dated[*].dated[*].yearRange.end",
 						],
 					},
+					formatter: "textarea",
 				},
 				{
 					title: "HSS Dekoration",
 					field: "decoWork",
+					minWidth: 100,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]", separator: " | " },
 					headerFilter: "input",
@@ -138,12 +151,14 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Quelle",
 					field: "source_text",
+					minWidth: 150,
 					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {
 						paths: ["$[*].author[*].value", "$[*].title"],
 						separator: ": ",
 					},
 					headerFilter: "input",
+					formatter: "textarea",
 				},
 			],
 		});

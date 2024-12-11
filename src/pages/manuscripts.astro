@@ -48,9 +48,18 @@ import TableHead from "../components/table-head.astro";
 			data: tabledata,
 			layout: "fitColumns",
 			responsiveLayout: "collapse",
+			rowHeader: {
+				formatter: "responsiveCollapse",
+				width: 30,
+				minWidth: 30,
+				hozAlign: "center",
+				resizable: false,
+				headerSort: false,
+			},
 			columns: [
 				{
 					title: "Signatur",
+					minWidth: 200,
 					field: "view_label",
 					formatter: "textarea",
 					headerFilter: "input",
@@ -58,16 +67,19 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Aktueller Standort",
 					field: "library_full",
+					minWidth: 200,
 					mutator: jsonpathsLookup,
 					mutatorParams: {
 						paths: ["$[*].settlement[*].name", "$[*].library_full"],
 						separator: ": ",
 					},
 					headerFilter: "input",
+					responsive: 2,
 				},
 				{
 					title: "Entstehungsort",
 					field: "orig_place",
+					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: { path: "$[*].name" },
 					headerFilter: "input",
@@ -75,6 +87,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Entstehungsdatum",
 					field: "manuscripts_dated",
+					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].date[*].label",
@@ -85,17 +98,20 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Dekoration",
 					field: "decoItems",
+					minWidth: 200,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*].value", separator: " | " },
 					headerFilter: "input",
+					responsive: 2,
 				},
 				{
 					title: "Annotationen",
 					field: "annotations",
+					minWidth: 200,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*].role[*].value", separator: " | " },
-					headerFilter: "list",
-					headerFilterParams: { valuesLookup: true, clearable: true },
+					headerFilter: "input",
+					responsive: 2,
 				},
 			],
 		});
