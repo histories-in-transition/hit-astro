@@ -112,20 +112,22 @@ const { data: work, manItems: matchingItems } = Astro.props;
 									? work.author.map((item) => (
 											<>
 												<NavLink
-													href={`/authors/${item.hit_id}`}
+													href={item.gnd_url}
 													class="hover:text-brandRed underline decoration-dotted underline-offset-4"
 												>
 													{item.name}
+													<Icon aria-hidden="true" name="lucide:external-link" class="inline-flex align-baseline"/>
 												</NavLink>
 												<br />
 											</>
 										))
 									: work.author.map((item) => (
 											<NavLink
-												href={`/authors/${item.hit_id}`}
+												href={item.gnd_url}
 												class="hover:text-brandRed underline decoration-dotted underline-offset-4"
 											>
 												{item.name}
+												<Icon aria-hidden="true" name="lucide:external-link" class="inline-flex align-baseline"/>
 											</NavLink>
 										))
 							}
@@ -138,7 +140,8 @@ const { data: work, manItems: matchingItems } = Astro.props;
 						<dd class="pl-5">
 							{
 								work?.gnd_url ? (
-									<NavLink href={work.gnd_url} class="hover:text-brandRed">
+									<NavLink href={work.gnd_url} 
+									class="hover:text-brandRed underline decoration-dotted underline-offset-4">
 										{work.gnd_url.split("gnd/")[1]}
 										<Icon
 											class="inline-flex align-baseline"
@@ -156,7 +159,8 @@ const { data: work, manItems: matchingItems } = Astro.props;
 							{
 								work.source_text.length > 0
 									? work.source_text.map((text) => (
-											<NavLink href={`/works/${text.hit_id}`} class="hover:text-brandRed">
+											<NavLink href={`/works/${text.hit_id}`} 
+											class="hover:text-brandRed underline underline-offset-4 decoration-dotted">
 												{text.title}
 											</NavLink>
 										))

@@ -63,6 +63,8 @@ const { data: item, hands: matchingHands } = Astro.props;
                 {item.manuscript[0]?.shelfmark[0].value}
               </NavLink>
             </dd>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Locus:</dt>  
+            <dd class="pl-5">{item.locus_grp}</dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
               <dd class="pl-5">
                 {item.title_work?.map(title => 
@@ -73,7 +75,17 @@ const { data: item, hands: matchingHands } = Astro.props;
               </dd>
              {item.title_work?.some(title => title.author.length > 0) &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-                <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => aut.name))}</dd>
+                <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => 
+                  
+                  <NavLink href={aut.gnd_url} 
+                      class="hover:text-brandRed underline decoration-dotted underline-offset-4">{aut.name}
+                      <Icon
+                                class="inline-flex align-middle"
+                                aria-hidden="true"
+                                name="lucide:external-link"
+                              />
+                  </NavLink>
+                  ))}</dd>
               }
               {item.title_note &&
               <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
