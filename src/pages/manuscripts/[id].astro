@@ -61,7 +61,7 @@ const codUnits = manuscript.related__cod_units ;
     <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
-            mainTitle={manuscript?.shelfmark[0]?.value}
+            mainTitle={manuscript.library_full[0].settlement[0].name + ', ' + manuscript?.shelfmark[0]?.value}
           >          
           
           <div class="flex gap-2 justify-end">
@@ -69,7 +69,7 @@ const codUnits = manuscript.related__cod_units ;
             <Button>PDF</Button>
           </div>
           <section aria-labelledby="msInfo" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
-            <h2 id="msInfo" class="text-xl font-semibold text-brandRed">Handschrift Signatur:</h2>
+            <h2 id="msInfo" class="text-xl font-semibold text-brandRed">Signatur der Handschrift:</h2>
             <dl class="grid grid-cols-[1fr_5fr] p-5">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
@@ -99,7 +99,13 @@ const codUnits = manuscript.related__cod_units ;
                   {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
                   {manuscript?.material?.value.includes("mixed") && <span>Mischung</span>}
                   {manuscript?.material?.value.includes("paper") && <span>Papier</span>}
-                   {manuscript?.material_spec}</dd>
+                  {manuscript?.material_spec && 
+                    <span>
+                       <Icon class="inline-flex" aria-hidden="true" name="lucide:arrow-right"/>  
+                       {manuscript?.material_spec}</span>
+                   
+                  }
+              </dd>
                    
               <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
               <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
@@ -170,10 +176,13 @@ const codUnits = manuscript.related__cod_units ;
                       ))}
                       </ul>}
                 </dd>
-                <dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-                <dd class="pl-5">{manuscript?.bibliography}</dd>
               </dl>
-            </section>          
+            </section>   
+
+            <section aria-labelledby="bibl" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+              <h2 id="bibl" class="text-xl font-semibold text-brandRed">Bibliographie:</h2>    
+              <p>To be added (Zotero)</p>
+            </section>  
 
             <section aria-labelledby="msContent" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msContent" class="text-xl font-semibold text-brandRed">Inhalt:</h2>           
@@ -207,7 +216,9 @@ const codUnits = manuscript.related__cod_units ;
                     })
                     .map(filteredItem => (
                      
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end"><NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus_grp}</NavLink></dt>
+                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
+                          <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus_grp}</NavLink>
+                        </dt>
                         <dd class="pl-5">
                           {filteredItem.title_work.map(work => (
                               <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
@@ -426,7 +437,9 @@ const codUnits = manuscript.related__cod_units ;
                         <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
                        )}
                         </td>
-                      <td class="p-2 border border-gray-300"><NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink></td>
+                      <td class="p-2 border border-gray-300">
+                        <NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink>
+                      </td>
                       <td class="p-2 border border-gray-300">{role.role.map(ro => ro.value).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.locus}</td>
                       <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope.value)}</td>

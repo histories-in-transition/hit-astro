@@ -88,8 +88,12 @@ const { data: work, manItems: matchingItems } = Astro.props;
 	<Article
 		prevLink={`/works/${work.prev.id}`}
 		nextLink={`/works/${work.next.id}`}
-		mainTitle={`${work?.title}`}
-	>
+		mainTitle={
+			work.author.length > 0
+			  ? work.author.map((item) => item.name).join(', ') + ': ' + work.title
+			  : work?.title
+		  }
+		 > 
 		<div class="flex gap-2 justify-end">
 			<Button>TEI-XML</Button>
 			<Button>PDF</Button>
