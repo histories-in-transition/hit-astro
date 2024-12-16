@@ -7,7 +7,7 @@ import imafoLogo from "../../public/images/imafo_logo_web.png";
 import acdhLogo from "../../public/images/acdh-ch-logo-light.svg";
 import fwfLogo from "../../public/images/fwf-logo.png";
 import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
-import tubLogo from "../../public/images/uni_tuebingen_logo.jpg";
+import tubLogo from "../../public/images/uni_tuebingen_logo.png";
 import scienceLogo from "../../public/images/science-europe_logo.png";
 import weaveLogo from "../../public/images/weave_logo.png";
 ---
@@ -18,10 +18,10 @@ import weaveLogo from "../../public/images/weave_logo.png";
 			<Icon aria-hidden="true" class="size-4.5" name="lucide:message-circle" />
 			<span class="text-sm font-medium">Kontakt</span>
 		</div>
-		<div class="mx-auto grid md:flex gap-6">
-			<div>
+		<div class="mx-auto grid md:flex gap-4">
+			<section>
 				<span class="font-semibold">Forschungseinrichtungen:</span>
-				<div class="md:grid grid-cols-[1fr_2fr] gap-2">
+				<div class="md:grid grid-cols-[2fr_3fr] gap-4 m-2">
 					<a class="hidden md:inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
 						<Image src={imafoLogo} alt="" class="h-auto w-60 m-auto" />
 						<span class="sr-only">Institut für Mittelalterforschung (IMAFO)</span>
@@ -43,7 +43,7 @@ import weaveLogo from "../../public/images/weave_logo.png";
 						</a>
 					</p>
 					<a class="hidden md:inline-flex py-1" href="https://uni-tuebingen.de/">
-						<Image src={tubLogo} alt="" class="m-auto" />
+						<Image src={tubLogo} alt="" class="w-60 h-auto m-auto" />
 						<span class="sr-only">Eberhard Karls Universität Tübingen</span>
 					</a>
 					<p>
@@ -61,63 +61,72 @@ import weaveLogo from "../../public/images/weave_logo.png";
 						</a>
 					</p>
 				</div>
-			</div>
+			</section>
 
-			<div class="flex gap-4">
-				<a class="hidden md:inline-flex py-1" href="https://www.oeaw.ac.at/acdh/">
-					<Image src={acdhLogo} alt="" />
-					<span class="sr-only">
-						Austrian Centre for Digital Humanities and Cultural Heritage
-					</span>
-				</a>
-				<div class="grid gap-2">
-					<span class="font-semibold text-lg">Technische Umsetzung:</span>
-					<p>
-						<NavLink class="font-semibold" href="https://www.oeaw.ac.at/acdh/"
-							>ACDH-CH Austrian Centre for Digital Humanities and Cultural Heritage</NavLink
-						>
-						<br />
-						Österreichische Akademie der Wissenschaften
-						<br />
-						Bäckerstraße 13, 1010 Wien
-						<br />
-						T:
-						<a
-							class="underline decoration-dotted underline-offset-4 hover:no-underline"
-							href="tel:+43 1 51581-2200"
-						>
-							+43 1 51581-2200
-						</a>
-						<br />
-						E:
-						<a
-							class="underline decoration-dotted underline-offset-4 hover:no-underline"
-							href="mailto:acdh-ch@oeaw.ac.at">acdh-ch@oeaw.ac.at</a
-						>
-					</p>
+			<section>
+				<span class="font-semibold">Technische Umsetzung:</span>
+				<div class="flex gap-4 items-start">
+					<a class="hidden md:inline-flex mt-4" href="https://www.oeaw.ac.at/acdh/">
+						<Image src={acdhLogo} alt="" />
+						<span class="sr-only">
+							Austrian Centre for Digital Humanities and Cultural Heritage
+						</span>
+					</a>
+					<div class="grid gap-2 m-2">
+						<p>
+							<NavLink class="font-semibold" href="https://www.oeaw.ac.at/acdh/"
+								>ACDH-CH Austrian Centre for Digital Humanities and Cultural Heritage</NavLink
+							>
+							<br />
+							Österreichische Akademie der Wissenschaften
+							<br />
+							Bäckerstraße 13, 1010 Wien
+							<br />
+							T:
+							<a
+								class="underline decoration-dotted underline-offset-4 hover:no-underline"
+								href="tel:+43 1 51581-2200"
+							>
+								+43 1 51581-2200
+							</a>
+							<br />
+							E:
+							<a
+								class="underline decoration-dotted underline-offset-4 hover:no-underline"
+								href="mailto:acdh-ch@oeaw.ac.at">acdh-ch@oeaw.ac.at</a
+							>
+						</p>
+					</div>
 				</div>
-			</div>
+			</section>
 
-			<div class="grid gap-y-2">
-				<div class="font-semibold">Gefördert von:</div>
-				<a
-					href="https://karten-t.dfg.de/gepris/projekt/524671186?context=projekt&task=showDetail&id=524671186&"
-				>
-					<Image src={dfgLogo} alt="Deutsche Forschungsgemeinschaft" class="h-auto w-60" />
-				</a>
+			<section class="grid">
+				<span class="font-semibold">Gefördert von:</span>
+				<div class="grid m-2 gap-4">
+					<a
+						href="https://karten-t.dfg.de/gepris/projekt/524671186?context=projekt&task=showDetail&id=524671186&"
+					>
+						<Image src={dfgLogo} alt="Deutsche Forschungsgemeinschaft" class="h-auto w-60 m-auto" />
+					</a>
 
-				<a href="https://www.fwf.ac.at/forschungsradar/10.55776/I6576">
-					<Image src={fwfLogo} alt="Österreichischer Wissenschaftsfonds" class="h-auto w-60" />
-				</a>
-				<br />
-				<div class="font-semibold">Unterstützt von:</div>
-				<a href="https://weave-research.net/">
-					<Image src={weaveLogo} alt="Weave" class="m-auto" />
-				</a>
-				<a href="https://scienceeurope.org/">
-					<Image src={scienceLogo} alt="Science Europe" class="m-auto" />
-				</a>
-			</div>
+					<a href="https://www.fwf.ac.at/forschungsradar/10.55776/I6576">
+						<Image
+							src={fwfLogo}
+							alt="Österreichischer Wissenschaftsfonds"
+							class="h-auto w-60 m-auto"
+						/>
+					</a>
+				</div>
+				<span class="font-semibold">Unterstützt von:</span>
+				<div class="grid m-2 gap-2">
+					<a href="https://weave-research.net/">
+						<Image src={weaveLogo} alt="Weave" class="m-auto" />
+					</a>
+					<a href="https://scienceeurope.org/">
+						<Image src={scienceLogo} alt="Science Europe" class="m-auto" />
+					</a>
+				</div>
+			</section>
 		</div>
 	</div>
 	<div class="bg-brandRed py-2 text-center text-brandIvory">
