@@ -7,6 +7,9 @@ import imafoLogo from "../../public/images/imafo_logo_web.png";
 import acdhLogo from "../../public/images/acdh-ch-logo-light.svg";
 import fwfLogo from "../../public/images/fwf-logo.png";
 import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
+import tubLogo from "../../public/images/uni_tuebingen_logo.jpg";
+import scienceLogo from "../../public/images/science-europe_logo.png";
+import weaveLogo from "../../public/images/weave_logo.png";
 ---
 
 <footer class="bg-brandRose border-t border-gray-300">
@@ -16,39 +19,45 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 			<span class="text-sm font-medium">Kontakt</span>
 		</div>
 		<div class="mx-auto grid md:flex gap-6">
-			<div class="flex gap-4">
-				<div class="md:grid hidden">
-					<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
-						<Image src={imafoLogo} alt="" class="h-auto w-60" />
-						<span class="sr-only"> Institut für Mittelalterforschung (IMAFO) </span>
+			<div>
+				<span class="font-semibold">Forschungseinrichtungen:</span>
+				<div class="md:grid grid-cols-[1fr_2fr] gap-2">
+					<a class="hidden md:inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
+						<Image src={imafoLogo} alt="" class="h-auto w-60 m-auto" />
+						<span class="sr-only">Institut für Mittelalterforschung (IMAFO)</span>
 					</a>
-					<a class="inline-flex py-1" href="https://www.oeaw.ac.at/en/imafo/home">
-						<Image src={oeawLogo} alt="" class="h-auto w-32" />
-						<span class="sr-only"> Österreichische Akademie der Wissenschaften </span>
-					</a>
-				</div>
-				<div class="grid gap-2">
 					<p>
-						<span class="font-semibold">Forschungseinrichtung:</span>
-						<br />
-						<NavLink href="https://www.oeaw.ac.at/en/imafo/home"
+						<NavLink class="font-semibold" href="https://www.oeaw.ac.at/en/imafo/home"
 							>Institut für Mittelalterforschung (IMAFO)</NavLink
 						>
+						|| Österreichische Akademie der Wissenschaften
+
+						<br /> Dominikanerbastei 16, 1010 Wien
 						<br />
-						Österreichische Akademie der Wissenschaften
-					</p>
-					<p>
-						Dominikanerbastei 16 (Eingang Wiesingerstraße 4)
-						<br />
-						1010 Wien
-					</p>
-					<p>
 						E:
 						<a
 							class="underline decoration-dotted underline-offset-4 hover:no-underline"
 							href="mailto:imafo.office@oeaw.ac.at"
 						>
 							imafo@oeaw.ac.at
+						</a>
+					</p>
+					<a class="hidden md:inline-flex py-1" href="https://uni-tuebingen.de/">
+						<Image src={tubLogo} alt="" class="m-auto" />
+						<span class="sr-only">Eberhard Karls Universität Tübingen</span>
+					</a>
+					<p>
+						<NavLink class="font-semibold" href="https://www.oeaw.ac.at/en/imafo/home">
+							Eberhard Karls Universität Tübingen</NavLink
+						>
+						<br /> Geschwister-Scholl-Platz, 72074 Tübingen
+						<br />
+						E:
+						<a
+							class="underline decoration-dotted underline-offset-4 hover:no-underline"
+							href="mailto:info@uni-tuebingen.de"
+						>
+							info@uni-tuebingen.de
 						</a>
 					</p>
 				</div>
@@ -62,18 +71,16 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 					</span>
 				</a>
 				<div class="grid gap-2">
+					<span class="font-semibold text-lg">Technische Umsetzung:</span>
 					<p>
-						<span class="font-semibold">Technische Umsetzung:</span>
-						<br />
-						<NavLink href="https://www.oeaw.ac.at/acdh/"
+						<NavLink class="font-semibold" href="https://www.oeaw.ac.at/acdh/"
 							>ACDH-CH Austrian Centre for Digital Humanities and Cultural Heritage</NavLink
 						>
 						<br />
 						Österreichische Akademie der Wissenschaften
-					</p>
-
-					<p>Bäckerstraße 13, 1010 Wien</p>
-					<p>
+						<br />
+						Bäckerstraße 13, 1010 Wien
+						<br />
 						T:
 						<a
 							class="underline decoration-dotted underline-offset-4 hover:no-underline"
@@ -82,7 +89,6 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 							+43 1 51581-2200
 						</a>
 						<br />
-
 						E:
 						<a
 							class="underline decoration-dotted underline-offset-4 hover:no-underline"
@@ -102,6 +108,14 @@ import dfgLogo from "../../public/images/dfg_logo_schriftzug_blau.gif";
 
 				<a href="https://www.fwf.ac.at/forschungsradar/10.55776/I6576">
 					<Image src={fwfLogo} alt="Österreichischer Wissenschaftsfonds" class="h-auto w-60" />
+				</a>
+				<br />
+				<div class="font-semibold">Unterstützt von:</div>
+				<a href="https://weave-research.net/">
+					<Image src={weaveLogo} alt="Weave" class="m-auto" />
+				</a>
+				<a href="https://scienceeurope.org/">
+					<Image src={scienceLogo} alt="Science Europe" class="m-auto" />
 				</a>
 			</div>
 		</div>
