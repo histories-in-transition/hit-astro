@@ -1,16 +1,30 @@
 ---
 import DownloadButtons from "./download-buttons.astro";
-
+import { Icon } from "astro-icon/components";
 interface Props {
 	title: string;
+	definition?: string;
 }
 
-const { title } = Astro.props;
+const { title, definition } = Astro.props;
 ---
 
 <div class="mx-auto md:w-4/5 w-5/6">
 	<div class="flex justify-between align-middle mb-2">
-		<h1 class="text-2xl font-semibold text-brandRed py-2">{title}</h1>
+		<h1 class="text-2xl font-semibold text-brandRed py-2 flex items-center p-1">
+			{title}
+			{
+				definition && (
+					<span class="group flex gap-2 items-start">
+						<Icon name="lucide:info" aria-hidden="true" />
+						<span class="sr-only">Definition des Begriffes</span>
+						<span class="invisible group-hover:visible border border-brandRed rounded-md px-2 py-1 text-sm font-normal bg-brandRoseDark">
+							{definition}
+						</span>
+					</span>
+				)
+			}
+		</h1>
 		<DownloadButtons />
 	</div>
 	<div class="text-brandRed text-xl">
