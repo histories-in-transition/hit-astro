@@ -11,14 +11,14 @@ const { title, definition } = Astro.props;
 
 <div class="mx-auto md:w-4/5 w-5/6">
 	<div class="flex justify-between align-middle mb-2">
-		<h1 class="text-2xl font-semibold text-brandRed py-2 flex items-center p-1">
+		<h1 class="text-2xl font-semibold text-brandRed py-2 flex items-center gap-1">
 			{title}
 			{
 				definition && (
 					<span class="group flex gap-2 items-start">
 						<Icon name="lucide:info" aria-hidden="true" />
 						<span class="sr-only">Definition des Begriffes</span>
-						<span class="invisible group-hover:visible border border-brandRed rounded-md px-2 py-1 text-sm font-normal bg-brandRoseDark">
+						<span class="invisible group-hover:visible border border-brandRed rounded-md px-2 py-1 text-sm md:text-base font-medium bg-brandRed text-brandRose">
 							{definition}
 						</span>
 					</span>
