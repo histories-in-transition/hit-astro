@@ -63,14 +63,37 @@ const codUnits = manuscript.related__cod_units ;
             nextLink={`/manuscripts/${manuscript.next.id}`}
             mainTitle={manuscript.library_full[0].settlement[0].name + ', ' + manuscript?.shelfmark[0]?.value}
           >          
-          
-          <div class="flex gap-2 justify-end">
-            <Button>TEI-XML</Button>
-            <Button>PDF</Button>
+          <div class="flex justify-between">
+            <div class="flex gap-2 justify-start">
+              {manuscript.handschriftenportal_url &&
+              <NavLink href={manuscript.handschriftenportal_url} class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
+            >HSP</NavLink>}
+            {manuscript.manuscripta_url &&
+              <NavLink href={manuscript.manuscripta_url} class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
+            >manuscripta</NavLink>}
+            {manuscript.digi_url &&
+              <NavLink href={manuscript.digi_url} class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
+            >Digitalisat</NavLink>}
+            {manuscript.catalog_url &&
+              <NavLink href={manuscript.catalog_url} class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition"
+            >Katalog</NavLink>}
+            </div>
+             {manuscript.status[0]?.value.includes('Bearbeitung') &&
+            <div class="flex items-center gap-x-1.5 justify-center text-brandRed font-semibold">
+              <Icon aria-hidden="true" name="lucide:construction" />
+              <span> {manuscript.status.map(st => st.value).join(', ')} </span>
+              <Icon aria-hidden="true" name="lucide:construction" />
+            </div>
+          }
+            <div class="flex gap-2 justify-end">
+              <Button>TEI-XML</Button>
+              <Button>PDF</Button>
+            </div>
           </div>
+         
           <section aria-labelledby="msInfo" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msInfo" class="text-xl font-semibold text-brandRed">Signatur der Handschrift:</h2>
-            <dl class="grid grid-cols-[1fr_5fr] p-5">
+            <dl class="grid grid-cols-[1fr_5fr] p-3">
 
               <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
               <dd class="pl-5">{manuscript?.library_full[0]?.settlement[0]?.name}</dd>              
@@ -89,11 +112,23 @@ const codUnits = manuscript.related__cod_units ;
               {manuscript.idno_former &&
               <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
               <dd class="pl-5">{manuscript?.idno_former}</dd>}
+              {manuscript.charakter.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
+                <dd class="pl-5">{manuscript.charakter.map(char => char.value).join(', ')}</dd>
+              }
+              {manuscript.case_study.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
+                <dd class="pl-5">{manuscript.case_study.map(study => study.value).join(', ')}</dd>}
+              {manuscript.status.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Status dieser Beschreibung:</dt>
+                <dd class="pl-5">{manuscript.status.map(st => st.value).join(', ')}</dd>
+              }
             </dl>
           </section>
-          <section aria-labelledby="msMaterial" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+          <section aria-labelledby="msMaterial" class="border rounded-sm border-gray-200 shadow-sm 
+          bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msMaterial" class="text-xl font-semibold text-brandRed">Materialität:</h2>
-            <dl class=" grid grid-cols-[1fr_5fr] p-5">
+            <dl class=" grid grid-cols-[1fr_5fr] p-3">
               <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
               <dd class="pl-5">
                   {manuscript?.material?.value.includes("parchment") && <span>Pergament</span>}
@@ -181,13 +216,13 @@ const codUnits = manuscript.related__cod_units ;
 
             <section aria-labelledby="bibl" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
               <h2 id="bibl" class="text-xl font-semibold text-brandRed">Bibliographie:</h2>    
-              <p>To be added (Zotero)</p>
+              <p>To be added Zotero</p>
             </section>  
 
             <section aria-labelledby="msContent" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msContent" class="text-xl font-semibold text-brandRed">Inhalt:</h2>           
               {codUnits.map((unit) => (
-                 <dl class="grid grid-cols-[1fr_5fr] p-5">
+                 <dl class="grid grid-cols-[1fr_5fr] p-3">
                   <dt class="font-semibold border-r border-gray-300 pr-2">
                     {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
                   <dd class="pl-5"></dd>
@@ -283,7 +318,7 @@ const codUnits = manuscript.related__cod_units ;
           </section>
            <section aria-labelledby="msStrata" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msStrata" class="text-xl font-semibold text-brandRed">Strata:</h2> 
-            <dl class="grid grid-cols-[1fr_5fr] p-5">
+            <dl class="grid grid-cols-[1fr_5fr] p-3">
                   {Object.values(strata)
                     .filter(stratum => stratum.manuscript[0].id === manuscript.id)
                     .map(filteredStrata => {
