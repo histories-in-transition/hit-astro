@@ -469,11 +469,11 @@ const codUnits = manuscript.related__cod_units ;
                       </td>
               
                       <td class="p-2 border border-gray-300">{role.ms_item.map((msItem) =>
-                        <NavLink class="hover:text-brandRed" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
+                        <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
                        )}
                         </td>
                       <td class="p-2 border border-gray-300">
-                        <NavLink class="hover:text-brandRed" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink>
+                        <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink>
                       </td>
                       <td class="p-2 border border-gray-300">{role.role.map(ro => ro.value).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.locus}</td>
