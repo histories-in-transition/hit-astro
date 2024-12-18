@@ -48,6 +48,10 @@ import TableHead from "../components/table-head.astro";
 			data: tabledata,
 			layout: "fitColumns",
 			responsiveLayout: "collapse",
+			initialSort: [
+				{ column: "library_full", dir: "asc" },
+				{ column: "view_label", dir: "asc" },
+			],
 			rowHeader: {
 				formatter: "responsiveCollapse",
 				width: 30,
@@ -58,15 +62,9 @@ import TableHead from "../components/table-head.astro";
 			},
 			columns: [
 				{
-					title: "Signatur",
-					minWidth: 200,
-					field: "view_label",
-					formatter: "textarea",
-					headerFilter: "input",
-				},
-				{
-					title: "Aktueller Standort",
+					title: "Standort",
 					field: "library_full",
+					sorter: "string",
 					minWidth: 200,
 					mutator: jsonpathsLookup,
 					mutatorParams: {
@@ -75,6 +73,14 @@ import TableHead from "../components/table-head.astro";
 					},
 					headerFilter: "input",
 					responsive: 2,
+				},
+				{
+					title: "Signatur",
+					minWidth: 200,
+					sorter: "string",
+					field: "view_label",
+					formatter: "textarea",
+					headerFilter: "input",
 				},
 				{
 					title: "Entstehungsort",
