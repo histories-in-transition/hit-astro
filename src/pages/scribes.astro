@@ -76,8 +76,12 @@ import TableHead from "../components/table-head.astro";
 					field: "group",
 					sorter: "boolean",
 					formatter: "tickCross",
-					//headerFilter: true,
-					width: 120,
+					width: 100,
+					headerFilter: "tickCross",
+					headerFilterParams: { tristate: true },
+					headerFilterEmptyCheck: function (value) {
+						return value === null;
+					},
 				},
 			],
 		});
