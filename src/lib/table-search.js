@@ -41,11 +41,16 @@ function filterTable() {
         }
       } else {
         // Handle simple string filtering for other columns
-        const columnIndex = Array.from(inputs).indexOf(input);
-        const cellValue = row.children[columnIndex]?.textContent.toLowerCase();
-
-        if (value && (!cellValue || !cellValue.includes(value))) {
-          shouldShow = false;
+        const value = input.value.trim().toLowerCase();
+        const columnIndex = Array.from(input.closest("th").parentNode.children).indexOf(input.closest("th")); // Get the column index
+  
+        if (value) {
+          const cell = row.children[columnIndex];
+          const cellValue = cell?.textContent.toLowerCase();
+  
+          if (!cellValue || !cellValue.includes(value)) {
+            shouldShow = false;
+          }
         }
       }
     });
