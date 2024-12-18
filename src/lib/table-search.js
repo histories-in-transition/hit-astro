@@ -73,7 +73,7 @@ function reapplyRowStriping(rows) {
 
 
 
-// Function to add highlight when hovered with mouse
+/* // Function to add highlight when hovered with mouse
 const tableRows = document.querySelectorAll("tbody tr");
 tableRows.forEach((row) => {
   row.addEventListener("mouseenter", () => {
@@ -84,7 +84,7 @@ tableRows.forEach((row) => {
     row.style.backgroundColor = "";
     row.style.color = "";
   });
-});
+}); */
 
 // Function for download CSV button on table
 
