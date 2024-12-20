@@ -473,7 +473,7 @@ const codUnits = manuscript.related__cod_units ;
                        )}
                         </td>
                       <td class="p-2 border border-gray-300">
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value)}</NavLink>
+                        <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value.split('_')[1])}</NavLink>
                       </td>
                       <td class="p-2 border border-gray-300">{role.role.map(ro => ro.value).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.locus}</td>
