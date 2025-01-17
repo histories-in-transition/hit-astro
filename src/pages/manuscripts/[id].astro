@@ -20,7 +20,7 @@ export async function getStaticPaths() {
     // Find matching hands based on the manuscript ID
     const matchingHands = handsList.filter((hand) => {
       return hand.hands_role.some((handRole) =>
-        handRole.ms_item.some((item) =>
+        handRole.ms_item.some((item: any) =>
           item.manuscript.some((ms) => ms.hit_id === manuscriptId)
         )
       );
@@ -87,7 +87,7 @@ const codUnits = manuscript.related__cod_units ;
           }
             <div class="flex gap-2 justify-end">
               <Button>TEI-XML</Button>
-              <Button>PDF</Button>
+              <button class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition" id="download-pdf">PDF</button>
             </div>
           </div>
          
@@ -228,24 +228,24 @@ const codUnits = manuscript.related__cod_units ;
                   <dd class="pl-5"></dd>
 
                   {Object.values(msItems)
-                    .filter(item => item.cod_unit.some(item_unit => item_unit.hit_id === unit.hit_id))
+                    .filter((item: { cod_unit: { hit_id: string; }[]; locus_grp: string; title_work: { hit_id: string; author: { name: string; }[]; title: string; }[]; title_note: string; rubric: string; incipit: string; explicit: string; final_rubric: string; decoration: { value: string; }[]; }) => item.cod_unit.some((item_unit: { hit_id: string; }) => item_unit.hit_id === unit.hit_id))
                     .sort((a, b) => {
-                      const extractLocusValues = (locusGrp) => {
+                      const extractLocusValues = (locusGrp: string) => {
                         const match = locusGrp.match(/^(\d+)(r|v)/);
                         if (!match) return [0, 'z'];  // Default values for invalid format
-
+                  
                         const startNumber = parseInt(match[1], 10);
                         const startSuffix = match[2];
-
+                  
                         return [startNumber, startSuffix];
                       };
-
+                  
                       const [startA, suffixA] = extractLocusValues(a.locus_grp);
                       const [startB, suffixB] = extractLocusValues(b.locus_grp);
-
+                  
                       // Primary sorting by startNumber
                       if (startA !== startB) return startA - startB;
-
+                  
                       // If start numbers are the same, prioritize "r" over "v"
                       return suffixA === 'r' ? -1 : (suffixB === 'r' ? 1 : 0);
                     })
@@ -491,4 +491,5 @@ const codUnits = manuscript.related__cod_units ;
            
     </Article>
     <script src="../../lib/table-search.js"></script>
+    <script src="../../lib/download-pdf.js"></script>
 </PageLayout>
