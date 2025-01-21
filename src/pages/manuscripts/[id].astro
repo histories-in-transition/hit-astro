@@ -1,24 +1,24 @@
 ---
 // page to get the details of a manuscript, 
-// general description from manuscript.json -> related__cod_units
-// its codicological units from cod_units.json
+// general description from manuscript.json + info about its codicological units from 
+// related__cod_units ->  cod_unit_placed
+// info on msitems from ms_items.json -> filtered by matching cod_unit.id
 // to display strata based on hands_role - need hands.json
 
 import {Icon} from "astro-icon/components";
 import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
-import Button from "@/components/button.astro"
 import NavLink from "@/components/nav-link.astro";
 
 import manuscripts from "@/content/data/manuscripts.json";
-import msItems from "@/content/data/ms_items.json";
+import mssItems from "@/content/data/ms_items.json";
 import handsJson from "@/content/data/hands.json"
 import strata from "@/content/data/strata.json";
 import codicologicalUnits from "@/content/data/cod_units.json";
 
 export async function getStaticPaths() {
   const manuscriptsList = Object.values(manuscripts);
-  const msItemsList = Object.values(msItems);
+  const msItemsList = Object.values(mssItems);
   const handsList = Object.values(handsJson);
   const codunits = Object.values(codicologicalUnits);
 
@@ -235,8 +235,8 @@ const codUnits = manuscript.related__cod_units ;
                     {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
                   <dd class="pl-5"></dd>
 
-                  {Object.values(msItems)
-                    .filter((item: { cod_unit: { hit_id: string; }[]; locus_grp: string; title_work: { hit_id: string; author: { name: string; }[]; title: string; }[]; title_note: string; rubric: string; incipit: string; explicit: string; final_rubric: string; decoration: { value: string; }[]; }) => item.cod_unit.some((item_unit: { hit_id: string; }) => item_unit.hit_id === unit.hit_id))
+                  {matchingMsItems
+                    .filter((item: any) => item.cod_unit.some((item_unit: { hit_id: string; }) => item_unit.hit_id === unit.hit_id))
                     .sort((a, b) => {
                       const extractLocusValues = (locusGrp: string) => {
                         const match = locusGrp.match(/^(\d+)(r|v)/);
