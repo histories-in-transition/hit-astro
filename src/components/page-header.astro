@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 			class="md:px-10 text-xl md:text-3xl text-brandIvory self-center tracking-wide
 			uppercase underline-offset-8 decoration-brandRose py-2"
 		>
-			<NavLink href="/index.html"
+			<NavLink href="/index.html" class="none"
 				>Histories in transition
 				<span class="hidden md:flex normal-case italic text-xl">
 					The Case of Freising and Salzburg (9th – 12th c.)</span
@@ -57,43 +57,43 @@ const base = import.meta.env.BASE_URL;
 					class={`${pathname === base + "/manuscripts" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/manuscripts">Handschriften</NavLink>
+					<NavLink class="none" href="/manuscripts">Handschriften</NavLink>
 				</li>
 				<li
 					class={`${pathname === base + "/works" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/works">Werke</NavLink>
+					<NavLink class="none" href="/works">Werke</NavLink>
 				</li>
 				<li
 					class={`${pathname === base + "/msitems" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/msitems">MS Elemente</NavLink>
+					<NavLink class="none" href="/msitems">MS Elemente</NavLink>
 				</li>
 				<li
 					class={`${pathname === base + "/scribes" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/scribes">Schreiber</NavLink>
+					<NavLink class="none" href="/scribes">Schreiber</NavLink>
 				</li>
 				<li
 					class={`${pathname === base + "/hands" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/hands">Hände</NavLink>
+					<NavLink class="none" href="/hands">Hände</NavLink>
 				</li>
 				<li
 					class={`${pathname === base + "/search" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/search">Suche</NavLink>
+					<NavLink class="none" href="/search">Suche</NavLink>
 				</li>
 				<li
 					class={`${pathname === base + "/about" ? "underline underline-offset-4 decoration-2 decoration-brandIvory" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brandIvory`}
 				>
-					<NavLink href="/about">Über das Projekt</NavLink>
+					<NavLink class="none" href="/about">Über das Projekt</NavLink>
 				</li>
 			</ul>
 		</nav>

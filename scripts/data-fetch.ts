@@ -7,6 +7,7 @@ import {
   getStrata,
   getWorks,
   getScribes,
+  getCodUnits
 } from "./api-client.js";
 
 async function fetchAllData() {
@@ -20,6 +21,7 @@ async function fetchAllData() {
     getStrata(),
     getWorks(),
     getScribes(),
+    getCodUnits(),
   ]);
   data.forEach(({ fileName, data }) => {
     writeFileSync(join(folderPath, fileName), JSON.stringify(data, null, 2), {

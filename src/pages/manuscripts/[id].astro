@@ -1,27 +1,35 @@
 ---
+// page to get the details of a manuscript, 
+// general description from manuscript.json -> related__cod_units
+// its codicological units from cod_units.json
+// to display strata based on hands_role - need hands.json
+
 import {Icon} from "astro-icon/components";
-import PageLayout from "../../layouts/page-layout.astro";
-import Article from "../../components/article.astro";
-import Button from "../../components/button.astro"
-import manuscripts from "../../content/data/manuscripts.json";
-import msItems from "../../content/data/ms_items.json";
-import handsJson from "../../content/data/hands.json"
-import NavLink from "../../components/nav-link.astro";
-import strata from "../../content/data/strata.json";
+import PageLayout from "@/layouts/page-layout.astro";
+import Article from "@/components/article.astro";
+import Button from "@/components/button.astro"
+import NavLink from "@/components/nav-link.astro";
+
+import manuscripts from "@/content/data/manuscripts.json";
+import msItems from "@/content/data/ms_items.json";
+import handsJson from "@/content/data/hands.json"
+import strata from "@/content/data/strata.json";
+import codicologicalUnits from "@/content/data/cod_units.json";
 
 export async function getStaticPaths() {
   const manuscriptsList = Object.values(manuscripts);
   const msItemsList = Object.values(msItems);
   const handsList = Object.values(handsJson);
+  const codunits = Object.values(codicologicalUnits);
 
   const paths = manuscriptsList.map((manuscript) => {
     const manuscriptId = manuscript.hit_id;
 
-    // Find matching hands based on the manuscript ID
+    // Find matching hands based on the manuscript id
     const matchingHands = handsList.filter((hand) => {
       return hand.hands_role.some((handRole) =>
         handRole.ms_item.some((item: any) =>
-          item.manuscript.some((ms) => ms.hit_id === manuscriptId)
+          item.manuscript.some((ms: any) => ms.hit_id === manuscriptId)
         )
       );
     });
@@ -86,8 +94,8 @@ const codUnits = manuscript.related__cod_units ;
             </div>
           }
             <div class="flex gap-2 justify-end">
-              <Button>TEI-XML</Button>
-              <button class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition" id="download-pdf">PDF</button>
+              <button class="border border-brandRed rounded-md py-2 px-4 bg-brandRed text-brandRose hover:bg-brandRose hover:text-brandRed transition" 
+              id="download-pdf">PDF</button>
             </div>
           </div>
          
@@ -329,7 +337,7 @@ const codUnits = manuscript.related__cod_units ;
             
                   })}
             </dl>
-          
+          {/* Table for displaying information about the strata - using the matchingHands - each strata is defined by the hands_role */}
             <div class="overflow-x-auto">
               <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
                 <thead class="bg-brandRoseDark">
@@ -426,8 +434,10 @@ const codUnits = manuscript.related__cod_units ;
                   </tr>
                 </thead>
                 <tbody>
+                  {/* each row is a hand-activity (hand_role) */}
                   {matchingHands.map(hand=> hand.hands_role.map(role => (
                     <tr>
+                      {/* check which is the relevant strata by filtering strata according to the hand_role */}
                       <td class="p-2 border border-gray-300 text-center">{Object.values(strata)
                         .filter(stratum => stratum.hand_role.some(handRole =>
                           handRole.hit_id === role.hit_id
@@ -443,9 +453,9 @@ const codUnits = manuscript.related__cod_units ;
                         )}
                       </td>
                       <td class="p-2 border border-gray-300">
-                        {role.ms_item.length > 1
+                       {role.ms_item.length > 1
                         ? (<ul class="list-disc">
-                            {role.ms_item.map(msItem =>
+                            {role.ms_item.map((msItem: any) =>
                                msItem.title_work.map(work => (
                                 <li>
                                   {work.author[0]?.name
@@ -455,7 +465,7 @@ const codUnits = manuscript.related__cod_units ;
                               ))
                             )}
                           </ul>)
-                        : (role.ms_item.map(msItem =>
+                        : (role.ms_item.map((msItem: any) =>
                           msItem.title_work.map(work => (
                                 <>
                                   {work.author[0]?.name
@@ -468,8 +478,9 @@ const codUnits = manuscript.related__cod_units ;
                           )}
                       </td>
               
-                      <td class="p-2 border border-gray-300">{role.ms_item.map((msItem) =>
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
+                      <td class="p-2 border border-gray-300">
+                        {role.ms_item.map((msItem) =>
+                          <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
                        )}
                         </td>
                       <td class="p-2 border border-gray-300">
@@ -490,6 +501,6 @@ const codUnits = manuscript.related__cod_units ;
         
            
     </Article>
-    <script src="../../lib/table-search.js"></script>
-    <script src="../../lib/download-pdf.js"></script>
+    <script src="@/lib/table-search.js"></script>
+    <script src="@/lib/download-pdf.js"></script>
 </PageLayout>

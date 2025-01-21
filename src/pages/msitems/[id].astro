@@ -1,22 +1,23 @@
 ---
-import PageLayout from "../../layouts/page-layout.astro";
+import PageLayout from "@/layouts/page-layout.astro";
 import { Icon } from "astro-icon/components";
-import Article from "../../components/article.astro";
-import msitems from "../../content/data/ms_items.json";
-import handsJson from "../../content/data/hands.json"
-import NavLink from "../../components/nav-link.astro";
+import Article from "@/components/article.astro";
+import NavLink from "@/components/nav-link.astro";
+
+import msitems from "@/content/data/ms_items.json";
+import handsJson from "@/content/data/hands.json";
 
 export async function getStaticPaths() { 
-  const handsList = Object.values(handsJson);
+  const hands = Object.values(handsJson);
   const msItemsList = Object.values(msitems);
  
   const paths = msItemsList.map((item) => {
     const msItemId = item.hit_id;
 
     // Find matching hands based on the msItemId
-    const matchingHands = handsList.filter(hand => {
+    const matchingHands = hands.filter(hand => {
       return hand.hands_role.some(handRole =>
-        handRole.ms_item.some(item => item.hit_id === msItemId)
+        handRole.ms_item.some((item: any) => item.hit_id === msItemId)
       )
     })
     return {
@@ -32,7 +33,7 @@ const { data: item, hands: matchingHands } = Astro.props;
 
 ---
 
-<PageLayout title={item.manuscript[0]?.shelfmark[0].value}>
+<PageLayout title={`${item.manuscript[0].shelfmark[0].value}, ${item.locus_grp}`}>
   <style>
     /* To make the table rows striped */
     tbody tr:nth-child(even) {
@@ -59,7 +60,7 @@ const { data: item, hands: matchingHands } = Astro.props;
           <dl class="grid grid-cols-[1fr_6fr] p-5">
             <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>  
             <dd class="pl-5">
-              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} class="underline decoration-dotted underline-offset-4  hover:text-brandRed">
+              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} >
                 {item.manuscript[0]?.shelfmark[0].value}
               </NavLink>
             </dd>
@@ -67,18 +68,18 @@ const { data: item, hands: matchingHands } = Astro.props;
             <dd class="pl-5">{item.locus_grp}</dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
               <dd class="pl-5">
-                {item.title_work?.map(title => 
+                {item.title_work?.map((title: any) => 
                   <NavLink href={`/works/${title?.hit_id}`} 
-                      class="hover:text-brandRed underline decoration-dotted underline-offset-4">{title.title}
+                      >{title.title}
                   </NavLink>
                 )}
               </dd>
-             {item.title_work?.some(title => title.author.length > 0) &&
+             {item.title_work?.some((title: any) => title.author.length > 0) &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-                <dd class="pl-5">{item.title_work?.map(title => title.author.map(aut => 
+                <dd class="pl-5">{item.title_work?.map((title:any) => title.author.map((aut: any) => 
                   
                   <NavLink href={aut.gnd_url} 
-                      class="hover:text-brandRed underline decoration-dotted underline-offset-4">{aut.name}
+                      >{aut.name}
                       <Icon
                                 class="inline-flex align-middle"
                                 aria-hidden="true"
@@ -94,7 +95,7 @@ const { data: item, hands: matchingHands } = Astro.props;
               {item?.rubric &&
               <dt class="font-semibold border-r border-gray-300 pr-2">Rubrik:</dt>
                <dd class="pl-5">
-                  {/* check for [text] shouldl be not-italic */}
+                  {/* check for [text in square brackets] should be not-italic */}
                   ›{item.rubric.split(/(\[ *.*?\])/).map((part) =>
                     part.startsWith('[') && part.endsWith(']')
                       ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
@@ -135,14 +136,15 @@ const { data: item, hands: matchingHands } = Astro.props;
                 <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
                 <dd class="pl-5">{item?.decoration.map(deco => deco.value).join(', ')}</dd>
               }
-              <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
+            <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
               <dd class="pl-5">
-                {item.hands_role
+                {item.hands_role.map(role => role.hand.length > 0) && 
+                item.hands_role
                 .filter(hand_role => hand_role.role.some(ro => ro.value == 'Schreiber'))
                 .map(filteredRole => {
                   return <ul>
                           <li>
-                            <NavLink class="hover:text-brandRed underline decoration-dotted underline-offset-4" 
+                            <NavLink 
                               href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}
                             </NavLink>
                             <span>
@@ -151,20 +153,22 @@ const { data: item, hands: matchingHands } = Astro.props;
                                 aria-hidden="true"
                                 name="lucide:arrow-right"
                               />
+                             {/* need to get the dating for the han from hands.json */}
                               {matchingHands
                                   .filter(hand => hand.hands_role
                                       .some(role => role.hit_id === filteredRole.hit_id))
-                                  .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}</span>
+                                  .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}
+                            </span>
                           </li>
                   </ul>
           
                 })}
-              </dd>              
+              </dd>
             </dl>
         </section>
 
         {item.hands_role
-              .some(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber')) &&
+              .some((hand_role: any) => hand_role.role.some((ro: any) => ro.value != 'Schreiber')) &&
           <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
              <h2 id="msitemRework" class="text-xl font-semibold text-brandRed mb-5">Bearbeitungsschritte</h2>
             <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table p-5">

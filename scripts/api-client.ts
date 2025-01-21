@@ -579,6 +579,292 @@ export interface Scribe {
   identical_hands: HandElement[];
 }
 
+export interface RelatedMSItem {
+  id:                 number;
+  label:              OrigDateElement[];
+  manuscript:         PurpleManuscript[];
+  incipit:            string;
+  explicit:           string;
+  rubric:             string;
+  title_work:         TitleWork[];
+  title_note:         string;
+  bibl:               any[];
+  final_rubric:       string;
+  siglum:             string;
+  hit_id:             null | string;
+  filiation:          any[];
+  locus_grp:          string;
+  hands_role:         HandsRole[];
+  cod_unit:           Welcome[];
+  "Last modified":    Date;
+  "Last modified by": LastModifiedBy;
+  note:               null | string;
+  hand:               LabelElement[];
+  decoration:         Column[];
+  facs_url:           string;
+  form:               Column[];
+  form_note:          null | string;
+  column:             Column[];
+  view_label:         string;
+  prev:               Next;
+  next:               Next;
+}
+
+export interface Welcome {
+  id:                      number;
+  label:                   LabelElement[];
+  notes:                   string;
+  hit_id:                  string;
+  locus:                   string;
+  manuscript:              OrigDateElement[];
+  quire:                   Quire[];
+  number:                  string;
+  prov_place_old:          OrigDateElement[];
+  "Last modified by":      LastModifiedBy;
+  "Last modified":         Date;
+  orig_date:               OrigDateElement[];
+  quires_number:           null | string;
+  heigth:                  null | string;
+  lines_number:            null | string;
+  decorations:             boolean;
+  codicological_reworking: any[];
+  basic_structure:         any[];
+  written_width:           null | string;
+  written_height:          null | string;
+  width:                   null | string;
+  columns:                 Column[];
+  cod_unit_placed:         CodUnitPlaced[];
+  prov_place:              ProvPlace[];
+  view_label?:             string;
+  prev?:                   Next;
+  next?:                   Next;
+  related__ms_items?:      RelatedMSItem[];
+}
+
+export interface LastModifiedBy {
+  id:   number;
+  name: LastModifiedByName;
+}
+
+export type LastModifiedByName = string;
+export interface Column {
+  id:    number;
+  value: string;
+  color: Color;
+}
+
+export interface LabelElement {
+  ids:   LabelIDS;
+  value: string;
+}
+
+export interface LabelIDS {
+  database_table_3487: number;
+  database_table_3488: number;
+}
+
+export interface HandsRole {
+  id:                      number;
+  hit_id:                  string;
+  hand:                    OrigDateElement[];
+  ms_item:                 OrigDateElement[];
+  role:                    Column[];
+  locus:                   null | string;
+  text:                    Text[];
+  locus_text:              OrigDateElement[];
+  "Last modified by":      LastModifiedBy;
+  "Last modified":         Date;
+  locus_layout:            Column[];
+  function:                Column[];
+  bezug_msitem:            OrigDateElement[];
+  role_to_reworked_msitem: Column[];
+}
+
+export interface OrigDateElement {
+  id:    number;
+  value: string;
+}
+
+export interface Text {
+  ids:   TextIDS;
+  value: string;
+}
+
+export interface TextIDS {
+  database_table_3489: number;
+  database_table_3491: number;
+}
+
+export interface PurpleManuscript {
+  id:                      number;
+  shelfmark:               OrigDateElement[];
+  hit_id:                  string;
+  library:                 OrigDateElement[];
+  manuscripta_url:         string;
+  handschriftenportal_url: string;
+  catalog_url:             string;
+  digi_url:                string;
+  idno:                    string;
+  idno_former:             null | string;
+  quire_structure:         string;
+  library_full:            LibraryFullElement[];
+  extent:                  string;
+  foliation:               null | string;
+  acc_mat:                 null | string;
+  binding:                 string;
+  binding_date:            OrigDateElement[];
+  history:                 string;
+  bibliography:            any[];
+  height:                  null | string;
+  width:                   null | string;
+  material_spec:           string;
+  orig_place:              Place[];
+  catchwords:              string;
+  quiremarks:              string;
+  material:                Column;
+  provenance:              LibraryFullElement[];
+  manuscripts_dated:       ManuscriptsDated[];
+  orig_dated:              OrigDated[];
+  "Last modified by":      LastModifiedBy;
+  "Last modified":         Date;
+  content_summary:         null | string;
+  charakter:               Column[];
+  case_study:              Column[];
+  status:                  Column[];
+}
+
+export interface LibraryFullElement {
+  id:                 number;
+  label:              LabelEnum;
+  hit_id:             LibraryFullHitID;
+  gnd_url:            string;
+  library_full:       LibraryFullEnum;
+  library_website:    string;
+  settlement:         Settlement[];
+  wikidata:           string;
+  "Last modified by": LastModifiedBy;
+  "Last modified":    Date;
+}
+
+
+export interface Settlement {
+  id:                 number;
+  name:               SettlementName;
+  geonames_url:       string;
+  hit_id:             SettlementHitID;
+  wikidata_url:       string;
+  "Last modified by": LastModifiedBy;
+  "Last modified":    Date;
+}
+
+export interface ManuscriptsDated {
+  id:                 number;
+  hit_id:             string;
+  manuscript:         OrigDateElement[];
+  date:               DateElement[];
+  authority:          Authority[];
+  page:               string;
+  preferred_date:     boolean;
+  "Last modified by": LastModifiedBy;
+  "Last modified":    Date;
+  note:               null | string;
+}
+
+export interface Authority {
+  id:          number;
+  name:        AuthorityName;
+  short_title: string;
+  zotero_id:   string;
+  hit_id:      AuthorityHitID;
+}
+
+export type AuthorityHitID = string;
+export interface DateElement {
+  id:                 number;
+  label:              string;
+  not_before:         Date | null;
+  hit_id:             string;
+  not_after:          Date | null;
+  "Last modified by": LastModifiedBy;
+  "Last modified":    Date;
+}
+
+export interface OrigDated {
+  ids:   OrigDatedIDS;
+  value: string;
+}
+
+export interface OrigDatedIDS {
+  database_table_3512: number;
+  database_table_3516: number;
+}
+
+export interface Place {
+  id:                 number;
+  name:               Value;
+  geonames_url:       string;
+  hit_id:             PlaceHitID;
+  wikidata_url:       string;
+  country:            Place[];
+  "Last modified by": LastModifiedBy;
+  "Last modified":    Date;
+}
+
+export type PlaceHitID = string;
+export type Value = string;
+export interface Next {
+  id:    null | string;
+  label: string;
+}
+
+export interface TitleWork {
+  id:                 number;
+  title:              string;
+  gnd_url:            string;
+  note:               string;
+  hit_id:             string;
+  author:             Author[];
+  bibliography:       any[];
+  source_text:        SourceText[];
+  genre:              Genre[];
+  note_source:        NoteSource | null;
+  "Last modified by": LastModifiedBy;
+  "Last modified":    Date;
+}
+
+
+
+
+export interface CodUnitPlaced {
+  id:        number;
+  hit_id:    CodUnitPlacedHitID;
+  cod_unit:  OrigDateElement[];
+  place:     Place[];
+  from:      OrigDateElement[];
+  type:      Column[];
+  till:      OrigDateElement[];
+  ms:        OrigDateElement[];
+  authority: OrigDateElement[];
+  page:      Page | null;
+}
+
+export type CodUnitPlacedHitID = string;
+export type Page = string;
+
+export interface ProvPlace {
+  ids:   ProvPlaceIDS;
+  value: Value;
+}
+
+export interface ProvPlaceIDS {
+  database_table_3492: number;
+  database_table_3840: number;
+}
+
+
+
+
+
 //////////////////////////////
 ////// EXPORT FUNCTIONS //////
 //////////////////////////////
@@ -637,5 +923,14 @@ export function getStrata() {
   }).then((data) => ({ fileName: "strata.json", data })) as Promise<{
     fileName: string;
     data: Array<Stratum>;
+  }>;
+}
+
+export function getCodUnits() {
+  return request(new URL("cod_units.json", baseUrl), {
+    responseType: "json",
+  }).then((data) => ({ fileName: "cod_units.json", data })) as Promise<{
+    fileName: string;
+    data: Array<CodUnit>;
   }>;
 }

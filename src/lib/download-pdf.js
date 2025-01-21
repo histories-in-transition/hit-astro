@@ -20,7 +20,6 @@ document.getElementById('download-pdf').addEventListener('click', async () => {
     const canvasHeight = canvas.height;
 
     const scale = contentWidth / canvasWidth; // Scale the image to fit content width
-    const scaledHeight = canvasHeight * scale; // Scaled height of the image
 
     let yOffset = 0; // Y-offset to track content height
 
