@@ -67,8 +67,8 @@ import TableHead from "../components/table-head.astro";
 			headerFilterLiveFilterDelay: 600,
 			height: 900,
 			data: tabledata,
-			layout: "fitColumns",
-			responsiveLayout: "collapse",
+			responsiveLayout: true,
+			initialSort: [{ column: "view_label", dir: "asc" }],
 			columns: [
 				{
 					title: "Titel",
@@ -77,6 +77,7 @@ import TableHead from "../components/table-head.astro";
 					formatter: "textarea",
 					minWidth: 150,
 					widthGrow: 3,
+					responsive: 0,
 				},
 				{
 					title: "Autor",
@@ -89,6 +90,7 @@ import TableHead from "../components/table-head.astro";
 					},
 					headerFilter: "input",
 					widthGrow: 2,
+					responsive: 1,
 				},
 
 				{
@@ -97,8 +99,10 @@ import TableHead from "../components/table-head.astro";
 					minWidth: 150,
 					mutator: jsonpathLookup,
 					mutatorParams: { path: "$..genre", reverse: true },
-					headerFilter: "input",
+					headerFilter: "list",
+					headerFilterParams: { valuesLookup: true, clearable: true },
 					widthGrow: 1,
+					responsive: 2,
 				},
 				{
 					title: "Überlieferung: HSS",
@@ -112,6 +116,7 @@ import TableHead from "../components/table-head.astro";
 					headerFilter: "input",
 					formatter: "textarea",
 					widthGrow: 1,
+					responsive: 2,
 				},
 				{
 					title: "Ort der Überlieferung",
@@ -120,6 +125,7 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]" },
 					headerFilter: "input",
+					responsive: 2,
 				},
 				{
 					title: "Datum der Überlieferung",
@@ -139,6 +145,7 @@ import TableHead from "../components/table-head.astro";
 						],
 					},
 					formatter: "textarea",
+					responsive: 2,
 				},
 				{
 					title: "HSS Dekoration",
@@ -147,6 +154,7 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]", separator: " | " },
 					headerFilter: "input",
+					responsive: 2,
 				},
 				{
 					title: "Quelle",
@@ -157,8 +165,10 @@ import TableHead from "../components/table-head.astro";
 						paths: ["$[*].author[*].value", "$[*].title"],
 						separator: ": ",
 					},
-					headerFilter: "input",
+					headerFilter: "list",
+					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
 					formatter: "textarea",
+					responsive: 2,
 				},
 			],
 		});
@@ -188,14 +198,20 @@ import TableHead from "../components/table-head.astro";
 
 		table.on("dataLoaded", function (data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 			var el = document.getElementById("counter2");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 
 		table.on("dataFiltered", function (filters, data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 	</script>
 </PageLayout>
