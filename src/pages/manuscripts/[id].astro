@@ -1,26 +1,24 @@
 ---
 // page to get the details of a manuscript, 
-// general description from manuscript.json -> related__cod_units
-// its codicological units from cod_units.json
+// general description from manuscript.json + info about its codicological units from 
+// related__cod_units ->  cod_unit_placed
+// info on msitems from ms_items.json -> filtered by matching cod_unit.id
 // to display strata based on hands_role - need hands.json
 
 import {Icon} from "astro-icon/components";
 import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
-import Button from "@/components/button.astro"
 import NavLink from "@/components/nav-link.astro";
 
 import manuscripts from "@/content/data/manuscripts.json";
-import msItems from "@/content/data/ms_items.json";
+import mssItems from "@/content/data/ms_items.json";
 import handsJson from "@/content/data/hands.json"
 import strata from "@/content/data/strata.json";
-import codicologicalUnits from "@/content/data/cod_units.json";
 
 export async function getStaticPaths() {
   const manuscriptsList = Object.values(manuscripts);
-  const msItemsList = Object.values(msItems);
+  const msItemsList = Object.values(mssItems);
   const handsList = Object.values(handsJson);
-  const codunits = Object.values(codicologicalUnits);
 
   const paths = manuscriptsList.map((manuscript) => {
     const manuscriptId = manuscript.hit_id;
@@ -131,6 +129,9 @@ const codUnits = manuscript.related__cod_units ;
                 <dt class="font-semibold border-r border-gray-300 pr-2">Status dieser Beschreibung:</dt>
                 <dd class="pl-5">{manuscript.status.map(st => st.value).join(', ')}</dd>
               }
+              {manuscript.content_summary &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
+                <dd class="pl-5">{manuscript.content_summary}</dd>}
             </dl>
           </section>
           <section aria-labelledby="msMaterial" class="border rounded-sm border-gray-200 shadow-sm 
@@ -186,8 +187,96 @@ const codUnits = manuscript.related__cod_units ;
                     <dd class="pl-5">
                   {manuscript?.acc_mat}
                 </dd>
-                )}
+                )}                
             </dl>
+          </section>
+          <section aria-labelledby="codUnits" class="border rounded-sm border-gray-200 shadow-sm 
+          bg-brandRose text-sm md:leading-7 md:text-base p-5">
+           {manuscript.related__cod_units.map((unit: any) => (
+             <> 
+                <h2 id="codUnits" class="text-xl font-semibold text-brandRed">Kodikologische Einheit {unit.number}</h2>
+                <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
+                  <dd class="pl-5">
+                      {unit.locus} 
+                      {unit.quires_number && <span>(Lagen: {unit.quires_number})</span>}
+                      
+                  </dd>
+                  {unit.basic_structure.length > 0 && 
+                   <dt class="font-semibold border-r border-gray-300 pr-2">Grundstruktur:</dt>
+                  <dd class="pl-5">
+                      {unit.basic_structure.map(struct => struct.value).join(', ')} 
+                  </dd>
+                  }
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+                  <dd class="pl-5">
+                    {unit.heigth && unit.width &&
+                      ( <>
+                    {unit.heigth} × {unit.width} mm
+                  </>)} 
+                  {unit.written_height && unit.written_width && 
+                     <>
+                      [{unit.written_height} × {unit.written_width} mm]
+                     </>}
+                     
+                  </dd>
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Spalte:</dt>
+                  <dd class="pl-5">
+                      {unit.columns.length > 0 &&
+                        unit.columns.map(col => col.value).join(', ')} 
+                  </dd> 
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Zeile:</dt>
+                  <dd class="pl-5">
+                      {unit.lines_number &&
+                      unit.lines_number} 
+                  </dd>    
+                  {unit.decorations &&
+                   <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
+                  <dd class="pl-5">
+                      {unit.decorations} 
+                  </dd>    
+                  } 
+
+                  {unit.codicological_reworking.length > 0 &&
+                   <dt class="font-semibold border-r border-gray-300 pr-2">Rework:</dt>
+                  <dd class="pl-5">
+                      {unit.codicological_reworking.map(rework => rework.value).join(', ')} 
+                  </dd>    
+                  }
+                  {unit.cod_unit_placed.length > 0 &&
+                   <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                   <dd class="pl-5">
+                      <ul>
+                        {unit.cod_unit_placed.map(placed_unit => (
+                        <li>
+                          {placed_unit.place.map(place => place.name)}
+                          {placed_unit.type[0].value === 'orig' &&
+                          <span>(Entsteungsort)</span>}
+                          {/* check if there are dates for the origin */ }
+                         {placed_unit.from.length > 0 &&
+                          <span>ab 
+                            {placed_unit.from.map(date => date.value).join(', ')}
+                            {placed_unit.certain_from === false && '(?)'}
+                          </span>}
+                          
+                          {placed_unit.till.length > 0 &&
+                          <span>bis 
+                            {placed_unit.till.map(date => date.value).join(', ')}
+                            {placed_unit.certain_till === false && '(?)'}
+                          </span>}
+                        </li>
+                      ))}
+                        </ul>
+                        </dd>
+                    }
+
+                
+                 
+                                
+                </dl>
+            </>
+           ))}
+
           </section>
           <section aria-labelledby="msHistory" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msHistory" class="text-xl font-semibold text-brandRed">Geschichte:</h2>
@@ -196,7 +285,7 @@ const codUnits = manuscript.related__cod_units ;
                 <dd class="pl-5">{manuscript?.history}</dd>
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
                 <dd class="pl-5">{manuscript?.orig_place.map(place => {
-                  return place.name}).join(', ')</dd>
+                  return place.name}).join(', ')}</dd>
                 <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
                 <dd class="pl-5">
                   {
@@ -235,8 +324,8 @@ const codUnits = manuscript.related__cod_units ;
                     {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
                   <dd class="pl-5"></dd>
 
-                  {Object.values(msItems)
-                    .filter((item: { cod_unit: { hit_id: string; }[]; locus_grp: string; title_work: { hit_id: string; author: { name: string; }[]; title: string; }[]; title_note: string; rubric: string; incipit: string; explicit: string; final_rubric: string; decoration: { value: string; }[]; }) => item.cod_unit.some((item_unit: { hit_id: string; }) => item_unit.hit_id === unit.hit_id))
+                  {matchingMsItems
+                    .filter((item: any) => item.cod_unit.some((item_unit: { hit_id: string; }) => item_unit.hit_id === unit.hit_id))
                     .sort((a, b) => {
                       const extractLocusValues = (locusGrp: string) => {
                         const match = locusGrp.match(/^(\d+)(r|v)/);
@@ -327,8 +416,8 @@ const codUnits = manuscript.related__cod_units ;
            <section aria-labelledby="msStrata" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msStrata" class="text-xl font-semibold text-brandRed">Strata:</h2> 
             <dl class="grid grid-cols-[1fr_5fr] p-3">
-                  {Object.values(strata)
-                    .filter(stratum => stratum.manuscript[0].id === manuscript.id)
+                  {Object.values(strata) // filter strata based on the manuscript id
+                    .filter(stratum => stratum.manuscript[0]?.id === manuscript.id)
                     .map(filteredStrata => {
                       return <>
                       <dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Stratum {filteredStrata.number}: </dt>
@@ -444,11 +533,11 @@ const codUnits = manuscript.related__cod_units ;
                         )).map(filteredStratum => filteredStratum.number)}
                       </td>
                       <td class="p-2 border border-gray-300">
-                        {hand.hands_dated.map(date =>
-                          date.dated.map(i => {
-                            const perStart = i.not_before ? new Date(i.not_before).getFullYear() :  null;
+                        {hand.hands_dated.map(date => // date is an array of objects with not_before and not_after properties
+                          date.dated.map(i => { // need to get only the years from the not_before and not_after e.g. 821 from "0821-01-01"
+                            const perStart = i.not_before ? new Date(i.not_before).getFullYear() :  null; // use Date object to get the year
                             const perEnd = i.not_after ? new Date(i.not_after).getFullYear() : null;
-                            return `${perStart}-${perEnd}`;
+                            return `${perStart}-${perEnd}`; // combine the two years in a string
                           })
                         )}
                       </td>

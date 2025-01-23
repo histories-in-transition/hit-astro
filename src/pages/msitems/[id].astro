@@ -33,7 +33,7 @@ const { data: item, hands: matchingHands } = Astro.props;
 
 ---
 
-<PageLayout title={`${item.manuscript[0].shelfmark[0].value}, ${item.locus_grp}`}>
+<PageLayout title={`${item.manuscript[0]?.shelfmark[0].value}, ${item.locus_grp}`}>
   <style>
     /* To make the table rows striped */
     tbody tr:nth-child(even) {
@@ -145,7 +145,7 @@ const { data: item, hands: matchingHands } = Astro.props;
                   return <ul>
                           <li>
                             <NavLink 
-                              href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>{filteredRole.hand[0].value}
+                              href={`/hands/hit_hands__${filteredRole.hand[0]?.id}`}>{filteredRole.hand[0].value}
                             </NavLink>
                             <span>
                               <Icon
@@ -190,8 +190,8 @@ const { data: item, hands: matchingHands } = Astro.props;
                     return  <tr>
                                 <td class="p-2 border border-gray-300">{filteredRole.role.map(rol => rol.value).join(', ')}</td>
                                 <td class="p-2 border border-gray-300">
-                                  <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0].id}`}>
-                                  {filteredRole.hand[0].value}</NavLink>
+                                  <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0]?.id}`}>
+                                  {filteredRole.hand[0]?.value}</NavLink>
                                 </td>
                                 <td class="p-2 border border-gray-300">{matchingHands
                                       .filter(hand => hand.hands_role
