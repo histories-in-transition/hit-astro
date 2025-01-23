@@ -69,7 +69,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Text",
 					field: "texts",
-					width: 200,
+					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
 						path: "$[*].value",
@@ -84,9 +84,11 @@ import TableHead from "../components/table-head.astro";
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
 						path: "$[*].value[*].value",
-						separator: ", ",
+						separator: "\n",
 					},
-					headerFilter: "input",
+					headerFilter: "list",
+					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
+					formatter: "textarea",
 				},
 				{
 					title: "Datiert",
