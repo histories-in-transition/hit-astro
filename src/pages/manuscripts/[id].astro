@@ -14,11 +14,25 @@ import manuscripts from "@/content/data/manuscripts.json";
 import mssItems from "@/content/data/ms_items.json";
 import handsJson from "@/content/data/hands.json"
 import strata from "@/content/data/strata.json";
+import type { Manuscript, MSItem, Work } from "@/lib/data";
 
 export async function getStaticPaths() {
-  const manuscriptsList = Object.values(manuscripts);
-  const msItemsList = Object.values(mssItems);
+  const manuscriptsList = Object.values(manuscripts) as Array<Manuscript>;
+  const msItemsList = Object.values(mssItems) as MSItem[];
   const handsList = Object.values(handsJson);
+
+  /** manuscript id => manuscript item */
+  const msItemListMap = new Map()
+  for (const item of msItemsList) {
+    for (const manuscript of item.manuscript) {
+      const id = manuscript.hit_id;
+      if (msItemListMap.has(id)) {
+        msItemListMap.get(id).push(item)
+      } else {
+        msItemListMap.set(id, [item])
+      }
+    }
+  }
 
   const paths = manuscriptsList.map((manuscript) => {
     const manuscriptId = manuscript.hit_id;
@@ -36,6 +50,7 @@ export async function getStaticPaths() {
     const matchingMsItems = msItemsList.filter((item) =>
       item.manuscript.some((ms) => ms.hit_id === manuscriptId)
     );
+    const _matchingMsItems = msItemListMap.get(manuscriptId) || [];
 
     return {
       params: { id: manuscriptId },
@@ -55,19 +70,10 @@ const codUnits = manuscript.related__cod_units ;
 ---
 
 <PageLayout title={manuscript?.shelfmark[0]?.value}> 
-  <style>
-		/* To make the table rows striped */
-		tbody tr:nth-child(even) {
-			background-color: #fcf1e8;
-		}
-		tbody tr:nth-child(odd) {
-			background-color: #fff8f7;
-		}
-	</style>   
     <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
-            mainTitle={manuscript.library_full[0].settlement[0].name + ', ' + manuscript?.shelfmark[0]?.value}
+            mainTitle={manuscript.library_full[0].settlement[0].name + ', ' + manuscript.shelfmark[0]?.value}
           >          
           <div class="flex justify-between">
             <div class="flex gap-2 justify-start">
@@ -192,7 +198,8 @@ const codUnits = manuscript.related__cod_units ;
           </section>
           <section aria-labelledby="codUnits" class="border rounded-sm border-gray-200 shadow-sm 
           bg-brandRose text-sm md:leading-7 md:text-base p-5">
-           {manuscript.related__cod_units.map((unit: any) => (
+           {manuscript?.related__cod_units?.length > 0 &&
+           manuscript.related__cod_units.map((unit) => (
              <> 
                 <h2 id="codUnits" class="text-xl font-semibold text-brandRed">Kodikologische Einheit {unit.number}</h2>
                 <dl class=" grid grid-cols-[1fr_5fr] p-3">
@@ -262,7 +269,7 @@ const codUnits = manuscript.related__cod_units ;
                           {placed_unit.till.length > 0 &&
                           <span>bis 
                             {placed_unit.till.map(date => date.value).join(', ')}
-                            {placed_unit.certain_till === false && '(?)'}
+                            {placed_unit.ceratin_till === false && '(?)'}
                           </span>}
                         </li>
                       ))}
@@ -314,7 +321,7 @@ const codUnits = manuscript.related__cod_units ;
             <section aria-labelledby="bibl" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
               <h2 id="bibl" class="text-xl font-semibold text-brandRed">Bibliographie:</h2>    
               <p>To be added Zotero</p>
-            </section>  
+            </section>
 
             <section aria-labelledby="msContent" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msContent" class="text-xl font-semibold text-brandRed">Inhalt:</h2>           
@@ -525,7 +532,7 @@ const codUnits = manuscript.related__cod_units ;
                 <tbody>
                   {/* each row is a hand-activity (hand_role) */}
                   {matchingHands.map(hand=> hand.hands_role.map(role => (
-                    <tr>
+                    <tr class="odd:bg-[#fff8f7] even:bg-[#fcf1e8]">
                       {/* check which is the relevant strata by filtering strata according to the hand_role */}
                       <td class="p-2 border border-gray-300 text-center">{Object.values(strata)
                         .filter(stratum => stratum.hand_role.some(handRole =>
@@ -544,8 +551,8 @@ const codUnits = manuscript.related__cod_units ;
                       <td class="p-2 border border-gray-300">
                        {role.ms_item.length > 1
                         ? (<ul class="list-disc">
-                            {role.ms_item.map((msItem: any) =>
-                               msItem.title_work.map(work => (
+                            {role.ms_item.map((msItem: MSItem) =>
+                               msItem.title_work.map((work: Work) => (
                                 <li>
                                   {work.author[0]?.name
                                     ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
@@ -554,7 +561,7 @@ const codUnits = manuscript.related__cod_units ;
                               ))
                             )}
                           </ul>)
-                        : (role.ms_item.map((msItem: any) =>
+                        : (role.ms_item.map((msItem: MSItem) =>
                           msItem.title_work.map(work => (
                                 <>
                                   {work.author[0]?.name
@@ -568,7 +575,7 @@ const codUnits = manuscript.related__cod_units ;
                       </td>
               
                       <td class="p-2 border border-gray-300">
-                        {role.ms_item.map((msItem) =>
+                        {role.ms_item.map((msItem: MSItem ) =>
                           <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
                        )}
                         </td>
