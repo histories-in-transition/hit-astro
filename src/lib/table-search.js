@@ -67,10 +67,14 @@ function filterTable() {
 
 // Reapply row striping for visible rows
 function reapplyRowStriping(rows) {
-  let index = 0;
+  let index = 0; // Keep track of visible row indices
   rows.forEach((row) => {
     if (row.style.display !== "none") {
-      row.classList.toggle("odd", index % 2 === 0);
+      // Remove both odd and even classes first
+      row.classList.remove("odd", "even");
+
+      // Apply the correct class based on the index
+      row.classList.add(index % 2 === 0 ? "odd" : "even");
       index++;
     }
   });
@@ -78,18 +82,7 @@ function reapplyRowStriping(rows) {
 
 
 
-/* // Function to add highlight when hovered with mouse
-const tableRows = document.querySelectorAll("tbody tr");
-tableRows.forEach((row) => {
-  row.addEventListener("mouseenter", () => {
-    row.style.backgroundColor = "#e5d9cf";
-    row.style.color = "black";
-  });
-  row.addEventListener("mouseleave", () => {
-    row.style.backgroundColor = "";
-    row.style.color = "";
-  });
-}); */
+
 
 // Function for download CSV button on table
 
