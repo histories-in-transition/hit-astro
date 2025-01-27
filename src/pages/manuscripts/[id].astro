@@ -14,14 +14,14 @@ import manuscripts from "@/content/data/manuscripts.json";
 import mssItems from "@/content/data/ms_items.json";
 import handsJson from "@/content/data/hands.json"
 import strata from "@/content/data/strata.json";
-import type { Manuscript, MSItem, Work } from "@/lib/data";
+import type { Manuscript, MSItem, Work, Stratum, Hand } from "@/lib/data";
 
 export async function getStaticPaths() {
   const manuscriptsList = Object.values(manuscripts) as Array<Manuscript>;
   const msItemsList = Object.values(mssItems) as MSItem[];
   const handsList = Object.values(handsJson);
 
-  /** manuscript id => manuscript item */
+  /** Use Maps to get easily loop thorugh msItems, hands and strata whcih refer to this manuscript based on matching manuscriptId or manuscriptName */
   const msItemListMap = new Map()
   for (const item of msItemsList) {
     for (const manuscript of item.manuscript) {
@@ -34,34 +34,52 @@ export async function getStaticPaths() {
     }
   }
 
+  const strataMap = new Map()
+  for (const stratum of Object.values(strata)) {
+    const id = stratum.manuscript[0]?.value;
+    if (strataMap.has(id)) {
+      strataMap.get(id).push(stratum)
+    } else {
+      strataMap.set(id, [stratum])
+    }
+  }
+
+  const handsMap = new Map()
+  for (const hand of handsList) {
+    const id = hand.manuscript[0].value;
+    if (handsMap.has(id)) {
+      handsMap.get(id).push(hand)
+    }
+    else {
+      handsMap.set(id, [hand])
+    }
+  }
+
   const paths = manuscriptsList.map((manuscript) => {
     const manuscriptId = manuscript.hit_id;
+    const manuscriptName = manuscript.shelfmark[0]?.value;
+   
+    // Find matching hands based on the manuscriptName
+    const matchingHands = handsMap.get(manuscriptName) || [];
 
-    // Find matching hands based on the manuscript id
-    const matchingHands = handsList.filter((hand) => {
-      return hand.hands_role.some((handRole) =>
-        handRole.ms_item.some((item: any) =>
-          item.manuscript.some((ms: any) => ms.hit_id === manuscriptId)
-        )
-      );
-    });
+    // Find matching strata based on the manuscriptName
+
+    const matchingStrata = strataMap.get(manuscriptName) || [];
 
     // Find matching manuscript items based on the manuscript ID
-    const matchingMsItems = msItemsList.filter((item) =>
-      item.manuscript.some((ms) => ms.hit_id === manuscriptId)
-    );
-    const _matchingMsItems = msItemListMap.get(manuscriptId) || [];
+   
+    const matchingMsItems = msItemListMap.get(manuscriptId) || [];
 
     return {
       params: { id: manuscriptId },
-      props: { data: manuscript, msItems: matchingMsItems, hands: matchingHands },
+      props: { data: manuscript, msItems: matchingMsItems, hands: matchingHands, strata: matchingStrata },
     };
   });
 
   return paths;
 }
 
-const { data: manuscript, msItems: matchingMsItems, hands: matchingHands } = Astro.props;
+const { data: manuscript, msItems: matchingMsItems, hands: matchingHands, strata: matchingStrata } = Astro.props;
 
 
 const codUnits = manuscript.related__cod_units ;
@@ -131,10 +149,7 @@ const codUnits = manuscript.related__cod_units ;
               {manuscript.case_study.length > 0 &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
                 <dd class="pl-5">{manuscript.case_study.map(study => study.value).join(', ')}</dd>}
-              {manuscript.status.length > 0 &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Status dieser Beschreibung:</dt>
-                <dd class="pl-5">{manuscript.status.map(st => st.value).join(', ')}</dd>
-              }
+             
               {manuscript.content_summary &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
                 <dd class="pl-5">{manuscript.content_summary}</dd>}
@@ -179,7 +194,7 @@ const codUnits = manuscript.related__cod_units ;
                 {manuscript.quire_structure && (
                    <span set:html={manuscript?.quire_structure}></span>
                 )}
-              </dd>
+              </dd>            
               
               <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
               <dd class="pl-5">
@@ -195,48 +210,67 @@ const codUnits = manuscript.related__cod_units ;
                 </dd>
                 )}                
             </dl>
-          </section>
+          </section> 
+          
+{manuscript?.related__cod_units?.length > 0 &&
           <section aria-labelledby="codUnits" class="border rounded-sm border-gray-200 shadow-sm 
           bg-brandRose text-sm md:leading-7 md:text-base p-5">
-           {manuscript?.related__cod_units?.length > 0 &&
-           manuscript.related__cod_units.map((unit) => (
+           
+           {manuscript.related__cod_units.map((unit) => (
              <> 
-                <h2 id="codUnits" class="text-xl font-semibold text-brandRed">Kodikologische Einheit {unit.number}</h2>
+                <h2 id="codUnits" class="text-lg font-semibold text-brandRed">Kodikologische Einheit {unit.number}: </h2>
                 <dl class=" grid grid-cols-[1fr_5fr] p-3">
                   <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
                   <dd class="pl-5">
-                      {unit.locus} 
-                      {unit.quires_number && <span>(Lagen: {unit.quires_number})</span>}
+                      {unit.locus 
+                      ? unit.locus
+                      : 'N/A'}
                       
                   </dd>
+                  {unit.quires_number 
+                      ? 
+                      <dt class="font-semibold border-r border-gray-300 pr-2">Lagen:</dt>
+                  <dd class="pl-5">
+                      {unit.quires_number}
+                  </dd> 
+                  : ''}
+
                   {unit.basic_structure.length > 0 && 
                    <dt class="font-semibold border-r border-gray-300 pr-2">Grundstruktur:</dt>
                   <dd class="pl-5">
                       {unit.basic_structure.map(struct => struct.value).join(', ')} 
                   </dd>
                   }
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-                  <dd class="pl-5">
-                    {unit.heigth && unit.width &&
-                      ( <>
+                  
+                  {unit.heigth && unit.width
+                     ? 
+                   ( <>
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+                    <dd class="pl-5">
                     {unit.heigth} × {unit.width} mm
-                  </>)} 
-                  {unit.written_height && unit.written_width && 
+                    
+                    {unit.written_height && unit.written_width && 
                      <>
                       [{unit.written_height} × {unit.written_width} mm]
-                     </>}
-                     
+                     </>}                      
                   </dd>
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Spalte:</dt>
+                  </>)
+                    : ''
+                  } 
+                  
+                   
+                     {unit.columns.length > 0 &&
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Spalten:</dt>
+                      <dd class="pl-5">
+                   
+                        {unit.columns.map(col => col.value).join(', ')} 
+                    </dd> }
+                  {unit.lines_number
+                  ? <dt class="font-semibold border-r border-gray-300 pr-2">Zeilen:</dt>
                   <dd class="pl-5">
-                      {unit.columns.length > 0 &&
-                        unit.columns.map(col => col.value).join(', ')} 
-                  </dd> 
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Zeile:</dt>
-                  <dd class="pl-5">
-                      {unit.lines_number &&
-                      unit.lines_number} 
-                  </dd>    
+                      {unit.lines_number} 
+                  </dd>
+                  : ''}    
                   {unit.decorations &&
                    <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
                   <dd class="pl-5">
@@ -256,9 +290,9 @@ const codUnits = manuscript.related__cod_units ;
                       <ul>
                         {unit.cod_unit_placed.map(placed_unit => (
                         <li>
-                          {placed_unit.place.map(place => place.name)}
                           {placed_unit.type[0].value === 'orig' &&
-                          <span>(Entsteungsort)</span>}
+                          <span>Entsteungsort: </span>}
+                          {placed_unit.place.map(place => place.name)}                          
                           {/* check if there are dates for the origin */ }
                          {placed_unit.from.length > 0 &&
                           <span>ab 
@@ -274,22 +308,18 @@ const codUnits = manuscript.related__cod_units ;
                         </li>
                       ))}
                         </ul>
-                        </dd>
-                    }
-
-                
-                 
-                                
+                    </dd>
+                    }          
                 </dl>
             </>
            ))}
 
           </section>
+          }
           <section aria-labelledby="msHistory" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msHistory" class="text-xl font-semibold text-brandRed">Geschichte:</h2>
-            <dl class=" grid grid-cols-[1fr_5fr] p-5">
-                <dt class="font-semibold border-r border-gray-300 pr-2">Herkunft:</dt>
-                <dd class="pl-5">{manuscript?.history}</dd>
+           
+            <dl class=" grid grid-cols-[1fr_5fr] p-5">               
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
                 <dd class="pl-5">{manuscript?.orig_place.map(place => {
                   return place.name}).join(', ')}</dd>
@@ -297,10 +327,7 @@ const codUnits = manuscript.related__cod_units ;
                 <dd class="pl-5">
                   {
                       manuscript?.provenance.map((entry, index) => (
-                        <>
-                          <NavLink href="/" class="hover:text-brandRed">
-                            {entry.label}
-                          </NavLink>
+                        <>{entry.label}                         
               
                           {index < manuscript.provenance.length - 1 && ', '}
                         </>
@@ -315,9 +342,11 @@ const codUnits = manuscript.related__cod_units ;
                       ))}
                       </ul>}
                 </dd>
-              </dl>
-            </section>   
-
+              </dl> 
+              {manuscript?.history.length 
+            ? <p class="p-5">{manuscript?.history}</p>
+            : ''}
+            </section> 
             <section aria-labelledby="bibl" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
               <h2 id="bibl" class="text-xl font-semibold text-brandRed">Bibliographie:</h2>    
               <p>To be added Zotero</p>
@@ -328,10 +357,10 @@ const codUnits = manuscript.related__cod_units ;
               {codUnits.map((unit) => (
                  <dl class="grid grid-cols-[1fr_5fr] p-3">
                   <dt class="font-semibold border-r border-gray-300 pr-2">
-                    {codUnits.length > 1 && `Codicological unit ${unit.number}`}</dt>
+                    {codUnits.length > 1 && `Kod. Einheit ${unit.number} (fols. ${unit.locus})`}</dt>
                   <dd class="pl-5"></dd>
 
-                  {matchingMsItems
+                  {(matchingMsItems as MSItem[])
                     .filter((item: any) => item.cod_unit.some((item_unit: { hit_id: string; }) => item_unit.hit_id === unit.hit_id))
                     .sort((a, b) => {
                       const extractLocusValues = (locusGrp: string) => {
@@ -375,7 +404,7 @@ const codUnits = manuscript.related__cod_units ;
                           {filteredItem.rubric && (
                             <span> 
                               {/* check for [text] shouldl be not-italic */}
-                              ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part) =>
+                              ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part: string) =>
                                 part.startsWith('[') && part.endsWith(']')
                                   ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
                                   : <span class="italic">{part}</span> // Italic for other text
@@ -385,7 +414,7 @@ const codUnits = manuscript.related__cod_units ;
                           
                           {filteredItem.incipit && (
                             <span>
-                              {filteredItem.incipit.split(/(\[ *.*?\])/).map((part) =>
+                              {filteredItem.incipit.split(/(\[ *.*?\])/).map((part: string) =>
                                 part.startsWith('[') && part.endsWith(']')
                                   ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
                                   : <span class="italic">{part}</span> // Italic for other text
@@ -395,7 +424,7 @@ const codUnits = manuscript.related__cod_units ;
                           )}
                          {filteredItem.explicit && (
                             <span class="italic">
-                              {filteredItem.explicit.split(/(\[.*?\])/).map((part) =>
+                              {filteredItem.explicit.split(/(\[.*?\])/).map((part: string) =>
                                 part.startsWith('[') && part.endsWith(']')
                                   ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
                                   : <span>{part}</span> // Italic for other text
@@ -406,7 +435,7 @@ const codUnits = manuscript.related__cod_units ;
 
                           {filteredItem.final_rubric && 
                           <span class="italic">
-                           ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part) =>
+                           ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part: string) =>
                                 part.startsWith('[') && part.endsWith(']')
                                   ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
                                   : <span class="italic">{part}</span> // Italic for other text
@@ -420,6 +449,8 @@ const codUnits = manuscript.related__cod_units ;
                     </dl>
               ))}
           </section>
+          {matchingStrata.length > 0 &&
+                    
            <section aria-labelledby="msStrata" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msStrata" class="text-xl font-semibold text-brandRed">Strata:</h2> 
             <dl class="grid grid-cols-[1fr_5fr] p-3">
@@ -531,10 +562,11 @@ const codUnits = manuscript.related__cod_units ;
                 </thead>
                 <tbody>
                   {/* each row is a hand-activity (hand_role) */}
-                  {matchingHands.map(hand=> hand.hands_role.map(role => (
-                    <tr class="odd:bg-[#fff8f7] even:bg-[#fcf1e8]">
+                  {matchingHands.map((hand: Hand)=> hand.hands_role.map(role => (
+                    <tr class="odd:bg-brandIvory even:bg-brandRose">
                       {/* check which is the relevant strata by filtering strata according to the hand_role */}
-                      <td class="p-2 border border-gray-300 text-center">{Object.values(strata)
+                      <td class="p-2 border border-gray-300 text-center">
+                        {(matchingStrata as Stratum[])
                         .filter(stratum => stratum.hand_role.some(handRole =>
                           handRole.hit_id === role.hit_id
                         )).map(filteredStratum => filteredStratum.number)}
@@ -551,7 +583,7 @@ const codUnits = manuscript.related__cod_units ;
                       <td class="p-2 border border-gray-300">
                        {role.ms_item.length > 1
                         ? (<ul class="list-disc">
-                            {role.ms_item.map((msItem: MSItem) =>
+                            {role.ms_item.map((msItem) =>
                                msItem.title_work.map((work: Work) => (
                                 <li>
                                   {work.author[0]?.name
@@ -561,7 +593,7 @@ const codUnits = manuscript.related__cod_units ;
                               ))
                             )}
                           </ul>)
-                        : (role.ms_item.map((msItem: MSItem) =>
+                        : (role.ms_item.map((msItem) =>
                           msItem.title_work.map(work => (
                                 <>
                                   {work.author[0]?.name
@@ -575,7 +607,7 @@ const codUnits = manuscript.related__cod_units ;
                       </td>
               
                       <td class="p-2 border border-gray-300">
-                        {role.ms_item.map((msItem: MSItem ) =>
+                        {role.ms_item.map((msItem: any ) =>
                           <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
                        )}
                         </td>
@@ -594,6 +626,7 @@ const codUnits = manuscript.related__cod_units ;
             </div>
          
           </section>
+          }
         
            
     </Article>
