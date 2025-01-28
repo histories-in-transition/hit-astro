@@ -1,18 +1,29 @@
 ---
-import PageLayout from "../../layouts/page-layout.astro";
-import Button from "../../components/button.astro";
-import NavLink from "../../components/nav-link.astro";
+// work page includes apart from basic info on the work (found in works.json) also info on the 
+// manuscript transmission of the work (found in ms_items.json) 
+// which are dated by the hands that worked on it (found in hands.json)
+// so we need to match all three json together to get the info we need
+
+import PageLayout from "@/layouts/page-layout.astro";
+import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
-import Article from "../../components/article.astro";
-import worksJson from "../../content/data/works.json";
-import msitemsJson from "../../content/data/ms_items.json";
-import handsJson from "../../content/data/hands.json";
+import Article from "@/components/article.astro";
+import worksJson from "@/content/data/works.json";
+import msitemsJson from "@/content/data/ms_items.json";
+import handsJson from "@/content/data/hands.json";
+import type { MSItem, Hand, Work } from "@/lib/data";
+
+interface TransformedMSItem extends MSItem {
+  origHands: any;
+  editHands: any;
+  origPlaces: string;
+}
+
 
 export async function getStaticPaths() {
 	const workList = Object.values(worksJson);
-	//const msItemsList = Object.values(msitemsJson);
 	const matchingHands = Object.values(handsJson);
-	const msItemsList = Object.values(msitemsJson).map((msItem) => {
+	const msItemsList: TransformedMSItem[] = Object.values(msitemsJson).map((msItem): TransformedMSItem => {
 		const matchingOrigHands = matchingHands.filter((hand) =>
 			hand.hands_role.some(
 				(handRole) =>
@@ -75,16 +86,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 ---
 
 <PageLayout title={work?.title}>
-	<style>
-		/* To make the table rows striped */
-		tbody tr:nth-child(even) {
-			background-color: #fcf1e8;
-		}
-		tbody tr:nth-child(odd) {
-			background-color: #fff8f7;
-		}
-	</style>
-
+	
 	<Article
 		prevLink={`/works/${work.prev.id}`}
 		nextLink={`/works/${work.next.id}`}
@@ -94,10 +96,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 			  : work?.title
 		  }
 		 > 
-		<div class="flex gap-2 justify-end">
-			<Button>TEI-XML</Button>
-			<Button>PDF</Button>
-		</div>
+		
 		<div
 			class="border-2 rounded-sm border-brandBrown bg-brandRose
 			text-sm md:leading-7 md:text-base"
@@ -164,7 +163,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 								work.source_text.length > 0
 									? work.source_text.map((text) => (
 											<NavLink href={`/works/${text.hit_id}`} 
-											class="hover:text-brandRed underline underline-offset-4 decoration-dotted">
+											>
 												{text.title}
 											</NavLink>
 										))
@@ -208,6 +207,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 					</dl>
 			</section>
 
+			{matchingItems.length > 0 && (
 			<section class="m-5 overflow-x-auto" aria-labelledby="transmission">
 				<h2 id="transmission" class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
 				<table
@@ -231,7 +231,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 					<tbody>
 						{
 							matchingItems.map((item) => (
-								<tr>
+								<tr class="odd:bg-brandIvory even:bg-brandRose">
 									<td class="p-2 border border-gray-300">
 										<NavLink
 											href={`/manuscripts/${item.manuscript[0].hit_id}`}
@@ -270,6 +270,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 					</tbody>
 				</table>
 			</section>
+			)}
 		</div>
 	</Article>
 </PageLayout>

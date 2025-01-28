@@ -291,7 +291,7 @@ const codUnits = manuscript.related__cod_units ;
                         {unit.cod_unit_placed.map(placed_unit => (
                         <li>
                           {placed_unit.type[0].value === 'orig' &&
-                          <span>Entsteungsort: </span>}
+                          <span>Entstehungsort: </span>}
                           {placed_unit.place.map(place => place.name)}                          
                           {/* check if there are dates for the origin */ }
                          {placed_unit.from.length > 0 &&
@@ -391,11 +391,11 @@ const codUnits = manuscript.related__cod_units ;
                           {filteredItem.title_work.map(work => (
                               <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
                                 {work.author.length > 0 ? (
-                                  <NavLink href={`/works/${work.hit_id}`}>
+                                  <NavLink class="no-underline" href={`/works/${work.hit_id}`}>
                                     {work.author.map(aut => aut.name).join(', ')}: {work.title}
                                   </NavLink>
                                 ) : (
-                                  <NavLink href={`/works/${work.hit_id}`}>{work.title}</NavLink>
+                                  <NavLink class="no-underline" href={`/works/${work.hit_id}`}>{work.title}</NavLink>
                                 )}
                               </span>
                             ))}
