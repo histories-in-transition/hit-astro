@@ -217,6 +217,8 @@ const { data: work, manItems: matchingItems } = Astro.props;
 						<tr>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Handschrift</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Locus</th>
+							{matchingItems.some((item) => item.role !== null) && (
+								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Role</th>)}
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Schreibort</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Datierung</th>
 							<th colspan="2" class="text-center p-2 font-semibold border border-gray-300">Annotationen</th>
@@ -233,21 +235,42 @@ const { data: work, manItems: matchingItems } = Astro.props;
 							matchingItems.map((item) => (
 								<tr class="odd:bg-brandIvory even:bg-brandRose">
 									<td class="p-2 border border-gray-300">
-										<NavLink
-											href={`/manuscripts/${item.manuscript[0].hit_id}`}
-											class="hover:text-brandRed"
-										>
+										<NavLink href={`/manuscripts/${item.manuscript[0].hit_id}`}>
 											{item.manuscript[0].shelfmark[0].value}
 										</NavLink>
 									</td>
 									<td class="p-2 border border-gray-300">
-										<NavLink class="hover:text-brandRed" href={`/msitems/${item.hit_id}`}>
-											({item.locus_grp})
+										<NavLink  href={`/msitems/${item.hit_id}`}>
+											{item.locus_grp}
 										</NavLink>
 									</td>
+									{item.role !== null && (
+										<td class="p-2 border border-gray-300">
+										{item.role?.value}
+										{item.function_role.length > 0 &&
+											<>
+												({item.function_role.map((role) => role.value).join(", ")})
+											</>
+										}
+										{item.commented_msitem.length > 0 && (
+											<ul class="list-disc list-inside">
+												{Object.values(msitemsJson)
+												.filter(msitem => item.commented_msitem.some(role => role.value === msitem.view_label))
+												.map((msitem) => (
+													<li>
+														<NavLink href={`/works/${msitem.title_work[0].hit_id}`}>
+															{msitem.title_work[0].title}
+														</NavLink>
+													</li>
+												))}
+											</ul>
+)}
+
+									</td>
+									)}
 									<td class="p-2 border border-gray-300">{item.origPlaces}</td>
 									<td class="p-2 border border-gray-300">
-										{[...new Set(item.origHands.map((hand) => hand.dating[0]?.value))].join(" | ")}
+										{[...new Set(item.origHands.map((hand) => hand.dating.map(h_dating => h_dating.value).join(" | ")))]}
 									</td>
 									<td class="p-2 border border-gray-300">
 										{[...new Set(item.editHands.map((hand) => hand.dating[0]?.value))].join(", ")}
