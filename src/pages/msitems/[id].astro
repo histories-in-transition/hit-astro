@@ -155,6 +155,19 @@ const { data: item, hands: matchingHands } = Astro.props;
           
                 })}
               </dd>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Role:</dt>
+              <dd class="pl-5">
+                {item.role} ({item.function}) 
+                <Icon
+                class="inline-flex align-middle"
+                aria-hidden="true"
+                name="lucide:arrow-right"
+              />      
+                {item.commentedMsItem
+                .map(i => 
+                  <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}
+              </dd>
+             
               <dt class="font-semibold border-r border-gray-300 pr-2">Role innerhalb der Handschrift:</dt>
               <dd class="pl-5">
                 {[new Set(item.hands.flatMap(hand => hand.jobs.flatMap(job => job.role_context)))]}                

@@ -189,9 +189,13 @@ const msItemsPlus = msitems.map((item) => {
 		role: item.role?.value,
 		function: item.function_role.map((func) => func.value),
 		commentedMsItem: item.commented_msitem.map((cItem) => {
+			// Find the corresponding msitem for the commented item
+			const relatedMsItem = msitems.find((ms) => ms.id === cItem.id);
 			return {
 				id: cItem.id,
 				value: cItem.value,
+				title: relatedMsItem?.title_work[0].value, // Add title if found
+				hit_id: relatedMsItem?.hit_id, // Add hit_id if found
 			};
 		}),
 		hands: relatedHand, // enriched with dating, placement and hand roles
