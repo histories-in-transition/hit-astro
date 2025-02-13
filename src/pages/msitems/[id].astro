@@ -5,31 +5,23 @@ import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 
 import msitems from "@/content/data/neu_ms_items.json";
-import handsJson from "@/content/data/hands.json";
 
 export async function getStaticPaths() { 
-  const hands = Object.values(handsJson);
   const msItemsList = Object.values(msitems);
  
   const paths = msItemsList.map((item) => {
     const msItemId = item.hit_id;
-
-    // Find matching hands based on the msItemId
-    const matchingHands = hands.filter(hand => {
-      return hand.hands_role.some(handRole =>
-        handRole.ms_item.some((item: any) => item.hit_id === msItemId)
-      )
-    })
+   
     return {
       params: { id: msItemId }, 
-      props: { data: item, hands: matchingHands }
+      props: { data: item }
     }
   });
 
   return paths;
 }
        
-const { data: item, hands: matchingHands } = Astro.props;
+const { data: item } = Astro.props;
 
 ---
 
@@ -140,8 +132,8 @@ const { data: item, hands: matchingHands } = Astro.props;
                           <li>
                             <NavLink 
                               href={`/hands/${filteredHand.hit_id}`}>{filteredHand.label}
-                            </NavLink>
-                            <span>
+                            </NavLink>                           
+                            <span>Datierung: 
                               <Icon
                                 class="inline-flex align-middle"
                                 aria-hidden="true"
@@ -149,13 +141,17 @@ const { data: item, hands: matchingHands } = Astro.props;
                               />                             
                              {filteredHand.dating}
                             
+                            </span> 
+                            <span>(Typ: 
+                              {filteredHand.jobs.flatMap(job => job.role_context)})
                             </span>
                           </li>
                   </ul>
           
                 })}
               </dd>
-              <dt class="font-semibold border-r border-gray-300 pr-2">Role:</dt>
+              {item.role &&              
+              <dt class="font-semibold border-r border-gray-300 pr-2">Role im Bezug zu anderen Texten:</dt>
               <dd class="pl-5">
                 {item.role} ({item.function}) 
                 <Icon
@@ -167,12 +163,13 @@ const { data: item, hands: matchingHands } = Astro.props;
                 .map(i => 
                   <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}
               </dd>
-             
-              <dt class="font-semibold border-r border-gray-300 pr-2">Role innerhalb der Handschrift:</dt>
-              <dd class="pl-5">
-                {[new Set(item.hands.flatMap(hand => hand.jobs.flatMap(job => job.role_context)))]}                
+              }
+               <!-- <dt class="font-semibold border-r border-gray-300 pr-2">Role innerhalb der Handschrift:</dt>
+             <dd class="pl-5">
+                {[new Set(item.hands.flatMap(hand => hand.jobs.flatMap(job => job.role_context)))]}               
                  
-              </dd>
+              </dd> -->
+             
             </dl>
         </section>
 
