@@ -142,16 +142,19 @@ const { data: item } = Astro.props;
                              {filteredHand.dating}
                             
                             </span> 
-                            <span>(Typ: 
-                              {filteredHand.jobs.flatMap(job => job.role_context)})
+                           {filteredHand.jobs.some(j => j.role_context.length > 0)
+                             ? <span>(Typ: 
+                              {filteredHand.jobs.flatMap(job => job.role_context).join(', ')})
                             </span>
+                            : ''
+                            }
                           </li>
                   </ul>
           
                 })}
               </dd>
               {item.role &&              
-              <dt class="font-semibold border-r border-gray-300 pr-2">Role im Bezug zu anderen Texten:</dt>
+              <dt class="font-semibold border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
               <dd class="pl-5">
                 {item.role} ({item.function}) 
                 <Icon
@@ -164,11 +167,6 @@ const { data: item } = Astro.props;
                   <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}
               </dd>
               }
-               <!-- <dt class="font-semibold border-r border-gray-300 pr-2">Role innerhalb der Handschrift:</dt>
-             <dd class="pl-5">
-                {[new Set(item.hands.flatMap(hand => hand.jobs.flatMap(job => job.role_context)))]}               
-                 
-              </dd> -->
              
             </dl>
         </section>
@@ -186,6 +184,7 @@ const { data: item } = Astro.props;
                   <th class="text-start p-2 font-semibold border border-gray-300">Datierung</th> 
                   <th class="text-start p-2 font-semibold border border-gray-300">Umfang</th> 
                   <th class="text-start p-2 font-semibold border border-gray-300">Mise-en-page</th> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Typ</th>
                   <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th>
                 </tr>
               </thead>
@@ -196,14 +195,19 @@ const { data: item } = Astro.props;
                       <tr>
                                 <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(rol => rol.role).join(', ')}</td>
                                 <td class="p-2 border border-gray-300">
-                                  <NavLink class="hover:text-brandRed" href={`/hands/${filteredHand.hit_id}`}>
+                                  <NavLink href={`/hands/${filteredHand.hit_id}`}>
                                   {filteredHand.label}</NavLink>
                                 </td>
-                                <td class="p-2 border border-gray-300">{filteredHand.scribe.map(scr => scr.value).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">
+                                  {filteredHand.scribe.length > 0
+                                    ? filteredHand.scribe.map(scr => scr.value).join(', ')
+                                  : 'N/A'}
+                                  </td>
                                 <td class="p-2 border border-gray-300">{filteredHand.dating}</td>
                                 <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus).join(', ')}</td>
                                 <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus_layout).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.function)}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role_context).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.function).join(', ')}</td>
                             </tr>
                           ))
                         }         

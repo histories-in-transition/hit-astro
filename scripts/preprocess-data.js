@@ -9,6 +9,7 @@ import handsrolejson from "../src/content/raw/hands_role.json" assert { type: "j
 import handsplacedjson from "../src/content/raw/hands_placed.json" assert { type: "json" };
 import worksjson from "../src/content/raw/works.json" assert { type: "json" };
 import peoplejson from "../src/content/raw/people.json" assert { type: "json" };
+import datesjson from "../src/content/raw/dates.json" assert { type: "json" };
 
 // convert json to array:
 const msitems = Object.values(msitemsjson);
@@ -18,6 +19,7 @@ const handsdated = Object.values(handsdatedjson);
 const handsrole = Object.values(handsrolejson);
 const people = Object.values(peoplejson);
 const handsplaced = Object.values(handsplacedjson);
+const dates = Object.values(datesjson);
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
@@ -110,7 +112,28 @@ const msItemsPlus = msitems.map((item) => {
 							};
 						}),
 						page: hDated.page,
-						date: Array.from(new Set(hDated.dated.flatMap((date) => date.value))),
+						date: hDated.dated.map((date) => {
+							// enrich date from dates.json
+							const dateRange = dates
+								.filter((dateRange) => dateRange.id === date.id)
+								.map((dateRange) => {
+									return {
+										not_before: dateRange.not_before.substring(0, 4),
+										not_after: dateRange.not_after.substring(0, 4),
+										range:
+											dateRange.not_before.substring(0, 4) +
+											"–" +
+											dateRange.not_after.substring(0, 4),
+									};
+								});
+							return {
+								id: date.id,
+								value: date.value,
+								range: dateRange[0]?.range,
+								not_before: dateRange[0]?.not_before,
+								not_after: dateRange[0]?.not_after,
+							};
+						}),
 					};
 				});
 			// Add related placement of each hand from hands_placed.json
@@ -149,7 +172,7 @@ const msItemsPlus = msitems.map((item) => {
 						locus: hRole.locus,
 						locus_layout: hRole.locus_layout.flatMap((layout) => layout.value),
 						function: hRole.function.flatMap((func) => func.value),
-						role_context: hRole.role_to_ms_context.flatMap((context) => context.value),
+						role_context: hRole.scribe_type.flatMap((context) => context.value),
 					};
 				});
 			return {
