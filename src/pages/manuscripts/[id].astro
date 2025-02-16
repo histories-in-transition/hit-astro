@@ -46,7 +46,7 @@ export async function getStaticPaths() {
 
   const handsMap = new Map()
   for (const hand of handsList) {
-    const id = hand.manuscript[0].value;
+    const id = hand.manuscript[0]?.value;
     if (handsMap.has(id)) {
       handsMap.get(id).push(hand)
     }
