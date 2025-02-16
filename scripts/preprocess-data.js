@@ -87,7 +87,7 @@ const msItemsPlus = msitems.map((item) => {
 				}),
 				nr_daniel: hand.nr_daniel,
 				note: hand.note,
-				dating: Array.from(new Set(hand.dating.flatMap((dating) => dating.value))),
+				// dating: Array.from(new Set(hand.dating.flatMap((dating) => dating.value))),
 				scribe: hand.scribe.map((scribe) => {
 					return {
 						id: scribe.id,
@@ -177,7 +177,7 @@ const msItemsPlus = msitems.map((item) => {
 				});
 			return {
 				...prunedHand,
-				date: hand_dated,
+				dating: hand_dated,
 				place: hand_placed,
 				jobs: hand_roles,
 			};
