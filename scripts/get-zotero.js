@@ -25,9 +25,27 @@ async function fetchZoteroEntries() {
 				start += 50; // Move to the next batch
 			}
 		}
+		console.log(`Fetched ${allItems.length} items. Now transforming ...`);
 
-		// Write final array to JSON file **after** fetching all entries
-		writeFileSync(join(folderPath, "bibliography.json"), JSON.stringify(allItems, null, 2), {
+		// Transform data to the required format to match Baserow table
+		const transformedData = allItems.map((item) => ({
+			key: item.data.key,
+			title: item.data.title,
+			short_title: item.data.shortTitle || "",
+			author:
+				item.data.creators
+					?.map((creator) => `${creator.lastName}, ${creator.firstName}`)
+					.join("; ") || "",
+			year: item.data.date || "",
+			citation:
+				item.data.creators?.length > 2
+					? `${item.data.creators[0]?.lastName} et al., ${item.data.date}`
+					: `${item.data.creators?.map((aut) => aut.lastName).join(" et ") || "N/A"}, ${item.data.date || "N/A"}`,
+			link: item.links.alternate.href,
+		}));
+
+		// Write final array to JSON file
+		writeFileSync(join(folderPath, "bibliography.json"), JSON.stringify(transformedData, null, 2), {
 			encoding: "utf-8",
 		});
 
