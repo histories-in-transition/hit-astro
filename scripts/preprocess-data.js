@@ -10,6 +10,12 @@ import handsplacedjson from "../src/content/raw/hands_placed.json" assert { type
 import worksjson from "../src/content/raw/works.json" assert { type: "json" };
 import peoplejson from "../src/content/raw/people.json" assert { type: "json" };
 import datesjson from "../src/content/raw/dates.json" assert { type: "json" };
+import placesjson from "../src/content/raw/places.json" assert { type: "json" };
+import stratajson from "../src/content/raw/strata.json" assert { type: "json" };
+import manuscriptsjson from "../src/content/raw/manuscripts.json" assert { type: "json" };
+import manuscripts_Datedjson from "../src/content/raw/manuscripts_dated.json" assert { type: "json" };
+import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "json" };
+import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
 
 // convert json to array:
 const msitems = Object.values(msitemsjson);
@@ -20,6 +26,12 @@ const handsrole = Object.values(handsrolejson);
 const people = Object.values(peoplejson);
 const handsplaced = Object.values(handsplacedjson);
 const dates = Object.values(datesjson);
+const places = Object.values(placesjson);
+const manuscripts = Object.values(manuscriptsjson);
+const manuscripts_dated = Object.values(manuscripts_Datedjson);
+const cod_units = Object.values(cod_unitsjson);
+const cod_unitsprov = Object.values(cod_unitsprovjson);
+const strataa = Object.values(stratajson);
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
@@ -64,7 +76,7 @@ const msItemsPlus = msitems.map((item) => {
 					bibliography: work.bibliography,
 					source_text: work.source_text,
 					genre: work.genre.map((genre) => genre.value),
-					note_source: work.note_source,
+					note_source: work.note_source ?? "",
 				};
 			}
 			return null; // Return null if no related works are found
@@ -105,12 +117,7 @@ const msItemsPlus = msitems.map((item) => {
 					return {
 						id: hDated.id,
 						hit_id: hDated.hit_id,
-						authority: hDated.authority.map((aut) => {
-							return {
-								id: aut.id,
-								value: aut.value,
-							};
-						}),
+						authority: hDated.authority.map(({ order, ...rest }) => rest),
 						page: hDated.page,
 						date: hDated.dated.map((date) => {
 							// enrich date from dates.json
@@ -122,7 +129,7 @@ const msItemsPlus = msitems.map((item) => {
 										not_after: dateRange.not_after.substring(0, 4),
 										range:
 											dateRange.not_before.substring(0, 4) +
-											"–" +
+											"-" +
 											dateRange.not_after.substring(0, 4),
 									};
 								});
@@ -223,7 +230,7 @@ const msItemsPlus = msitems.map((item) => {
 		}),
 		hands: relatedHand, // enriched with dating, placement and hand roles
 		decoration: item.decoration.map((deco) => deco.value),
-		note: item.note,
+		note: item.note ?? "",
 	};
 });
 
@@ -233,5 +240,226 @@ const updatedMsItems = addPrevNextToMsItems(msItemsPlus);
 writeFileSync(join(folderPath, "neu_ms_items.json"), JSON.stringify(updatedMsItems, null, 2), {
 	encoding: "utf-8",
 });
+
+const manuscriptsPlus = manuscripts.map((manuscript) => {
+	// find and prune related dating from manuscripts_Dated.json
+	const ms_dating = manuscripts_dated
+		.filter((mDated) => mDated.manuscript.some((m) => m.id === manuscript.id))
+		.map((mDated) => {
+			return {
+				date: mDated.date.map((date) => {
+					// enrich date from dates.json
+					const dateRange = dates
+						.filter((dateRange) => dateRange.id === date.id)
+						.map((dateRange) => {
+							return {
+								not_before: dateRange.not_before?.substring(0, 4),
+								not_after: dateRange.not_after?.substring(0, 4),
+								range:
+									dateRange.not_before?.substring(0, 4) +
+									"-" +
+									dateRange.not_after?.substring(0, 4),
+							};
+						});
+					return {
+						// need to an array of object dates cause sometimes there is more than one date
+						value: date.value,
+						range: dateRange[0]?.range,
+						not_before: dateRange[0]?.not_before,
+						not_after: dateRange[0]?.not_after,
+					};
+				}),
+				authority: mDated.authority.map((aut) => {
+					return {
+						id: aut.id,
+						value: aut.value,
+					};
+				}),
+				page: mDated.page,
+				preferred_date: mDated.preferred_date,
+			};
+		});
+	const cod_unit = cod_units
+		.filter((unit) => unit.manuscript.some((m) => m.id === manuscript.id))
+		.map((unit) => {
+			// enrich with data from cod_unit_placed.json
+			const prov_place = cod_unitsprov
+				.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
+				.map((prov) => {
+					return {
+						place: prov.place.map((place) => {
+							// enrich place with geo from places.json
+							const place_geo = places.filter((p) => p.id === place.id);
+							return {
+								id: place.id,
+								value: place.value,
+								geonames_url: place_geo.geonames_url,
+								hit_id: place_geo.hit_id,
+							};
+						}),
+						from: prov.from,
+						till: prov.till,
+						uncertain_from: prov.uncertain_from,
+						uncertain_till: prov.uncertain_till,
+						type: prov.type.map((t) => t.value).join(", "),
+					};
+				});
+			return {
+				id: unit.id,
+				hit_id: unit.hit_id,
+				value: unit.label[0].value,
+				notes: unit.notes,
+				locus: unit.locus,
+				quires_number: unit.quires_number ?? "",
+				heigth: unit.heigth ?? "",
+				width: unit.width ?? "",
+				written_hight: unit.written_height ?? "",
+				written_width: unit.written_width ?? "",
+				columns: unit.columns ?? "",
+				lines_number: unit.lines_number ?? "",
+				decoration: unit.decorations ?? "",
+				codicological_reworking: unit.codicological_reworking.map((re) => re.value),
+				basic_Structure: unit.basic_structure.map((str) => str.value),
+
+				prov_place: prov_place,
+				content: msItemsPlus
+					// get the msitems which belong to this unit
+					.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
+					// clean up unnecessary fields by map and return the prune rest
+					.map(({ manuscript, cod_unit, hands, view_label, ...rest }) => rest),
+			};
+		});
+
+	const strata = strataa
+		.filter((stratum) => stratum.manuscript.some((ms) => ms.id === manuscript.id))
+		.map((stratum) => {
+			// get corresponding hand_roles data from hands_role.json
+			const h_roles = handsrole
+				.filter((h_role) => stratum.hand_role.some((s_h_role) => s_h_role.id === h_role.id))
+				.map((h_role) => {
+					// enrich hands with data from hands_Dated.json
+					const hand = handsdated
+						.filter((hand) => h_role.hand.some((rol_hand) => rol_hand.id === hand.id))
+						.map((hand) => {
+							return {
+								id: hand.id,
+								hit_id: hand.hit_id,
+								date: hand.dated.map((date) => {
+									// enrich date from dates.json
+									const dateRange = dates
+										.filter((dateRange) => dateRange.id === date.id)
+										.map((dateRange) => {
+											return {
+												not_before: dateRange.not_before.substring(0, 4),
+												not_after: dateRange.not_after.substring(0, 4),
+												range:
+													dateRange.not_before.substring(0, 4) +
+													"-" +
+													dateRange.not_after.substring(0, 4),
+											};
+										});
+									return {
+										id: date.id,
+										value: date.value,
+										range: dateRange[0]?.range,
+										not_before: dateRange[0]?.not_before,
+										not_after: dateRange[0]?.not_after,
+									};
+								}),
+							};
+						});
+					const mssitems = msItemsPlus
+						.filter((mitem) => h_role.ms_item.some((item) => item.id === mitem.id))
+						.map((item) => {
+							return {
+								id: item.id,
+								hit_id: item.hit_id,
+								title: item.title_work.map((t) => t.title),
+								author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
+								locus: item.locus_grp,
+							};
+						});
+					return {
+						hit_id: h_role.hit_id,
+						hand: hand,
+						ms_item: mssitems,
+						role: h_role.role.map((r) => r.value),
+						locus: h_role.locus,
+						scribe_type: h_role.scribe_type.map((type) => type.value),
+						function: h_role.function.map((func) => func.value),
+						locus_layout: h_role.locus_layout.map((layout) => layout.value),
+					};
+				});
+			return {
+				id: stratum.id,
+				hit_id: stratum.hit_id,
+				label: stratum.label[0].value,
+				character: stratum.character.map((c) => c.value),
+				hand_roles: h_roles,
+			};
+		});
+	return {
+		id: manuscript.id,
+		hit_id: manuscript.hit_id,
+		shelfmark: manuscript.shelfmark[0].value,
+		library: manuscript.library[0].value,
+		library_full: manuscript.library_full[0].value,
+		manuscripta_url: manuscript.manuscripta_url,
+		handschriftenportal_url: manuscript.handschriftenportal_url,
+		catalog_url: manuscript.catalog_url,
+		digi_url: manuscript.digi_url,
+		idno_former: manuscript.idno_former ?? "",
+		quire_structure: manuscript.quire_structure,
+		extent: manuscript.extent ?? "",
+		foliation: manuscript.foliation ?? "",
+		acc_mat: manuscript.acc_mat ?? "",
+		binding: manuscript.binding ?? "",
+		binding_date: manuscript.binding_date.map((date) => {
+			return {
+				id: date.id,
+				value: date.value,
+			};
+		}),
+		bibliography: manuscript.bibliography,
+		height: manuscript.height ?? "",
+		width: manuscript.width ?? "",
+		material: manuscript.material?.value,
+		material_spec: manuscript.material_spec,
+		catchwords: manuscript.catchwords ?? "",
+		quiremarks: manuscript.quiremarks ?? "",
+		history: manuscript.history,
+		orig_place: manuscript.orig_place.map((place) => {
+			return {
+				id: place.id,
+				value: place.value,
+			};
+		}),
+		provenance: manuscript.provenance.map((prov) => {
+			return {
+				id: prov.id,
+				value: prov.value,
+			};
+		}),
+		orig_date: ms_dating,
+		content_summary: manuscript.content_summary ?? "",
+
+		charakter: manuscript.charakter.map((char) => char.value),
+		case_study: manuscript.case_study.map((c) => c.value),
+		status: manuscript.status.map((s) => s.value),
+		cod_units: cod_unit,
+		strata: strata,
+	};
+});
+
+const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus);
+
+// Save the merged json
+writeFileSync(
+	join(folderPath, "neu_manuscripts.json"),
+	JSON.stringify(updatedManuscripts, null, 2),
+	{
+		encoding: "utf-8",
+	},
+);
 
 console.log("JSON files have been merged and cleaned successfully!");
