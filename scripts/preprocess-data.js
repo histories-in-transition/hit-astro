@@ -17,6 +17,7 @@ import manuscripts_Datedjson from "../src/content/raw/manuscripts_dated.json" as
 import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "json" };
 import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
 import bibljson from "../src/content/raw/bibliography.json" assert { type: "json" };
+import genrejson from "../src/content/raw/genres.json" assert { type: "json" };
 
 // convert json to array:
 const msitems = Object.values(msitemsjson);
@@ -34,6 +35,7 @@ const cod_units = Object.values(cod_unitsjson);
 const cod_unitsprov = Object.values(cod_unitsprovjson);
 const strataa = Object.values(stratajson);
 const bibliography = Object.values(bibljson);
+const genres = Object.values(genrejson);
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
@@ -527,6 +529,23 @@ const worksPlus = works.map((work) => {
 				orig_place: msi.orig_place,
 			};
 		});
+	const relatedGenres = genres
+		.filter((genre) => work.genre.some((g) => g.id === genre.id))
+		.map((genre) => {
+			return {
+				value: genre.genre,
+				main_genre: genre.main_genre.map((mg) => mg.value),
+			};
+		});
+	const relatedSourceTexts = works
+		.filter((w) => work.source_text.some((st) => st.id === w.id))
+		.map((source_w) => {
+			return {
+				title: source_w.title,
+				author: source_w.author.map((aut) => aut.value).join("; "),
+				hit_id: source_w.hit_id,
+			};
+		});
 	return {
 		hit_id: work.hit_id,
 		title: work.title,
@@ -534,9 +553,9 @@ const worksPlus = works.map((work) => {
 		note: work.note ?? "",
 		author: relatedAuthors,
 		bibliography: enrichBibl(work.bibliography, bibliography),
-		source_text: work.source_text.map(({ order, ...rest }) => rest),
+		source_text: relatedSourceTexts,
 		note_source: work.note_source ?? "",
-		genre: work.genre.map((g) => g.value).join(", "),
+		genre: relatedGenres,
 		ms_transmission: relatedMsitems,
 	};
 });
