@@ -16,6 +16,7 @@ import manuscriptsjson from "../src/content/raw/manuscripts.json" assert { type:
 import manuscripts_Datedjson from "../src/content/raw/manuscripts_dated.json" assert { type: "json" };
 import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "json" };
 import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
+import bibljson from "../src/content/raw/bibliography.json" assert { type: "json" };
 
 // convert json to array:
 const msitems = Object.values(msitemsjson);
@@ -32,10 +33,68 @@ const manuscripts_dated = Object.values(manuscripts_Datedjson);
 const cod_units = Object.values(cod_unitsjson);
 const cod_unitsprov = Object.values(cod_unitsprovjson);
 const strataa = Object.values(stratajson);
+const bibliography = Object.values(bibljson);
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
 mkdirSync(folderPath, { recursive: true });
+
+// functions to enrich data
+
+function enrichPlaces(placeArray, places) {
+	return placeArray.map((place) => {
+		// Find matching place in places.json
+		const place_geo = places.find((p) => p.id === place.id) || {};
+		return {
+			id: place.id,
+			value: place.value,
+			geonames_url: place_geo.geonames_url ?? "",
+			hit_id: place_geo.hit_id ?? "",
+		};
+	});
+}
+
+function enrichDates(dateArray, dates) {
+	return dateArray.map((date) => {
+		// Find matching date in dates.json
+		const dateRange = dates.find((d) => d.id === date.id);
+
+		if (!dateRange) {
+			// Return default structure if no match is found
+			return {
+				id: date.id,
+				value: date.value,
+				range: "",
+				not_before: "",
+				not_after: "",
+			};
+		}
+
+		const not_before = dateRange.not_before?.substring(0, 4) ?? "";
+		const not_after = dateRange.not_after?.substring(0, 4) ?? "";
+
+		return {
+			id: date.id,
+			value: date.value,
+			range: `${not_before}-${not_after}`,
+			not_before,
+			not_after,
+		};
+	});
+}
+
+function enrichBibl(biblArray, bibliography) {
+	return biblArray.map((bibl) => {
+		// find matching bibl entreis in bibl_entries.json
+		const bibl_entries = bibliography.find((bibl_entry) => bibl_entry.id === bibl.id);
+		return {
+			citation: bibl_entries.citation,
+			link: bibl_entries.link,
+			author: bibl_entries.author,
+			title: bibl_entries.title,
+		};
+	});
+}
 
 // merge data for msItems
 
@@ -72,7 +131,7 @@ const msItemsPlus = msitems.map((item) => {
 					title: work.title,
 					author: relatedAuthors,
 					gnd_url: work.gnd_url,
-					note: work.note,
+					note: work.note ?? "",
 					bibliography: work.bibliography,
 					source_text: work.source_text,
 					genre: work.genre.map((genre) => genre.value),
@@ -94,18 +153,11 @@ const msItemsPlus = msitems.map((item) => {
 				label: hand.label[0]?.value,
 				hit_id: hand.hit_id,
 				description: hand.description,
-				similar_hands: hand.similar_hands.map((sHand) => {
-					return { value: sHand.value, id: sHand.id };
-				}),
-				nr_daniel: hand.nr_daniel,
-				note: hand.note,
+				similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
+				nr_daniel: hand.nr_daniel ?? "",
+				note: hand.note ?? "",
 				// dating: Array.from(new Set(hand.dating.flatMap((dating) => dating.value))),
-				scribe: hand.scribe.map((scribe) => {
-					return {
-						id: scribe.id,
-						value: scribe.value,
-					};
-				}),
+				scribe: hand.scribe.map(({ order, ...rest }) => rest),
 				group: hand.gruppe,
 			};
 			// Add realted dating of each hand from hands_dated.json
@@ -117,30 +169,9 @@ const msItemsPlus = msitems.map((item) => {
 					return {
 						id: hDated.id,
 						hit_id: hDated.hit_id,
-						authority: hDated.authority.map(({ order, ...rest }) => rest),
+						authority: enrichBibl(hDated.authority, bibliography),
 						page: hDated.page,
-						date: hDated.dated.map((date) => {
-							// enrich date from dates.json
-							const dateRange = dates
-								.filter((dateRange) => dateRange.id === date.id)
-								.map((dateRange) => {
-									return {
-										not_before: dateRange.not_before.substring(0, 4),
-										not_after: dateRange.not_after.substring(0, 4),
-										range:
-											dateRange.not_before.substring(0, 4) +
-											"-" +
-											dateRange.not_after.substring(0, 4),
-									};
-								});
-							return {
-								id: date.id,
-								value: date.value,
-								range: dateRange[0]?.range,
-								not_before: dateRange[0]?.not_before,
-								not_after: dateRange[0]?.not_after,
-							};
-						}),
+						date: enrichDates(hDated.dated, dates),
 					};
 				});
 			// Add related placement of each hand from hands_placed.json
@@ -150,18 +181,8 @@ const msItemsPlus = msitems.map((item) => {
 					return {
 						id: hPlaced.id,
 						hit_id: hPlaced.hit_id,
-						place: hPlaced.place.map((place) => {
-							return {
-								id: place.id,
-								value: place.value,
-							};
-						}),
-						authority: hPlaced.authority.map((aut) => {
-							return {
-								id: aut.id,
-								value: aut.value,
-							};
-						}),
+						place: enrichPlaces(hPlaced.place, places),
+						authority: enrichBibl(hPlaced.authority, bibliography),
 						page: hPlaced.page,
 					};
 				});
@@ -195,18 +216,8 @@ const msItemsPlus = msitems.map((item) => {
 		hit_id: item.hit_id,
 		view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
 		label: item.label[0]?.value,
-		manuscript: item.manuscript.map((ms) => {
-			return {
-				id: ms.id,
-				value: ms.value,
-			};
-		}),
-		cod_unit: item.cod_unit.map((unit) => {
-			return {
-				id: unit.id,
-				value: unit.value,
-			};
-		}),
+		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
+		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
 		locus: item.locus_grp,
 		incipit: item.incipit,
 		explicit: item.explicit,
@@ -249,34 +260,8 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		.filter((mDated) => mDated.manuscript.some((m) => m.id === manuscript.id))
 		.map((mDated) => {
 			return {
-				date: mDated.date.map((date) => {
-					// enrich date from dates.json
-					const dateRange = dates
-						.filter((dateRange) => dateRange.id === date.id)
-						.map((dateRange) => {
-							return {
-								not_before: dateRange.not_before?.substring(0, 4),
-								not_after: dateRange.not_after?.substring(0, 4),
-								range:
-									dateRange.not_before?.substring(0, 4) +
-									"-" +
-									dateRange.not_after?.substring(0, 4),
-							};
-						});
-					return {
-						// need to an array of object dates cause sometimes there is more than one date
-						value: date.value,
-						range: dateRange[0]?.range,
-						not_before: dateRange[0]?.not_before,
-						not_after: dateRange[0]?.not_after,
-					};
-				}),
-				authority: mDated.authority.map((aut) => {
-					return {
-						id: aut.id,
-						value: aut.value,
-					};
-				}),
+				date: enrichDates(mDated.date, dates),
+				authority: enrichBibl(mDated.authority, bibliography),
 				page: mDated.page,
 				preferred_date: mDated.preferred_date,
 			};
@@ -289,16 +274,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
 				.map((prov) => {
 					return {
-						place: prov.place.map((place) => {
-							// enrich place with geo from places.json
-							const place_geo = places.filter((p) => p.id === place.id);
-							return {
-								id: place.id,
-								value: place.value,
-								geonames_url: place_geo.geonames_url,
-								hit_id: place_geo.hit_id,
-							};
-						}),
+						place: enrichPlaces(prov.place, places),
 						from: prov.from,
 						till: prov.till,
 						uncertain_from: prov.uncertain_from,
@@ -346,28 +322,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 							return {
 								id: hand.id,
 								hit_id: hand.hit_id,
-								date: hand.dated.map((date) => {
-									// enrich date from dates.json
-									const dateRange = dates
-										.filter((dateRange) => dateRange.id === date.id)
-										.map((dateRange) => {
-											return {
-												not_before: dateRange.not_before.substring(0, 4),
-												not_after: dateRange.not_after.substring(0, 4),
-												range:
-													dateRange.not_before.substring(0, 4) +
-													"-" +
-													dateRange.not_after.substring(0, 4),
-											};
-										});
-									return {
-										id: date.id,
-										value: date.value,
-										range: dateRange[0]?.range,
-										not_before: dateRange[0]?.not_before,
-										not_after: dateRange[0]?.not_after,
-									};
-								}),
+								date: enrichDates(hand.dated, dates),
 							};
 						});
 					const mssitems = msItemsPlus
@@ -430,18 +385,9 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		catchwords: manuscript.catchwords ?? "",
 		quiremarks: manuscript.quiremarks ?? "",
 		history: manuscript.history,
-		orig_place: manuscript.orig_place.map((place) => {
-			return {
-				id: place.id,
-				value: place.value,
-			};
-		}),
-		provenance: manuscript.provenance.map((prov) => {
-			return {
-				id: prov.id,
-				value: prov.value,
-			};
-		}),
+		orig_place: enrichPlaces(manuscript.orig_place, places),
+
+		provenance: enrichPlaces(manuscript.provenance, places),
 		orig_date: ms_dating,
 		content_summary: manuscript.content_summary ?? "",
 
@@ -464,7 +410,7 @@ writeFileSync(
 	},
 );
 
-// merge data for hands
+// Merge data for hands
 const handsPlus = hands
 	.filter((hand) => hand.label.length > 0) // skip hands with empty labels
 	.map((hand) => {
@@ -474,32 +420,21 @@ const handsPlus = hands
 			.map((dathand) => {
 				return {
 					hit_id: dathand.hit_id,
-					authority: dathand.authority.map(({ order, ...rest }) => rest),
+					authority: enrichBibl(dathand.authority, bibliography),
 					page: dathand.page ?? "",
-					dated: dathand.dated.map((date) => {
-						// enrich date from dates.json
-						const dateRange = dates
-							.filter((dateRange) => dateRange.id === date.id)
-							.map((dateRange) => {
-								return {
-									not_before: dateRange.not_before?.substring(0, 4),
-									not_after: dateRange.not_after?.substring(0, 4),
-									range:
-										dateRange.not_before?.substring(0, 4) +
-										"-" +
-										dateRange.not_after?.substring(0, 4),
-								};
-							});
-						return {
-							// need to an array of object dates cause sometimes there is more than one date
-							value: date.value,
-							range: dateRange[0]?.range,
-							not_before: dateRange[0]?.not_before,
-							not_after: dateRange[0]?.not_after,
-						};
-					}),
+					dated: enrichDates(dathand.dated, dates),
 					new_dating: dathand.new_dating,
 					note: dathand.note ?? "",
+				};
+			});
+		const h_placed = handsplaced
+			.filter((hplaced) => hplaced.hand.some((h) => h.id === hand.id))
+			.map((p_hand) => {
+				return {
+					hit_id: p_hand.hit_id,
+					authority: enrichBibl(p_hand.authority, bibliography),
+					page: p_hand.page,
+					place: enrichPlaces(p_hand.place, places),
 				};
 			});
 		const h_roles = handsrole
@@ -545,10 +480,51 @@ const handsPlus = hands
 			group: hand.gruppe,
 			date: h_dated,
 			hand_roles: h_roles,
+			placed: h_placed,
 		};
 	});
 
 writeFileSync(join(folderPath, "new_hands.json"), JSON.stringify(handsPlus, null, 2), {
 	encoding: "utf-8",
+});
+
+// merge data for works objects enriched with manuscript transmission, dates etc.
+const worksPlus = works.map((work) => {
+	const relatedAuthors = work.author
+		?.flatMap((wAuthor) => {
+			// Find the corresponding author from the people list
+			const author = people
+				.filter((person) => person.id === wAuthor.id)
+				// Return the author with only the necessary properties
+				.map((person) => {
+					return {
+						id: person.id,
+						hit_id: person.hit_id,
+						name: person.name,
+						gnd_url: person.gnd_url,
+					};
+				});
+
+			return author.length > 0 ? author : null; // returns valid authors or null
+		})
+		.filter((author) => author !== null); // remove null authors
+	const relatedMsitems = msItemsPlus
+		.filter((msi) => msi.title_work.some((w) => w.id === work.id))
+		.map((msi) => {
+			return {
+				hit_id: msi.hit_id,
+			};
+		});
+	return {
+		hit_id: work.hit_id,
+		title: work.title,
+		gnd_url: work.gnd_url,
+		note: work.note ?? "",
+		author: relatedAuthors,
+		bibliography: enrichBibl(work.bibliography, bibliography),
+		source_text: work.source_text.map(({ order, ...rest }) => rest),
+		note_source: work.note_source ?? "",
+		genre: work.genre.map((g) => g.value).join(", "),
+	};
 });
 console.log("JSON files have been merged and cleaned successfully!");
