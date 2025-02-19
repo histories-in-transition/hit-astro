@@ -18,6 +18,7 @@ import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "js
 import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
 import bibljson from "../src/content/raw/bibliography.json" assert { type: "json" };
 import genrejson from "../src/content/raw/genres.json" assert { type: "json" };
+import librariesjson from "../src/content/raw/libraries_organisations.json" assert { type: "json" };
 
 // convert json to array:
 const msitems = Object.values(msitemsjson);
@@ -36,6 +37,7 @@ const cod_unitsprov = Object.values(cod_unitsprovjson);
 const strataa = Object.values(stratajson);
 const bibliography = Object.values(bibljson);
 const genres = Object.values(genrejson);
+const libraries = Object.values(librariesjson);
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
@@ -283,8 +285,8 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				.map((prov) => {
 					return {
 						place: enrichPlaces(prov.place, places),
-						from: prov.from,
-						till: prov.till,
+						from: enrichDates(prov.from, dates),
+						till: enrichDates(prov.till, dates),
 						uncertain_from: prov.uncertain_from,
 						uncertain_till: prov.uncertain_till,
 						type: prov.type.map((t) => t.value).join(", "),
@@ -294,18 +296,19 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				id: unit.id,
 				hit_id: unit.hit_id,
 				value: unit.label[0].value,
+				number: unit.number,
 				notes: unit.notes,
 				locus: unit.locus,
 				quires_number: unit.quires_number ?? "",
 				heigth: unit.heigth ?? "",
 				width: unit.width ?? "",
-				written_hight: unit.written_height ?? "",
+				written_height: unit.written_height ?? "",
 				written_width: unit.written_width ?? "",
-				columns: unit.columns ?? "",
+				columns: unit.columns.map((c) => c.value) ?? "",
 				lines_number: unit.lines_number ?? "",
 				decoration: unit.decorations ?? "",
 				codicological_reworking: unit.codicological_reworking.map((re) => re.value),
-				basic_Structure: unit.basic_structure.map((str) => str.value),
+				basic_structure: unit.basic_structure.map((str) => str.value),
 
 				prov_place: prov_place,
 				content: msItemsPlus
@@ -357,10 +360,20 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				});
 			return {
 				id: stratum.id,
+				number: stratum.number,
 				hit_id: stratum.hit_id,
 				label: stratum.label[0].value,
 				character: stratum.character.map((c) => c.value),
 				hand_roles: h_roles,
+			};
+		});
+	const library_place = libraries
+		.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
+		.map((library) => {
+			return {
+				id: library.id,
+				hit_id: library.hit_id,
+				place: enrichPlaces(library.settlement, places),
 			};
 		});
 	return {
@@ -369,6 +382,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		shelfmark: manuscript.shelfmark[0].value,
 		library: manuscript.library[0].value,
 		library_full: manuscript.library_full[0].value,
+		library_place: library_place,
 		manuscripta_url: manuscript.manuscripta_url,
 		handschriftenportal_url: manuscript.handschriftenportal_url,
 		catalog_url: manuscript.catalog_url,
@@ -401,7 +415,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 
 		charakter: manuscript.charakter.map((char) => char.value),
 		case_study: manuscript.case_study.map((c) => c.value),
-		status: manuscript.status.map((s) => s.value),
+		status: manuscript.status?.map((s) => s.value) ?? [],
 		cod_units: cod_unit,
 		strata: strata,
 	};
@@ -411,7 +425,7 @@ const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus, "hit_id", "shel
 
 // Save the merged json
 writeFileSync(
-	join(folderPath, "neu_manuscripts.json"),
+	join(folderPath, "new_manuscripts.json"),
 	JSON.stringify(updatedManuscripts, null, 2),
 	{
 		encoding: "utf-8",
