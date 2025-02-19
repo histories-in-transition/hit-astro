@@ -37,7 +37,7 @@ const strataa = Object.values(stratajson);
 const folderPath = join(process.cwd(), "src", "content", "data");
 mkdirSync(folderPath, { recursive: true });
 
-// merge data
+// merge data for msItems
 
 const msItemsPlus = msitems.map((item) => {
 	// Add info to related works
@@ -236,10 +236,12 @@ const msItemsPlus = msitems.map((item) => {
 
 const updatedMsItems = addPrevNextToMsItems(msItemsPlus);
 
-// Save the merged json
+// Save the merged msitems in json
 writeFileSync(join(folderPath, "neu_ms_items.json"), JSON.stringify(updatedMsItems, null, 2), {
 	encoding: "utf-8",
 });
+
+// merge data for manuscripts
 
 const manuscriptsPlus = manuscripts.map((manuscript) => {
 	// find and prune related dating from manuscripts_Dated.json
@@ -462,4 +464,91 @@ writeFileSync(
 	},
 );
 
+// merge data for hands
+const handsPlus = hands
+	.filter((hand) => hand.label.length > 0) // skip hands with empty labels
+	.map((hand) => {
+		// find matching dating for the hands from hands_Dated.json
+		const h_dated = handsdated
+			.filter((dhand) => dhand.hand.some((h) => h.id === hand.id))
+			.map((dathand) => {
+				return {
+					hit_id: dathand.hit_id,
+					authority: dathand.authority.map(({ order, ...rest }) => rest),
+					page: dathand.page ?? "",
+					dated: dathand.dated.map((date) => {
+						// enrich date from dates.json
+						const dateRange = dates
+							.filter((dateRange) => dateRange.id === date.id)
+							.map((dateRange) => {
+								return {
+									not_before: dateRange.not_before?.substring(0, 4),
+									not_after: dateRange.not_after?.substring(0, 4),
+									range:
+										dateRange.not_before?.substring(0, 4) +
+										"-" +
+										dateRange.not_after?.substring(0, 4),
+								};
+							});
+						return {
+							// need to an array of object dates cause sometimes there is more than one date
+							value: date.value,
+							range: dateRange[0]?.range,
+							not_before: dateRange[0]?.not_before,
+							not_after: dateRange[0]?.not_after,
+						};
+					}),
+					new_dating: dathand.new_dating,
+					note: dathand.note ?? "",
+				};
+			});
+		const h_roles = handsrole
+			.filter((hrol) => hrol.hand.some((h) => h.id === hand.id))
+			.map((hand_r) => {
+				const msitem = msItemsPlus
+					.filter((m) => m.hands.some((han) => han.jobs.some((j) => j.hit_id === hand_r.hit_id)))
+					.map((msit) => {
+						return {
+							manuscript: msit.manuscript,
+							title_work: msit.title_work.map((t) => {
+								return {
+									hit_id: t.hit_id,
+									title: t.title,
+									author: t.author.map((a) => a.name).join("; "),
+								};
+							}),
+							locus: msit.locus,
+						};
+					});
+				return {
+					hit_id: hand_r.hit_id,
+					ms_item: msitem,
+					locus: hand_r.locus ?? "",
+					function: hand_r.function.map((f) => f.value),
+					scribe_type: hand_r.scribe_type.map((sc) => sc.value),
+					locus_layout: hand_r.locus_layout.map((l) => l.value),
+				};
+			});
+
+		return {
+			id: hand.id,
+			hit_id: hand.hit_id,
+			label: hand.label[0].value,
+			view_label: hand.label[0].value,
+			description: hand.description,
+			similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
+			nr_danie: hand.nr_daniel ?? "",
+			manuscript: hand.manuscript.map(({ order, ...rest }) => rest),
+			note: hand.note ?? "",
+			roles: [...new Set(hand.role.flatMap((r) => r.value.map((v) => v.value)))],
+			scribe: hand.scribe.map(({ order, ...rest }) => rest),
+			group: hand.gruppe,
+			date: h_dated,
+			hand_roles: h_roles,
+		};
+	});
+
+writeFileSync(join(folderPath, "new_hands.json"), JSON.stringify(handsPlus, null, 2), {
+	encoding: "utf-8",
+});
 console.log("JSON files have been merged and cleaned successfully!");
