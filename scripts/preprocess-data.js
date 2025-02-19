@@ -524,9 +524,23 @@ const worksPlus = works.map((work) => {
 			return {
 				hit_id: msi.hit_id,
 				manuscript: msi.manuscript,
+				role: msi.role,
+				function: msi.function,
+				commented_msitem: msi.commentedMsItem,
 				locus: msi.locus,
 				orig_date: msi.orig_date,
 				orig_place: msi.orig_place,
+				decoration: msi.decoration,
+				annotation_date: msi.hands
+					.filter((h) => !h.jobs.some((j) => j.role.includes("Schreiber")))
+					.flatMap((hand) => hand.dating),
+				annotation_typ: [
+					...new Set(
+						msi.hands
+							.filter((h) => !h.jobs.some((j) => j.role.includes("Schreiber")))
+							.flatMap((hand) => hand.jobs.map((j) => j.role).flat()), // Ensure full flattening
+					),
+				],
 			};
 		});
 	const relatedGenres = genres
