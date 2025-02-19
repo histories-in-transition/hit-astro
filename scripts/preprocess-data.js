@@ -88,10 +88,10 @@ function enrichBibl(biblArray, bibliography) {
 		// find matching bibl entreis in bibl_entries.json
 		const bibl_entries = bibliography.find((bibl_entry) => bibl_entry.id === bibl.id);
 		return {
-			citation: bibl_entries.citation,
-			link: bibl_entries.link,
-			author: bibl_entries.author,
-			title: bibl_entries.title,
+			citation: bibl_entries.citation ?? "",
+			link: bibl_entries.link ?? "",
+			author: bibl_entries.author ?? "",
+			title: bibl_entries.title ?? "",
 		};
 	});
 }
@@ -242,6 +242,12 @@ const msItemsPlus = msitems.map((item) => {
 		hands: relatedHand, // enriched with dating, placement and hand roles
 		decoration: item.decoration.map((deco) => deco.value),
 		note: item.note ?? "",
+		orig_date: relatedHand
+			.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
+			.flatMap((hand) => hand.dating),
+		orig_place: relatedHand
+			.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
+			.flatMap((hand) => hand.place),
 	};
 });
 
@@ -399,7 +405,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 	};
 });
 
-const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus);
+const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus, "hit_id", "shelfmark");
 
 // Save the merged json
 writeFileSync(
@@ -484,7 +490,9 @@ const handsPlus = hands
 		};
 	});
 
-writeFileSync(join(folderPath, "new_hands.json"), JSON.stringify(handsPlus, null, 2), {
+const updatedHands = addPrevNextToMsItems(handsPlus);
+
+writeFileSync(join(folderPath, "new_hands.json"), JSON.stringify(updatedHands, null, 2), {
 	encoding: "utf-8",
 });
 
@@ -513,6 +521,10 @@ const worksPlus = works.map((work) => {
 		.map((msi) => {
 			return {
 				hit_id: msi.hit_id,
+				manuscript: msi.manuscript,
+				locus: msi.locus,
+				orig_date: msi.orig_date,
+				orig_place: msi.orig_place,
 			};
 		});
 	return {
@@ -525,6 +537,13 @@ const worksPlus = works.map((work) => {
 		source_text: work.source_text.map(({ order, ...rest }) => rest),
 		note_source: work.note_source ?? "",
 		genre: work.genre.map((g) => g.value).join(", "),
+		ms_transmission: relatedMsitems,
 	};
+});
+
+const updatedWorks = addPrevNextToMsItems(worksPlus, "hit_id", "title");
+
+writeFileSync(join(folderPath, "new_works.json"), JSON.stringify(updatedWorks, null, 2), {
+	encoding: "utf-8",
 });
 console.log("JSON files have been merged and cleaned successfully!");
