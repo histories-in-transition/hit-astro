@@ -148,109 +148,111 @@ const { data: manuscript } = Astro.props;
             </dl>
           </section> 
           
-{manuscript?.cod_units?.length > 0 &&
-          <section aria-labelledby="codUnits" class="border rounded-sm border-gray-200 shadow-sm 
-          bg-brandRose text-sm md:leading-7 md:text-base p-5">
-           
-           {manuscript.cod_units.map((unit) => (
-             <> 
-                <h2 id="codUnits" class="text-lg font-semibold text-brandRed">Kodikologische Einheit {unit.number}: </h2>
-                <dl class=" grid grid-cols-[1fr_5fr] p-3">
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
-                  <dd class="pl-5">
-                      {unit.locus 
-                      ? unit.locus
-                      : 'N/A'}
-                      
-                  </dd>
-                  {unit.quires_number 
-                      ? 
-                      <dt class="font-semibold border-r border-gray-300 pr-2">Lagen:</dt>
-                  <dd class="pl-5">
-                      {unit.quires_number}
-                  </dd> 
-                  : ''}
-
-                  {unit.basic_structure.length > 0 && 
-                   <dt class="font-semibold border-r border-gray-300 pr-2">Grundstruktur:</dt>
-                  <dd class="pl-5">
-                      {unit.basic_structure.map(struct => struct.value).join(', ')} 
-                  </dd>
-                  }
-                  
-                  {unit.heigth && unit.width
-                     ? 
-                   ( <>
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-                    <dd class="pl-5">
-                    {unit.heigth} × {unit.width} mm
+          {manuscript?.cod_units?.length > 0 
+          ?
+                    <section aria-labelledby="codUnits" class="border rounded-sm border-gray-200 shadow-sm 
+                    bg-brandRose text-sm md:leading-7 md:text-base p-5">
                     
-                    {unit.written_height && unit.written_width && 
-                     <>
-                      [{unit.written_height} × {unit.written_width} mm]
-                     </>}                      
-                  </dd>
-                  </>)
-                    : ''
-                  } 
-                  
-                   
-                     {unit.columns.length > 0 &&
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Spalten:</dt>
-                      <dd class="pl-5">
-                   
-                        {unit.columns.map(col => col.value).join(', ')} 
-                    </dd> }
-                  {unit.lines_number
-                  ? <dt class="font-semibold border-r border-gray-300 pr-2">Zeilen:</dt>
-                  <dd class="pl-5">
-                      {unit.lines_number} 
-                  </dd>
-                  : ''}    
-                  {unit.decorations &&
-                   <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-                  <dd class="pl-5">
-                      {unit.decorations} 
-                  </dd>    
-                  } 
+                    {manuscript.cod_units.map((unit) => (
+                      <> 
+                          <h2 id="codUnits" class="text-lg font-semibold text-brandRed">Kodikologische Einheit {unit.number}: </h2>
+                          <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
+                            <dd class="pl-5">
+                                {unit.locus 
+                                ? unit.locus
+                                : 'N/A'}
+                                
+                            </dd>
+                            {unit.quires_number 
+                                ? 
+                                <dt class="font-semibold border-r border-gray-300 pr-2">Lagen:</dt>
+                            <dd class="pl-5">
+                                {unit.quires_number}
+                            </dd> 
+                            : ''}
 
-                  {unit.codicological_reworking.length > 0 &&
-                   <dt class="font-semibold border-r border-gray-300 pr-2">Rework:</dt>
-                  <dd class="pl-5">
-                      {unit.codicological_reworking.map(rework => rework.value).join(', ')} 
-                  </dd>    
-                  }
-                  {unit.prov_place.length > 0 &&
-                   <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
-                   <dd class="pl-5">
-                      <ul>
-                        {unit.prov_place.map(prov_unit => (
-                        <li>
-                          {prov_unit.type === 'orig' &&
-                          <span>Entstehungsort: </span>}
-                          {prov_unit.place.map(place => place.value)}                          
-                          {/* check if there are dates for the origin */ }
-                         {prov_unit.from.length > 0 &&
-                          <span>ab 
-                            {prov_unit.from.map(date => date.value).join(', ')}
-                            {prov_unit.certain_from === false && '(?)'}
-                          </span>}
-                          
-                          {prov_unit.till.length > 0 &&
-                          <span>bis 
-                            {prov_unit.till.map(date => date.value).join(', ')}
-                            {prov_unit.ceratin_till === false && '(?)'}
-                          </span>}
-                        </li>
-                      ))}
-                        </ul>
-                    </dd>
-                    }          
-                </dl>
-            </>
-           ))}
+                            {unit.basic_structure.length > 0 && 
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Grundstruktur:</dt>
+                            <dd class="pl-5">
+                                {unit.basic_structure.map(struct => struct.value).join(', ')} 
+                            </dd>
+                            }
+                            
+                            {unit.heigth && unit.width
+                              ? 
+                            ( <>
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+                              <dd class="pl-5">
+                              {unit.heigth} × {unit.width} mm
+                              
+                              {unit.written_height && unit.written_width && 
+                              <>
+                                [{unit.written_height} × {unit.written_width} mm]
+                              </>}                      
+                            </dd>
+                            </>)
+                              : ''
+                            } 
+                            
+                            
+                              {unit.columns.length > 0 &&
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Spalten:</dt>
+                                <dd class="pl-5">
+                            
+                                  {unit.columns.map(col => col).join(', ')} 
+                              </dd> }
+                            {unit.lines_number
+                            ? <dt class="font-semibold border-r border-gray-300 pr-2">Zeilen:</dt>
+                            <dd class="pl-5">
+                                {unit.lines_number} 
+                            </dd>
+                            : ''}    
+                            {unit.decoration &&
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
+                            <dd class="pl-5">
+                                {unit.decoration} 
+                            </dd>    
+                            } 
 
-          </section>
+                            {unit.codicological_reworking.length > 0 &&
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Rework:</dt>
+                            <dd class="pl-5">
+                                {unit.codicological_reworking.map(rework => rework.value).join(', ')} 
+                            </dd>    
+                            }
+                            {unit.prov_place.length > 0 &&
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                            <dd class="pl-5">
+                                <ul>
+                                  {unit.prov_place.map(prov_unit => (
+                                  <li>
+                                    {prov_unit.type === 'orig' &&
+                                    <span>Entstehungsort: </span>}
+                                    {prov_unit.place.map(place => place.value)}                          
+                                    {/* check if there are dates for the origin */ }
+                                  {prov_unit.from.length > 0 &&
+                                    <span>ab 
+                                      {prov_unit.from.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_from === false && '(?)'}
+                                    </span>}
+                                    
+                                    {prov_unit.till.length > 0 &&
+                                    <span>bis 
+                                      {prov_unit.till.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_till === false && '(?)'}
+                                    </span>}
+                                  </li>
+                                ))}
+                                  </ul>
+                              </dd>
+                              }          
+                          </dl>
+                      </>
+                    ))}
+
+                    </section>
+                    : ''  
           } 
           <section aria-labelledby="msHistory" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msHistory" class="text-xl font-semibold text-brandRed">Geschichte:</h2>
@@ -282,8 +284,9 @@ const { data: manuscript } = Astro.props;
               {manuscript?.history !== undefined 
             ? <p class="p-5">{manuscript?.history}</p>
             : ''}
-            </section> 
-            {manuscript.bibliography.length > 0 
+          </section> 
+
+          {manuscript.bibliography.length > 0 
             ? <section aria-labelledby="bibl" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
               <h2 id="bibl" class="text-xl font-semibold text-brandRed">Bibliographie:</h2>    
               <ul>
@@ -292,106 +295,107 @@ const { data: manuscript } = Astro.props;
               </ul>
             </section>
             : ''
-            }
+          }
 
-            <section aria-labelledby="msContent" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
-            <h2 id="msContent" class="text-xl font-semibold text-brandRed">Inhalt:</h2>           
-              {manuscript.cod_units.map((unit) => (
-                 <dl class="grid grid-cols-[1fr_5fr] p-3">
-                  <dt class="font-semibold border-r border-gray-300 pr-2">
-                    {manuscript.cod_units.length > 1 && `Kod. Einheit ${unit.number} (fols. ${unit.locus})`}</dt>
-                  <dd class="pl-5"></dd>
+        <section aria-labelledby="msContent" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
+          <h2 id="msContent" class="text-xl font-semibold text-brandRed">Inhalt:</h2>           
+            {manuscript.cod_units.map((unit) => (
+                <dl class="grid grid-cols-[1fr_5fr] p-3">
+                <dt class="font-semibold border-r border-gray-300 pr-2">
+                  {manuscript.cod_units.length > 1 && `Kod. Einheit ${unit.number} (fols. ${unit.locus})`}</dt>
+                <dd class="pl-5"></dd>
 
-                  {unit.content
-                    .sort((a, b) => {
-                      const extractLocusValues = (locus: string) => {
-                        const match = locus.match(/^(\d+)(r|v)/);
-                        if (!match) return [0, 'z'];  // Default values for invalid format
-                  
-                        const startNumber = parseInt(match[1], 10);
-                        const startSuffix = match[2];
-                  
-                        return [startNumber, startSuffix];
-                      };
-                  
-                      const [startA, suffixA] = extractLocusValues(a.locus);
-                      const [startB, suffixB] = extractLocusValues(b.locus);
-                  
-                      // Primary sorting by startNumber
-                      if (startA !== startB) return startA - startB;
-                  
-                      // If start numbers are the same, prioritize "r" over "v"
-                      return suffixA === 'r' ? -1 : (suffixB === 'r' ? 1 : 0);
-                    })
-                    .map(filteredItem => (
-                     
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                          <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
-                        </dt>
-                        <dd class="pl-5">
-                          {filteredItem.title_work.map(work => (
-                              <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
-                                {work.author.length > 0 ? (
-                                  <NavLink class="no-underline" href={`/works/${work.hit_id}`}>
-                                    {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                                  </NavLink>
-                                ) : (
-                                  <NavLink class="no-underline" href={`/works/${work.hit_id}`}>{work.title}</NavLink>
-                                )}
-                              </span>
-                            ))}
-
-                          {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
-                          {filteredItem.rubric && (
-                            <span> 
-                              {/* check for [text] shouldl be not-italic */}
-                              ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part: string) =>
-                                part.startsWith('[') && part.endsWith(']')
-                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                  : <span class="italic">{part}</span> // Italic for other text
-                              )}‹
-                            </span>
-                          )}                          
-                          
-                          {filteredItem.incipit && (
-                            <span>
-                              {filteredItem.incipit.split(/(\[ *.*?\])/).map((part: string) =>
-                                part.startsWith('[') && part.endsWith(']')
-                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                  : <span class="italic">{part}</span> // Italic for other text
-                              )}
-                              {filteredItem.incipit.trim().endsWith('…') ? '' : '…'}
-                            </span>
-                          )}
-                         {filteredItem.explicit && (
-                            <span class="italic">
-                              {filteredItem.explicit.split(/(\[.*?\])/).map((part: string) =>
-                                part.startsWith('[') && part.endsWith(']')
-                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                  : <span>{part}</span> // Italic for other text
-                              )}
-                              {filteredItem.explicit.trim().startsWith('…') ? '' : '…'}
-                            </span>
-                          )}
-
-                          {filteredItem.final_rubric && 
-                          <span class="italic">
-                           ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part: string) =>
-                                part.startsWith('[') && part.endsWith(']')
-                                  ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                  : <span class="italic">{part}</span> // Italic for other text
-                              )}‹
-                            </span>}
-
-                          {filteredItem.decoration.length > 0 && <span>Ausstattung: {filteredItem.decoration}</span>}
-                          
-                        </dd>
-                    ))}
-                    </dl>
-              ))}
-          </section> 
-        {manuscript.strata.length > 0 &&
+                {unit.content
+                  .sort((a, b) => {
+                    const extractLocusValues = (locus: string) => {
+                      const match = locus.match(/^(\d+)(r|v)/);
+                      if (!match) return [0, 'z'];  // Default values for invalid format
+                
+                      const startNumber = parseInt(match[1], 10);
+                      const startSuffix = match[2];
+                
+                      return [startNumber, startSuffix];
+                    };
+                
+                    const [startA, suffixA] = extractLocusValues(a.locus);
+                    const [startB, suffixB] = extractLocusValues(b.locus);
+                
+                    // Primary sorting by startNumber
+                    if (startA !== startB) return startA - startB;
+                
+                    // If start numbers are the same, prioritize "r" over "v"
+                    return suffixA === 'r' ? -1 : (suffixB === 'r' ? 1 : 0);
+                  })
+                  .map(filteredItem => (
                     
+                      <dt class="border-r border-gray-300 pr-2 justify-self-end">
+                        <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
+                      </dt>
+                      <dd class="pl-5">
+                        {filteredItem.title_work.map(work => (
+                            <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
+                              {work.author.length > 0 ? (
+                                <NavLink class="no-underline" href={`/works/${work.hit_id}`}>
+                                  {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                                </NavLink>
+                              ) : (
+                                <NavLink class="no-underline" href={`/works/${work.hit_id}`}>{work.title}</NavLink>
+                              )}
+                            </span>
+                          ))}
+
+                        {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
+                        {filteredItem.rubric && (
+                          <span> 
+                            {/* check for [text] shouldl be not-italic */}
+                            ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part: string) =>
+                              part.startsWith('[') && part.endsWith(']')
+                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                : <span class="italic">{part}</span> // Italic for other text
+                            )}‹
+                          </span>
+                        )}                          
+                        
+                        {filteredItem.incipit && (
+                          <span>
+                            {filteredItem.incipit.split(/(\[ *.*?\])/).map((part: string) =>
+                              part.startsWith('[') && part.endsWith(']')
+                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                : <span class="italic">{part}</span> // Italic for other text
+                            )}
+                            {filteredItem.incipit.trim().endsWith('…') ? '' : '…'}
+                          </span>
+                        )}
+                        {filteredItem.explicit && (
+                          <span class="italic">
+                            {filteredItem.explicit.split(/(\[.*?\])/).map((part: string) =>
+                              part.startsWith('[') && part.endsWith(']')
+                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                : <span>{part}</span> // Italic for other text
+                            )}
+                            {filteredItem.explicit.trim().startsWith('…') ? '' : '…'}
+                          </span>
+                        )}
+
+                        {filteredItem.final_rubric && 
+                        <span class="italic">
+                          ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part: string) =>
+                              part.startsWith('[') && part.endsWith(']')
+                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                                : <span class="italic">{part}</span> // Italic for other text
+                            )}‹
+                          </span>}
+
+                        {filteredItem.decoration.length > 0 && <span>Ausstattung: {filteredItem.decoration}</span>}
+                        
+                      </dd>
+                  ))}
+                  </dl>
+            ))}
+        </section> 
+        
+        {manuscript.strata.length > 0 
+        ?                    
            <section aria-labelledby="msStrata" class="border rounded-sm border-gray-200 shadow-sm bg-brandRose text-sm md:leading-7 md:text-base p-5">
             <h2 id="msStrata" class="text-xl font-semibold text-brandRed">Strata:</h2> 
             <dl class="grid grid-cols-[1fr_5fr] p-3">
@@ -404,7 +408,7 @@ const { data: manuscript } = Astro.props;
                   })}
             </dl>
           {/* Table for displaying information about the strata - each strata is defined by the hands_role */}
-           {/*   <div class="overflow-x-auto">
+          <div class="overflow-x-auto">
               <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
                 <thead class="bg-brandRoseDark">
                   <tr>
@@ -452,14 +456,6 @@ const { data: manuscript } = Astro.props;
                     <th class="text-center p-2 font-semibold border border-gray-300">
                       <form role="search" data-search-form >
                         <label class="flex flex-col items-start p-2">
-                          <div>Locus</div>
-                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
-                        </label>
-                      </form>
-                    </th>
-                    <th class="text-center p-2 font-semibold border border-gray-300">
-                      <form role="search" data-search-form >
-                        <label class="flex flex-col items-start p-2">
                           <div>Hand</div>
                           <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
                         </label>
@@ -500,72 +496,77 @@ const { data: manuscript } = Astro.props;
                   </tr>
                 </thead>
                 <tbody>
-                  // each row is a hand-activity (hand_role)
-                  {manuscript.strata.map(s => s.hand_roles.map((hand)=> hand.hands_role.map(role => (
-                    <tr class="odd:bg-brandIvory even:bg-brandRose">
-                      // check which is the relevant strata by filtering strata according to the hand_role
+                  {manuscript.strata
+                  .flatMap(stratum => stratum.hand_roles
+                  .map((role) => (
+                    <tr class="odd:bg-brandIvory even:bg-brandRose">                      
                       <td class="p-2 border border-gray-300 text-center">
-                        {(matchingStrata as Stratum[])
-                        .filter(stratum => stratum.hand_role.some(handRole =>
-                          handRole.hit_id === role.hit_id
-                        )).map(filteredStratum => filteredStratum.number)}
+                        {stratum.number}
                       </td>
                       <td class="p-2 border border-gray-300">
-                        {hand.hands_dated.map(date => // date is an array of objects with not_before and not_after properties
-                          date.dated.map(i => { // need to get only the years from the not_before and not_after e.g. 821 from "0821-01-01"
-                            const perStart = i.not_before ? new Date(i.not_before).getFullYear() :  null; // use Date object to get the year
-                            const perEnd = i.not_after ? new Date(i.not_after).getFullYear() : null;
-                            return `${perStart}-${perEnd}`; // combine the two years in a string
-                          })
-                        )}
+                        {role.hand.flatMap(hand => hand.date. map(d => d.range)).join(' | ')}
                       </td>
                       <td class="p-2 border border-gray-300">
-                       {role.ms_item.length > 1
-                        ? (<ul class="list-disc">
-                            {role.ms_item.map((msItem) =>
-                               msItem.title_work.map((work: Work) => (
-                                <li>
-                                  {work.author[0]?.name
-                                    ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
-                                    : work.title}
-                                </li>
-                              ))
-                            )}
-                          </ul>)
-                        : (role.ms_item.map((msItem) =>
-                          msItem.title_work.map(work => (
-                                <>
-                                  {work.author[0]?.name
-                                    ? `${work.author.map(aut => aut.name).join(', ')}: ${work.title}`
-                                        : work.title}
-                                      <br />
-                                </>
+                        {role.ms_item.length > 1 ? (
+                          <ul class="list-disc list-inside">
+                            {role.ms_item.map((msItem) => (
+                             <li>
+                              <span>
+                                {msItem.author && msItem.author.length > 0
+                                  ? `${msItem.author.join(', ')}: ${msItem.title}`
+                                  : msItem.title}
+                              </span>
+                              <NavLink href={`/msitems/${msItem?.hit_id}`}>
+                                ({msItem.locus})
+                              </NavLink>
+                            </li>
+
+                            ))}
+                          </ul>
+                        ) : (
+                          role.ms_item.map((msItem) => (                           
+                          <span>
+                                {msItem.author && msItem.author.length > 0
+                                  ? `${msItem.author.join(', ')}: ${msItem.title}`
+                                  : msItem.title}
+                              </span>
+                              <NavLink href={`/msitems/${msItem?.hit_id}`}>
+                                ({msItem.locus})
+                              </NavLink>
                               ))
                             )
-                          )}
-                      </td>
-              
-                      <td class="p-2 border border-gray-300">
-                        {role.ms_item.map((msItem: any ) =>
-                          <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/msitems/${msItem.hit_id}`}>{msItem.locus_grp}</NavLink><br />
-                       )}
+                          }
                         </td>
+
+              
+                     
                       <td class="p-2 border border-gray-300">
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" href={`/hands/${hand.hit_id}`}>{hand.label.map(l => l.value.split('_')[1])}</NavLink>
-                      </td>
-                      <td class="p-2 border border-gray-300">{role.role.map(ro => ro.value).join(', ')}</td>
+                        {role.hand.length > 1 ? (
+                          <ul class="list-disc list-inside">
+                            {role.hand.map((hand) => (
+                              <li>
+                        <NavLink class="hover:text-brandRed after:content-['_↗']" 
+                        href={`/hands/${hand?.hit_id}`}>{hand.label}</NavLink>
+                      </li>
+                            ))}
+                          </ul>
+                        ) : (
+                        <NavLink class="hover:text-brandRed after:content-['_↗']" 
+                        href={`/hands/${role.hand[0]?.hit_id}`}>{role.hand[0]?.label}</NavLink>
+                        )}   </td>
+                      <td class="p-2 border border-gray-300">{role.role.map(ro => ro).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.locus}</td>
-                      <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope.value)}</td>
-                      <td class="p-2 border border-gray-300">{role.function.map(func => func.value).join(', ')}</td>
+                      <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope).join(' | ')}</td>
+                      <td class="p-2 border border-gray-300">{role.function.map(func => func).join(', ')}</td>
                     </tr>
                   )))}
                 </tbody>
               
               </table>
-            </div> */}
+            </div> 
           
           </section>
-          } 
+          : ""} 
         
            
     </Article>

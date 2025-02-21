@@ -139,7 +139,7 @@ const { data: item } = Astro.props;
                                 aria-hidden="true"
                                 name="lucide:arrow-right"
                               />                             
-                             {filteredHand.dating}
+                             {filteredHand.dating.map(d => d.date.map(date => date.value).join(', '))}
                             
                             </span> 
                            {filteredHand.jobs.some(j => j.role_context.length > 0)

@@ -332,6 +332,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 						.map((hand) => {
 							return {
 								id: hand.id,
+								label: hand.hand[0].value,
 								hit_id: hand.hit_id,
 								date: enrichDates(hand.dated, dates),
 							};
@@ -344,7 +345,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 								hit_id: item.hit_id,
 								title: item.title_work.map((t) => t.title),
 								author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
-								locus: item.locus_grp,
+								locus: item.locus,
 							};
 						});
 					return {
@@ -365,8 +366,62 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				label: stratum.label[0].value,
 				character: stratum.character.map((c) => c.value),
 				hand_roles: h_roles,
+				note: stratum.note ?? "",
 			};
 		});
+	const uncharted_roles = handsrole
+		.filter((h_role) =>
+			msItemsPlus.some(
+				(item) =>
+					item.manuscript.some((ms) => ms.id === manuscript.id) &&
+					item.hands.some((hand) => hand.jobs.some((j) => j.id === h_role.id)),
+			),
+		)
+		.filter((h_role) => !strataa.some((str) => str.hand_role.some((r) => r.id === h_role.id)))
+		.map((h_role) => {
+			// Enrich hands with data from hands_Dated.json
+			const hand = handsdated
+				.filter((hand) => h_role.hand.some((rol_hand) => rol_hand.id === hand.id))
+				.map((hand) => ({
+					id: hand.id,
+					label: hand.hand[0].value,
+					hit_id: hand.hit_id,
+					date: enrichDates(hand.dated, dates),
+				}));
+
+			// Enrich ms_items
+			const mssitems = msItemsPlus
+				.filter((mitem) => h_role.ms_item.some((item) => item.id === mitem.id))
+				.map((item) => ({
+					id: item.id,
+					hit_id: item.hit_id,
+					title: item.title_work.map((t) => t.title),
+					author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
+					locus: item.locus,
+				}));
+
+			return {
+				hit_id: h_role.hit_id,
+				hand: hand,
+				ms_item: mssitems,
+				role: h_role.role.map((r) => r.value),
+				locus: h_role.locus,
+				scribe_type: h_role.scribe_type.map((type) => type.value),
+				function: h_role.function.map((func) => func.value),
+				locus_layout: h_role.locus_layout.map((layout) => layout.value),
+			};
+		});
+
+	strata.push({
+		id: "stratum X",
+		number: "X",
+		hit_id: "X",
+		label: "undefined stratum",
+		character: "TBD",
+		hand_roles: uncharted_roles,
+		note: "These hand-roles are not yet assigned to a stratum",
+	});
+
 	const library_place = libraries
 		.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
 		.map((library) => {
