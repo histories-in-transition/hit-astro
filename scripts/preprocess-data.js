@@ -369,6 +369,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				note: stratum.note ?? "",
 			};
 		});
+	// some hand_roles are not yet assigned to a stratum, need to collect them in a separate 'TBD' stratum
 	const uncharted_roles = handsrole
 		.filter((h_role) =>
 			msItemsPlus.some(
@@ -413,9 +414,9 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		});
 
 	strata.push({
-		id: "stratum X",
-		number: "X",
-		hit_id: "X",
+		id: "stratum TBD",
+		number: "TBD",
+		hit_id: "TBD",
 		label: "undefined stratum",
 		character: "TBD",
 		hand_roles: uncharted_roles,

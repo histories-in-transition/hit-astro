@@ -132,16 +132,20 @@ const { data: item } = Astro.props;
                           <li>
                             <NavLink 
                               href={`/hands/${filteredHand.hit_id}`}>{filteredHand.label}
-                            </NavLink>                           
+                            </NavLink>
+                            {filteredHand.dating?.length > 0
+  ?                           
                             <span>Datierung: 
                               <Icon
                                 class="inline-flex align-middle"
                                 aria-hidden="true"
                                 name="lucide:arrow-right"
                               />                             
-                             {filteredHand.dating.map(d => d.date.map(date => date.value).join(', '))}
+                             {filteredHand.dating.map(d => d.date?.map(date => date.value).join(', ')).join('; ')
+  }
                             
                             </span> 
+                            : ''}
                            {filteredHand.jobs.some(j => j.role_context.length > 0)
                              ? <span>(Typ: 
                               {filteredHand.jobs.flatMap(job => job.role_context).join(', ')})
