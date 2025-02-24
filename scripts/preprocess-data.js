@@ -2,42 +2,44 @@ import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import { addPrevNextToMsItems } from "./utils.js";
 
-import msitemsjson from "../src/content/raw/ms_items.json" assert { type: "json" };
+import bibljson from "../src/content/raw/bibliography.json" assert { type: "json" };
+import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "json" };
+import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
+import datesjson from "../src/content/raw/dates.json" assert { type: "json" };
+import genrejson from "../src/content/raw/genres.json" assert { type: "json" };
 import handsjson from "../src/content/raw/hands.json" assert { type: "json" };
 import handsdatedjson from "../src/content/raw/hands_dated.json" assert { type: "json" };
 import handsrolejson from "../src/content/raw/hands_role.json" assert { type: "json" };
 import handsplacedjson from "../src/content/raw/hands_placed.json" assert { type: "json" };
-import worksjson from "../src/content/raw/works.json" assert { type: "json" };
-import peoplejson from "../src/content/raw/people.json" assert { type: "json" };
-import datesjson from "../src/content/raw/dates.json" assert { type: "json" };
-import placesjson from "../src/content/raw/places.json" assert { type: "json" };
-import stratajson from "../src/content/raw/strata.json" assert { type: "json" };
+import librariesjson from "../src/content/raw/libraries_organisations.json" assert { type: "json" };
 import manuscriptsjson from "../src/content/raw/manuscripts.json" assert { type: "json" };
 import manuscripts_Datedjson from "../src/content/raw/manuscripts_dated.json" assert { type: "json" };
-import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "json" };
-import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
-import bibljson from "../src/content/raw/bibliography.json" assert { type: "json" };
-import genrejson from "../src/content/raw/genres.json" assert { type: "json" };
-import librariesjson from "../src/content/raw/libraries_organisations.json" assert { type: "json" };
+import msitemsjson from "../src/content/raw/ms_items.json" assert { type: "json" };
+import peoplejson from "../src/content/raw/people.json" assert { type: "json" };
+import placesjson from "../src/content/raw/places.json" assert { type: "json" };
+import stratajson from "../src/content/raw/strata.json" assert { type: "json" };
+import scribesjson from "../src/content/raw/scribes.json" assert { type: "json" };
+import worksjson from "../src/content/raw/works.json" assert { type: "json" };
 
 // convert json to array:
-const msitems = Object.values(msitemsjson);
-const works = Object.values(worksjson);
-const hands = Object.values(handsjson);
-const handsdated = Object.values(handsdatedjson);
-const handsrole = Object.values(handsrolejson);
-const people = Object.values(peoplejson);
-const handsplaced = Object.values(handsplacedjson);
-const dates = Object.values(datesjson);
-const places = Object.values(placesjson);
-const manuscripts = Object.values(manuscriptsjson);
-const manuscripts_dated = Object.values(manuscripts_Datedjson);
+const bibliography = Object.values(bibljson);
 const cod_units = Object.values(cod_unitsjson);
 const cod_unitsprov = Object.values(cod_unitsprovjson);
-const strataa = Object.values(stratajson);
-const bibliography = Object.values(bibljson);
+const dates = Object.values(datesjson);
 const genres = Object.values(genrejson);
+const hands = Object.values(handsjson);
+const handsdated = Object.values(handsdatedjson);
+const handsplaced = Object.values(handsplacedjson);
+const handsrole = Object.values(handsrolejson);
 const libraries = Object.values(librariesjson);
+const manuscripts = Object.values(manuscriptsjson);
+const manuscripts_dated = Object.values(manuscripts_Datedjson);
+const msitems = Object.values(msitemsjson);
+const people = Object.values(peoplejson);
+const places = Object.values(placesjson);
+const scribes = Object.values(scribesjson);
+const strataa = Object.values(stratajson);
+const works = Object.values(worksjson);
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
@@ -320,21 +322,25 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		});
 
 	const strata = strataa
+		// get strata for specific manuscript based on ms_id
 		.filter((stratum) => stratum.manuscript.some((ms) => ms.id === manuscript.id))
 		.map((stratum) => {
 			// get corresponding hand_roles data from hands_role.json
 			const h_roles = handsrole
 				.filter((h_role) => stratum.hand_role.some((s_h_role) => s_h_role.id === h_role.id))
 				.map((h_role) => {
-					// enrich hands with data from hands_Dated.json
-					const hand = handsdated
-						.filter((hand) => h_role.hand.some((rol_hand) => rol_hand.id === hand.id))
+					const hand = hands
+						.filter((hand) => h_role.hand.some((hand_r) => hand_r.id === hand.id))
 						.map((hand) => {
+							// enrich hands with data from hands_Dated.json
+							const dhand = handsdated
+								// filter hands_dated.json for hands (hand => hand.id)
+								.filter((hand_d) => hand_d.hand.some((h) => hand.id === h.id))
+								.flatMap((dhand) => enrichDates(dhand.dated, dates));
 							return {
-								id: hand.id,
-								label: hand.hand[0].value,
 								hit_id: hand.hit_id,
-								date: enrichDates(hand.dated, dates),
+								label: hand.label[0].value,
+								date: dhand,
 							};
 						});
 					const mssitems = msItemsPlus
@@ -381,14 +387,20 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		.filter((h_role) => !strataa.some((str) => str.hand_role.some((r) => r.id === h_role.id)))
 		.map((h_role) => {
 			// Enrich hands with data from hands_Dated.json
-			const hand = handsdated
-				.filter((hand) => h_role.hand.some((rol_hand) => rol_hand.id === hand.id))
-				.map((hand) => ({
-					id: hand.id,
-					label: hand.hand[0].value,
-					hit_id: hand.hit_id,
-					date: enrichDates(hand.dated, dates),
-				}));
+			const hand = hands
+				.filter((hand) => h_role.hand.some((hand_r) => hand_r.id === hand.id))
+				.map((hand) => {
+					// enrich hands with data from hands_Dated.json
+					const dhand = handsdated
+						// filter hands_dated.json for hands (hand => hand.id)
+						.filter((hand_d) => hand_d.hand.some((h) => hand.id === h.id))
+						.flatMap((dhand) => enrichDates(dhand.dated, dates));
+					return {
+						hit_id: hand.hit_id,
+						label: hand.label[0].value,
+						date: dhand,
+					};
+				});
 
 			// Enrich ms_items
 			const mssitems = msItemsPlus
@@ -412,16 +424,15 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 				locus_layout: h_role.locus_layout.map((layout) => layout.value),
 			};
 		});
-
-	strata.push({
-		id: "stratum TBD",
-		number: "TBD",
-		hit_id: "TBD",
-		label: "undefined stratum",
-		character: "TBD",
-		hand_roles: uncharted_roles,
-		note: "These hand-roles are not yet assigned to a stratum",
-	});
+	uncharted_roles.length > 0 &&
+		strata.push({
+			id: "TBD",
+			number: "TBD",
+			label: "undefined stratum",
+			character: ["TBD"],
+			hand_roles: uncharted_roles,
+			note: "These hand-roles are not yet assigned to a stratum",
+		});
 
 	const library_place = libraries
 		.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
@@ -523,6 +534,7 @@ const handsPlus = hands
 					.map((msit) => {
 						return {
 							manuscript: msit.manuscript,
+							hit_id: msit.hit_id,
 							title_work: msit.title_work.map((t) => {
 								return {
 									hit_id: t.hit_id,
@@ -537,6 +549,7 @@ const handsPlus = hands
 					hit_id: hand_r.hit_id,
 					ms_item: msitem,
 					locus: hand_r.locus ?? "",
+					role: hand_r.role.map((r) => r.value),
 					function: hand_r.function.map((f) => f.value),
 					scribe_type: hand_r.scribe_type.map((sc) => sc.value),
 					locus_layout: hand_r.locus_layout.map((l) => l.value),
@@ -550,7 +563,7 @@ const handsPlus = hands
 			view_label: hand.label[0].value,
 			description: hand.description,
 			similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
-			nr_danie: hand.nr_daniel ?? "",
+			nr_daniel: hand.nr_daniel ?? "",
 			manuscript: hand.manuscript.map(({ order, ...rest }) => rest),
 			note: hand.note ?? "",
 			roles: [...new Set(hand.role.flatMap((r) => r.value.map((v) => v.value)))],
@@ -559,6 +572,7 @@ const handsPlus = hands
 			date: h_dated,
 			hand_roles: h_roles,
 			placed: h_placed,
+			texts: [...new Set(hand.texts.map((text) => text.value))],
 		};
 	});
 
@@ -647,6 +661,28 @@ const worksPlus = works.map((work) => {
 const updatedWorks = addPrevNextToMsItems(worksPlus, "hit_id", "title");
 
 writeFileSync(join(folderPath, "new_works.json"), JSON.stringify(updatedWorks, null, 2), {
+	encoding: "utf-8",
+});
+
+const scribesPlus = scribes.map((scribe) => {
+	const scribalHands = handsPlus.filter((hand) => hand.scribe.some((s) => s.id === scribe.id));
+	const date = scribalHands.flatMap((hand) => hand.date);
+	const place = scribalHands.flatMap((hand) => hand.placed);
+	return {
+		id: scribe.id,
+		hit_id: scribe.hit_id,
+		name: scribe.name ?? "N/A",
+		description: scribes.description ?? "",
+		group: scribe.group,
+		hands: scribalHands,
+		date: date,
+		places: place,
+	};
+});
+
+const updatedScribes = addPrevNextToMsItems(scribesPlus, "hit_id", "name");
+
+writeFileSync(join(folderPath, "new_scribes.json"), JSON.stringify(updatedScribes, null, 2), {
 	encoding: "utf-8",
 });
 console.log("JSON files have been merged and cleaned successfully!");

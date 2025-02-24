@@ -17,7 +17,7 @@ import TableHead from "../components/table-head.astro";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
 		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
-		import data from "../content/data/hands.json";
+		import data from "../content/data/new_hands.json";
 		import {
 			jsonpathLookup,
 			jsonpathsDateRanges,
@@ -72,19 +72,18 @@ import TableHead from "../components/table-head.astro";
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].value",
+						path: "$[*]",
 					},
 					headerFilter: "input",
 					formatter: "textarea",
 				},
 				{
 					title: "Rolle",
-					field: "role",
+					field: "roles",
 					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
+					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].value[*].value",
-						separator: "\n",
+						path: "$[*]",
 					},
 					headerFilter: "list",
 					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
@@ -92,7 +91,7 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Datiert",
-					field: "hands_dated",
+					field: "date",
 					minWidth: 100,
 					mutator: jsonpathsDateRanges,
 					mutatorParams: {
@@ -102,30 +101,28 @@ import TableHead from "../components/table-head.astro";
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
 					headerFilterFuncParams: {
-						paths: [
-							"$[*].hands_dated[*].dated[*].not_before",
-							"$[*].hands_dated[*].dated[*].not_after",
-						],
+						paths: ["$[*].dated[*].not_before", "$[*].dated[*].not_after"],
 					},
 				},
 				{
 					title: "Lokalisiert",
-					field: "hands_placed",
+					field: "placed",
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].place[*].name",
+						path: "$[*].place[*].value",
 						separator: "; ",
 					},
 					headerFilter: "input",
 				},
+				,
 				{
 					title: "Schreiber",
 					field: "scribe",
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].name",
+						path: "$[*].value",
 					},
 					headerFilter: "input",
 					formatter: "textarea",

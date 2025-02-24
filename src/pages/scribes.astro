@@ -10,17 +10,14 @@ import TableHead from "../components/table-head.astro";
 	/>
 	<script>
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		// import "tabulator-tables/dist/css/tabulator_bootstrap5.min.css";
-		// import "tabulator-tables/dist/css/tabulator_simple.min.css";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
-		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 
-		import data from "../content/data/scribes.json";
+		import data from "../content/data/new_scribes.json";
 		import {
 			jsonpathLookup,
 			jsonpathsDateRanges,
 			dateRangeFilter,
+			jsonpathDistinctLookup,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
@@ -43,11 +40,11 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Hand",
-					field: "hand",
+					field: "hands",
 					minWidth: 150,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].value",
+						path: "$[*].label",
 						separator: "\n",
 					},
 					headerFilter: "input",
@@ -56,10 +53,10 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Datierung",
-					field: "hands",
+					field: "date",
 					mutator: jsonpathsDateRanges,
 					mutatorParams: {
-						paths: ["$[*].hands_dated[*].dated[*]"],
+						paths: ["$[*].dated[*]"],
 						separator: ", ",
 					},
 					headerFilter: "input",
@@ -70,6 +67,15 @@ import TableHead from "../components/table-head.astro";
 							"$[*].hands_dated[*].dated[*].not_after",
 						],
 					},
+				},
+				{
+					title: "Ort",
+					field: "places",
+					minWidth: 150,
+					mutator: jsonpathDistinctLookup,
+					mutatorParams: { path: "$[*].place[*].value", separator: ", " },
+					headerFilter: "input",
+					responsive: 2,
 				},
 				{
 					title: "Gruppe",

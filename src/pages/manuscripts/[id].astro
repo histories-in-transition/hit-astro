@@ -402,7 +402,15 @@ const { data: manuscript } = Astro.props;
                   {manuscript.strata.map(stratum => {
                       return <>
                       <dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Stratum {stratum.number}: </dt>
-                      <dd class="pl-5"><span class="underlined">{stratum.character}:</span> {stratum?.note ?? ''}</dd>
+                      <dd class="pl-5">
+                        <span class="underlined">
+                          {Array.isArray(stratum.character) && stratum.character.length > 0 
+                            ? stratum.character.join(', ') 
+                            : 'N/A'}
+                        </span>
+                        {stratum?.note ? `: ${stratum.note}` : ''}
+                      </dd>
+
                         </>
             
                   })}
@@ -469,7 +477,23 @@ const { data: manuscript } = Astro.props;
                           </label>
                         </form>
                       </th>
-                    <th class="text-center p-2 font-semibold border border-gray-300">
+                      <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Schreiber-Typ</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          </label>
+                        </form>
+                      </th>
+                     <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Funktion</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
+                          </label>
+                        </form>
+                      </th>
+                      <th class="text-center p-2 font-semibold border border-gray-300">
                       <form role="search" data-search-form >
                         <label class="flex flex-col items-start p-2">
                           <div>Umfang</div>
@@ -485,14 +509,7 @@ const { data: manuscript } = Astro.props;
                           </label>
                         </form>
                       </th>
-                      <th class="text-center p-2 font-semibold border border-gray-300">
-                        <form role="search" data-search-form>
-                          <label class="flex flex-col items-start p-2">
-                            <div>Funktion</div>
-                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-200 rounded font-normal">
-                          </label>
-                        </form>
-                      </th>
+                     
                   </tr>
                 </thead>
                 <tbody>
@@ -555,9 +572,10 @@ const { data: manuscript } = Astro.props;
                         href={`/hands/${role.hand[0]?.hit_id}`}>{role.hand[0]?.label}</NavLink>
                         )}   </td>
                       <td class="p-2 border border-gray-300">{role.role.map(ro => ro).join(', ')}</td>
+                      <td class="p-2 border border-gray-300">{role.scribe_type.map(t => t).join(', ')}</td>
+                      <td class="p-2 border border-gray-300">{role.function.map(func => func).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.locus}</td>
                       <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope).join(' | ')}</td>
-                      <td class="p-2 border border-gray-300">{role.function.map(func => func).join(', ')}</td>
                     </tr>
                   )))}
                 </tbody>

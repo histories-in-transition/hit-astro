@@ -9,57 +9,31 @@ import TableHead from "../components/table-head.astro";
 	<script>
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		import data from "../content/data/works.json";
+		import data from "../content/data/new_works.json";
 		import {
 			jsonpathLookup,
-			dateRangeFilter,
 			jsonpathDistinctLookup,
-			jsonpathsDistinctRanges,
 			jsonpathsDistinctLookup,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
-		import hands_Json from "../content/data/hands.json";
-		// preprocess works.json and hands.json to get all necessary data for fields
-		// add yearRange to handsJson to easy handle dates as numbers
-		const handsJson = Object.values(hands_Json).map((hand) => ({
-			...hand,
-			hands_dated: hand.hands_dated.map((date) => ({
-				...date,
-				dated: date.dated.map((i) => ({
-					...i,
-					yearRange: {
-						start: i.not_before ? new Date(i.not_before).getFullYear() : null,
-						end: i.not_after ? new Date(i.not_after).getFullYear() : null,
-					},
-				})),
-			})),
-		}));
-		// hands -> hands_dated. Need matchedHands - hands with role Schreiber to msItem with
-		// titlework id === work.id
-		// Combine the two datasets
-		const tabledata = Object.values(data).map((work) => {
-			const matchingOrigHands = handsJson.filter((hand) =>
-				hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) =>
-							item.title_work.some((titleWork) => titleWork.hit_id === work.hit_id),
-						) && handRole.role.some((ro) => ro.value === "Schreiber"),
-				),
-			);
-			// get the scribe hands again for using in column Schreiberort:
-			const matchingPlaces = matchingOrigHands.flatMap(
-				(hand) => hand.hands_placed?.flatMap((place) => place.place.map((p) => p.name)) || [],
-			);
-			// duplicate object 'decoration' from works.json to use as separate field
-			const decoration = work.related__ms_items.map((relItem) =>
-				relItem.decoration.map((deco) => deco.value).join(" | "),
-			);
 
+		const tabledata = Object.values(data).map((work) => {
 			return {
 				...work,
-				origHands: matchingOrigHands,
-				origPlaces: [...new Set(matchingPlaces)], // get rid of duplicates
-				decoWork: [...new Set(decoration)],
+				origDate: [
+					...new Set(
+						work.ms_transmission.flatMap((ms) =>
+							ms.orig_date.flatMap((d) => d.date.map((dt) => dt.value)),
+						),
+					),
+				].join(" | "),
+				origPlaces: [
+					...new Set(
+						work.ms_transmission.flatMap((ms) =>
+							ms.orig_place.flatMap((p) => p.place.map((pl) => pl.value)),
+						),
+					),
+				],
 			};
 		});
 
@@ -67,12 +41,13 @@ import TableHead from "../components/table-head.astro";
 			headerFilterLiveFilterDelay: 600,
 			height: 900,
 			data: tabledata,
-			responsiveLayout: true,
-			initialSort: [{ column: "view_label", dir: "asc" }],
+			layout: "fitColumns",
+			responsiveLayout: "collapse",
+			initialSort: [{ column: "title", dir: "asc" }],
 			columns: [
 				{
 					title: "Titel",
-					field: "view_label",
+					field: "title",
 					headerFilter: "input",
 					formatter: "textarea",
 					minWidth: 150,
@@ -98,7 +73,7 @@ import TableHead from "../components/table-head.astro";
 					field: "genre",
 					minWidth: 150,
 					mutator: jsonpathLookup,
-					mutatorParams: { path: "$..genre", reverse: true },
+					mutatorParams: { path: "$..value", reverse: true },
 					headerFilter: "list",
 					headerFilterParams: { valuesLookup: true, clearable: true },
 					widthGrow: 1,
@@ -106,11 +81,11 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Überlieferung: HSS",
-					field: "related__ms_items",
+					field: "ms_transmission",
 					minWidth: 150,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
-						path: "$..manuscript..shelfmark..value",
+						path: "$..manuscript..value",
 						separator: "\n ",
 					},
 					headerFilter: "input",
@@ -123,46 +98,26 @@ import TableHead from "../components/table-head.astro";
 					field: "origPlaces",
 					minWidth: 150,
 					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*]" },
+					mutatorParams: { path: "$[*]", separator: ", " },
 					headerFilter: "input",
 					responsive: 2,
 				},
 				{
 					title: "Datum der Überlieferung",
-					field: "origHands",
+					field: "origDate",
 					minWidth: 150,
-					mutator: jsonpathsDistinctRanges,
-					mutatorParams: {
-						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
-						separator: ", ",
-					},
 					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-					headerFilterFuncParams: {
-						paths: [
-							"$[*].hands_dated[*].dated[*].yearRange.start",
-							"$[*].hands_dated[*].dated[*].yearRange.end",
-						],
-					},
 					formatter: "textarea",
 					responsive: 2,
 				},
-				{
-					title: "HSS Dekoration",
-					field: "decoWork",
-					minWidth: 100,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*]", separator: " | " },
-					headerFilter: "input",
-					responsive: 2,
-				},
+
 				{
 					title: "Quelle",
 					field: "source_text",
 					minWidth: 150,
 					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {
-						paths: ["$[*].author[*].value", "$[*].title"],
+						paths: ["$[*].author", "$[*].title"],
 						separator: ": ",
 					},
 					headerFilter: "list",

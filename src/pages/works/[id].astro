@@ -210,7 +210,7 @@ const { data: work } = Astro.props;
 
 									</td>
 									)}
-									<td class="p-2 border border-gray-300">{item.orig_place.map(p => p.place.map(pl => pl.value))}</td>
+									<td class="p-2 border border-gray-300">{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}</td>
 									<td class="p-2 border border-gray-300">
 										{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 									</td>
