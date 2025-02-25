@@ -5,49 +5,32 @@ import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 
 import msitems from "@/content/data/ms_items.json";
-import handsJson from "@/content/data/hands.json";
 
 export async function getStaticPaths() { 
-  const hands = Object.values(handsJson);
   const msItemsList = Object.values(msitems);
  
   const paths = msItemsList.map((item) => {
     const msItemId = item.hit_id;
-
-    // Find matching hands based on the msItemId
-    const matchingHands = hands.filter(hand => {
-      return hand.hands_role.some(handRole =>
-        handRole.ms_item.some((item: any) => item.hit_id === msItemId)
-      )
-    })
+   
     return {
       params: { id: msItemId }, 
-      props: { data: item, hands: matchingHands }
+      props: { data: item }
     }
   });
 
   return paths;
 }
        
-const { data: item, hands: matchingHands } = Astro.props;
+const { data: item } = Astro.props;
 
 ---
 
-<PageLayout title={`${item.manuscript[0]?.shelfmark[0].value}, ${item.locus_grp}`}>
-  <style>
-    /* To make the table rows striped */
-    tbody tr:nth-child(even) {
-      background-color: #fcf1e8;
-    }
-    tbody tr:nth-child(odd) {
-      background-color: #fff8f7;
-    }
-   
-  </style>
+<PageLayout title={item.view_label}>
+  
   <Article
           prevLink={`/msitems/${item.prev.id}`}
           nextLink={`/msitems/${item.next.id}`}
-          mainTitle={`${item.manuscript[0]?.shelfmark[0].value}, ${item?.locus_grp}`}
+          mainTitle={item.view_label}
         > 
       <div
         class="border-2 rounded-sm border-brandBrown bg-brandRose
@@ -60,12 +43,12 @@ const { data: item, hands: matchingHands } = Astro.props;
           <dl class="grid grid-cols-[1fr_6fr] p-5">
             <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>  
             <dd class="pl-5">
-              <NavLink href={`/manuscripts/${item.manuscript[0]?.hit_id}`} >
-                {item.manuscript[0]?.shelfmark[0].value}
+              <NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`} >
+                {item.manuscript[0]?.value}
               </NavLink>
             </dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Locus:</dt>  
-            <dd class="pl-5">{item.locus_grp}</dd>
+            <dd class="pl-5">{item.locus}</dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
               <dd class="pl-5">
                 {item.title_work?.map((title: any) => 
@@ -77,8 +60,8 @@ const { data: item, hands: matchingHands } = Astro.props;
              {item.title_work?.some((title: any) => title.author.length > 0) &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
                 <dd class="pl-5">{item.title_work?.map((title:any) => title.author.map((aut: any) => 
-                  
-                  <NavLink href={aut.gnd_url} 
+                  aut.gnd_url !== '' ?
+                  <NavLink href={aut.gnd_url} target="_blank"
                       >{aut.name}
                       <Icon
                                 class="inline-flex align-middle"
@@ -86,6 +69,8 @@ const { data: item, hands: matchingHands } = Astro.props;
                                 name="lucide:external-link"
                               />
                   </NavLink>
+                  :
+                  <span>{aut.name}</span>
                   ))}</dd>
               }
               {item.title_note &&
@@ -134,41 +119,64 @@ const { data: item, hands: matchingHands } = Astro.props;
                   </dd>}
               { item.decoration.length > 0 &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-                <dd class="pl-5">{item?.decoration.map(deco => deco.value).join(', ')}</dd>
+                <dd class="pl-5">{item?.decoration}</dd>
               }
             <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
               <dd class="pl-5">
-                {item.hands_role.map(role => role.hand.length > 0) && 
-                item.hands_role
-                .filter(hand_role => hand_role.role.some(ro => ro.value == 'Schreiber'))
-                .map(filteredRole => {
+                {item.hands.map(hand => hand.jobs.length > 0) && 
+                item.hands
+                // filter hands with jobs.role 'Schreiber'
+                .filter(hand => hand.jobs.some(h_job => h_job.role.includes('Schreiber')))
+                .map(filteredHand => {
                   return <ul>
                           <li>
                             <NavLink 
-                              href={`/hands/hit_hands__${filteredRole.hand[0]?.id}`}>{filteredRole.hand[0].value}
+                              href={`/hands/${filteredHand.hit_id}`}>{filteredHand.label}
                             </NavLink>
-                            <span>
+                            {filteredHand.dating?.length > 0
+  ?                           
+                            <span>Datierung: 
                               <Icon
                                 class="inline-flex align-middle"
                                 aria-hidden="true"
                                 name="lucide:arrow-right"
-                              />
-                             {/* need to get the dating for the han from hands.json */}
-                              {matchingHands
-                                  .filter(hand => hand.hands_role
-                                      .some(role => role.hit_id === filteredRole.hit_id))
-                                  .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}
+                              />                             
+                             {filteredHand.dating.map(d => d.date?.map(date => date.value).join(', ')).join('; ')
+  }
+                            
+                            </span> 
+                            : ''}
+                           {filteredHand.jobs.some(j => j.role_context.length > 0)
+                             ? <span>(Typ: 
+                              {filteredHand.jobs.flatMap(job => job.role_context).join(', ')})
                             </span>
+                            : ''
+                            }
                           </li>
                   </ul>
           
                 })}
               </dd>
+              {item.role &&              
+              <dt class="font-semibold border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
+              <dd class="pl-5">
+                {item.role} ({item.function}) 
+                <Icon
+                class="inline-flex align-middle"
+                aria-hidden="true"
+                name="lucide:arrow-right"
+              />      
+                {item.commentedMsItem
+                .map(i => 
+                  <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}
+              </dd>
+              }
+             
             </dl>
         </section>
 
-        {item.hands_role
-              .some((hand_role: any) => hand_role.role.some((ro: any) => ro.value != 'Schreiber')) &&
+        {item.hands.some(hand => hand.jobs.some(job => !job.role.includes('Schreiber'))) &&
+              
           <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
              <h2 id="msitemRework" class="text-xl font-semibold text-brandRed mb-5">Bearbeitungsschritte</h2>
             <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table p-5">
@@ -180,34 +188,32 @@ const { data: item, hands: matchingHands } = Astro.props;
                   <th class="text-start p-2 font-semibold border border-gray-300">Datierung</th> 
                   <th class="text-start p-2 font-semibold border border-gray-300">Umfang</th> 
                   <th class="text-start p-2 font-semibold border border-gray-300">Mise-en-page</th> 
-                  <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th> 
+                  <th class="text-start p-2 font-semibold border border-gray-300">Typ</th>
+                  <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th>
                 </tr>
               </thead>
               <tbody>
-                {item.hands_role
-                  .filter(hand_role => hand_role.role.some(ro => ro.value != 'Schreiber'))
-                  .map(filteredRole => {
-                    return  <tr>
-                                <td class="p-2 border border-gray-300">{filteredRole.role.map(rol => rol.value).join(', ')}</td>
+                {item.hands
+                  .filter(hand => hand.jobs.some(j => !j.role.includes('Schreiber')))
+                  .map(filteredHand => (
+                      <tr>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.role?.join(', ')).join(', ')}</td>
                                 <td class="p-2 border border-gray-300">
-                                  <NavLink class="hover:text-brandRed" href={`/hands/hit_hands__${filteredRole.hand[0]?.id}`}>
-                                  {filteredRole.hand[0]?.value}</NavLink>
+                                  <NavLink href={`/hands/${filteredHand.hit_id}`}>
+                                  {filteredHand.label}</NavLink>
                                 </td>
-                                <td class="p-2 border border-gray-300">{matchingHands
-                                      .filter(hand => hand.hands_role
-                                          .some(role => role.hit_id === filteredRole.hit_id))
-                                      .map(hand => hand.scribe.map(scr => scr.name))}
-                                </td>
-                                <td class="p-2 border border-gray-300">{matchingHands
-                                      .filter(hand => hand.hands_role
-                                          .some(role => role.hit_id === filteredRole.hit_id))
-                                      .map(hand => hand.hands_dated.map(dating => dating.dated.map(date => date.label)))}
-                                </td>
-                                <td class="p-2 border border-gray-300">{filteredRole.locus}</td>
-                                <td class="p-2 border border-gray-300">{filteredRole.locus_layout.map(layout => layout.value).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredRole.function.map(func => func.value).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">
+                                  {filteredHand.scribe.length > 0
+                                    ? filteredHand.scribe.map(scr => scr.value).join(', ')
+                                  : 'N/A'}
+                                  </td>
+                                <td class="p-2 border border-gray-300">{filteredHand.dating.flatMap(d => d.date.map(date => date.value))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j?.locus).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.locus_layout?.join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.role_context?.join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.join(', '))}</td>
                             </tr>
-                          })
+                          ))
                         }         
 
               </tbody>

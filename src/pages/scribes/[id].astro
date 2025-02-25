@@ -1,10 +1,10 @@
 ---
-import PageLayout from "../../layouts/page-layout.astro";
-import Button from "../../components/button.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import Button from "@/components/button.astro";
 import { Icon } from "astro-icon/components";
-import Article from "../../components/article.astro";
-import NavLink from "../../components/nav-link.astro";
-import scribesJson from "../../content/data/scribes.json";
+import Article from "@/components/article.astro";
+import NavLink from "@/components/nav-link.astro";
+import scribesJson from "@/content/data/scribes.json";
 
 export async function getStaticPaths() {
 	const scribes = Object.values(scribesJson);
@@ -22,15 +22,7 @@ const { data: scribe } = Astro.props;
 ---
 
 <PageLayout title={scribe.name}>
-	<style>
-		/* To make the table rows striped */
-		tbody tr:nth-child(even) {
-			background-color: #fcf1e8;
-		}
-		tbody tr:nth-child(odd) {
-			background-color: #fff8f7;
-		}
-	</style>
+	
 	
     <Article
             prevLink={`/scribes/${scribe.prev.id}`}
@@ -54,31 +46,41 @@ const { data: scribe } = Astro.props;
 					<dt class="font-semibold border-r border-gray-300 pr-2">Datierung der Hände:</dt>
 					<dd class="pl-5">
                         <ul>
-                            {scribe.hands.map(hand => hand.hands_dated.map(dating => {
+                            {scribe.date.map((dating, index) => {
                                 return (
                                     <li>
-                                    {dating.dated.map(date => date.label)} 
-                                    ({dating.authority.map(aut => (
-                                        <>
-                                            {aut.name}: <span class="italic">{aut.short_title}</span>
-                                        </>
-                                    ))})  
+                                    {dating.dated.map(date => date.value)} 
+                                    {dating.authority.length > 0
+                                                     ? ` (${dating.authority.map((aut) => 
+                                                            aut.citation && aut.citation.trim() !== '' 
+                                                            ? aut.citation 
+                                                            : 'N/A').join(', ')})`
+                                                     : ''
+                                                }
+                                               {index < scribe.date.length - 1 && ' | '}  
                                     </li>
                                 );
-                            }))}
+                            })}
                         </ul>
                     </dd>
 					<dt class="font-semibold border-r border-gray-300 pr-2">Lokalisierung:</dt>
 					<dd class="pl-5">
                         <ul>
-                            {scribe.hands.map(hand => hand.hands_placed.map(placement => {
-                                return (
-                                    <li>
-                                        {placement.place.map(place => place.name)}
-                                        ({placement.authority.map(aut => `${aut.name}: ${aut.short_title}`)})
-                                    </li>
-                                )
-                            }))}
+                            {scribe.places.map((placement, index) => {
+                                 return (
+                                            <>
+                                            {placement.place.map(location => location.value).join(', ')}                                             
+                                            {placement.authority.length > 0
+                                                     ? ` (${placement.authority.map((aut) => 
+                                                            aut.citation && aut.citation.trim() !== '' 
+                                                            ? aut.citation 
+                                                            : 'N/A').join(', ')})`
+                                                     : ''
+                                                }
+                                               {index < scribe.places.length - 1 && ' | '}
+                                                </>
+                                        );
+                                        })}
                         </ul>
                     </dd>
 				</dl>
@@ -91,7 +93,7 @@ const { data: scribe } = Astro.props;
                             <h3 class="text-xl font-semibold py-3 text-brandRed p-5">
                                 <NavLink href={`/hands/${hand.hit_id}`}
                                 class="hover:text-brandRed underline decoration-dotted underline-offset-4">
-                                    Schreiberhand {hand.label[0].value}
+                                    Schreiberhand {hand.label}
                                     </NavLink>
                             </h3>
                             <div>
@@ -99,10 +101,7 @@ const { data: scribe } = Astro.props;
                                 <dl class="grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
                                     <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
                                     <dd class="pl-5">
-                                    <NavLink
-                                        href={`/manuscripts/${hand.hands_role[0]?.ms_item[0]?.manuscript[0]?.hit_id}`}
-                                        class="hover:text-brandRed underline decoration-dotted underline-offset-4"
-                                    >
+                                    <NavLink href={`/manuscripts/hit_manuscript__${hand.hand_roles[0]?.content[0]?.manuscript[0]?.id}`}>
                                         {hand.manuscript[0]?.value}
                                     </NavLink>
                                     </dd>
@@ -112,11 +111,10 @@ const { data: scribe } = Astro.props;
                                     {hand.similar_hands?.length > 0 &&
                                         <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
                                         <dd class="pl-5">
-                                            {hand.similar_hands.map((hand, index) => (
+                                            {hand.similar_hands.map((h, index) => (
                                                 <span>
-                                                    <NavLink href={`/hands/hit_hands__${hand.id}`} 
-                                                    class="hover:text-brandRed underline decoration-dotted underline-offset-4">
-                                                    {hand.value}
+                                                    <NavLink href={`/hands/hit_hands__${h.id}`}>
+                                                    {h.value}
                                                     </NavLink>
                                                 
                                                     {index < hand.similar_hands?.length - 1 && ' | '}
@@ -127,15 +125,15 @@ const { data: scribe } = Astro.props;
                                     }
                                     <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
                                     <dd class="pl-5">
-                                        {hand.hands_dated.map(dating => {
+                                        {hand.date.map(dating => {
                                             return (
                                                 <>
-                                                {dating.dated.map(date => date.label)} 
-                                                ({dating.authority.map(aut => (
-                                                    <>
-                                                        {aut.name}: <span class="italic">{aut.short_title}</span>
-                                                    </>
-                                                ))})  
+                                                {dating.dated.map(date => date.value)} 
+                                                {dating.authority.length > 0
+                                                     ? dating.authority.map((aut) => aut.citation ?? 'N/A').join(', ')
+                                                     : ''
+                                                }
+                                               
                                                 </>
                                             );
                                         })}
@@ -143,16 +141,19 @@ const { data: scribe } = Astro.props;
 
                                     <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
                                     <dd class="pl-5">
-                                        {hand.hands_placed.map(placing => {
+                                        {hand.placed.map((placing, index) => {
                                         return (
                                             <>
-                                            {placing.place.map(location => location.name)} 
-                                            ({placing.authority.map(aut => (
-                                                <>
-                                                {aut.name}: <span class="italic"}>{aut.short_title}</span>
+                                            {placing.place.map(location => location.value).join(', ')}                                             
+                                            {placing.authority.length > 0
+                                                     ? ` (${placing.authority.map((aut) => 
+                                                            aut.citation && aut.citation.trim() !== '' 
+                                                            ? aut.citation 
+                                                            : 'N/A').join(', ')})`
+                                                     : ''
+                                                }
+                                               {index < hand.placed.length - 1 && ' | '}
                                                 </>
-                                            ))})
-                                            </>
                                         );
                                         })}
                                     </dd>
@@ -165,7 +166,7 @@ const { data: scribe } = Astro.props;
 
                                     <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
                                     <dd class="pl-5">
-                                        {Array.from(new Set(hand.hands_role.flatMap(handrole => handrole.role.map(rol => rol.value)))).join(', ')}
+                                        {(hand.roles).join(', ')}
                                     </dd>   
                                                 
                                 </dl>
@@ -178,32 +179,36 @@ const { data: scribe } = Astro.props;
                                             <th class="text-center p-2 font-semibold border border-gray-300">Locus</th>
                                             <th class="text-center p-2 font-semibold border border-gray-300">Werk</th>
                                             <th class="text-center p-2 font-semibold border border-gray-300">Rolle</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Umfang</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Mise-en-page</th>
+                                            <th class="text-center p-2 font-semibold border border-gray-300">Schreiber-Typ</th>
                                             <th class="text-center p-2 font-semibold border border-gray-300">Funktion</th>              
+                                            <th class="text-center p-2 font-semibold border border-gray-300">Mise-en-page</th>
+                                            <th class="text-center p-2 font-semibold border border-gray-300">Umfang</th>
                                         
                                         </tr>
                                     </thead>                                    
                                         
                                     <tbody>
-                                        {hand.hands_role.map(role => {
-                                                return role.ms_item.map(msItem => {
+                                        {hand.hand_roles.map(role => {
+                                                return role.content.map(msItem => {
                                                     return (
-                                                        <tr>
+                                                        <tr  class="odd:bg-brandIvory even:bg-brandRose">
                                                             
                                                             <td class="p-2 border border-gray-300">
-                                                                    <NavLink href={`/msitems/${msItem.hit_id}`}
-                                                                    class="hover:text-brandRed underline decoration-dotted underline-offset-4">
-                                                                        {msItem.locus_grp}
+                                                                    <NavLink href={`/msitems/${msItem.hit_id}`}>
+                                                                        {msItem.locus}
                                                                     </NavLink>
                                                                 </td>
-                                                                <td class="p-2 border border-gray-300">{msItem.title_work?.map(work => {                                                            
-                                                                    return  work.author[0]?.name ? `${work.author[0].name}: ${work.title}` : work.title                                                            
-                                                                    }).join(', ')}</td>
-                                                                <td class="p-2 border border-gray-300">{role.role.map(eachRole => eachRole.value).join(' und ')}</td>
-                                                               <td class="p-2 border border-gray-300">{role.locus}</td>
-                                                               <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope.value)}</td>
-                                                               <td class="p-2 border border-gray-300">{role.function.map(func => func.value)}</td>
+                                                                <td class="p-2 border border-gray-300">{msItem.title_work?.map(work => (
+                                                                    <NavLink href={`/msitems/${msItem.hit_id}`}>
+                                                                        {work.author ? `${work.author}: ${work.title}` : work.title                                                            
+                                                                    }
+                                                                    </NavLink>  ))}
+                                                                    </td>
+                                                                <td class="p-2 border border-gray-300">{(role.role).join(' und ')}</td>
+                                                                <td class="p-2 border border-gray-300">{role.scribe_type?.join(', ')}</td>
+                                                               <td class="p-2 border border-gray-300">{role.function?.join(', ')}</td>
+                                                               <td class="p-2 border border-gray-300">{role.locus_layout?.join(', ')}</td>
+                                                               <td class="p-2 border border-gray-300">{role.scope}</td>
                                                             
                                                         </tr>)
                                                 })

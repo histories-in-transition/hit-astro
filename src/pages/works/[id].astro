@@ -1,88 +1,26 @@
 ---
-// work page includes apart from basic info on the work (found in works.json) also info on the 
-// manuscript transmission of the work (found in ms_items.json) 
-// which are dated by the hands that worked on it (found in hands.json)
-// so we need to match all three json together to get the info we need
-
 import PageLayout from "@/layouts/page-layout.astro";
 import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
-import worksJson from "@/content/data/works.json";
-import msitemsJson from "@/content/data/ms_items.json";
-import handsJson from "@/content/data/hands.json";
-import type { MSItem, Hand, Work } from "@/lib/data";
-
-interface TransformedMSItem extends MSItem {
-  origHands: any;
-  editHands: any;
-  origPlaces: string;
-}
-
+import new_works from "@/content/data/works.json"
 
 export async function getStaticPaths() {
-	const workList = Object.values(worksJson);
-	const matchingHands = Object.values(handsJson);
-	const msItemsList: TransformedMSItem[] = Object.values(msitemsJson).map((msItem): TransformedMSItem => {
-		const matchingOrigHands = matchingHands.filter((hand) =>
-			hand.hands_role.some(
-				(handRole) =>
-					handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-					handRole.role.some((role) => role.value === "Schreiber"),
-			),
-		);
-		// get the scribe hands, extract only place again for using in column Schreiberort:
-		const matchingPlaces = matchingHands
-			.filter((hand) =>
-				hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-						handRole.role.some((role) => role.value === "Schreiber"),
-				),
-			)
-			.flatMap((hand) => hand.hands_placed.map((placement) => placement.place[0]?.name))
-			.filter(Boolean); // Remove null/undefined values
-
-		// Remove duplicates and join with ', '
-		const scribePlaces = [...new Set(matchingPlaces)].join(", ");
-
-		// finds all hands objects working on this msItem with role other than 'Schreiber'
-		const matchingEditHands = matchingHands.filter((hand) =>
-			hand.hands_role.some((handRole) =>
-				handRole.ms_item.some(
-					(item) =>
-						item.hit_id === msItem.hit_id &&
-						item.hands_role.some((h_role) => h_role.role.some((role) => role.value != "Schreiber")),
-				),
-			),
-		);
-		return {
-			...msItem,
-			origHands: matchingOrigHands,
-			editHands: matchingEditHands,
-			origPlaces: scribePlaces,
-		};
-	});
-
-	const paths = workList.map((work) => {
+	
+const works = Object.values(new_works);
+	const paths = works.map((work) => {
 		const workId = work.hit_id;
 
-		// Find matching msItems for the work
-		const matchingItems = msItemsList.filter((item) =>
-			item.title_work.some((title) => title.hit_id === workId),
-		);
-
-		// Return a params object for each path
 		return {
 			params: { id: workId },
-			props: { data: work, manItems: matchingItems }, // This belongs in getStaticProps
+			props: { data: work }, 
 		};
 	});
 
 	return paths;
 }
 
-const { data: work, manItems: matchingItems } = Astro.props;
+const { data: work } = Astro.props;
 ---
 
 <PageLayout title={work?.title}>
@@ -179,8 +117,8 @@ const { data: work, manItems: matchingItems } = Astro.props;
 											return (
 												<>
 													{item.main_genre.length > 0 &&
-														item.main_genre.map((item) => `${item.genre}: `)}
-													{item.genre}
+														item.main_genre.map((item) => `${item}: `)}
+													{item.value}
 													{index < work.genre.length - 1 && " | "}
 												</>
 											);
@@ -195,7 +133,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 												return (
 													<>
 														{item.author.length > 0 &&
-															item.author.map((aut) => `${aut.value}: `)}
+															`${item.author}: `}
 														{item.title}
 														{index < work.genre.length - 1 && " | "}
 													</>
@@ -207,7 +145,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 					</dl>
 			</section>
 
-			{matchingItems.length > 0 && (
+			{work.ms_transmission.length > 0 && (
 			<section class="m-5 overflow-x-auto" aria-labelledby="transmission">
 				<h2 id="transmission" class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
 				<table
@@ -217,7 +155,7 @@ const { data: work, manItems: matchingItems } = Astro.props;
 						<tr>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Handschrift</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Locus</th>
-							{matchingItems.some((item) => item.role !== null) && (
+							{work.ms_transmission.some((item) => item.role !== undefined) && (
 								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Role</th>)}
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Schreibort</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Datierung</th>
@@ -232,34 +170,33 @@ const { data: work, manItems: matchingItems } = Astro.props;
 
 					<tbody>
 						{
-							matchingItems.map((item) => (
+							work.ms_transmission.map((item) => (
 								<tr class="odd:bg-brandIvory even:bg-brandRose">
 									<td class="p-2 border border-gray-300">
-										<NavLink href={`/manuscripts/${item.manuscript[0].hit_id}`}>
-											{item.manuscript[0].shelfmark[0].value}
+										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
+											{item.manuscript[0].value}
 										</NavLink>
 									</td>
 									<td class="p-2 border border-gray-300">
 										<NavLink  href={`/msitems/${item.hit_id}`}>
-											{item.locus_grp}
+											{item.locus}
 										</NavLink>
 									</td>
-									{item.role !== null && (
+									{item?.role !== undefined && (
 										<td class="p-2 border border-gray-300">
-										{item.role?.value}
-										{item.function_role.length > 0 &&
+										{item.role}
+										{item.function.length > 0 &&
 											<>
-												({item.function_role.map((role) => role.value).join(", ")})
+												({item.function})
 											</>
 										}
 										{item.commented_msitem.length > 0 && (
 											<ul class="list-disc list-inside">
-												{Object.values(msitemsJson)
-												.filter(msitem => item.commented_msitem.some(role => role.value === msitem.view_label))
+												{item.commented_msitem
 												.map((msitem) => (
 													<li>
-														<NavLink href={`/works/${msitem.title_work[0].hit_id}`}>
-															{msitem.title_work[0].title}
+														<NavLink href={`/msitems/${msitem.hit_id}`}>
+															{msitem.title}
 														</NavLink>
 													</li>
 												))}
@@ -268,24 +205,18 @@ const { data: work, manItems: matchingItems } = Astro.props;
 
 									</td>
 									)}
-									<td class="p-2 border border-gray-300">{item.origPlaces}</td>
+									<td class="p-2 border border-gray-300">{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}</td>
 									<td class="p-2 border border-gray-300">
-										{[...new Set(item.origHands.map((hand) => hand.dating.map(h_dating => h_dating.value).join(" | ")))]}
+										{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 									</td>
 									<td class="p-2 border border-gray-300">
-										{[...new Set(item.editHands.map((hand) => hand.dating[0]?.value))].join(", ")}
+										{item.annotation_date.map(anDat => anDat.date.map(d => d.value)).join(' | ')}
 									</td>
 									<td class="p-2 border border-gray-300">
-										{[
-											...new Set(
-												item.hands_role.flatMap((h_role) =>
-													h_role.role.map((r) => r.value).filter((value) => value != "Schreiber"),
-												),
-											),
-										].join(", ")}
+										{item.annotation_typ}
 									</td>
 									<td class="p-2 border border-gray-300">
-										{item.decoration.map((deco) => deco?.value).join(", ")}
+										{item.decoration}
 									</td>
 								</tr>
 							))

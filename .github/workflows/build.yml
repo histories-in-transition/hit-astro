@@ -40,6 +40,9 @@ jobs:
       - name: fetch fresh data using script
         run: pnpm run get-data # using pnpm to run the js using shorthand as recorded in package.json
 
+      - name: data processing # preprocess the raw baserow dumps to be used in the website
+        run: pnpm run process-data
+
       - name: setup pages
         id: pages
         uses: actions/configure-pages@v5

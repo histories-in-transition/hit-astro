@@ -10,42 +10,18 @@ import TableHead from "../components/table-head.astro";
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
-		import data from "../content/data/manuscripts.json";
-		import msitems from "../content/data/ms_items.json";
+		import data from "@/content/data/manuscripts.json";
 		import {
 			jsonpathLookup,
-			jsonpathsLookup,
-			jsonpathDistinctLookup,
+			dateRangeFilter,
+			jsonpathsDateRanges,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
-		// preprocess tabledata
-		// merge two datasets manuscripts.json + msitems.json
-		const tabledata = Object.values(data).map((ms) => {
-			const matchingMsItems = Object.values(msitems).filter((item) =>
-				item.manuscript.some((man) => man.hit_id === ms.hit_id),
-			);
-			// Map decorations from matching items into a single array for decoItems
-			const decoItems = matchingMsItems.flatMap((item) => item.decoration || []);
-
-			// Map decorations from matching items into a single array for decoItems
-			const annotations = matchingMsItems.flatMap(
-				(item) =>
-					item.hands_role.filter((h_role) =>
-						h_role.role.some((role) => role.value != "Schreiber"),
-					) || [],
-			);
-
-			return {
-				...ms,
-				decoItems,
-				annotations,
-			};
-		});
 
 		var table = new Tabulator("#tabulator-table", {
 			headerFilterLiveFilterDelay: 600,
 			height: 900,
-			data: tabledata,
+			data: data,
 			layout: "fitColumns",
 			responsiveLayout: "collapse",
 			initialSort: [
@@ -63,14 +39,21 @@ import TableHead from "../components/table-head.astro";
 			columns: [
 				{
 					title: "Standort",
+					field: "library_place",
+					sorter: "string",
+					minWidth: 200,
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*].place[*].value",
+					},
+					headerFilter: "input",
+					responsive: 2,
+				},
+				{
+					title: "Bibliothek",
 					field: "library_full",
 					sorter: "string",
 					minWidth: 200,
-					mutator: jsonpathsLookup,
-					mutatorParams: {
-						paths: ["$[*].settlement[*].name", "$[*].library_full"],
-						separator: ": ",
-					},
 					headerFilter: "input",
 					responsive: 2,
 				},
@@ -78,7 +61,7 @@ import TableHead from "../components/table-head.astro";
 					title: "Signatur",
 					minWidth: 200,
 					sorter: "string",
-					field: "view_label",
+					field: "shelfmark",
 					formatter: "textarea",
 					headerFilter: "input",
 				},
@@ -87,45 +70,32 @@ import TableHead from "../components/table-head.astro";
 					field: "orig_place",
 					minWidth: 200,
 					mutator: jsonpathLookup,
-					mutatorParams: { path: "$[*].name" },
+					mutatorParams: { path: "$[*].value" },
 					headerFilter: "input",
 				},
 				{
 					title: "Entstehungsdatum",
-					field: "manuscripts_dated",
+					field: "orig_date",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathsDateRanges,
 					mutatorParams: {
-						path: "$[*].date[*].label",
-						separator: "; ",
+						paths: ["$[*].date[*]"],
+						separator: ", ",
 					},
 					headerFilter: "input",
-				},
-				{
-					title: "Dekoration",
-					field: "decoItems",
-					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*].value", separator: " | " },
-					headerFilter: "list",
-					headerFilterParams: { valuesLookup: true, clearable: true },
-					responsive: 2,
-				},
-				{
-					title: "Annotationen",
-					field: "annotations",
-					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*].role[*].value", separator: " | " },
-					headerFilter: "input",
-					responsive: 2,
+					headerFilterFunc: dateRangeFilter,
+					headerFilterFuncParams: {
+						paths: ["$[*].date[*].not_before", "$[*].date[*].not_after"],
+					},
 				},
 				{
 					title: "Case study",
 					field: "case_study",
 					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*].value", separator: " | " },
+					mutator: jsonpathLookup,
+					mutatorParams: {
+						path: "$[*]",
+					},
 					headerFilter: "list",
 					headerFilterParams: { valuesLookup: true, clearable: true },
 					responsive: 2,
@@ -157,14 +127,20 @@ import TableHead from "../components/table-head.astro";
 		});
 		table.on("dataLoaded", function (data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 			var el = document.getElementById("counter2");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 
 		table.on("dataFiltered", function (filters, data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 	</script>
 </PageLayout>

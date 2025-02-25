@@ -17,7 +17,7 @@ import TableHead from "../components/table-head.astro";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
 		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
-		import data from "../content/data/hands.json";
+		import data from "@/content/data/hands.json";
 		import {
 			jsonpathLookup,
 			jsonpathsDateRanges,
@@ -72,19 +72,18 @@ import TableHead from "../components/table-head.astro";
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].value",
+						path: "$[*]",
 					},
 					headerFilter: "input",
 					formatter: "textarea",
 				},
 				{
 					title: "Rolle",
-					field: "role",
+					field: "roles",
 					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
+					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].value[*].value",
-						separator: "\n",
+						path: "$[*]",
 					},
 					headerFilter: "list",
 					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
@@ -92,7 +91,7 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Datiert",
-					field: "hands_dated",
+					field: "date",
 					minWidth: 100,
 					mutator: jsonpathsDateRanges,
 					mutatorParams: {
@@ -102,30 +101,28 @@ import TableHead from "../components/table-head.astro";
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
 					headerFilterFuncParams: {
-						paths: [
-							"$[*].hands_dated[*].dated[*].not_before",
-							"$[*].hands_dated[*].dated[*].not_after",
-						],
+						paths: ["$[*].dated[*].not_before", "$[*].dated[*].not_after"],
 					},
 				},
 				{
 					title: "Lokalisiert",
-					field: "hands_placed",
+					field: "placed",
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].place[*].name",
+						path: "$[*].place[*].value",
 						separator: "; ",
 					},
 					headerFilter: "input",
 				},
+				,
 				{
 					title: "Schreiber",
 					field: "scribe",
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].name",
+						path: "$[*].value",
 					},
 					headerFilter: "input",
 					formatter: "textarea",
@@ -162,7 +159,7 @@ import TableHead from "../components/table-head.astro";
 		});
 
 		// event listeners set:
-		// href to the work detail view page
+		// href to the ms detail view page
 		table.on("rowClick", function (e, row) {
 			var data = row.getData();
 			var url = withBasePath(`/hands/${data["hit_id"]}`);
@@ -170,14 +167,20 @@ import TableHead from "../components/table-head.astro";
 		});
 		table.on("dataLoaded", function (data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 			var el = document.getElementById("counter2");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 
 		table.on("dataFiltered", function (filters, data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 	</script>
 </PageLayout>
