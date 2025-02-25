@@ -4,7 +4,7 @@ import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 
-import msitems from "@/content/data/neu_ms_items.json";
+import msitems from "@/content/data/ms_items.json";
 
 export async function getStaticPaths() { 
   const msItemsList = Object.values(msitems);
@@ -194,10 +194,10 @@ const { data: item } = Astro.props;
               </thead>
               <tbody>
                 {item.hands
-                  .filter(handh => handh.jobs.some(j => !j.role.includes('Schreiber')))
+                  .filter(hand => hand.jobs.some(j => !j.role.includes('Schreiber')))
                   .map(filteredHand => (
                       <tr>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(rol => rol.role).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.role?.join(', ')).join(', ')}</td>
                                 <td class="p-2 border border-gray-300">
                                   <NavLink href={`/hands/${filteredHand.hit_id}`}>
                                   {filteredHand.label}</NavLink>
@@ -207,11 +207,11 @@ const { data: item } = Astro.props;
                                     ? filteredHand.scribe.map(scr => scr.value).join(', ')
                                   : 'N/A'}
                                   </td>
-                                <td class="p-2 border border-gray-300">{filteredHand.dating}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus_layout).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role_context).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.function).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.dating.flatMap(d => d.date.map(date => date.value))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j?.locus).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.locus_layout?.join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.role_context?.join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.join(', '))}</td>
                             </tr>
                           ))
                         }         

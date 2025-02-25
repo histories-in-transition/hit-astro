@@ -1,14 +1,9 @@
 ---
-// work page includes apart from basic info on the work (found in works.json) also info on the 
-// manuscript transmission of the work (found in ms_items.json) 
-// which are dated by the hands that worked on it (found in hands.json)
-// so we need to match all three json together to get the info we need
-
 import PageLayout from "@/layouts/page-layout.astro";
 import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
-import new_works from "@/content/data/new_works.json"
+import new_works from "@/content/data/works.json"
 
 export async function getStaticPaths() {
 	
@@ -178,7 +173,7 @@ const { data: work } = Astro.props;
 							work.ms_transmission.map((item) => (
 								<tr class="odd:bg-brandIvory even:bg-brandRose">
 									<td class="p-2 border border-gray-300">
-										<NavLink href={`/manuscripts/hit_manuscripts__${item.manuscript[0].id}`}>
+										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
 											{item.manuscript[0].value}
 										</NavLink>
 									</td>

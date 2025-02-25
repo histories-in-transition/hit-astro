@@ -4,7 +4,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 
-import manuscripts from "@/content/data/new_manuscripts.json";
+import manuscripts from "@/content/data/manuscripts.json";
 
 export async function getStaticPaths() {
   const manuscriptsList = Object.values(manuscripts); 
@@ -306,26 +306,26 @@ const { data: manuscript } = Astro.props;
                 <dd class="pl-5"></dd>
 
                 {unit.content
-                  .sort((a, b) => {
-                    const extractLocusValues = (locus: string) => {
-                      const match = locus.match(/^(\d+)(r|v)/);
-                      if (!match) return [0, 'z'];  // Default values for invalid format
-                
-                      const startNumber = parseInt(match[1], 10);
-                      const startSuffix = match[2];
-                
-                      return [startNumber, startSuffix];
-                    };
-                
-                    const [startA, suffixA] = extractLocusValues(a.locus);
-                    const [startB, suffixB] = extractLocusValues(b.locus);
-                
-                    // Primary sorting by startNumber
-                    if (startA !== startB) return startA - startB;
-                
-                    // If start numbers are the same, prioritize "r" over "v"
-                    return suffixA === 'r' ? -1 : (suffixB === 'r' ? 1 : 0);
-                  })
+                   .sort((a, b) => {
+                const parseLocus = (locus) => {
+                  return locus.split('-').map(part => {
+                    const match = part.match(/^(\d+)([rv]?)$/);
+                    if (!match) return [Infinity, "z"]; // Default if parsing fails
+                    return [parseInt(match[1], 10), match[2] || ""]; // Extract number & letter
+                  });
+                };
+
+                // Extract start and end locus parts for both items
+                const [startA, endA = startA] = parseLocus(a.locus);
+                const [startB, endB = startB] = parseLocus(b.locus);
+
+                return (
+                  startA[0] - startB[0] ||  // Compare start numbers
+                  startA[1].localeCompare(startB[1]) || // "r" before "v"
+                  endA[0] - endB[0] || // Compare end numbers
+                  endA[1].localeCompare(endB[1]) // Compare end suffix
+                );
+              })
                   .map(filteredItem => (
                     
                       <dt class="border-r border-gray-300 pr-2 justify-self-end">

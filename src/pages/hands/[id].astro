@@ -1,9 +1,9 @@
 ---
-import PageLayout from "../../layouts/page-layout.astro";
-import Button from "../../components/button.astro";
-import Article from "../../components/article.astro";
-import NavLink from "../../components/nav-link.astro";
-import hands from "../../content/data/new_hands.json";
+import PageLayout from "@/layouts/page-layout.astro";
+import Button from "@/components/button.astro";
+import Article from "@/components/article.astro";
+import NavLink from "@/components/nav-link.astro";
+import hands from "@/content/data/hands.json";
 
 export async function getStaticPaths() {
 	const paths = Object.values(hands).map((item) => ({
@@ -39,94 +39,97 @@ const { data: item } = Astro.props;
         <h2 id="handInfo" class="text-xl font-semibold text-brandRed">Eingaben über die Hand:</h2>
         <dl class="grid grid-cols-[1fr_5fr] p-5">            
           <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
-            <dd class="pl-5">
-              <NavLink
-                href=`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`
-                class="hover:text-brandRed underline decoration-dotted underline-offset-4"
-              >
-                {item.manuscript[0]?.value}
-              </NavLink>
-            </dd>
-            {item.description ? 
+          <dd class="pl-5">
+            <NavLink
+              href=`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`>
+              {item.manuscript[0]?.value}
+            </NavLink>
+          </dd>
+          {item.description ? 
             (
               <>
               <dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
               <dd class="pl-5">{item?.description}</dd>
               </>
             )
-          : null }
-           
+          : null }         
 
-                    {item.similar_hands.length > 0 &&
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
-                        <dd class="pl-5">
-                            {item.similar_hands.map((hand, index) => (
-                                <span>
-                                    <NavLink href={`/hands/hit_hands__${hand.id}`} 
-                                    class="hover:text-brandRed underline decoration-dotted underline-offset-4">
-                                    {hand.value}
-                                    </NavLink>
-                                
-                                    {index < item.similar_hands.length - 1 && ' | '}
-                                </span>
-                                ))
-                            }
-                        </dd>
-                    }
-                    {item.date.length > 0 ?
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
-                        <dd class="pl-5">
-                            {item.date.map(dating => {
-                                return (
-                                    <>
-                                      {dating.dated.map(date => date.value)} 
-                                      ({dating.authority.map(aut => (
-                                          <NavLink href= {aut.link}>{aut.citation}</NavLink>
-                                      ))})  
-                                    </>
-                                );
-                            })}
-                        </dd> 
-                    : ''}
+        {item.similar_hands.length > 0 &&
+            <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
+            <dd class="pl-5">
+                {item.similar_hands.map((hand, index) => (
+                    <span>
+                        <NavLink href={`/hands/hit_hands__${hand.id}`} 
+                        class="hover:text-brandRed underline decoration-dotted underline-offset-4">
+                        {hand.value}
+                        </NavLink>
+                    
+                        {index < item.similar_hands.length - 1 && ' | '}
+                    </span>
+                    ))
+                }
+            </dd>
+        }
+          {item.date.length > 0 ?
+          <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
+              <dd class="pl-5">
+                  {item.date.map((dating, index) => {
+                      return (
+                          <>
+                            {dating.dated.map(date => date.value)} 
+                                    {dating.authority.length > 0
+                                                     ? ` (${dating.authority.map((aut) => 
+                                                            aut.citation && aut.citation.trim() !== '' 
+                                                            ? aut.citation 
+                                                            : 'N/A').join(', ')})`
+                                                     : ''
+                                                }
+                            {index < item.date.length - 1 && ' | '} 
+                          </>
+                      );
+                  })}
+              </dd> 
+          : ''}
                         
-                        {item.placed.length > 0 
-                        ? 
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
-                        <dd class="pl-5">
-                            {item.placed.map(placing =>                   
-                                placing.place.length > 0 
-                                  ? ( <>
-                                  {placing.place.map(location => location.value)} 
-                                  ({placing.authority.map(aut => (
-                                    <NavLink href= {aut.link}>{aut.citation}</NavLink>
-                                  ))})
-                                </>)
-                                : 'N/A')
-                                }                              ;
-                          </dd>
-                        : ''}
-                       
-                          
+          {item.placed.length > 0 
+          ? 
+          <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
+          <dd class="pl-5">
+              {item.placed.map((placement, index) =>                   
+                  placement.place.length > 0 
+                    ? ( <>
+                    {placement.place.map(location => location.value).join(', ')}                                             
+                    {placement.authority.length > 0
+                              ? ` (${placement.authority.map((aut) => 
+                                    aut.citation && aut.citation.trim() !== '' 
+                                    ? aut.citation 
+                                    : 'N/A').join(', ')})`
+                              : ''
+                        }
+                        {index < item.placed.length - 1 && ' | '}
+                  </>)
+                  : 'N/A')
+                  }                              
+            </dd>
+          : ''}
+          {item.nr_daniel &&
+              <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
+              <dd class="pl-5">{item.nr_daniel}</dd>                
+          }
 
-                    {item.nr_daniel &&
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
-                        <dd class="pl-5">{item.nr_daniel}</dd>                
-                    }
-
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
-                    <dd class="pl-5">
-                      {item.roles.join(', ')}  </dd>  
-                      {item.scribe.length > 0 
-                      ? 
-                      <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
-                      <dd class="pl-5">
-                        {item.scribe.map(scrib => <NavLink  
-                          href={`/scribes/hit_scribes__${scrib.id}`}>{scrib.value}</NavLink>)  
-                          
-                        }           
-                      </dd> 
-                    : ''} 
-                                   
+          <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
+          <dd class="pl-5">
+            {item.roles.join(', ')}  </dd>  
+            {item.scribe.length > 0 
+            ? 
+            <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
+            <dd class="pl-5">
+              {item.scribe.map(scrib => <NavLink  
+                href={`/scribes/hit_scribes__${scrib.id}`}>{scrib.value}</NavLink>)  
+                
+              }           
+            </dd> 
+          : ''}                                    
 			  </dl>
       </section>
 			
@@ -135,95 +138,69 @@ const { data: item } = Astro.props;
         <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
           <thead class="bg-brandRoseDark">
             <tr> 
-              <th class="text-start font-semibold border border-gray-300">                  
-                  <form role="search" data-search-form>
-                    <label class="flex flex-col items-start p-2">
-                      <div>Locus</div>
-                      <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                    </label>
-                  </form>
-                </th>
-              <th class="text-start font-semibold border border-gray-300">                  
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Werk</div>
-                    <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>   
-              <th class="text-start font-semibold border border-gray-300">              
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Rolle</div>
-                    <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>
-              <th class="text-start font-semibold border border-gray-300">              
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Schreiber-Typ</div>
-                    <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>         
-              <th class="text-start font-semibold border border-gray-300">             
-                <form role="search" data-search-form>
-                  <label class="flex flex-col items-start p-2">
-                    <div>Funktion</div>
-                    <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th> 
-              <th class="text-start font-semibold border border-gray-300">             
-                <form role="search" data-search-form >
-                  <label class="flex flex-col items-start p-2">
-                    <div>Umfang</div>
-                    <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                  </label>
-                </form>
-              </th>            
-              <th class="text-start font-semibold border border-gray-300">             
-                  <form role="search" data-search-form>
-                    <label class="flex flex-col items-start p-2">
-                      <div>Mise-en-page</div>
-                      <input type="search"  data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded font-normal">
-                    </label>
-                  </form>
-                </th> 
+              <th class="text-center p-2 font-semibold border border-gray-300">Locus</th>
+              <th class="text-center p-2 font-semibold border border-gray-300">Werk</th>
+              <th class="text-center p-2 font-semibold border border-gray-300">Rolle</th>
+              <th class="text-center p-2 font-semibold border border-gray-300">Schreiber-Typ</th>
+              <th class="text-center p-2 font-semibold border border-gray-300">Funktion</th>              
+              <th class="text-center p-2 font-semibold border border-gray-300">Umfang</th>
+              <th class="text-center p-2 font-semibold border border-gray-300">Mise-en-page</th>   
             </tr>
           </thead>
                 
-                
           <tbody>
-            {item.hand_roles.map(role => {
-                      return role.ms_item.map(msItem => {
-                        return <tr class="odd:bg-brandIvory even:bg-brandRose">
-                          <td class="p-2 border border-gray-300">
-                            <NavLink class="hover:text-brandRed underline decoration-dotted underline-offset-4" href={`/msitems/${msItem.hit_id}`}>
-                                      {msItem.locus}
-                                    </NavLink></td>
-                          <td class="p-2 border border-gray-300">{msItem.title_work?.map(work => {
-                                      
-                                      return  work.author ? `${work.author}: ${work.title}` : work.title
-                                    
-                                    }).join(', ')}</td>
-                          <td class="p-2 border border-gray-300">{role.role}</td>
-                          <td class="p-2 border border-gray-300">{role.scribe_type}</td>
-                          <td class="p-2 border border-gray-300">{role.function}</td>
-                          <td class="p-2 border border-gray-300">{role.locus}</td>
-                          <td class="p-2 border border-gray-300">{role.locus_layout}</td>
-                        </tr>
-                      })
-                    })}
-          
+            {item.hand_roles.map(role =>
+              role.content
+              // have no idea why this sort doesnt work
+              .sort((a, b) => {
+                const parseLocus = (locus) => {
+                  return locus.split('-').map(part => {
+                    const match = part.match(/^(\d+)([rv]?)$/);
+                    if (!match) return [Infinity, "z"]; // Default if parsing fails
+                    return [parseInt(match[1], 10), match[2] || ""]; // Extract number & letter
+                  });
+                };
 
+                // Extract start and end locus parts for both items
+                const [startA, endA = startA] = parseLocus(a.locus);
+                const [startB, endB = startB] = parseLocus(b.locus);
+
+                return (
+                  startA[0] - startB[0] ||  // Compare start numbers
+                  startA[1].localeCompare(startB[1]) || // "r" before "v"
+                  endA[0] - endB[0] || // Compare end numbers
+                  endA[1].localeCompare(endB[1]) // Compare end suffix
+                );
+              })
+                .map(msItem => (
+                  <tr class="odd:bg-brandIvory even:bg-brandRose">
+                    <td class="p-2 border border-gray-300">
+                      <NavLink href={`/msitems/${msItem.hit_id}`}>{msItem.locus}</NavLink>
+                    </td>
+                    <td class="p-2 border border-gray-300">
+                      {msItem.title_work?.map(work => (
+                        <NavLink href={`/msitems/${msItem.hit_id}`}>
+                          {work.author ? `${work.author}: ${work.title}` : work.title}
+                        </NavLink>
+                      ))}
+                    </td>
+                    <td class="p-2 border border-gray-300">{role.role?.join(', ')}</td>
+                    <td class="p-2 border border-gray-300">{role.scribe_type?.join(', ')}</td>
+                    <td class="p-2 border border-gray-300">{role.function?.join(', ')}</td>
+                    <td class="p-2 border border-gray-300">{role.scope}</td>
+                    <td class="p-2 border border-gray-300">{role.locus_layout?.join(', ')}</td>
+                  </tr>
+                ))
+            )}
+            
           </tbody>
+          
+          
+          
              
         </table>
       
       </section>
     </div>
 		</Article>
-  <script src="../../lib/table-search.js"></script>
 </PageLayout>

@@ -260,7 +260,7 @@ const msItemsPlus = msitems.map((item) => {
 const updatedMsItems = addPrevNextToMsItems(msItemsPlus);
 
 // Save the merged msitems in json
-writeFileSync(join(folderPath, "neu_ms_items.json"), JSON.stringify(updatedMsItems, null, 2), {
+writeFileSync(join(folderPath, "ms_items.json"), JSON.stringify(updatedMsItems, null, 2), {
 	encoding: "utf-8",
 });
 
@@ -491,13 +491,9 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus, "hit_id", "shelfmark");
 
 // Save the merged json
-writeFileSync(
-	join(folderPath, "new_manuscripts.json"),
-	JSON.stringify(updatedManuscripts, null, 2),
-	{
-		encoding: "utf-8",
-	},
-);
+writeFileSync(join(folderPath, "manuscripts.json"), JSON.stringify(updatedManuscripts, null, 2), {
+	encoding: "utf-8",
+});
 
 // Merge data for hands
 const handsPlus = hands
@@ -512,7 +508,7 @@ const handsPlus = hands
 					authority: enrichBibl(dathand.authority, bibliography),
 					page: dathand.page ?? "",
 					dated: enrichDates(dathand.dated, dates),
-					new_dating: dathand.new_dating,
+					dating: dathand.new_dating,
 					note: dathand.note ?? "",
 				};
 			});
@@ -547,8 +543,8 @@ const handsPlus = hands
 					});
 				return {
 					hit_id: hand_r.hit_id,
-					ms_item: msitem,
-					locus: hand_r.locus ?? "",
+					content: msitem,
+					scope: hand_r.locus ?? "",
 					role: hand_r.role.map((r) => r.value),
 					function: hand_r.function.map((f) => f.value),
 					scribe_type: hand_r.scribe_type.map((sc) => sc.value),
@@ -578,7 +574,7 @@ const handsPlus = hands
 
 const updatedHands = addPrevNextToMsItems(handsPlus);
 
-writeFileSync(join(folderPath, "new_hands.json"), JSON.stringify(updatedHands, null, 2), {
+writeFileSync(join(folderPath, "hands.json"), JSON.stringify(updatedHands, null, 2), {
 	encoding: "utf-8",
 });
 
@@ -660,7 +656,7 @@ const worksPlus = works.map((work) => {
 
 const updatedWorks = addPrevNextToMsItems(worksPlus, "hit_id", "title");
 
-writeFileSync(join(folderPath, "new_works.json"), JSON.stringify(updatedWorks, null, 2), {
+writeFileSync(join(folderPath, "works.json"), JSON.stringify(updatedWorks, null, 2), {
 	encoding: "utf-8",
 });
 
@@ -672,7 +668,7 @@ const scribesPlus = scribes.map((scribe) => {
 		id: scribe.id,
 		hit_id: scribe.hit_id,
 		name: scribe.name ?? "N/A",
-		description: scribes.description ?? "",
+		description: scribe.description ?? "N/A",
 		group: scribe.group,
 		hands: scribalHands,
 		date: date,
@@ -682,7 +678,8 @@ const scribesPlus = scribes.map((scribe) => {
 
 const updatedScribes = addPrevNextToMsItems(scribesPlus, "hit_id", "name");
 
-writeFileSync(join(folderPath, "new_scribes.json"), JSON.stringify(updatedScribes, null, 2), {
+writeFileSync(join(folderPath, "scribes.json"), JSON.stringify(updatedScribes, null, 2), {
 	encoding: "utf-8",
 });
+
 console.log("JSON files have been merged and cleaned successfully!");

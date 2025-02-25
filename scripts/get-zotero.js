@@ -5,7 +5,7 @@ async function fetchZoteroEntries() {
 	const groupID = "5525026";
 	const baseUrl = `https://api.zotero.org/groups/${groupID}/items?format=json&limit=50`;
 	// Set the output folder
-	const folderPath = join(process.cwd(), "src", "content", "data");
+	const folderPath = join(process.cwd(), "src", "content", "raw");
 	mkdirSync(folderPath, { recursive: true });
 
 	let allItems = [];

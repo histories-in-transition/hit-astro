@@ -11,14 +11,14 @@ import TableHead from "../components/table-head.astro";
 	<script>
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		import data from "../content/data/ms_items.json";
-		import hands_Json from "../content/data/hands.json";
+		import data from "@/content/data/ms_items.json";
+		import hands_Json from "@/content/data/hands.json";
 
 		// Preprocessing data from json
 		//  replacing the hands_dated property with a new, processed version
 		const handsJson = Object.values(hands_Json).map((hand) => ({
 			...hand,
-			hands_dated: hand.hands_dated.map((date) => ({
+			hands_dated: hand.date.map((date) => ({
 				...date,
 				dated: date.dated.map((i) => ({
 					...i,
@@ -32,36 +32,19 @@ import TableHead from "../components/table-head.astro";
 
 		// Combine the two datasets
 		const tabledata = Object.values(data).map((msItem) => {
-			const matchingOrigHands = handsJson.filter((hand) =>
-				hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-						handRole.role.some((role) => role.value === "Schreiber"),
-				),
+			// FlatMap only once over the correct level
+			const editings = msItem.hands.flatMap((h) =>
+				h.jobs?.some((j) => !j.role.includes("Schreiber"))
+					? h.dating // Only include if the condition is met
+					: [],
 			);
-			// get the scribe hands again for using in column Schreiberort:
-			const matchingPlaces = handsJson.filter((hand) =>
-				hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-						handRole.role.some((role) => role.value === "Schreiber"),
-				),
-			);
-			const matchingEditHands = Object.values(handsJson).filter((hand) =>
-				hand.hands_role.some(
-					(handRole) =>
-						handRole.ms_item.some((item) => item.hit_id === msItem.hit_id) &&
-						handRole.role.some((role) => role.value != "Schreiber"),
-				),
-			);
+
 			return {
 				...msItem,
-				origHands: matchingOrigHands,
-				editHands: matchingEditHands,
-				origPlaces: matchingPlaces,
+				editings: editings,
 			};
 		});
-		console.log(tabledata.map((item) => item.editHands));
+
 		import {
 			jsonpathLookup,
 			jsonpathsLookup,
@@ -92,14 +75,14 @@ import TableHead from "../components/table-head.astro";
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: {
-						path: "$[*].shelfmark[*].value",
+						path: "$[*].value",
 						separator: "; ",
 					},
 					headerFilter: "input",
 				},
 				{
 					title: "Locus",
-					field: "locus_grp",
+					field: "locus",
 					minWidth: 80,
 					headerFilter: "input",
 				},
@@ -119,25 +102,25 @@ import TableHead from "../components/table-head.astro";
 					field: "decoration",
 					minWidth: 100,
 					mutator: jsonpathLookup,
-					mutatorParams: { path: "$[*].value" },
+					mutatorParams: { path: "$[*]" },
 					headerFilter: "input",
 					responsive: 2,
 				},
 				{
 					title: "Schreiberort",
-					field: "origPlaces",
+					field: "orig_place",
 					minWidth: 200,
 					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*].hands_placed[*].place[*].name" },
+					mutatorParams: { path: "$[*].place[*].value" },
 					headerFilter: "input",
 				},
 				{
 					title: "Datum der Niederschrift",
-					field: "origHands",
+					field: "orig_date",
 					minWidth: 200,
-					mutator: jsonpathsDistinctRanges,
+					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
-						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+						path: "$[*].date[*].range",
 						separator: ", ",
 					},
 					headerFilter: "input",
@@ -152,11 +135,11 @@ import TableHead from "../components/table-head.astro";
 
 				{
 					title: "Datum der Bearbeitung",
-					field: "editHands",
+					field: "editings",
 					minWidth: 200,
-					mutator: jsonpathsDistinctRanges,
+					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
-						paths: ["$[*].hands_dated[*].dated[*].yearRange"],
+						path: "$[*].date[*].range",
 						separator: ", ",
 					},
 					headerFilter: "input",
@@ -187,23 +170,28 @@ import TableHead from "../components/table-head.astro";
 		});
 
 		// event listeners set:
-		// href to the work detail view page
+		// href to the ms detail view page
 		table.on("rowClick", function (e, row) {
 			var data = row.getData();
 			var url = withBasePath(`/msitems/${data["hit_id"]}`);
 			window.open(url, "_self");
 		});
-		// trigger counter of hits
 		table.on("dataLoaded", function (data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 			var el = document.getElementById("counter2");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 
 		table.on("dataFiltered", function (filters, data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 	</script>
 </PageLayout>

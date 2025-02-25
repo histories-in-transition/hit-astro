@@ -12,7 +12,7 @@ import TableHead from "../components/table-head.astro";
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 
-		import data from "../content/data/new_scribes.json";
+		import data from "@/content/data/scribes.json";
 		import {
 			jsonpathLookup,
 			jsonpathsDateRanges,
@@ -116,14 +116,20 @@ import TableHead from "../components/table-head.astro";
 		});
 		table.on("dataLoaded", function (data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 			var el = document.getElementById("counter2");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 
 		table.on("dataFiltered", function (filters, data) {
 			var el = document.getElementById("counter1");
-			el.innerHTML = `${data.length}`;
+			if (el) {
+				el.innerHTML = `${data.length}`;
+			}
 		});
 	</script>
 </PageLayout>
