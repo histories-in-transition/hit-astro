@@ -7,7 +7,6 @@ import NavLink from "@/components/nav-link.astro";
 import manuscripts from "@/content/data/manuscripts.json";
 
 export async function getStaticPaths() {
-  const manuscriptsList = Object.values(manuscripts); 
 
   const paths = manuscriptsList.map((manuscript) => {
     const manuscriptId = manuscript.hit_id;     
