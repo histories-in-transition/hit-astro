@@ -7,7 +7,7 @@
 		"format:check": "prettier . --cache --check",
 		"format:fix": "pnpm run format:check --write",
 		"get-data": "tsx ./scripts/data-fetch.ts",
-		"process-data": "node .scripts/preprocess-data.js",
+		"process-data": "node ./scripts/preprocess-data.js",
 		"build": "astro build",
 		"start": "astro preview",
 		"astro": "astro"
