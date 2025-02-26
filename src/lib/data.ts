@@ -1,476 +1,365 @@
-export interface Stratum {
-    id:                 number;
-    label:              LabelElement[];
-    character:          Material[];
-    manuscript:         LabelElement[];
-    number:             string;
-    hit_id:             string;
-    hand_role:          HandRole[];
-    note:               string;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    strata_filiation:   LabelElement[];
-    view_label:         string;
-    prev:               Next;
-    next:               Next;
+export interface Scribe {
+	id: number;
+	hit_id: string;
+	name: string;
+	description: string;
+	group: boolean;
+	hands: Hand[];
+	date: ScribeDate[];
+	places: OrigPlaceElement[];
+	prev: Next;
+	next: Next;
 }
 
-export interface LastModifiedBy {
-    id:   number;
-    name: LastModifiedByName;
-}
-
-export type LastModifiedByName = string;
-
-export interface Material {
-    id:    number;
-    value: string;
-    color: string;
-}
-
-export interface HandRole {
-    id:                   number;
-    hit_id:               string;
-    hand:                 LabelElement[];
-    ms_item:              MSItem[];
-    role:                 Material[];
-    locus:                string;
-    text:                 Text[];
-    locus_text:           LabelElement[];
-    "Last modified by":   LastModifiedBy;
-    "Last modified":      Date;
-    locus_layout:         any[];
-    function:             any[];
-    bezug_msitem:         any[];
-    role_to_bezug_msitem: any[];
-}
-
-export interface LabelElement {
-    id:    number;
-    value: string;
-}
-
-export interface MSItem {
-    id:                 number;
-    label:              LabelElement[];
-    incipit:            string;
-    explicit:           string;
-    rubric:             string;
-    title_work:         Work[];
-    title_note:         string;
-    bibl:               any[];
-    final_rubric:       string;
-    siglum:             string;
-    hit_id:             string;
-    filiation:          any[];
-    locus_grp:          string;
-    hands_role:         MSItemHandsRole[];
-    cod_unit:           CodUnitElement[];
-    "Last modified":    Date;
-    "Last modified by": LastModifiedBy;
-    note:               null;
-    hand:               labelElement2[];
-    decoration:         Material[];
-    facs_url:           string;
-    form:               any[];
-    form_note:          null;
-    column:             any[];
-    manuscript:        Manuscript[];
-    view_label:        string;
-    prev:              Next;
-    next:              Next;
-}
-
-export interface CodUnitElement {
-    id:                      number;
-    label:                   labelElement2[];
-    notes:                   string;
-    hit_id:                  string;
-    locus:                   string;
-    manuscript:              LabelElement[];
-    quire:                   Quire[];
-    number:                  string;
-    prov_place_old:          LabelElement[];
-    "Last modified by":      LastModifiedBy;
-    "Last modified":         Date;
-    orig_date:               LabelElement[];
-    quires_number:           null | string;
-    heigth:                  null | string;
-    lines_number:            null | string;
-    decorations:             string;
-    codicological_reworking: any[];
-    basic_structure:         any[];
-    written_width:           null | string;
-    written_height:          null | string;
-    width:                   null | string;
-    columns:                 Material[];
-    cod_unit_placed:         CodUnitPlaced[];
-    prov_place:              labelElement2[];
-}
-
-export interface CodUnitPlaced {
-    id:           number;
-    hit_id:       string;
-    cod_unit:     LabelElement[];
-    place:        OrigPlace[];
-    from:         LabelElement[];
-    type:         Material[];
-    till:         LabelElement[];
-    ms:           LabelElement[];
-    authority:    LabelElement[];
-    page:         string | null;
-    certain_from: boolean;
-    ceratin_till: boolean;
-}
-
-
-export interface OrigPlace {
-    id:                 number;
-    name:               string;
-    geonames_url:       string;
-    hit_id:             string;
-    wikidata_url:       string;
-    country:            OrigPlace[];
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-}
-
-export interface labelElement2 {
-    ids:   any;
-    value: string;
-}
-
-
-export interface Quire {
-    id:                 number;
-    label:              labelElement2[];
-    hit_id:             string;
-    number:             string;
-    locus:              string;
-    library:            labelElement2[];
-    locus_from:         string;
-    locus_to:           string;
-    manuscript:         LabelElement[];
-    quiremark:          null | string;
-    written_height:     null | string;
-    written_width:      null | string;
-    written:            string;
-    hair_flesh:         Material[];
-    ruling:             string;
-    column:             Material[];
-    note:               string;
-    decoration:         string;
-    quire_structure:    string;
-    correct_number:     null;
-    height:             null | string;
-    width:              null | string;
-    catchwords:         boolean;
-    stratum:            LabelElement[];
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    cod_units:          LabelElement[];
-    besonderheiten:     any[];
-}
-
-
-export interface MSItemHandsRole {
-    id:                   number;
-    hit_id:               string;
-    hand:                 LabelElement[];
-    ms_item:              LabelElement[];
-    role:                 Material[];
-    locus:                string;
-    text:                 labelElement2[];
-    locus_text:           LabelElement[];
-    "Last modified by":   LastModifiedBy;
-    "Last modified":      Date;
-    locus_layout:         Material[];
-    function:             Material[];
-    bezug_msitem:         any[];
-    role_to_bezug_msitem: Material[];
-}
- 
-
-export interface LibraryFullElement {
-    id:                 number;
-    label:              string;
-    hit_id:             string;
-    gnd_url:            string;
-    library_full:       string;
-    library_website:    string;
-    settlement:         Settlement[];
-    wikidata:           string;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-}
-
-export interface Settlement {
-    id:                 number;
-    name:               string;
-    geonames_url:       string;
-    hit_id:             string;
-    wikidata_url:       string;
-    country:            LabelElement[];
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-}
-
-export interface ManuscriptsDated {
-    id:                 number;
-    hit_id:             ManuscriptsDatedHitID;
-    manuscript:         LabelElement[];
-    date:               DateElement[];
-    authority:          Authority[];
-    page:               string;
-    preferred_date:     boolean;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    note:               null | string;
+export interface ScribeDate {
+	hit_id: string;
+	authority: Authority[];
+	page: string;
+	dated: DatedElement[];
+	dating: boolean;
+	note: string;
 }
 
 export interface Authority {
-    id:          number;
-    name:        string;
-    short_title: string;
-    zotero_id:   string;
-    hit_id:      string;
+	citation: string;
+	link: string;
+	author: string;
+	title: string;
 }
 
-export interface DateElement {
-    id:                 number;
-    label:              string;
-    not_before:         Date | null;
-    hit_id:             string;
-    not_after:          Date | null;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-}
-
-export type ManuscriptsDatedHitID = string;
-
-export interface Next {
-    id:    string;
-    label: string;
-}
-
-export interface Work {
-    id:                 number;
-    title:              string;
-    gnd_url:            string;
-    note:               string;
-    hit_id:             string;
-    author:             Author[];
-    bibliography:       any[];
-    source_text:        any[];
-    genre:              Genre[];
-    note_source:        null | string;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    view_label:        string;
-    prev:              Next;
-    next:              Next;
-    related__ms_items?: MSItem[];
-}
-
-export interface Author {
-    id:                 number;
-    name:               string;
-    gnd_url:            string;
-    hit_id:             string;
-    role:               Material[];
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    works:              LabelElement[];
-    work:               LabelElement[];
-}
-
-export interface Genre {
-    id:                 number;
-    genre:              string;
-    hit_id:             string;
-    main_genre:         Genre[];
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-}
-
-export interface Scribe {
-    id:                 number;
-    name:               string;
-    hit_id:             string;
-    description:        string;
-    group:              boolean;
-    hands:              any[];
-    hand:               labelElement2[];
-    "Last modified":    Date;
-    "Last modified by": LastModifiedBy;
-    view_label:         string;
-    prev:               Next;
-    next:               Next;
-}
-
-export interface PurpleHand {
-    id:                 number;
-    label:              labelElement2[];
-    description:        string;
-    hit_id:             string;
-    similar_hands:      any[];
-    nr_daniel:          string;
-    manuscript:         LabelElement[];
-    number:             string;
-    note:               string;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    hands_role:         HandHandsRole[];
-    role:               Role[];
-    texts:              Text[];
-    hands_dated:        HandsDated[];
-    dating:             labelElement2[];
-    hands_placed:       any[];
-    scribe:             ScribeElement[];
-    gruppe:             boolean;
-}
-
-export interface HandsDated {
-    id:                 number;
-    hit_id:             string;
-    authority:          any[];
-    page:               string;
-    dated:              DateElement[];
-    hand:               LabelElement[];
-    new_dating:         boolean;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    note:               string;
-}
-
-export interface HandHandsRole {
-    id:                   number;
-    hit_id:               string;
-    hand:                 LabelElement[];
-    ms_item:              MSItem[];
-    role:                 Material[];
-    locus:                string;
-    text:                 Text[];
-    locus_text:           LabelElement[];
-    "Last modified by":   LastModifiedBy;
-    "Last modified":      Date;
-    locus_layout:         any[];
-    function:             Material[];
-    bezug_msitem:         any[];
-    role_to_bezug_msitem: any[];
-}
-
-export interface Manuscript {
-    id:                      number;
-    shelfmark:               LabelElement[];
-    hit_id:                  string;
-    library:                 LabelElement[];
-    manuscripta_url:         string;
-    handschriftenportal_url: string;
-    catalog_url:             string;
-    digi_url:                string;
-    idno:                    string;
-    idno_former:             string;
-    quire_structure:         string;
-    library_full:            LibraryFullElement[];
-    extent:                  string;
-    foliation:               string;
-    acc_mat:                 string | null;
-    binding:                 string;
-    binding_date:            LabelElement[];
-    history:                 string;
-    bibliography:            any[];
-    height:                  string;
-    width:                   string;
-    material_spec:           string;
-    orig_place:              OrigPlace[];
-    catchwords:              string;
-    quiremarks:              string;
-    material:                Material;
-    provenance:              LibraryFullElement[];
-    manuscripts_dated:       ManuscriptsDated[];
-    orig_dated:              labelElement2[];
-    "Last modified by":      LastModifiedBy;
-    "Last modified":         Date;
-    content_summary:         null | string;
-    charakter:               Material[];
-    case_study:              Material[];
-    status:                  Material[];
-    view_label:             string;
-    prev:                   Next;
-    next:                   Next;
-    related__cod_units:     CodUnit[];
-}
-
-export interface CodUnit {
-    id:                      number;
-    label:                   labelElement2[];
-    notes:                   string;
-    hit_id:                  string;
-    locus:                   string;
-    manuscript:              LabelElement[];
-    quire?:                   Quire[];
-    number:                  string;
-    prov_place_old:          LabelElement[];
-    "Last modified by":      LastModifiedBy;
-    "Last modified":         Date;
-    orig_date:               LabelElement[];
-    quires_number:           null | string;
-    heigth:                  null | string;
-    lines_number:            null | string;
-    decorations:             string;
-    codicological_reworking: any[];
-    basic_structure:         any[];
-    written_width:           null | string;
-    written_height:          null | string;
-    width:                   null | string;
-    columns:                 Material[];
-    cod_unit_placed:         CodUnitPlaced[];
-    prov_place:              labelElement2[];
-    view_label?:             string;
-    prev?:                   Next;
-    next?:                   Next;
-    related__ms_items?:      any[];
-}
-
-export interface Role {
-    id:    number;
-    value: Material[];
-}
-
-export interface ScribeElement {
-    id:                 number;
-    name:               string;
-    hit_id:             string;
-    description:        string;
-    group:              boolean;
-    hands:              LabelElement[];
-    hand:               labelElement2[];
-    "Last modified":    Date;
-    "Last modified by": LastModifiedBy;
+export interface DatedElement {
+	id: number;
+	value: string;
+	range: string;
+	not_before: string;
+	not_after: string;
 }
 
 export interface Hand {
-    id:                 number;
-    label:              labelElement2[];
-    description:        string;
-    hit_id:             string;
-    similar_hands:      LabelElement[];
-    nr_daniel:          string;
-    manuscript:         LabelElement[];
-    number:             string;
-    note:               string;
-    "Last modified by": LastModifiedBy;
-    "Last modified":    Date;
-    hands_role:         HandHandsRole[];
-    role:               Role[];
-    texts:              Text[];
-    hands_dated:        HandsDated[];
-    dating:             labelElement2[];
-    hands_placed:       any[];
-    scribe:             any[];
-    gruppe:             boolean;
-    view_label:         string;
-    prev:               Next;
-    next:               Next;
+	id: number;
+	hit_id: string;
+	label: string;
+	view_label: string;
+	description: string;
+	similar_hands: ManuscriptElement[];
+	nr_daniel: string;
+	manuscript: ManuscriptElement[];
+	note: string;
+	roles: string[];
+	scribe: ManuscriptElement[];
+	group: boolean;
+	date: ScribeDate[];
+	hand_roles: HandHandRole[];
+	placed: OrigPlaceElement[];
+	texts: string[];
+	prev: Next;
+	next: Next;
+}
+
+export interface HandHandRole {
+	hit_id: string;
+	content: Content[];
+	scope: string;
+	role: string[];
+	function: string[];
+	scribe_type: string[];
+	locus_layout: string[];
+}
+
+export interface Content {
+	manuscript: ManuscriptElement[];
+	hit_id: string;
+	title_work: TitleWorkElement[];
+	locus: string;
+}
+
+export interface ManuscriptElement {
+	id: number;
+	value: string;
+}
+
+export interface TitleWorkElement {
+	hit_id: string;
+	title: string;
+	author: string;
+}
+
+export interface Next {
+	id: string;
+	label: string;
+}
+
+export interface OrigPlaceElement {
+	id?: number;
+	hit_id: string;
+	authority: string[];
+	page: string;
+	date?: DatedElement[];
+	place?: CommentedMSItem[];
+}
+
+export interface CommentedMSItem {
+	id: number;
+	value: string;
+	title?: string;
+	hit_id: string;
+	geonames_url?: string;
+}
+
+export interface Manuscript {
+	id: number;
+	hit_id: string;
+	shelfmark: string;
+	library: Library;
+	library_full: LibraryFull;
+	library_place: LibraryPlace[];
+	manuscripta_url: string;
+	handschriftenportal_url: string;
+	catalog_url: string;
+	digi_url: string;
+	idno_former: string;
+	quire_structure: string;
+	extent: string;
+	foliation: string;
+	acc_mat: string;
+	binding: string;
+	binding_date: ManuscriptElement[];
+	bibliography: any[];
+	height: string;
+	width: string;
+	material?: string;
+	material_spec: string;
+	catchwords: string;
+	quiremarks: string;
+	history: string;
+	orig_place: CommentedMSItem[];
+	provenance: CommentedMSItem[];
+	orig_date: ManuscriptOrigDate[];
+	content_summary: string;
+	charakter: string[];
+	case_study: string[];
+	status: string[];
+	cod_units: PurpleCodUnit[];
+	strata: Stratum[];
+	prev: Next;
+	next: Next;
+}
+
+export interface PurpleCodUnit {
+	id: number;
+	hit_id: string;
+	value: string;
+	number: string;
+	notes: string;
+	locus: string;
+	quires_number: string;
+	heigth: string;
+	width: string;
+	written_height: string;
+	written_width: string;
+	columns: string[];
+	lines_number: string;
+	decoration: string;
+	codicological_reworking: any[];
+	basic_structure: any[];
+	prov_place: ProvPlace[];
+	content: MSItem[];
+}
+
+export interface MSItem {
+	id: number;
+	hit_id: string;
+	view_label?: string;
+	label?: string;
+	manuscript?: ManuscriptElement[];
+	cod_unit?: ManuscriptElement[];
+	locus: string;
+	incipit: string;
+	explicit: string;
+	rubric: string;
+	final_rubric: string;
+	title_work: TitleWork[];
+	title_note: string;
+	siglum: string;
+	bibl: any[];
+	function: string[];
+	commentedMsItem: CommentedMSItem[];
+	hands?: MSItemHand[];
+	decoration: string[];
+	note: string;
+	orig_date: OrigPlaceElement[];
+	orig_place: OrigPlaceElement[];
+	prev: Next;
+	next: Next;
+	role?: string;
+}
+
+export interface MSItemHand {
+	id: number;
+	label: string;
+	hit_id: string;
+	description: string;
+	similar_hands: ManuscriptElement[];
+	nr_daniel: string;
+	note: string;
+	scribe: ManuscriptElement[];
+	group: boolean;
+	dating: OrigPlaceElement[];
+	place: OrigPlaceElement[];
+	jobs: Job[];
+}
+
+export interface Job {
+	id: number;
+	hit_id: string;
+	role: string[];
+	locus: null | string;
+	locus_layout: string[];
+	function: Function[];
+	role_context: string[];
+}
+
+export interface TitleWork {
+	id: number;
+	hit_id: string;
+	title: string;
+	author: AuthorElement[];
+	gnd_url: string;
+	note: string;
+	bibliography: any[];
+	source_text: TitleWorkSourceText[];
+	genre: string[];
+	note_source: NoteSource;
+}
+
+export interface AuthorElement {
+	id: number;
+	hit_id: string;
+	name: string;
+	gnd_url: string;
+}
+
+export type NoteSource =
+	| ""
+	| "II, 1"
+	| "Autorschaft umstritten"
+	| "recencio brevior"
+	| "II, 14"
+	| "Lib. 2"
+	| "I, 48"
+	| "Kapitel 19";
+
+export interface TitleWorkSourceText {
+	id: number;
+	value: Value;
+	order: string;
+}
+
+export type Value =
+	| "Miracula sancti Martini"
+	| "Decem libri historiarum"
+	| "Historiae duae de sancta cruce";
+
+export interface ProvPlace {
+	place: CommentedMSItem[];
+	from: DatedElement[];
+	till: DatedElement[];
+	uncertain_from: boolean;
+	uncertain_till: boolean;
+	type: Type;
+}
+
+export type Type = "orig" | "prov";
+
+export type Library = "ÖNB" | "UBWÜ" | "BSB" | "Saint-Omer" | "Bruxelles KBR";
+
+export type LibraryFull =
+	| "Österreichische Nationalbibliothek"
+	| "Universitätsbibliothek Würzburg"
+	| "Bayerische Staatsbibliothek"
+	| "Saint-Omer, Bibliothèque d'agglomération de Saint-Omer"
+	| "Bibliothèque royale de Belgique";
+
+export interface LibraryPlace {
+	id: number;
+	hit_id: string;
+	place: CommentedMSItem[];
+}
+
+export interface ManuscriptOrigDate {
+	date: DatedElement[];
+	authority: Authority[];
+	page: string;
+	preferred_date: boolean;
+}
+
+export interface Stratum {
+	id: IDEnum | number;
+	number: string;
+	hit_id?: string;
+	label: string;
+	character: string[];
+	hand_roles: StratumHandRole[];
+	note: string;
+}
+
+export interface StratumHandRole {
+	hit_id: string;
+	hand: HandRoleHand[];
+	ms_item: MSItemElement[];
+	role: string[];
+	locus: null | string;
+	scribe_type: string[];
+	function: Function[];
+	locus_layout: string[];
+}
+
+export interface HandRoleHand {
+	hit_id: string;
+	label: string;
+	date: DatedElement[];
+}
+
+export interface MSItemElement {
+	id: number;
+	hit_id: string;
+	title: string[];
+	author: string[];
+	locus: string;
+}
+
+export type IDEnum = "TBD";
+
+export interface Work {
+	hit_id: string;
+	title: string;
+	gnd_url: string;
+	note: string;
+	author: AuthorElement[];
+	bibliography: any[];
+	source_text: TitleWorkElement[];
+	note_source: NoteSource;
+	genre: Genre[];
+	ms_transmission: MSTransmission[];
+	prev: Next;
+	next: Next;
+}
+
+export interface Genre {
+	value: string;
+	main_genre: string[];
+}
+
+export interface MSTransmission {
+	hit_id: string;
+	manuscript: ManuscriptElement[];
+	function: Function[];
+	commented_msitem: CommentedMSItem[];
+	locus: string;
+	orig_date: OrigPlaceElement[];
+	orig_place: OrigPlaceElement[];
+	decoration: string[];
+	annotation_date: OrigPlaceElement[];
+	annotation_typ: string[];
+	role?: string;
 }

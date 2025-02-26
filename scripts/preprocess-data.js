@@ -81,9 +81,12 @@ const msItemsPlus = msitems.map((item) => {
 		.filter((work) => work !== null); // Remove null works
 
 	// Add related hands
+	const handLabelsSet = new Set(item.hand.map((h) => h.value));
 	const relatedHand = hands
-		// Filter for matching hands
-		.filter((hand) => item.hand.some((h) => h.value === hand.label[0]?.value))
+		.filter(
+			(hand) => hand.label.length > 0 && item.hand.some((h) => h.value === hand.label[0]?.value),
+		)
+		.filter((hand) => handLabelsSet.has(hand.label[0]?.value))
 		.map((hand) => {
 			// use map to prune unnecessary fields from each hand object
 			const prunedHand = {
