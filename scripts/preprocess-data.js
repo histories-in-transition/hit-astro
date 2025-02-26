@@ -1,106 +1,38 @@
 import { writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
-import { addPrevNextToMsItems } from "./utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichDates, enrichBibl } from "./utils.js";
 
-import bibljson from "../src/content/raw/bibliography.json" assert { type: "json" };
-import cod_unitsjson from "../src/content/raw/cod_units.json" assert { type: "json" };
-import cod_unitsprovjson from "../src/content/raw/cod_unit_placed.json" assert { type: "json" };
-import datesjson from "../src/content/raw/dates.json" assert { type: "json" };
-import genrejson from "../src/content/raw/genres.json" assert { type: "json" };
-import handsjson from "../src/content/raw/hands.json" assert { type: "json" };
-import handsdatedjson from "../src/content/raw/hands_dated.json" assert { type: "json" };
-import handsrolejson from "../src/content/raw/hands_role.json" assert { type: "json" };
-import handsplacedjson from "../src/content/raw/hands_placed.json" assert { type: "json" };
-import librariesjson from "../src/content/raw/libraries_organisations.json" assert { type: "json" };
-import manuscriptsjson from "../src/content/raw/manuscripts.json" assert { type: "json" };
-import manuscripts_Datedjson from "../src/content/raw/manuscripts_dated.json" assert { type: "json" };
-import msitemsjson from "../src/content/raw/ms_items.json" assert { type: "json" };
-import peoplejson from "../src/content/raw/people.json" assert { type: "json" };
-import placesjson from "../src/content/raw/places.json" assert { type: "json" };
-import stratajson from "../src/content/raw/strata.json" assert { type: "json" };
-import scribesjson from "../src/content/raw/scribes.json" assert { type: "json" };
-import worksjson from "../src/content/raw/works.json" assert { type: "json" };
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-// convert json to array:
-const bibliography = Object.values(bibljson);
-const cod_units = Object.values(cod_unitsjson);
-const cod_unitsprov = Object.values(cod_unitsprovjson);
-const dates = Object.values(datesjson);
-const genres = Object.values(genrejson);
-const hands = Object.values(handsjson);
-const handsdated = Object.values(handsdatedjson);
-const handsplaced = Object.values(handsplacedjson);
-const handsrole = Object.values(handsrolejson);
-const libraries = Object.values(librariesjson);
-const manuscripts = Object.values(manuscriptsjson);
-const manuscripts_dated = Object.values(manuscripts_Datedjson);
-const msitems = Object.values(msitemsjson);
-const people = Object.values(peoplejson);
-const places = Object.values(placesjson);
-const scribes = Object.values(scribesjson);
-const strataa = Object.values(stratajson);
-const works = Object.values(worksjson);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const loadJSON = (file) =>
+	JSON.parse(readFileSync(join(__dirname, "../src/content/raw", file), "utf8"));
+
+const bibliography = Object.values(loadJSON("bibliography.json"));
+const cod_units = Object.values(loadJSON("cod_units.json"));
+const cod_unitsprov = Object.values(loadJSON("cod_unit_placed.json"));
+const dates = Object.values(loadJSON("dates.json"));
+const genres = Object.values(loadJSON("genres.json"));
+const hands = Object.values(loadJSON("hands.json"));
+const handsdated = Object.values(loadJSON("hands_dated.json"));
+const handsplaced = Object.values(loadJSON("hands_placed.json"));
+const handsrole = Object.values(loadJSON("hands_role.json"));
+const libraries = Object.values(loadJSON("libraries_organisations.json"));
+const manuscripts = Object.values(loadJSON("manuscripts.json"));
+const manuscripts_dated = Object.values(loadJSON("manuscripts_dated.json"));
+const msitems = Object.values(loadJSON("ms_items.json"));
+const people = Object.values(loadJSON("people.json"));
+const places = Object.values(loadJSON("places.json"));
+const scribes = Object.values(loadJSON("scribes.json"));
+const strataa = Object.values(loadJSON("strata.json"));
+const works = Object.values(loadJSON("works.json"));
 
 // set the output folder
 const folderPath = join(process.cwd(), "src", "content", "data");
 mkdirSync(folderPath, { recursive: true });
-
-// functions to enrich data
-
-function enrichPlaces(placeArray, places) {
-	return placeArray.map((place) => {
-		// Find matching place in places.json
-		const place_geo = places.find((p) => p.id === place.id) || {};
-		return {
-			id: place.id,
-			value: place.value,
-			geonames_url: place_geo.geonames_url ?? "",
-			hit_id: place_geo.hit_id ?? "",
-		};
-	});
-}
-
-function enrichDates(dateArray, dates) {
-	return dateArray.map((date) => {
-		// Find matching date in dates.json
-		const dateRange = dates.find((d) => d.id === date.id);
-
-		if (!dateRange) {
-			// Return default structure if no match is found
-			return {
-				id: date.id,
-				value: date.value,
-				range: "",
-				not_before: "",
-				not_after: "",
-			};
-		}
-
-		const not_before = dateRange.not_before?.substring(0, 4) ?? "";
-		const not_after = dateRange.not_after?.substring(0, 4) ?? "";
-
-		return {
-			id: date.id,
-			value: date.value,
-			range: `${not_before}-${not_after}`,
-			not_before,
-			not_after,
-		};
-	});
-}
-
-function enrichBibl(biblArray, bibliography) {
-	return biblArray.map((bibl) => {
-		// find matching bibl entreis in bibl_entries.json
-		const bibl_entries = bibliography.find((bibl_entry) => bibl_entry.id === bibl.id);
-		return {
-			citation: bibl_entries.citation ?? "",
-			link: bibl_entries.link ?? "",
-			author: bibl_entries.author ?? "",
-			title: bibl_entries.title ?? "",
-		};
-	});
-}
 
 // merge data for msItems
 
