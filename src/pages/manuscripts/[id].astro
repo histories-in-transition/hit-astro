@@ -8,7 +8,7 @@ import manuscripts from "@/content/data/manuscripts.json";
 
 export async function getStaticPaths() {
 
-  const paths = manuscriptsList.map((manuscript) => {
+  const paths = manuscripts.map((manuscript) => {
     const manuscriptId = manuscript.hit_id;     
 
     return {
