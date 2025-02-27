@@ -1,9 +1,7 @@
-import { writeFileSync, mkdirSync } from "fs";
-import { addPrevNextToMsItems, enrichPlaces, enrichDates, enrichBibl } from "./utils.js";
-
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { addPrevNextToMsItems, enrichPlaces, enrichDates, enrichBibl } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

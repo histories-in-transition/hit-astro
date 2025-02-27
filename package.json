@@ -34,7 +34,8 @@
 		"tailwindcss": "^3.4.5",
 		"tsx": "^4.19.2",
 		"typescript": "^5.5.3",
-		"typesense-instantsearch-adapter": "^2.8.0"
+		"typesense-instantsearch-adapter": "^2.8.0",
+		"xml-js": "^1.6.11"
 	},
 	"devDependencies": {
 		"@acdh-oeaw/prettier-config": "^2.0.0",
