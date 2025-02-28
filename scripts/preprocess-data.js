@@ -34,171 +34,180 @@ mkdirSync(folderPath, { recursive: true });
 
 // merge data for msItems
 
-const msItemsPlus = msitems.map((item) => {
-	// get library and library place for each msitem
-	const library = manuscripts
-		.filter((ms) => ms.id === item.manuscript[0]?.id)
-		.flatMap((ms) => ms.library_full);
-	const library_place = libraries
-		.filter((lib) => library.some((libr) => libr.id === lib.id))
-		.map((lib) => enrichPlaces(lib.settlement, places));
+const msItemsPlus = msitems
+	//filter out all entries without a manuscript, title OR title_note
+	.filter((item) => item.manuscript.length > 0 && (item.title_work.length > 0 || item.title_note))
+	.map((item) => {
+		// get library and library place for each msitem
+		const library = manuscripts
+			.filter((ms) => ms.id === item.manuscript[0]?.id)
+			.flatMap((ms) => ms.library_full);
+		const library_place = libraries
+			.filter((lib) => library.some((libr) => libr.id === lib.id))
+			.map((lib) => enrichPlaces(lib.settlement, places));
 
-	// Add info to related works
-	const relatedWorks = works
-		.map((work) => {
-			// Check if the msitem has any related works
-			if (item.title_work.some((title) => title.id === work.id)) {
-				// Find authors related to the work
-				const relatedAuthors = work.author
-					?.flatMap((wAuthor) => {
-						// Find the corresponding author from the people list
-						const author = people
-							.filter((person) => person.id === wAuthor.id)
-							// Return the author with only the necessary properties
-							.map((person) => {
-								return {
-									id: person.id,
-									hit_id: person.hit_id,
-									name: person.name,
-									gnd_url: person.gnd_url,
-								};
-							});
+		// Add info to related works
+		const relatedWorks = works
+			.map((work) => {
+				// Check if the msitem has any related works
+				if (item.title_work.some((title) => title.id === work.id)) {
+					// Find authors related to the work
+					const relatedAuthors = work.author
+						?.flatMap((wAuthor) => {
+							// Find the corresponding author from the people list
+							const author = people
+								.filter((person) => person.id === wAuthor.id)
+								// Return the author with only the necessary properties
+								.map((person) => {
+									return {
+										id: person.id,
+										hit_id: person.hit_id,
+										name: person.name,
+										gnd_url: person.gnd_url,
+									};
+								});
 
-						return author.length > 0 ? author : null; // returns valid authors or null
-					})
-					.filter((author) => author !== null); // remove null authors
+							return author.length > 0 ? author : null; // returns valid authors or null
+						})
+						.filter((author) => author !== null); // remove null authors
 
-				// Return the work with its related authors
-				return {
-					id: work.id,
-					hit_id: work.hit_id,
-					title: work.title,
-					author: relatedAuthors,
-					gnd_url: work.gnd_url,
-					note: work.note ?? "",
-					bibliography: work.bibliography,
-					source_text: work.source_text,
-					genre: work.genre.map((genre) => genre.value),
-					note_source: work.note_source ?? "",
+					// Return the work with its related authors
+					return {
+						id: work.id,
+						hit_id: work.hit_id,
+						title: work.title,
+						author: relatedAuthors,
+						gnd_url: work.gnd_url,
+						note: work.note ?? "",
+						bibliography: work.bibliography,
+						source_text: work.source_text,
+						genre: work.genre.map((genre) => genre.value),
+						note_source: work.note_source ?? "",
+					};
+				}
+				return null; // Return null if no related works are found
+			})
+			.filter((work) => work !== null); // Remove null works
+
+		// Add related hands
+		const handLabelsSet = new Set(item.hand.map((h) => h.value));
+		const relatedHand = hands
+			.filter(
+				(hand) => hand.label.length > 0 && item.hand.some((h) => h.value === hand.label[0]?.value),
+			)
+			.filter((hand) => handLabelsSet.has(hand.label[0]?.value))
+			.map((hand) => {
+				// use map to prune unnecessary fields from each hand object
+				const prunedHand = {
+					id: hand.id,
+					label: hand.label[0]?.value,
+					hit_id: hand.hit_id,
+					description: hand.description,
+					similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
+					nr_daniel: hand.nr_daniel ?? "",
+					note: hand.note ?? "",
+					// dating: Array.from(new Set(hand.dating.flatMap((dating) => dating.value))),
+					scribe: hand.scribe.map(({ order, ...rest }) => rest),
+					group: hand.gruppe,
 				};
-			}
-			return null; // Return null if no related works are found
-		})
-		.filter((work) => work !== null); // Remove null works
+				// Add realted dating of each hand from hands_dated.json
 
-	// Add related hands
-	const handLabelsSet = new Set(item.hand.map((h) => h.value));
-	const relatedHand = hands
-		.filter(
-			(hand) => hand.label.length > 0 && item.hand.some((h) => h.value === hand.label[0]?.value),
-		)
-		.filter((hand) => handLabelsSet.has(hand.label[0]?.value))
-		.map((hand) => {
-			// use map to prune unnecessary fields from each hand object
-			const prunedHand = {
-				id: hand.id,
-				label: hand.label[0]?.value,
-				hit_id: hand.hit_id,
-				description: hand.description,
-				similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
-				nr_daniel: hand.nr_daniel ?? "",
-				note: hand.note ?? "",
-				// dating: Array.from(new Set(hand.dating.flatMap((dating) => dating.value))),
-				scribe: hand.scribe.map(({ order, ...rest }) => rest),
-				group: hand.gruppe,
-			};
-			// Add realted dating of each hand from hands_dated.json
+				const hand_dated = handsdated
+					.filter((hDated) => hDated.hand.some((h) => h.id === hand.id))
+					// use map to remove unnecessary objects
+					.map((hDated) => {
+						return {
+							id: hDated.id,
+							hit_id: hDated.hit_id,
+							authority: enrichBibl(hDated.authority, bibliography),
+							page: hDated.page,
+							date: enrichDates(hDated.dated, dates),
+						};
+					});
+				// Add related placement of each hand from hands_placed.json
+				const hand_placed = handsplaced
+					.filter((hPlaced) => hPlaced.hand.some((h) => h.id === hand.id))
+					.map((hPlaced) => {
+						return {
+							id: hPlaced.id,
+							hit_id: hPlaced.hit_id,
+							place: enrichPlaces(hPlaced.place, places),
+							authority: enrichBibl(hPlaced.authority, bibliography),
+							page: hPlaced.page,
+						};
+					});
+				// Add related roles for each hand from hands_role.json
+				const hand_roles = handsrole
+					// filter for matching hands
+					.filter((hRole) => hRole.hand.some((h) => h.id === hand.id))
+					// filter for matching items
+					.filter((hRole) => hRole.ms_item.some((m_item) => m_item.id === item.id))
+					.map((hRole) => {
+						return {
+							id: hRole.id,
+							hit_id: hRole.hit_id,
+							role: hRole.role.map((role) => role.value),
+							locus: hRole.locus,
+							locus_layout: hRole.locus_layout.flatMap((layout) => layout.value),
+							function: hRole.function.flatMap((func) => func.value),
+							role_context: hRole.scribe_type.flatMap((context) => context.value),
+						};
+					});
+				return {
+					...prunedHand,
+					dating: hand_dated,
+					place: hand_placed,
+					jobs: hand_roles,
+				};
+			});
 
-			const hand_dated = handsdated
-				.filter((hDated) => hDated.hand.some((h) => h.id === hand.id))
-				// use map to remove unnecessary objects
-				.map((hDated) => {
-					return {
-						id: hDated.id,
-						hit_id: hDated.hit_id,
-						authority: enrichBibl(hDated.authority, bibliography),
-						page: hDated.page,
-						date: enrichDates(hDated.dated, dates),
-					};
-				});
-			// Add related placement of each hand from hands_placed.json
-			const hand_placed = handsplaced
-				.filter((hPlaced) => hPlaced.hand.some((h) => h.id === hand.id))
-				.map((hPlaced) => {
-					return {
-						id: hPlaced.id,
-						hit_id: hPlaced.hit_id,
-						place: enrichPlaces(hPlaced.place, places),
-						authority: enrichBibl(hPlaced.authority, bibliography),
-						page: hPlaced.page,
-					};
-				});
-			// Add related roles for each hand from hands_role.json
-			const hand_roles = handsrole
-				// filter for matching hands
-				.filter((hRole) => hRole.hand.some((h) => h.id === hand.id))
-				// filter for matching items
-				.filter((hRole) => hRole.ms_item.some((m_item) => m_item.id === item.id))
-				.map((hRole) => {
-					return {
-						id: hRole.id,
-						hit_id: hRole.hit_id,
-						role: hRole.role.map((role) => role.value),
-						locus: hRole.locus,
-						locus_layout: hRole.locus_layout.flatMap((layout) => layout.value),
-						function: hRole.function.flatMap((func) => func.value),
-						role_context: hRole.scribe_type.flatMap((context) => context.value),
-					};
-				});
-			return {
-				...prunedHand,
-				dating: hand_dated,
-				place: hand_placed,
-				jobs: hand_roles,
-			};
-		});
-	// Return the enriched msitem
-	return {
-		id: item.id,
-		hit_id: item.hit_id,
-		view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
-		label: item.label[0]?.value,
-		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
-		library: library,
-		library_place: library_place,
-		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
-		locus: item.locus_grp,
-		incipit: item.incipit,
-		explicit: item.explicit,
-		rubric: item.rubric,
-		final_rubric: item.final_rubric,
-		title_work: relatedWorks, // Enriched with related authors
-		title_note: item.title_note,
-		siglum: item.siglum,
-		bibl: item.bibl,
-		role: item.role?.value,
-		function: item.function_role.map((func) => func.value),
-		commentedMsItem: item.commented_msitem.map((cItem) => {
-			// Find the corresponding msitem for the commented item
-			const relatedMsItem = msitems.find((ms) => ms.id === cItem.id);
-			return {
-				id: cItem.id,
-				value: cItem.value,
-				title: relatedMsItem?.title_work[0].value, // Add title if found
-				hit_id: relatedMsItem?.hit_id, // Add hit_id if found
-			};
-		}),
-		hands: relatedHand, // enriched with dating, placement and hand roles
-		decoration: item.decoration.map((deco) => deco.value),
-		note: item.note ?? "",
-		orig_date: relatedHand
-			.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
-			.flatMap((hand) => hand.dating),
-		orig_place: relatedHand
-			.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
-			.flatMap((hand) => hand.place),
-	};
-});
+		// get provenance based on cod_unit_placed.json
+		const provenance = cod_unitsprov
+			.filter((unit_pr) => item.cod_unit.some((c) => c.id === unit_pr.cod_unit[0].id))
+			.flatMap((unit_pr) => enrichPlaces(unit_pr.place, places));
+		// Return the enriched msitem
+		return {
+			id: item.id,
+			hit_id: item.hit_id,
+			view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
+			label: item.label[0]?.value,
+			manuscript: item.manuscript.map(({ order, ...rest }) => rest),
+			library: library,
+			library_place: library_place,
+			cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
+			locus: item.locus_grp,
+			incipit: item.incipit,
+			explicit: item.explicit,
+			rubric: item.rubric,
+			final_rubric: item.final_rubric,
+			title_work: relatedWorks.length > 0 ? relatedWorks : [{ title: item.title_note }],
+			title_note: relatedWorks.length > 0 ? item.title_note : [],
+			siglum: item.siglum,
+			bibl: item.bibl,
+			role: item.role?.value,
+			function: item.function_role.map((func) => func.value),
+			commentedMsItem: item.commented_msitem.map((cItem) => {
+				// Find the corresponding msitem for the commented item
+				const relatedMsItem = msitems.find((ms) => ms.id === cItem.id);
+				return {
+					id: cItem.id,
+					value: cItem.value,
+					title: relatedMsItem?.title_work[0].value, // Add title if found
+					hit_id: relatedMsItem?.hit_id, // Add hit_id if found
+				};
+			}),
+			hands: relatedHand, // enriched with dating, placement and hand roles
+			decoration: item.decoration.map((deco) => deco.value),
+			note: item.note ?? "",
+			orig_date: relatedHand
+				.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
+				.flatMap((hand) => hand.dating),
+			orig_place: relatedHand
+				.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
+				.flatMap((hand) => hand.place),
+			provenance: provenance,
+		};
+	});
 
 const updatedMsItems = addPrevNextToMsItems(msItemsPlus);
 
