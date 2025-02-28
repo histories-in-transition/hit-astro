@@ -35,6 +35,14 @@ mkdirSync(folderPath, { recursive: true });
 // merge data for msItems
 
 const msItemsPlus = msitems.map((item) => {
+	// get library and library place for each msitem
+	const library = manuscripts
+		.filter((ms) => ms.id === item.manuscript[0]?.id)
+		.flatMap((ms) => ms.library_full);
+	const library_place = libraries
+		.filter((lib) => library.some((libr) => libr.id === lib.id))
+		.map((lib) => enrichPlaces(lib.settlement, places));
+
 	// Add info to related works
 	const relatedWorks = works
 		.map((work) => {
@@ -156,6 +164,8 @@ const msItemsPlus = msitems.map((item) => {
 		view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
 		label: item.label[0]?.value,
 		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
+		library: library,
+		library_place: library_place,
 		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
 		locus: item.locus_grp,
 		incipit: item.incipit,
