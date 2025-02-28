@@ -5,34 +5,49 @@ import "instantsearch.css/themes/satellite.css";
 
 <PageLayout title="Search">
 	<div class="grid mx-auto md:w-3/4 sm:w-4/5 py-4 gap-8">
-		<h1 class="text-2xl text-brandBrown">Erweiterte suche nach Manuskripteinträgen (MS-items):</h1>
-		<div>
-			<div data-search-panel>
-				<div data-search-results>
-					<div id="searchbox"></div>
-					<div id="stats-container"></div>
-					<div id="current-refinements"></div>
-					<div class="grid grid-cols-[1fr_3fr] gap-6 p-5">
-						<div>
-							<div class="p-5" id="clear-refinements"></div>
-							<div id="refinement-list-work"></div>
-							<div id="refinement-list-authors"></div>
-							<div id="refinement-list-manuscripts"></div>
-							<div id="refinement-list-library"></div>
-							<div id="refinement-list-hands-role"></div>
-							<div id="refinement-list-hands"></div>
-							<div id="refinement-list-decoration"></div>
-						</div>
-						<div>
-							<div class="grid gap-4">
-								<div id="pagination"></div>
-								<div id="hits"></div>
-							</div>
-						</div>
-					</div>
+		<h2 class="text-3xl font-bold text-brandBrown mb-6">
+			Erweiterte suche nach Manuskripteinträgen (MS-items):
+		</h2>
+
+		<div class="space-y-6">
+			<!-- Search Input and Stats -->
+			<div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+				<div id="searchbox" class="mb-4"></div>
+				<div class="flex items-center justify-between">
+					<div id="stats-container" class="text-sm text-gray-600"></div>
+					<div id="current-refinements" class="text-sm text-gray-600"></div>
+					<div id="clear-refinements"></div>
+				</div>
+			</div>
+			<div class="grid md:grid-cols-[1fr_3fr] gap-6">
+				<!-- Refinements Section -->
+				<aside class="bg-gray-50 p-4 rounded-lg shadow-sm space-y-6">
+					<div id="refinement-list-work"></div>
+					<div id="refinement-list-authors"></div>
+					<div id="refinement-list-manuscripts"></div>
+					<div id="refinement-list-library"></div>
+					<div id="refinement-list-library-place"></div>
+					<div id="refinement-list-orig-date"></div>
+					<div id="refinement-list-orig-place"></div>
+					<div id="refinement-list-provenance"></div>
+					<div id="refinement-list-hands-role"></div>
+					<div id="refinement-list-hands-function"></div>
+					<div id="refinement-list-scribe-type"></div>
+					<div id="refinement-list-decoration"></div>
+				</aside>
+				<!-- Results Section -->
+				<section>
+					<div id="hits" class="bg-white p-4 rounded-lg shadow-sm"></div>
+					<div id="pagination" class="mt-4 flex justify-center"></div>
+				</section>
+
+				<div class="grid gap-4">
+					<div id="pagination"></div>
+					<div id="hits"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 </PageLayout>
+
 <script src="../lib/advanced-search.js"></script>

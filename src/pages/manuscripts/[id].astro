@@ -562,14 +562,16 @@ const { data: manuscript } = Astro.props;
                           <ul class="list-disc list-inside">
                             {role.hand.map((hand) => (
                               <li>
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" 
-                        href={`/hands/${hand?.hit_id}`}>{hand.label}</NavLink>
+                        <NavLink href={`/hands/${hand?.hit_id}`}>
+                          {hand.label.split("_")[1]}
+                        </NavLink>
                       </li>
                             ))}
                           </ul>
                         ) : (
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" 
-                        href={`/hands/${role.hand[0]?.hit_id}`}>{role.hand[0]?.label}</NavLink>
+                        <NavLink href={`/hands/${role.hand[0]?.hit_id}`}>
+                          {role.hand[0]?.label.split("_")[1]}
+                        </NavLink>
                         )}   </td>
                       <td class="p-2 border border-gray-300">{role.role.map(ro => ro).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.scribe_type.map(t => t).join(', ')}</td>

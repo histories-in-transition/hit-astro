@@ -33,12 +33,14 @@ async function generate() {
 			{ name: "view_label", type: "string", sort: true },
 			{ name: "title", type: "string", sort: true },
 			{ name: "manuscript", type: "object[]", facet: true, optional: true },
-			{ name: "library", type: "string", sort: true },
+			{ name: "library", type: "object[]", facet: true, optional: true },
+			{ name: "library_place", type: "object[]", facet: true, optional: true },
 			{ name: "work", type: "object[]", facet: true, optional: true },
 			{ name: "decoration", type: "object[]", facet: true, optional: true },
 			{ name: "orig_date", type: "object[]", facet: true, optional: true },
 			{ name: "orig_place", type: "object[]", facet: true, optional: true },
 			{ name: "provenance", type: "object[]", facet: true, optional: true },
+			{ name: "hands", type: "object[]", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -59,17 +61,14 @@ async function generate() {
 			view_label: value?.view_label,
 			title: value?.title_work?.[0]?.title || "Untitled",
 			manuscript: value?.manuscript || [],
-			library:
-				value?.library_place?.[0]?.value && value?.library?.[0]?.value
-					? `${value.library_place[0].value}, ${value.library[0].value}`
-					: "",
+			library: value?.library || [],
+			library_place: value?.library_place || [],
 			work: value?.title_work || [],
-			decoration: Array.isArray(value?.decoration)
-				? value.decoration.map((d) => ({ type: d })) // Wrap strings in objects
-				: [],
+			decoration: value?.decoration || [],
 			orig_date: value?.orig_date || [],
 			orig_place: value?.orig_place || [],
 			provenance: value?.provenance || [],
+			hands: value?.hands || [],
 		};
 		records.push(item);
 	});

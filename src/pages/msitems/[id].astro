@@ -119,14 +119,14 @@ const { data: item } = Astro.props;
                   </dd>}
               { item.decoration.length > 0 &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-                <dd class="pl-5">{item?.decoration}</dd>
+                <dd class="pl-5">{item?.decoration.map(d => d.value).join(', ')}</dd>
               }
             <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
               <dd class="pl-5">
                 {item.hands.map(hand => hand.jobs.length > 0) && 
                 item.hands
                 // filter hands with jobs.role 'Schreiber'
-                .filter(hand => hand.jobs.some(h_job => h_job.role.includes('Schreiber')))
+                .filter(hand => hand.jobs.some(h_job => h_job.role.some(r => r.value ==='Schreiber')))
                 .map(filteredHand => {
                   return <ul>
                           <li>
@@ -148,7 +148,7 @@ const { data: item } = Astro.props;
                             : ''}
                            {filteredHand.jobs.some(j => j.role_context.length > 0)
                              ? <span>(Typ: 
-                              {filteredHand.jobs.flatMap(job => job.role_context).join(', ')})
+                              {filteredHand.jobs.flatMap(job => job.role_context.map(rc => rc.value)).join(', ')})
                             </span>
                             : ''
                             }
@@ -175,7 +175,7 @@ const { data: item } = Astro.props;
             </dl>
         </section>
 
-        {item.hands.some(hand => hand.jobs.some(job => !job.role.includes('Schreiber'))) &&
+        {item.hands.some(hand => hand.jobs.some(job => !job.role.some(r => r.value ==='Schreiber'))) &&
               
           <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
              <h2 id="msitemRework" class="text-xl font-semibold text-brandRed mb-5">Bearbeitungsschritte</h2>
@@ -194,10 +194,10 @@ const { data: item } = Astro.props;
               </thead>
               <tbody>
                 {item.hands
-                  .filter(hand => hand.jobs.some(j => !j.role.includes('Schreiber')))
+                  .filter(hand => hand.jobs.some(j => !j.role.some(r => r.value ==='Schreiber')))
                   .map(filteredHand => (
                       <tr>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.role?.join(', ')).join(', ')}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role.map(r => r.value).join(', ')).join(', ')}</td>
                                 <td class="p-2 border border-gray-300">
                                   <NavLink href={`/hands/${filteredHand.hit_id}`}>
                                   {filteredHand.label}</NavLink>
@@ -209,9 +209,9 @@ const { data: item } = Astro.props;
                                   </td>
                                 <td class="p-2 border border-gray-300">{filteredHand.dating.flatMap(d => d.date.map(date => date.value))}</td>
                                 <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j?.locus).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.locus_layout?.join(', '))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.role_context?.join(', '))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus_layout.map(ll => ll.value))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role_context.map(rc => rc.value))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.map(f => f.value))}</td>
                             </tr>
                           ))
                         }         

@@ -44,7 +44,7 @@ const msItemsPlus = msitems
 			.flatMap((ms) => ms.library_full);
 		const library_place = libraries
 			.filter((lib) => library.some((libr) => libr.id === lib.id))
-			.map((lib) => enrichPlaces(lib.settlement, places));
+			.flatMap((lib) => enrichPlaces(lib.settlement, places));
 
 		// Add info to related works
 		const relatedWorks = works
@@ -146,11 +146,11 @@ const msItemsPlus = msitems
 						return {
 							id: hRole.id,
 							hit_id: hRole.hit_id,
-							role: hRole.role.map((role) => role.value),
+							role: hRole.role.map(({ value }) => ({ value })),
 							locus: hRole.locus,
-							locus_layout: hRole.locus_layout.flatMap((layout) => layout.value),
-							function: hRole.function.flatMap((func) => func.value),
-							role_context: hRole.scribe_type.flatMap((context) => context.value),
+							locus_layout: hRole.locus_layout.map(({ value }) => ({ value })),
+							function: hRole.function.map(({ value }) => ({ value })),
+							role_context: hRole.scribe_type.map(({ value }) => ({ value })),
 						};
 					});
 				return {
@@ -197,13 +197,13 @@ const msItemsPlus = msitems
 				};
 			}),
 			hands: relatedHand, // enriched with dating, placement and hand roles
-			decoration: item.decoration.map((deco) => deco.value),
+			decoration: item.decoration.map(({ value }) => ({ value })),
 			note: item.note ?? "",
 			orig_date: relatedHand
-				.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
+				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
 				.flatMap((hand) => hand.dating),
 			orig_place: relatedHand
-				.filter((h) => h.jobs.some((j) => j.role.includes("Schreiber")))
+				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
 				.flatMap((hand) => hand.place),
 			provenance: provenance,
 		};
