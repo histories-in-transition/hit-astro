@@ -5,13 +5,13 @@ import "instantsearch.css/themes/satellite.css";
 
 <PageLayout title="Search">
 	<div class="grid mx-auto md:w-3/4 sm:w-4/5 py-4 gap-8">
-		<h2 class="text-3xl font-bold text-brandBrown mb-6">
+		<h1 class="text-2xl font-bold text-brandBrown">
 			Erweiterte suche nach Manuskripteinträgen (MS-items):
-		</h2>
+		</h1>
 
 		<div class="space-y-6">
 			<!-- Search Input and Stats -->
-			<div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+			<div class="bg-brandRose p-4 rounded-sm shadow-sm">
 				<div id="searchbox" class="mb-4"></div>
 				<div class="flex items-center justify-between">
 					<div id="stats-container" class="text-sm text-gray-600"></div>
@@ -21,7 +21,7 @@ import "instantsearch.css/themes/satellite.css";
 			</div>
 			<div class="grid md:grid-cols-[1fr_3fr] gap-6">
 				<!-- Refinements Section -->
-				<aside class="bg-gray-50 p-4 rounded-lg shadow-sm space-y-6">
+				<aside class="bg-brandRose p-4 rounded-sm shadow-sm space-y-6">
 					<div id="refinement-list-work"></div>
 					<div id="refinement-list-authors"></div>
 					<div id="refinement-list-manuscripts"></div>
@@ -37,7 +37,7 @@ import "instantsearch.css/themes/satellite.css";
 				</aside>
 				<!-- Results Section -->
 				<section>
-					<div id="hits" class="bg-white p-4 rounded-lg shadow-sm"></div>
+					<div id="hits" class="bg-white p-4 rounded-sm shadow-sm"></div>
 					<div id="pagination" class="mt-4 flex justify-center"></div>
 				</section>
 

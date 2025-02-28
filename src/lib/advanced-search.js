@@ -164,17 +164,32 @@ search.addWidgets([
 				const href = withBasePath(`/msitems/${hit.hit_id}`);
 
 				return html`
-					<article>
-						<h3>
-							<a href="${href}">${hit.view_label} </a>
-						</h3>
-						<p>
-							${hit.work[0]?.author.length > 0
-								? `${hit.work[0]?.author.map((a) => a.name).join(", ")}: `
-								: ""}
-							${hit.work[0]?.title || "Untitled"}
-						</p>
-					</article>
+					<a href="${href}">
+						<article>
+							<h2 class="text-lg underline underline-offset-2 font-semibold text-brandRed">
+								${hit.work[0]?.author.length > 0
+									? `${hit.work[0]?.author.map((a) => a.name).join(", ")}: `
+									: ""}
+								<span class="italic">${hit.work[0]?.title || "Untitled"}</span>
+							</h2>
+							<dl class="grid grid-cols-[1fr_5fr] p-2">
+								<dt class="font-semibold pr-2">Handschrift:</dt>
+								<dd class="pl-5">${hit.view_label}</dd>
+								<dt class="font-semibold pr-2">Datierung:</dt>
+								<dd class="pl-5">
+									${[...new Set(hit.orig_date.flatMap((od) => od.date.map((d) => d.value)))].join(
+										" | ",
+									)}
+								</dd>
+								<dt class="font-semibold pr-2">Entstehungsort:</dt>
+								<dd class="pl-5">
+									${[...new Set(hit.orig_place.flatMap((pl) => pl.place.map((p) => p.value)))].join(
+										" | ",
+									)}
+								</dd>
+							</dl>
+						</article>
+					</a>
 				`;
 			},
 		},
