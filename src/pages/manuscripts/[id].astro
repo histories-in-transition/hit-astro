@@ -332,17 +332,30 @@ const { data: manuscript } = Astro.props;
                         <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
                       </dt>
                       <dd class="pl-5">
-                        {filteredItem.title_work.map(work => (
-                            <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
-                              {work.author.length > 0 ? (
-                                <NavLink class="no-underline" href={`/works/${work.hit_id}`}>
-                                  {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                                </NavLink>
-                              ) : (
-                                <NavLink class="no-underline" href={`/works/${work.hit_id}`}>{work.title}</NavLink>
-                              )}
-                            </span>
-                          ))}
+                       {filteredItem.title_work.map(work => (
+                        <span class="font-semibold">
+                          {work.author?.length > 0 ? (
+                            work.hit_id ? (
+                              <NavLink class ="underline underline-offset-2 hover:text-brandRed" href={`/works/${work.hit_id}`}>
+                                {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                              </NavLink>
+                            ) : (
+                              <span>
+                                {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                              </span>
+                            )
+                          ) : (
+                            work.hit_id ? (
+                              <NavLink href={`/works/${work.hit_id}`}>
+                                {work.title}
+                              </NavLink>
+                            ) : (
+                              <span>{work.title}</span>
+                            )
+                          )}
+                        </span>
+                      ))}
+
 
                         {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
                         {filteredItem.rubric && (

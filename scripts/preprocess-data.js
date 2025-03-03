@@ -181,7 +181,7 @@ const msItemsPlus = msitems
 			rubric: item.rubric,
 			final_rubric: item.final_rubric,
 			title_work: relatedWorks.length > 0 ? relatedWorks : [{ title: item.title_note }],
-			title_note: relatedWorks.length > 0 ? item.title_note : [],
+			title_note: relatedWorks.length > 0 ? item.title_note : "",
 			siglum: item.siglum,
 			bibl: item.bibl,
 			role: item.role?.value,

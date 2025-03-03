@@ -51,13 +51,15 @@ const { data: item } = Astro.props;
             <dd class="pl-5">{item.locus}</dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
               <dd class="pl-5">
-                {item.title_work?.map((title: any) => 
-                  <NavLink href={`/works/${title?.hit_id}`} 
+                {item.title_work?.map((title) => (
+                 title.hit_id
+                 ? <NavLink href={`/works/${title?.hit_id}`} 
                       >{title.title}
                   </NavLink>
+                  : title.title)
                 )}
               </dd>
-             {item.title_work?.some((title: any) => title.author.length > 0) &&
+             {item.title_work?.some((title: any) => title.author?.length > 0) &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
                 <dd class="pl-5">{item.title_work?.map((title:any) => title.author.map((aut: any) => 
                   aut.gnd_url !== '' ?
