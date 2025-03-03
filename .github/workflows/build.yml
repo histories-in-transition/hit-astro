@@ -1,4 +1,4 @@
-name: Fetch data, build website and deploy to github pages
+name: Fetch data, generate index, build website and deploy to github pages
 # defines when the action should be executed in this case on push to the main branch or manual trigger
 on:
   schedule:
