@@ -8,6 +8,7 @@
 		"format:fix": "pnpm run format:check --write",
 		"get-data": "node ./scripts/data-fetch.js",
 		"process-data": "node ./scripts/preprocess-data.js",
+		"generate-index": "node ./scripts/generate-search-index.js",
 		"build": "astro build",
 		"start": "astro preview",
 		"astro": "astro"
