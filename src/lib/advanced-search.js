@@ -385,6 +385,41 @@ search.addWidgets([
 	clearRefinements({
 		container: "#clear-refinements",
 	}),
+
+	currentRefinements({
+		container: "#current-refinements",
+		transformItems(items) {
+			return items.map((item) => ({
+				...item,
+				label:
+					item.attribute === "work.author.name"
+						? "Author"
+						: item.attribute === "work.title"
+							? "Werk"
+							: item.attribute === "manuscript.value"
+								? "Handschrift"
+								: item.attribute === "library.value"
+									? "Bibliothek"
+									: item.attribute === "library_place.value"
+										? "Aktuellen Standort"
+										: item.attribute === "orig_date.date.value"
+											? "Entstehungszeit"
+											: item.attribute === "orig_place.place.value"
+												? "Entstehungsort"
+												: item.attribute === "provenance.value"
+													? "Provenienz"
+													: item.attribute === "hands.jobs.function.value"
+														? "Händefunktion"
+														: item.attribute === "hands.jobs.role.value"
+															? "Schreiberaktivitäten"
+															: item.attribute === "hands.jobs.role_context.value"
+																? "Schreiber Typ"
+																: item.attribute === "decoration.value"
+																	? "Decoration"
+																	: item.label,
+			}));
+		},
+	}),
 ]);
 
 search.start();
