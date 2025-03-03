@@ -46,6 +46,11 @@ const refinementListAuthor = panel({
 	templates: {
 		header: "Author",
 	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
+	},
 })(refinementList);
 
 const refinementListWork = panel({
@@ -54,6 +59,11 @@ const refinementListWork = panel({
 	},
 	templates: {
 		header: "Werk",
+	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
 	},
 })(refinementList);
 
@@ -64,6 +74,11 @@ const refinementListMS = panel({
 	templates: {
 		header: "Handschrift",
 	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
+	},
 })(refinementList);
 
 const refinementListRepo = panel({
@@ -72,6 +87,11 @@ const refinementListRepo = panel({
 	},
 	templates: {
 		header: "Bibliothek",
+	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
 	},
 })(refinementList);
 
@@ -82,6 +102,11 @@ const refinementListRepoPlace = panel({
 	templates: {
 		header: "Aktuellen Standort",
 	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
+	},
 })(refinementList);
 
 const refinementListOrigDate = panel({
@@ -90,6 +115,11 @@ const refinementListOrigDate = panel({
 	},
 	templates: {
 		header: "Entstehungszeit",
+	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
 	},
 })(refinementList);
 
@@ -100,6 +130,11 @@ const refinementListOrigPlace = panel({
 	templates: {
 		header: "Entstehungsort",
 	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
+	},
 })(refinementList);
 
 const refinementListProvenance = panel({
@@ -108,6 +143,11 @@ const refinementListProvenance = panel({
 	},
 	templates: {
 		header: "Provenienz",
+	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
 	},
 })(refinementList);
 
@@ -118,6 +158,11 @@ const refinementListHandsFunktion = panel({
 	templates: {
 		header: "Händefunktion",
 	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10 w-full-blue-300",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
+	},
 })(refinementList);
 
 const refinementListHandsRole = panel({
@@ -126,6 +171,11 @@ const refinementListHandsRole = panel({
 	},
 	templates: {
 		header: "Schreiberaktivitäten",
+	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10 w-full-blue-300",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
 	},
 })(refinementList);
 
@@ -136,6 +186,11 @@ const refinementListHandsContextRole = panel({
 	templates: {
 		header: "Schreiber Typ",
 	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10 w-full-blue-300",
+		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+		collapseIcon: "",
+	},
 })(refinementList);
 
 const refinementListDecoration = panel({
@@ -144,6 +199,11 @@ const refinementListDecoration = panel({
 	},
 	templates: {
 		header: "Decoration",
+	},
+	cssClasses: {
+		header: "cursor-pointer relative z-10 w-full-blue-300",
+		collapseButton: "absolute inset-0 z-20 bg-transparent flex flex-row-reverse",
+		collapseIcon: "",
 	},
 })(refinementList);
 
@@ -167,6 +227,7 @@ search.addWidgets([
 					<a href="${href}">
 						<article>
 							<h2 class="text-lg underline underline-offset-2 font-semibold text-brandRed">
+								<span>(#${hit.id}) </span>
 								${hit.work[0]?.author.length > 0
 									? `${hit.work[0]?.author.map((a) => a.name).join(", ")}: `
 									: ""}
