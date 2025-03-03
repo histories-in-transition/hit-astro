@@ -332,17 +332,30 @@ const { data: manuscript } = Astro.props;
                         <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
                       </dt>
                       <dd class="pl-5">
-                        {filteredItem.title_work.map(work => (
-                            <span class="font-semibold underline underline-offset-4 hover:text-brandRed">
-                              {work.author.length > 0 ? (
-                                <NavLink class="no-underline" href={`/works/${work.hit_id}`}>
-                                  {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                                </NavLink>
-                              ) : (
-                                <NavLink class="no-underline" href={`/works/${work.hit_id}`}>{work.title}</NavLink>
-                              )}
-                            </span>
-                          ))}
+                       {filteredItem.title_work.map(work => (
+                        <span class="font-semibold">
+                          {work.author?.length > 0 ? (
+                            work.hit_id ? (
+                              <NavLink class ="underline underline-offset-2 hover:text-brandRed" href={`/works/${work.hit_id}`}>
+                                {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                              </NavLink>
+                            ) : (
+                              <span>
+                                {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                              </span>
+                            )
+                          ) : (
+                            work.hit_id ? (
+                              <NavLink href={`/works/${work.hit_id}`}>
+                                {work.title}
+                              </NavLink>
+                            ) : (
+                              <span>{work.title}</span>
+                            )
+                          )}
+                        </span>
+                      ))}
+
 
                         {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
                         {filteredItem.rubric && (
@@ -562,14 +575,16 @@ const { data: manuscript } = Astro.props;
                           <ul class="list-disc list-inside">
                             {role.hand.map((hand) => (
                               <li>
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" 
-                        href={`/hands/${hand?.hit_id}`}>{hand.label}</NavLink>
+                        <NavLink href={`/hands/${hand?.hit_id}`}>
+                          {hand.label.split("_")[1]}
+                        </NavLink>
                       </li>
                             ))}
                           </ul>
                         ) : (
-                        <NavLink class="hover:text-brandRed after:content-['_↗']" 
-                        href={`/hands/${role.hand[0]?.hit_id}`}>{role.hand[0]?.label}</NavLink>
+                        <NavLink href={`/hands/${role.hand[0]?.hit_id}`}>
+                          {role.hand[0]?.label.split("_")[1]}
+                        </NavLink>
                         )}   </td>
                       <td class="p-2 border border-gray-300">{role.role.map(ro => ro).join(', ')}</td>
                       <td class="p-2 border border-gray-300">{role.scribe_type.map(t => t).join(', ')}</td>

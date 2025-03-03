@@ -45,75 +45,60 @@ const { data: work } = Astro.props;
 						<dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
 						<dd class="pl-5">
 							{work?.title}
-						</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-						<dd class="pl-5">
-							{
-								work?.author.length > 1
-									? work.author.map((item) => (
-											<>
-												<NavLink
-													href={item.gnd_url}
-													class="hover:text-brandRed underline decoration-dotted underline-offset-4"
-												>
-													{item.name}
-													<Icon aria-hidden="true" name="lucide:external-link" class="inline-flex align-baseline"/>
-												</NavLink>
-												<br />
-											</>
-										))
-									: work.author.map((item) => (
-											<NavLink
-												href={item.gnd_url}
-												class="hover:text-brandRed underline decoration-dotted underline-offset-4"
-											>
-												{item.name}
-												<Icon aria-hidden="true" name="lucide:external-link" class="inline-flex align-baseline"/>
-											</NavLink>
-										))
-							}
-						</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-						<dd class="pl-5">
-							{work.bibliography.length > 0 ? work.bibliography.map((item) => item) : "N/A"}
-						</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">GND:</dt>
-						<dd class="pl-5">
-							{
-								work?.gnd_url ? (
-									<NavLink href={work.gnd_url} 
-									class="hover:text-brandRed underline decoration-dotted underline-offset-4">
-										{work.gnd_url.split("gnd/")[1]}
+							{String(work?.gnd_url).trim() &&
+									<NavLink href={work.gnd_url}>
+										(GND: {work.gnd_url.split("gnd/")[1]}
 										<Icon
 											class="inline-flex align-baseline"
 											aria-hidden="true"
 											name="lucide:external-link"
-										/>
+										/>)
 									</NavLink>
-								) : (
-									"N/A"
-								)
-							}
+						}
 						</dd>
+					{work.author.length > 0 &&
+						<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+						<dd class="pl-5">
+							 {work.author.map((item) => 
+							 <ul>
+								<li>{item.name} {String(item?.gnd_url).trim() &&						
+									<NavLink href={item.gnd_url}>
+										(GND: {item.gnd_url.split("gnd/")[1]}
+										<Icon
+											class="inline-flex align-baseline"
+											aria-hidden="true"
+											name="lucide:external-link"
+										/>)
+									</NavLink>
+								}</li>
+							</ul>)}
+							
+						</dd>
+					}
+					{work.bibliography.length > 0 &&
+						<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
+						<dd class="pl-5">
+							 {work.bibliography.map((item) => item)}
+						</dd>
+						}
+						{work.source_text.length > 0 &&						
 						<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
 						<dd class="pl-5">
-							{
-								work.source_text.length > 0
-									? work.source_text.map((text) => (
+							{work.source_text.map((text) => (
 											<NavLink href={`/works/${text.hit_id}`} 
 											>
 												{text.title}
 											</NavLink>
 										))
-									: "N/A"
+									
 							}
 							{work.note_source ? <span>({work.note_source})</span> : ""}
 						</dd>
+						}
+						{work.genre.length > 0 &&
 						<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
 						<dd class="pl-5">
-							{
-								work.genre.length > 0
-									? work.genre.map((item, index) => {
+							{work.genre.map((item, index) => {
 											return (
 												<>
 													{item.main_genre.length > 0 &&
@@ -123,9 +108,9 @@ const { data: work } = Astro.props;
 												</>
 											);
 										})
-									: "N/A"
 							}
 						</dd>
+						}
 						{work.source_text.length > 0 &&
 							<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
 							<dd class="pl-5">
@@ -210,13 +195,13 @@ const { data: work } = Astro.props;
 										{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 									</td>
 									<td class="p-2 border border-gray-300">
-										{item.annotation_date.map(anDat => anDat.date.map(d => d.value)).join(' | ')}
+										{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
 									</td>
 									<td class="p-2 border border-gray-300">
-										{item.annotation_typ}
+										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
 									</td>
 									<td class="p-2 border border-gray-300">
-										{item.decoration}
+										{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
 									</td>
 								</tr>
 							))
