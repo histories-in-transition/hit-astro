@@ -39,173 +39,29 @@ const search = instantsearch({
 	indexName: project_collection_name,
 });
 
-const refinementListAuthor = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Author",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListAuthor = newFunction("Autor");
 
-const refinementListWork = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Werk",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListWork = newFunction("Werk");
 
-const refinementListMS = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Handschrift",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListMS = newFunction("Handschrift");
 
-const refinementListRepo = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Bibliothek",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListRepo = newFunction("Bibliothek");
 
-const refinementListRepoPlace = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Aktuellen Standort",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListRepoPlace = newFunction("Aktuellen Standort");
 
-const refinementListOrigDate = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Entstehungszeit",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListOrigDate = newFunction("Entstehungszeit");
 
-const refinementListOrigPlace = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Entstehungsort",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListOrigPlace = newFunction("Entstehungsort");
 
-const refinementListProvenance = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Provenienz",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListProvenance = newFunction("Provenienz");
 
-const refinementListHandsFunktion = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Händefunktion",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10 w-full-blue-300",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListHandsFunktion = newFunction("Händefunktion");
 
-const refinementListHandsRole = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Schreiberaktivitäten",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10 w-full-blue-300",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListHandsRole = newFunction("Schreiberaktivitäten");
 
-const refinementListHandsContextRole = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Schreiber Typ",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10 w-full-blue-300",
-		collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListHandsContextRole = newFunction("Schreiber Typ");
 
-const refinementListDecoration = panel({
-	collapsed: ({ state }) => {
-		return state.query.length === 0;
-	},
-	templates: {
-		header: "Decoration",
-	},
-	cssClasses: {
-		header: "cursor-pointer relative z-10 w-full-blue-300",
-		collapseButton: "absolute inset-0 z-20 bg-transparent flex flex-row-reverse",
-		collapseIcon: "",
-	},
-})(refinementList);
+const refinementListDecoration = newFunction("Ausstatung");
 
 // add widgets
 search.addWidgets([
@@ -228,27 +84,74 @@ search.addWidgets([
 						<article>
 							<h2 class="text-lg underline underline-offset-2 font-semibold text-brandRed">
 								<span>(#${hit.id}) </span>
-								${hit.work[0]?.author.length > 0
-									? `${hit.work[0]?.author.map((a) => a.name).join(", ")}: `
+								${hit.work[0]?.author?.length
+									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
 									: ""}
 								<span class="italic">${hit.work[0]?.title || "Untitled"}</span>
 							</h2>
-							<dl class="grid grid-cols-[1fr_5fr] p-2">
-								<dt class="font-semibold pr-2">Handschrift:</dt>
-								<dd class="pl-5">${hit.view_label}</dd>
-								<dt class="font-semibold pr-2">Datierung:</dt>
-								<dd class="pl-5">
-									${[...new Set(hit.orig_date.flatMap((od) => od.date.map((d) => d.value)))].join(
-										" | ",
-									)}
-								</dd>
-								<dt class="font-semibold pr-2">Entstehungsort:</dt>
-								<dd class="pl-5">
-									${[...new Set(hit.orig_place.flatMap((pl) => pl.place.map((p) => p.value)))].join(
-										" | ",
-									)}
-								</dd>
-							</dl>
+							<div class="columns-2 gap-8">
+								<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
+									${hit.title_note !== ""
+										? html`
+												<dt class="font-semibold pr-2">Bemerkung:</dt>
+												<dd class="pl-5">${hit.title_note}</dd>
+											`
+										: ""}
+									<dt class="font-semibold pr-2">Handschrift:</dt>
+									<dd class="pl-5">${hit.view_label}</dd>
+									<dt class="font-semibold pr-2">Datierung:</dt>
+									<dd class="pl-5">
+										${[
+											...new Set(
+												hit.orig_date?.flatMap((od) => od.date?.map((d) => d.value)) || [],
+											),
+										].join(" | ")}
+									</dd>
+									<dt class="font-semibold pr-2">Entstehungsort:</dt>
+									<dd class="pl-5">
+										${[
+											...new Set(
+												hit.orig_place?.flatMap((pl) => pl.place?.map((p) => p.value)) || [],
+											),
+										].join(" | ")}
+									</dd>
+									${hit.hands?.some((h) =>
+										h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
+									)
+										? html`
+												<dt class="font-semibold pr-2">Bearbeitung:</dt>
+												<dd class="pl-5">
+													${[
+														...new Set(
+															hit.hands
+																.filter((h) =>
+																	h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
+																)
+																.flatMap(
+																	(h) => h.jobs?.flatMap((j) => j.role?.map((r) => r.value)) || [],
+																),
+														),
+													].join(" | ")}
+												</dd>
+											`
+										: ""}
+									${hit.hands?.some((h) => h.jobs?.some((j) => j.function.length > 0))
+										? html`
+												<dt class="font-semibold pr-2">Händefunktion:</dt>
+												<dd class="pl-5">
+													${[
+														...new Set(
+															hit.hands.flatMap(
+																(h) =>
+																	h.jobs?.flatMap((j) => j.function?.map((f) => f.value)) || [],
+															),
+														),
+													].join(" | ")}
+												</dd>
+											`
+										: ""}
+								</dl>
+							</div>
 						</article>
 					</a>
 				`;
@@ -423,3 +326,18 @@ search.addWidgets([
 ]);
 
 search.start();
+function newFunction(title) {
+	return panel({
+		collapsed: ({ state }) => {
+			return state.query.length === 0;
+		},
+		templates: {
+			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
+		},
+		cssClasses: {
+			header: "cursor-pointer relative z-10",
+			collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+			collapseIcon: "",
+		},
+	})(refinementList);
+}

@@ -10,33 +10,35 @@ import "instantsearch.css/themes/satellite.css";
 		</h1>
 
 		<div class="space-y-6">
-			<!-- Search Input and Stats -->
-			<div class="bg-brandRose p-4 rounded-sm shadow-sm">
-				<div id="searchbox" class="mb-4"></div>
-				<div class="flex items-center justify-between">
-					<div id="stats-container" class="text-sm text-gray-600"></div>
-					<div id="current-refinements" class="text-sm text-gray-600"></div>
-					<div id="clear-refinements"></div>
-				</div>
-			</div>
 			<div class="grid md:grid-cols-[1fr_3fr] gap-6">
-				<!-- Refinements Section -->
-				<aside class="bg-brandRose rounded-sm shadow-sm p-4">
-					<div id="refinement-list-work"></div>
-					<div id="refinement-list-authors"></div>
-					<div id="refinement-list-manuscripts"></div>
-					<div id="refinement-list-library"></div>
-					<div id="refinement-list-library-place"></div>
-					<div id="refinement-list-orig-date"></div>
-					<div id="refinement-list-orig-place"></div>
-					<div id="refinement-list-provenance"></div>
-					<div id="refinement-list-hands-role"></div>
-					<div id="refinement-list-hands-function"></div>
-					<div id="refinement-list-scribe-type"></div>
-					<div id="refinement-list-decoration"></div>
-				</aside>
+				<!-- Search Input and Stats -->
+				<div class="bg-brandRose p-4 rounded-sm shadow-sm">
+					<div id="searchbox" class="mb-4"></div>
+
+					<!-- Refinements Section -->
+					<aside class="bg-brandRose rounded-sm shadow-sm p-4">
+						<div id="refinement-list-work"></div>
+						<div id="refinement-list-authors"></div>
+						<div id="refinement-list-manuscripts"></div>
+						<div id="refinement-list-library"></div>
+						<div id="refinement-list-library-place"></div>
+						<div id="refinement-list-orig-date"></div>
+						<div id="refinement-list-orig-place"></div>
+						<div id="refinement-list-provenance"></div>
+						<div id="refinement-list-hands-role"></div>
+						<div id="refinement-list-hands-function"></div>
+						<div id="refinement-list-scribe-type"></div>
+						<div id="refinement-list-decoration"></div>
+					</aside>
+				</div>
+
 				<!-- Results Section -->
 				<section class="space-y-3">
+					<div id="stats-container" class="text-sm text-gray-600"></div>
+					<div class="space-y-3">
+						<div id="current-refinements" class="text-sm text-gray-600"></div>
+						<div id="clear-refinements"></div>
+					</div>
 					<div id="pagination" class="flex justify-center"></div>
 					<div id="hits" class="bg-white p-4 rounded-sm shadow-sm"></div>
 				</section>
