@@ -1,85 +1,95 @@
 ---
-import PageLayout from "../layouts/page-layout.astro";
-import NavLink from "../components/nav-link.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import NavLink from "@/components/nav-link.astro";
+import IndexCard from "@/components/index-card.astro";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import clm210 from "../../public/images/clm210.jpg";
+import clm210 from "@/icons/clm210.jpg";
+import clm6388 from "@/icons/clm6388.png";
+import clm6375 from "@/icons/clm6375.png";
+import clm6308 from "@/icons/clm6308.png";
+import clm6393 from "@/icons/clm6393.png";
 ---
 
 <PageLayout title="Home">
-	<div class="md:grid grid-cols-2 p-5 md:p-10 place-content-center gap-10
-	mx-auto md:w-3/4 sm:w-4/5">
-		<div class="self-center">
-			<div class="grid gap-2">
-				<h1 class="self-center text-xl md:text-4xl font-semibold">Histories in Transition</h1>
-				<h2 class="self-center text-lg md:text-2xl italic">
+	<div class="w-full bg-brand-800 text-brand-50">
+		<div class="md:w-3/4 md:mx-auto p-5 space-y-3">
+			<h1 class="text-center text-xl md:text-4xl font-semibold">
+				<span>Histories in Transition</span>
+				<br />
+				<span class="text-lg md:text-2xl italic">
 					The Case of Freising and Salzburg (9th – 12th c.)
-				</h2>
-				<p class="py-3">
-					The project aims to challenge the current understanding of the cultural history of
-					historiography in the Carolingian and post-Carolingian world (9th–12th centuries) through
-					an innovative and precisely focussed investigation of two major centres of historical
-					writing during this period, Salzburg and Freising. We want to explore how in the course of
-					the transformation of the Carolingian World, the ways of thinking about, organising,
-					compiling and writing history changed between the 9th and 12th centuries.
-					<NavLink class="italic underline underline-offset-4 hover:text-brandRed" href="/about"
-						>Read more
-						<Icon
-							class="inline-flex align-baseline"
-							aria-hidden="true"
-							name="lucide:chevrons-right"
-						/>
-						<span class="sr-only">about the project</span>
-					</NavLink>
-				</p>
+				</span>
+			</h1>
 
-				<p>
-					A central aspect of the project is the creation of a relational database that enables
-					users to analyse and visualise the chronological layers and connections between the
-					manuscripts.
-				</p>
-				<p class="text-brandRed font-semibold">
-					<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
-					This application is under development.
-					<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
-				</p>
-				<p>
-					Currently one can browse the entries in five categories:
-					<NavLink
-						href="/manuscripts"
-						class="underline underline-offset-4 hover:text-brandRed font-medium"
-						>manuscripts</NavLink
-					>,
-					<NavLink
-						href="/msitems"
-						class="underline underline-offset-4 hover:text-brandRed font-medium"
-						>separate content items</NavLink
-					> (msItems),
-					<NavLink
-						href="/works"
-						class="underline underline-offset-4 hover:text-brandRed font-medium">works</NavLink
-					>,
-					<NavLink
-						href="/scribes"
-						class="underline underline-offset-4 hover:text-brandRed font-medium">scribes</NavLink
-					> and
-					<NavLink
-						href="/hands"
-						class="underline underline-offset-4 hover:text-brandRed font-medium"
-						>scribal hands</NavLink
-					> or <NavLink
-						href="/search"
-						class="underline underline-offset-4 hover:text-brandRed font-semibold">search</NavLink
-					> the manuscript content items (msItems).
-				</p>
-			</div>
+			<p class="line-clamp-6 justify-normal">
+				The project aims to challenge the current understanding of the cultural history of
+				historiography in the Carolingian and post-Carolingian world (9th–12th centuries) through an
+				innovative and precisely focussed investigation of two major centres of historical writing
+				during this period, Salzburg and Freising. We want to explore how in the course of the
+				transformation of the Carolingian World, the ways of thinking about, organising, compiling
+				and writing history changed between the 9th and 12th centuries.
+			</p>
+			<NavLink class="italic underline underline-offset-4 hover:text-yellow-300" href="/about"
+				>Read more
+				<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:chevrons-right" />
+				<span class="sr-only">about the project</span>
+			</NavLink>
+
+			<p class="hidden md:block">
+				A central aspect of the project is the creation of a relational database that enables users
+				to analyse and visualise the chronological layers and connections between the manuscripts.
+			</p>
+			<p class="text-center text-yellow-400 font-semibold hidden md:block">
+				<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
+				This application is under development.
+				<Icon class="inline-flex align-baseline" aria-hidden="true" name="lucide:construction" />
+			</p>
 		</div>
-		<figure class="md:grid gap-2 content-start hidden">
-			<Image
-				alt="Abbildung aus dem Manuskript BSB Clm 210, fol. 91v, mit der Personifizierung der Monate."
-				src={clm210}
-			/>
-			<figcaption class="font-extralight text-xs text-right">BSB, Clm. 210, fol. 91v</figcaption>
-		</figure>
+	</div>
+
+	<div class="md:w-1/2 grid md:grid-cols-2 gap-3 mx-auto md:p-10 p-2">
+		<div class="md:col-span-2">
+			<IndexCard
+				title="text records | MS-items"
+				summary="Analyse and explore detailed text records with advanced search and filtering options."
+				url={"/search"}
+				icon="lucide:notebook-pen"
+				image={clm6388}
+			>
+				<p class="text-brand-100 hidden md:block">
+					* According to the TEI definition, a manuscript item describes an individual work or item
+					within the intellectual content of a manuscript. *
+				</p>
+			</IndexCard>
+		</div>
+		<IndexCard
+			title="manuscripts"
+			summary="Browse categorized descriptions of entire manuscripts in a structured, filterable table."
+			url={"/manuscripts"}
+			icon="lucide:book"
+			image={clm210}
+		/>
+		<IndexCard
+			title="works"
+			summary="View works found in manuscripts, organized in a searchable and sortable table."
+			url={"/works"}
+			icon="lucide:text"
+			image={clm6393}
+		/>
+		<IndexCard
+			title="scribal hands"
+			summary="Discover scribal hands found in a particular manuscript through a refined, categorized table."
+			url={"/hands"}
+			icon="lucide:hand"
+			image={clm6375}
+		/>
+		<IndexCard
+			title="scribes"
+			summary="Explore the work of detected scribes across manuscripts with interactive filtering."
+			url={"/scribes"}
+			icon="lucide:pen-tool"
+			image={clm6308}
+		/>
 	</div>
 </PageLayout>

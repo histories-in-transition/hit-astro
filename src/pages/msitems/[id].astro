@@ -33,11 +33,11 @@ const { data: item } = Astro.props;
           mainTitle={item.view_label}
         > 
       <div
-        class="border-2 rounded-sm border-brandBrown bg-brandRose
+        class="border-2 rounded-sm border-brandBrown bg-brand-100
         text-sm md:leading-7 md:text-base"
       >
         <section aria-labelledby="msitemInfo" class="m-5">
-          <h2 id="msitemInfo" class="text-xl font-semibold text-brandRed">Allgemeine Info über das MS Element
+          <h2 id="msitemInfo" class="text-xl font-semibold text-brand-800">Allgemeine Info über das MS Element
             
           </h2>
           <dl class="grid grid-cols-[1fr_6fr] p-5">
@@ -180,9 +180,9 @@ const { data: item } = Astro.props;
         {item.hands.some(hand => hand.jobs.some(job => !job.role.some(r => r.value ==='Schreiber'))) &&
               
           <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
-             <h2 id="msitemRework" class="text-xl font-semibold text-brandRed mb-5">Bearbeitungsschritte</h2>
-            <table class="w-full bg-brandRose shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table p-5">
-              <thead class="bg-brandRoseDark">
+             <h2 id="msitemRework" class="text-xl font-semibold text-brand-800 mb-5">Bearbeitungsschritte</h2>
+            <table class="w-full bg-brand-100 shadow-sm border border-gray-300 lg:leading-7 text-sm lg:text-base data-table p-5">
+              <thead class="bg-brand-300">
                 <tr> 
                   <th class="text-start p-2 font-semibold border border-gray-300">Bearbeitungsart</th>
                   <th class="text-start p-2 font-semibold border border-gray-300">Schreiberhand</th>    

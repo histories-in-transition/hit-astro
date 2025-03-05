@@ -32,11 +32,11 @@ const { data: item } = Astro.props;
 				<Button>PDF</Button>
 			</div>
       <div
-			class="border-2 rounded-sm border-brandBrown bg-brandRose
+			class="border-2 rounded-sm border-brandBrown bg-brand-100
 			text-sm md:leading-7 md:text-base"
 		>
       <section aria-labelledby="handInfo" class="m-5 overflow-x-auto">
-        <h2 id="handInfo" class="text-xl font-semibold text-brandRed">Eingaben über die Hand:</h2>
+        <h2 id="handInfo" class="text-xl font-semibold text-brand-800">Eingaben über die Hand:</h2>
         <dl class="grid grid-cols-[1fr_5fr] p-5">            
           <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
           <dd class="pl-5">
@@ -60,7 +60,7 @@ const { data: item } = Astro.props;
                 {item.similar_hands.map((hand, index) => (
                     <span>
                         <NavLink href={`/hands/hit_hands__${hand.id}`} 
-                        class="hover:text-brandRed underline decoration-dotted underline-offset-4">
+                        class="hover:text-brand-800 underline decoration-dotted underline-offset-4">
                         {hand.value}
                         </NavLink>
                     
@@ -134,9 +134,9 @@ const { data: item } = Astro.props;
       </section>
 			
       <section aria-labelledby="handMS" class="m-5 overflow-x-auto">
-        <h2 id="handMS" class="text-xl font-semibold text-brandRed mb-5">Beteiligung innerhalb der Handschrift:</h2>
-        <table class="w-full bg-brandRose rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
-          <thead class="bg-brandRoseDark">
+        <h2 id="handMS" class="text-xl font-semibold text-brand-800 mb-5">Beteiligung innerhalb der Handschrift:</h2>
+        <table class="w-full bg-brand-100 rounded-sm shadow-sm border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
+          <thead class="bg-brand-300">
             <tr> 
               <th class="text-center p-2 font-semibold border border-gray-300">Locus</th>
               <th class="text-center p-2 font-semibold border border-gray-300">Werk</th>
@@ -173,7 +173,7 @@ const { data: item } = Astro.props;
                 );
               })
                 .map(msItem => (
-                  <tr class="odd:bg-brandIvory even:bg-brandRose">
+                  <tr class="odd:bg-brand-50 even:bg-brand-100">
                     <td class="p-2 border border-gray-300">
                       <NavLink href={`/msitems/${msItem.hit_id}`}>{msItem.locus}</NavLink>
                     </td>

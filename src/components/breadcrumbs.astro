@@ -16,9 +16,9 @@ const segments = path.split("/").filter((segment) => segment);
 		<ul />
 	) : (
 		<nav aria-label="Breadcrumbs">
-			<ol class="flex items-center text-brandRed gap-1 p-3">
+			<ol class="flex items-center text-brand-800 gap-1 p-3">
 				<li>
-					<NavLink href="/" class="flex items-center text-brandRed hover:underline">
+					<NavLink href="/" class="flex items-center text-brand-800 hover:underline">
 						<span>Home</span>
 					</NavLink>
 				</li>
@@ -33,9 +33,9 @@ const segments = path.split("/").filter((segment) => segment);
 						<li class="flex items-center">
 							<Icon aria-hidden="true" name="lucide:chevron-right" />
 							{isLastSegment ? (
-								<span class="text-brandRed">{displayName}</span> // Plain text for the last segment
+								<span class="text-brand-800">{displayName}</span> // Plain text for the last segment
 							) : (
-								<NavLink href={url} class="text-brandRed hover:underline">
+								<NavLink href={url} class="text-brand-800 hover:underline">
 									{displayName}
 								</NavLink>
 							)}
