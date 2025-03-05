@@ -39,29 +39,29 @@ const search = instantsearch({
 	indexName: project_collection_name,
 });
 
-const refinementListAuthor = newFunction("Autor");
+const refinementListAuthor = wrapInPanel("Autor");
 
-const refinementListWork = newFunction("Werk");
+const refinementListWork = wrapInPanel("Werk");
 
-const refinementListMS = newFunction("Handschrift");
+const refinementListMS = wrapInPanel("Handschrift");
 
-const refinementListRepo = newFunction("Bibliothek");
+const refinementListRepo = wrapInPanel("Bibliothek");
 
-const refinementListRepoPlace = newFunction("Aktuellen Standort");
+const refinementListRepoPlace = wrapInPanel("Aktuellen Standort");
 
-const refinementListOrigDate = newFunction("Entstehungszeit");
+const refinementListOrigDate = wrapInPanel("Entstehungszeit");
 
-const refinementListOrigPlace = newFunction("Entstehungsort");
+const refinementListOrigPlace = wrapInPanel("Entstehungsort");
 
-const refinementListProvenance = newFunction("Provenienz");
+const refinementListProvenance = wrapInPanel("Provenienz");
 
-const refinementListHandsFunktion = newFunction("Händefunktion");
+const refinementListHandsFunktion = wrapInPanel("Händefunktion");
 
-const refinementListHandsRole = newFunction("Schreiberaktivitäten");
+const refinementListHandsRole = wrapInPanel("Schreiberaktivitäten");
 
-const refinementListHandsContextRole = newFunction("Schreiber Typ");
+const refinementListHandsContextRole = wrapInPanel("Schreiber Typ");
 
-const refinementListDecoration = newFunction("Ausstatung");
+const refinementListDecoration = wrapInPanel("Ausstatung");
 
 // add widgets
 search.addWidgets([
@@ -80,9 +80,9 @@ search.addWidgets([
 				const href = withBasePath(`/msitems/${hit.hit_id}`);
 
 				return html`
-					<a href="${href}">
+					<a href="${href}" class="hover:bg-gray-50">
 						<article>
-							<h2 class="text-lg underline underline-offset-2 font-semibold text-brandRed">
+							<h2 class="text-lg underline underline-offset-2 font-semibold text-brand-800">
 								<span>(#${hit.id}) </span>
 								${hit.work[0]?.author?.length
 									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
@@ -156,6 +156,10 @@ search.addWidgets([
 					</a>
 				`;
 			},
+		},
+		cssClasses: {
+			list: "space-y-2",
+			item: "border-l border-brand-800 hover:bg-gray-50 rounded-md shadow-sm",
 		},
 	}),
 
@@ -326,7 +330,8 @@ search.addWidgets([
 ]);
 
 search.start();
-function newFunction(title) {
+// function to wrap refinements filter in a panel
+function wrapInPanel(title) {
 	return panel({
 		collapsed: ({ state }) => {
 			return state.query.length === 0;
@@ -338,6 +343,7 @@ function newFunction(title) {
 			header: "cursor-pointer relative z-10",
 			collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
 			collapseIcon: "",
+			root: "border-b",
 		},
 	})(refinementList);
 }

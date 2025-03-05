@@ -36,11 +36,11 @@ const { data: work } = Astro.props;
 		 > 
 		
 		<div
-			class="border-2 rounded-sm border-brandBrown bg-brandRose
+			class="border-2 rounded-sm border-brandBrown bg-brand-100
 			text-sm md:leading-7 md:text-base"
 		>
 			<section class="m-5 overflow-x-auto" aria-labelledby="workInfo">
-				<h2 id="workInfo" class="text-xl font-semibold text-brandRed mb-5">Allgemeine Info zum Werk:</h2>
+				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">Allgemeine Info zum Werk:</h2>
 					<dl class="grid grid-cols-[1fr_6fr]">
 						<dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
 						<dd class="pl-5">
@@ -132,11 +132,11 @@ const { data: work } = Astro.props;
 
 			{work.ms_transmission.length > 0 && (
 			<section class="m-5 overflow-x-auto" aria-labelledby="transmission">
-				<h2 id="transmission" class="text-xl font-semibold text-brandRed mb-5">Überlieferung:</h2>
+				<h2 id="transmission" class="text-xl font-semibold text-brand-800 mb-5">Überlieferung:</h2>
 				<table
-					class="w-full shadow-sm border-1 border-brandRed lg:leading-7 text-sm lg:text-base data-table"
+					class="w-full shadow-sm border-1 border-brand-800 lg:leading-7 text-sm lg:text-base data-table"
 				>
-					<thead class="bg-brandRoseDark">
+					<thead class="bg-brand-300">
 						<tr>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Handschrift</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Locus</th>
@@ -156,7 +156,7 @@ const { data: work } = Astro.props;
 					<tbody>
 						{
 							work.ms_transmission.map((item) => (
-								<tr class="odd:bg-brandIvory even:bg-brandRose">
+								<tr class="odd:bg-brand-50 even:bg-brand-100">
 									<td class="p-2 border border-gray-300">
 										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
 											{item.manuscript[0].value}
