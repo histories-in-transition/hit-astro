@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tabulator Custom Styles */
+.tabulator {
+	@apply bg-neutral-50 border-gray-300 text-gray-900;
+}
+
+.headerBackgroundColor {
+	@apply bg-brand-800 text-gray-700 border-gray-400;
+}
+
+.tabulator-header .tabulator-col {
+	@apply border-gray-400;
+}
+
+.tabulator-header .tabulator-col-sorter {
+	@apply text-gray-600;
+}
+
+.tabulator-header .tabulator-col[aria-sort] .tabulator-col-sorter {
+	@apply text-brand-800;
+}
+
+.tabulator-row {
+	@apply bg-white border-gray-300;
+}
+
+.tabulator-row:hover {
+	@apply bg-gray-50;
+}

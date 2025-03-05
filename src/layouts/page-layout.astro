@@ -1,6 +1,7 @@
 ---
 import "@fontsource-variable/inter";
 import "tailwindcss/tailwind.css";
+import "../styles/global.css";
 
 import PageFooter from "../components/page-footer.astro";
 import PageHeader from "../components/page-header.astro";
@@ -23,7 +24,7 @@ const { title = "Histories in transition" } = Astro.props;
 	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brand-50">
 		<PageHeader />
 		<main>
-			<BreadCrumbs />
+			{title !== "Home" && <BreadCrumbs />}
 			<slot />
 		</main>
 		<PageFooter />
