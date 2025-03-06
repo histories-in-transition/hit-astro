@@ -2,31 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tabulator Custom Styles */
-.tabulator {
-	@apply bg-neutral-50 border-gray-300 text-gray-900;
+/* Change background color of all headers */
+.tabulator .tabulator-header {
+	@apply bg-brand-100 text-brand-800; /* Adjust to your Tailwind colors */
 }
 
-.headerBackgroundColor {
-	@apply bg-brand-800 text-gray-700 border-gray-400;
+/* Change background, font, text size of each header column */
+.tabulator .tabulator-col-content {
+	@apply bg-brand-100 text-brand-800 font-semibold text-base;
 }
 
-.tabulator-header .tabulator-col {
-	@apply border-gray-400;
+/* Ensure header filter inputs match the styling */
+.tabulator .tabulator-header-filter input {
+	@apply bg-white text-gray-700 border-gray-300 px-2 py-1 rounded;
 }
 
-.tabulator-header .tabulator-col-sorter {
-	@apply text-gray-600;
-}
-
-.tabulator-header .tabulator-col[aria-sort] .tabulator-col-sorter {
+/* Change the sorting arrow color */
+.tabulator .tabulator-col-sorter .tabulator-arrow {
 	@apply text-brand-800;
 }
 
-.tabulator-row {
-	@apply bg-white border-gray-300;
+@screen md {
+	.tabulator .tabulator-row:nth-child(even) {
+		@apply bg-brand-50;
+	}
+	.tabulator .tabulator-cell {
+		@apply border-l;
+	}
 }
-
-.tabulator-row:hover {
-	@apply bg-gray-50;
+/* Apply styles only for small screens (Mobile: <640px) */
+@media (max-width: 639px) {
+	.tabulator .tabulator-cell {
+		@apply font-semibold text-brand-800 bg-brand-100 bg-opacity-50;
+	}
 }

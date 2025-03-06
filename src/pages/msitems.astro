@@ -102,7 +102,7 @@ import TableHead from "../components/table-head.astro";
 					field: "decoration",
 					minWidth: 100,
 					mutator: jsonpathLookup,
-					mutatorParams: { path: "$[*]" },
+					mutatorParams: { path: "$[*].value" },
 					headerFilter: "input",
 					responsive: 2,
 				},
