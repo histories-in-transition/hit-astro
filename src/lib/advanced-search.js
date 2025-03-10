@@ -80,80 +80,81 @@ search.addWidgets([
 				const href = withBasePath(`/msitems/${hit.hit_id}`);
 
 				return html`
-					<a href="${href}">
-						<article class="py-2 px-4 border-brand-300 border rounded-md">
-							<h2 class="text-lg underline underline-offset-2 font-semibold text-brand-800">
+					<article
+						class="w-full max-w-screen-sm mx-auto p-2 md:px-4 border-brand-300 border rounded-md"
+					>
+						<a href="${href}"
+							><h2
+								class="text-lg underline underline-offset-2 font-semibold text-brand-800  break-words"
+							>
 								<span>(#${hit.id}) </span>
 								${hit.work[0]?.author?.length
 									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
 									: ""}
-								<span class="italic">${hit.work[0]?.title || "Untitled"}</span>
-							</h2>
-							<div class="columns-2 gap-8 text-gray-700">
-								<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
-									${hit.title_note !== ""
-										? html`
-												<dt class="font-semibold pr-2">Bemerkung:</dt>
-												<dd class="pl-5">${hit.title_note}</dd>
-											`
-										: ""}
-									<dt class="font-semibold pr-2">Handschrift:</dt>
-									<dd class="pl-5">${hit.view_label}</dd>
-									<dt class="font-semibold pr-2">Datierung:</dt>
-									<dd class="pl-5">
-										${[
-											...new Set(
-												hit.orig_date?.flatMap((od) => od.date?.map((d) => d.value)) || [],
-											),
-										].join(" | ")}
-									</dd>
-									<dt class="font-semibold pr-2">Entstehungsort:</dt>
-									<dd class="pl-5">
-										${[
-											...new Set(
-												hit.orig_place?.flatMap((pl) => pl.place?.map((p) => p.value)) || [],
-											),
-										].join(" | ")}
-									</dd>
-									${hit.hands?.some((h) =>
-										h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
-									)
-										? html`
-												<dt class="font-semibold pr-2">Bearbeitung:</dt>
-												<dd class="pl-5">
-													${[
-														...new Set(
-															hit.hands
-																.filter((h) =>
-																	h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
-																)
-																.flatMap(
-																	(h) => h.jobs?.flatMap((j) => j.role?.map((r) => r.value)) || [],
-																),
-														),
-													].join(" | ")}
-												</dd>
-											`
-										: ""}
-									${hit.hands?.some((h) => h.jobs?.some((j) => j.function.length > 0))
-										? html`
-												<dt class="font-semibold pr-2">Händefunktion:</dt>
-												<dd class="pl-5">
-													${[
-														...new Set(
-															hit.hands.flatMap(
-																(h) =>
-																	h.jobs?.flatMap((j) => j.function?.map((f) => f.value)) || [],
+								<span class="italic break-words">${hit.work[0]?.title || "Untitled"}</span>
+							</h2></a
+						>
+						<div class="text-gray-700">
+							<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
+								${hit.title_note !== ""
+									? html`
+											<dt class="font-semibold pr-2">Bemerkung:</dt>
+											<dd class="pl-5">${hit.title_note}</dd>
+										`
+									: ""}
+								<dt class="font-semibold pr-2">Handschrift:</dt>
+								<dd class="pl-5">${hit.view_label}</dd>
+								<dt class="font-semibold pr-2">Datierung:</dt>
+								<dd class="pl-5">
+									${[
+										...new Set(hit.orig_date?.flatMap((od) => od.date?.map((d) => d.value)) || []),
+									].join(" | ")}
+								</dd>
+								<dt class="font-semibold pr-2">Entstehungsort:</dt>
+								<dd class="pl-5">
+									${[
+										...new Set(
+											hit.orig_place?.flatMap((pl) => pl.place?.map((p) => p.value)) || [],
+										),
+									].join(" | ")}
+								</dd>
+								${hit.hands?.some((h) =>
+									h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
+								)
+									? html`
+											<dt class="font-semibold pr-2">Bearbeitung:</dt>
+											<dd class="pl-5">
+												${[
+													...new Set(
+														hit.hands
+															.filter((h) =>
+																h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
+															)
+															.flatMap(
+																(h) => h.jobs?.flatMap((j) => j.role?.map((r) => r.value)) || [],
 															),
+													),
+												].join(" | ")}
+											</dd>
+										`
+									: ""}
+								${hit.hands?.some((h) => h.jobs?.some((j) => j.function.length > 0))
+									? html`
+											<dt class="font-semibold pr-2">Händefunktion:</dt>
+											<dd class="pl-5">
+												${[
+													...new Set(
+														hit.hands.flatMap(
+															(h) => h.jobs?.flatMap((j) => j.function?.map((f) => f.value)) || [],
 														),
-													].join(" | ")}
-												</dd>
-											`
-										: ""}
-								</dl>
-							</div>
-						</article>
-					</a>
+													),
+												].join(" | ")}
+											</dd>
+										`
+									: ""}
+							</dl>
+						</div>
+					</article>
 				`;
 			},
 		},
@@ -342,4 +343,9 @@ function wrapInPanel(title) {
 			root: "border-b",
 		},
 	})(refinementList);
+}
+
+function toggleRefinements() {
+	const refinementsSection = document.getElementById("refinements-section");
+	refinementsSection.classList.toggle("hidden");
 }

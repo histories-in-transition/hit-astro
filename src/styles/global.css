@@ -163,7 +163,7 @@
 /* Checkbox */
 .ais-RefinementList-checkbox {
 	@apply mr-2 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600;
-	accent-color: var(--brand-600, #20bbb3);
+	accent-color: var(--brand-600, #d44807);
 }
 
 /* Label text */
