@@ -1,6 +1,6 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
-import "instantsearch.css/themes/satellite.css";
+// import "instantsearch.css/themes/satellite.css";
 ---
 
 <PageLayout title="Search">
@@ -9,18 +9,15 @@ import "instantsearch.css/themes/satellite.css";
 			Erweiterte suche nach Manuskripteinträgen (MS-items):
 		</h1>
 
-		<div class="space-y-6">
-			<div class="grid md:grid-cols-[1fr_3fr] gap-6">
-				<!-- Search Input and Stats -->
+		<div class="space-y-6 bg-white">
+			<!-- Search Input and Stats -->
+			<div id="searchbox" class="px-10 py-6 rounded-md border bg-brand-600 w-full"></div>
+
+			<div class="grid md:grid-cols-[1fr_3fr] gap-6 px-5">
+				<!-- Refinements Section -->
 				<div>
-					<div class="bg-brand-100 p-4 rounded-sm">
-						<!-- Refinements Section -->
-						<h2
-							class="py-2 px-6 mb-2 text-brand-800 text-center font-semibold text-lg border-b-2 border-neutral-50 uppercase tracking-wider"
-						>
-							Filter
-						</h2>
-						<aside class="">
+					<div class="rounded-sm">
+						<aside>
 							<div id="refinement-list-work"></div>
 							<div id="refinement-list-authors"></div>
 							<div id="refinement-list-manuscripts"></div>
@@ -36,18 +33,22 @@ import "instantsearch.css/themes/satellite.css";
 						</aside>
 					</div>
 				</div>
-
-				<!-- Results Section -->
-				<section class="space-y-3">
-					<div class="space-y-3">
-						<div id="searchbox"></div>
+				<div>
+					<!-- Current Refinements -->
+					<div class="grid grid-cols-[4fr_1fr] justify-between mr-5">
 						<div id="current-refinements" class="text-sm text-gray-600"></div>
-						<div id="clear-refinements" class="max-w-56"></div>
+						<div id="clear-refinements" class="justify-self-end"></div>
 					</div>
-					<div id="stats-container" class="text-sm text-gray-600"></div>
-					<div id="hits" class="bg-white p-4 rounded-sm shadow-sm"></div>
-					<div id="pagination" class="flex justify-center"></div>
-				</section>
+					<section class="space-y-3 mb-5">
+						<!-- Stats and pagination -->
+						<div class="grid grid-cols-[1fr_auto] items-center gap-8">
+							<div id="stats-container" class="text-base italic text-brand-600"></div>
+							<div id="pagination" class="flex justify-center"></div>
+						</div>
+						<!-- Results Section -->
+						<div id="hits" class="bg-white rounded-sm shadow-sm"></div>
+					</section>
+				</div>
 			</div>
 		</div>
 	</div>

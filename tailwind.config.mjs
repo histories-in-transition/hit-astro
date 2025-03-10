@@ -9,6 +9,7 @@ export default {
 					50: "#f9f6f1", // Lightest Ivory
 					100: "#f6f0e6", // light beige
 					300: "#e9dfcd", // beige
+					600: "#953c04",
 					800: "#6d2b02", // Darker Red
 				},
 				neutral: {

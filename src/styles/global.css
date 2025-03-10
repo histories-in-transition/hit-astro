@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--brand-600: #953c04;
+}
+
 /* Change background color of all headers */
 .tabulator .tabulator-header {
 	@apply bg-brand-100 text-brand-800; /* Adjust to your Tailwind colors */
@@ -35,4 +39,229 @@
 	.tabulator .tabulator-cell {
 		@apply font-semibold text-brand-800 bg-brand-100 bg-opacity-50;
 	}
+}
+/* Styles for algolia widgets */
+
+/* For the current refinements */
+.ais-CurrentRefinements-list {
+	@apply flex flex-wrap gap-3;
+}
+
+.ais-CurrentRefinements-item {
+	@apply py-2 px-3  border rounded-md border-brand-800 bg-brand-50 flex gap-2;
+}
+
+.ais-CurrentRefinements-category {
+	@apply flex gap-3 justify-between;
+}
+
+.ais-CurrentRefinements-label {
+	@apply font-semibold text-brand-800;
+}
+
+.ais-CurrentRefinements-delete {
+	@apply hover:font-semibold hover:text-brand-600;
+}
+
+.ais-ClearRefinements-button {
+	@apply py-2 px-3  border rounded-md hover:border-brand-800 bg-brand-600 text-brand-50 font-semibold text-sm hover:bg-brand-100 hover:text-brand-800 transition;
+}
+
+.ais-ClearRefinements-button--disabled {
+	@apply hidden;
+}
+
+/* Styles for Algolia search box */
+.ais-SearchBox-form {
+	@apply relative w-full;
+}
+
+.ais-SearchBox-input {
+	@apply w-full py-2 pl-10 pr-3 border rounded-md border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-800 focus:border-transparent;
+}
+
+/* Position the existing SVG icon inside the input */
+.ais-SearchBox-submit {
+	@apply absolute left-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none;
+}
+
+.ais-SearchBox-submitIcon {
+	@apply w-5 h-5 text-gray-400;
+}
+
+/* Style the reset button */
+.ais-SearchBox-reset {
+	@apply absolute right-3 top-1/2 transform -translate-y-1/2 bg-transparent border-none;
+}
+
+.ais-SearchBox-resetIcon {
+	@apply w-5 h-5 text-gray-400;
+}
+
+/* Filter Panel  */
+
+/* Main panel container */
+.ais-Panel {
+	@apply mb-4 rounded-lg border border-brand-300 bg-white overflow-hidden shadow-sm;
+}
+
+/* Panel header */
+.ais-Panel-header {
+	@apply px-4 py-2 bg-brand-50 flex justify-between items-center border-b border-gray-200;
+}
+
+/* Panel header text */
+.ais-Panel-header span {
+	@apply text-brand-800 font-medium;
+}
+
+/* Collapse button */
+.ais-Panel-collapseButton {
+	@apply w-auto h-auto bg-transparent flex items-center justify-start pr-2;
+}
+
+/* Collapse icon */
+.ais-Panel-collapseIcon {
+	@apply transform transition-transform duration-300 text-brand-600;
+}
+
+/* Rotate icon when expanded */
+.ais-Panel--collapsed .ais-Panel-collapseIcon {
+	@apply rotate-90 text-brand-800;
+}
+
+/* Hide body when collapsed */
+.ais-Panel--collapsed .ais-Panel-body {
+	@apply hidden;
+}
+
+/* Panel body */
+.ais-Panel-body {
+	@apply px-4 py-2;
+}
+
+/* Refinement list */
+.ais-RefinementList-list {
+	@apply space-y-2 mt-2;
+}
+
+/* Refinement item */
+.ais-RefinementList-item {
+	@apply text-sm;
+}
+
+/* Active refinement item */
+.ais-RefinementList-item--selected {
+	@apply bg-brand-50 rounded-md;
+}
+
+/* Refinement label */
+.ais-RefinementList-label {
+	@apply flex items-center py-1 cursor-pointer hover:text-brand-600;
+}
+
+/* Checkbox */
+.ais-RefinementList-checkbox {
+	@apply mr-2 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600;
+	accent-color: var(--brand-600, #20bbb3);
+}
+
+/* Label text */
+.ais-RefinementList-labelText {
+	@apply text-gray-700 flex-grow;
+}
+
+/* Count badge */
+.ais-RefinementList-count {
+	@apply ml-2 bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full;
+}
+
+/* Show more button */
+.ais-RefinementList-showMore {
+	@apply mt-2 text-sm text-brand-600 hover:text-brand-800 focus:outline-none;
+}
+
+/* Disabled show more button */
+.ais-RefinementList-showMore--disabled {
+	@apply text-gray-400 cursor-not-allowed hover:text-gray-400;
+}
+
+/* Search box in refinement */
+.ais-RefinementList-searchBox {
+	@apply mt-2 mb-3;
+}
+
+.ais-RefinementList-searchBox .ais-SearchBox-form {
+	@apply relative;
+}
+
+.ais-RefinementList-searchBox .ais-SearchBox-input {
+	@apply w-full text-sm py-1.5 pl-8 pr-2 border border-gray-300 rounded;
+}
+
+.ais-RefinementList-searchBox .ais-SearchBox-submit {
+	@apply absolute left-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none;
+}
+
+.ais-RefinementList-searchBox .ais-SearchBox-submitIcon {
+	@apply w-3.5 h-3.5 text-gray-400;
+}
+
+.ais-RefinementList-searchBox .ais-SearchBox-reset {
+	@apply absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent border-none;
+}
+
+.ais-RefinementList-searchBox .ais-SearchBox-resetIcon {
+	@apply w-3.5 h-3.5 text-gray-400;
+}
+
+/* Hits */
+
+.ais-Hits-list {
+	@apply space-y-4;
+}
+
+.ais-Hits-item {
+	@apply border-l-4 border-brand-600 hover:bg-brand-50 rounded-md shadow-sm;
+}
+
+/* Base Pagination List */
+
+.ais-Pagination-list {
+	@apply flex items-center justify-center gap-1 my-4;
+}
+
+/* All Pagination Items */
+.ais-Pagination-item {
+	@apply inline-flex items-center justify-center;
+}
+
+/* Pagination Links */
+.ais-Pagination-link {
+	@apply h-8 w-8 flex items-center justify-center rounded-md text-sm font-medium transition-colors;
+	@apply hover:bg-brand-100;
+}
+
+/* Selected Page */
+.ais-Pagination-item--selected .ais-Pagination-link {
+	@apply bg-brand-600 text-white hover:bg-brand-800;
+}
+
+/* Disabled Items */
+.ais-Pagination-item--disabled .ais-Pagination-link {
+	@apply text-gray-300 cursor-not-allowed hover:bg-transparent;
+}
+
+.ais-Pagination-item--page .ais-Pagination-link {
+	@apply border border-brand-600 rounded-lg  transition hover:bg-brand-100 hover:text-brand-800;
+}
+
+/* previous */
+
+/* First, Last, Previous, Next Icons */
+.ais-Pagination-item--firstPage .ais-Pagination-link,
+.ais-Pagination-item--lastPage .ais-Pagination-link,
+.ais-Pagination-item--previousPage .ais-Pagination-link,
+.ais-Pagination-item--nextPage .ais-Pagination-link {
+	@apply font-bold;
 }

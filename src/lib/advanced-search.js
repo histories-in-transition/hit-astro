@@ -11,9 +11,9 @@ import {
 	currentRefinements,
 } from "instantsearch.js/es/widgets";
 import { withBasePath } from "./withBasePath";
-
 const project_collection_name = "hit__msitems";
 const main_search_field = "title";
+const secondary_search_field = "manuscript";
 const search_api_key = "m4HIiAYUUfemilHQ5LvSTC6hqEiNCjSX"; // custom search only key
 
 const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
@@ -28,7 +28,7 @@ const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
 		],
 	},
 	additionalSearchParameters: {
-		query_by: main_search_field,
+		query_by: `${main_search_field},${secondary_search_field}`,
 	},
 });
 
@@ -68,7 +68,7 @@ search.addWidgets([
 	searchBox({
 		container: "#searchbox",
 		autofocus: true,
-		placeholder: "Suche nach einem Titel",
+		placeholder: "Suche nach einem Titel oder einer Handschrift",
 	}),
 
 	hits({
@@ -80,8 +80,8 @@ search.addWidgets([
 				const href = withBasePath(`/msitems/${hit.hit_id}`);
 
 				return html`
-					<a href="${href}" class="hover:bg-gray-50">
-						<article>
+					<a href="${href}">
+						<article class="py-2 px-4 border-brand-300 border rounded-md">
 							<h2 class="text-lg underline underline-offset-2 font-semibold text-brand-800">
 								<span>(#${hit.id}) </span>
 								${hit.work[0]?.author?.length
@@ -89,7 +89,7 @@ search.addWidgets([
 									: ""}
 								<span class="italic">${hit.work[0]?.title || "Untitled"}</span>
 							</h2>
-							<div class="columns-2 gap-8">
+							<div class="columns-2 gap-8 text-gray-700">
 								<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
 									${hit.title_note !== ""
 										? html`
@@ -156,10 +156,6 @@ search.addWidgets([
 					</a>
 				`;
 			},
-		},
-		cssClasses: {
-			list: "space-y-2",
-			item: "border-l border-brand-800 hover:bg-gray-50 rounded-md shadow-sm",
 		},
 	}),
 
