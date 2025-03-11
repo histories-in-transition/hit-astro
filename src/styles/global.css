@@ -6,12 +6,12 @@
 	--brand-600: #953c04;
 }
 
-/* Change background color of all headers */
+/* background color of all headers */
 .tabulator .tabulator-header {
 	@apply bg-brand-100 text-brand-800; /* Adjust to your Tailwind colors */
 }
 
-/* Change background, font, text size of each header column */
+/* background, font, text size of each header column */
 .tabulator .tabulator-col-content {
 	@apply bg-brand-100 text-brand-800 font-semibold text-base;
 }
@@ -21,7 +21,7 @@
 	@apply bg-white text-gray-700 border-gray-300 px-2 py-1 rounded;
 }
 
-/* Change the sorting arrow color */
+/* sorting arrow color */
 .tabulator .tabulator-col-sorter .tabulator-arrow {
 	@apply text-brand-800;
 }
@@ -40,7 +40,7 @@
 		@apply font-semibold text-brand-800 bg-brand-100 bg-opacity-50;
 	}
 }
-/* Styles for algolia widgets */
+/* Styles for ALGOLIA widgets */
 
 /* For the current refinements */
 .ais-CurrentRefinements-list {
@@ -77,7 +77,7 @@
 }
 
 .ais-SearchBox-input {
-	@apply w-full py-2 pl-10 pr-3 border rounded-md border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-800 focus:border-transparent;
+	@apply w-full py-2 pl-10 pr-3 border rounded-lg border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-800 focus:border-transparent h-12;
 }
 
 /* Position the existing SVG icon inside the input */
@@ -102,12 +102,12 @@
 
 /* Main panel container */
 .ais-Panel {
-	@apply mb-4 rounded-lg border border-brand-300 bg-white overflow-hidden shadow-sm;
+	@apply md:mb-4 md:rounded-lg md:border border-brand-300 bg-white overflow-hidden md:shadow-sm;
 }
 
 /* Panel header */
 .ais-Panel-header {
-	@apply px-4 py-2 bg-brand-50 flex justify-between items-center border-b border-gray-200;
+	@apply px-4 py-2 md:bg-brand-50 flex justify-between items-center md:border-b border-gray-200;
 }
 
 /* Panel header text */

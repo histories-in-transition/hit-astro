@@ -80,9 +80,7 @@ search.addWidgets([
 				const href = withBasePath(`/msitems/${hit.hit_id}`);
 
 				return html`
-					<article
-						class="w-full max-w-screen-sm mx-auto p-2 md:px-4 border-brand-300 border rounded-md"
-					>
+					<article class="w-full p-2 md:px-4 border-brand-300 border rounded-md">
 						<a href="${href}"
 							><h2
 								class="text-lg underline underline-offset-2 font-semibold text-brand-800  break-words"
@@ -345,7 +343,27 @@ function wrapInPanel(title) {
 	})(refinementList);
 }
 
-function toggleRefinements() {
-	const refinementsSection = document.getElementById("refinements-section");
-	refinementsSection.classList.toggle("hidden");
+// Back to top functionality
+const backToTopButton = document.getElementById("back-to-top");
+if (backToTopButton) {
+	backToTopButton.addEventListener("click", function () {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	});
+
+	// Show/hide based on scroll position
+	window.addEventListener("scroll", function () {
+		if (window.scrollY > 300) {
+			backToTopButton.classList.remove("hidden");
+		} else {
+			backToTopButton.classList.add("hidden");
+		}
+	});
+}
+// Filter show/hide panel
+const showFilter = document.querySelector("#filter-button");
+const filters = document.querySelector("#refinements-section");
+if (showFilter) {
+	showFilter.addEventListener("click", function () {
+		filters?.classList.toggle("hidden");
+	});
 }
