@@ -159,7 +159,7 @@ const { data: item } = Astro.props;
           
                 })}
               </dd>
-              {item.commentedMsItem &&              
+              {item.commentedMsItem.length > 0 &&              
               <dt class="font-semibold border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
               <dd class="pl-5">               
                 {item.commentedMsItem
