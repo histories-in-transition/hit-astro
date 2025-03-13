@@ -34,16 +34,16 @@ const { data: manuscript } = Astro.props;
           <div class="flex justify-between">
             <div class="flex gap-2 justify-start">
               {manuscript.handschriftenportal_url &&
-              <NavLink href={manuscript.handschriftenportal_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.handschriftenportal_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >HSP</NavLink>}
             {manuscript.manuscripta_url &&
-              <NavLink href={manuscript.manuscripta_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.manuscripta_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >manuscripta</NavLink>}
             {manuscript.digi_url &&
-              <NavLink href={manuscript.digi_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.digi_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >Digitalisat</NavLink>}
             {manuscript.catalog_url &&
-              <NavLink href={manuscript.catalog_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.catalog_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >Katalog</NavLink>}
             </div>
             {manuscript.status.some(status => status.includes('Bearbeitung')) && (
@@ -399,7 +399,7 @@ const { data: manuscript } = Astro.props;
                             )}‹
                           </span>}
 
-                        {filteredItem.decoration.length > 0 && <span>Ausstattung: {filteredItem.decoration}</span>}
+                        {filteredItem.decoration.length > 0 && (<br/><span>Ausstattung: {filteredItem.decoration.map(deco => deco.value).join(', ')}</span>)}
                         
                       </dd>
                   ))}

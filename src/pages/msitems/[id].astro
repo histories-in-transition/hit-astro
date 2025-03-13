@@ -159,15 +159,9 @@ const { data: item } = Astro.props;
           
                 })}
               </dd>
-              {item.role &&              
+              {item.commentedMsItem &&              
               <dt class="font-semibold border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
-              <dd class="pl-5">
-                {item.role} ({item.function}) 
-                <Icon
-                class="inline-flex align-middle"
-                aria-hidden="true"
-                name="lucide:arrow-right"
-              />      
+              <dd class="pl-5">               
                 {item.commentedMsItem
                 .map(i => 
                   <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}

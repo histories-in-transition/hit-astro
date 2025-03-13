@@ -184,8 +184,6 @@ const msItemsPlus = msitems
 			title_note: relatedWorks.length > 0 ? item.title_note : "",
 			siglum: item.siglum,
 			bibl: item.bibl,
-			role: item.role?.value,
-			function: item.function_role.map((func) => func.value),
 			commentedMsItem: item.commented_msitem.map((cItem) => {
 				// Find the corresponding msitem for the commented item
 				const relatedMsItem = msitems.find((ms) => ms.id === cItem.id);
