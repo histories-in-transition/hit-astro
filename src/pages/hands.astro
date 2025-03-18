@@ -1,7 +1,6 @@
 ---
-import PageLayout from "../layouts/page-layout.astro";
-
-import TableHead from "../components/table-head.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import TableHead from "@/components/table-head.astro";
 ---
 
 <PageLayout title="Hands">
@@ -12,16 +11,11 @@ import TableHead from "../components/table-head.astro";
 
 	<script>
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		// import "tabulator-tables/dist/css/tabulator_bootstrap5.min.css";
-		// import "tabulator-tables/dist/css/tabulator_simple.min.css";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		// import "tabulator-tables/dist/css/tabulator_bulma.min.css";
-		// import "tabulator-tables/dist/css/tabulator_materialize.min.css";
 		import data from "@/content/data/hands.json";
 		import {
 			jsonpathLookup,
 			jsonpathsDateRanges,
-			jsonpathDistinctLookup,
 			dateRangeFilter,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
