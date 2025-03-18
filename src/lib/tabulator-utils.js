@@ -215,7 +215,7 @@ export function dateRangeHeaderFilter(cell, onRendered, success, cancel, editorP
   // Submit new value on blur or change
   [start, end].forEach(input => {
     input.addEventListener("change", () => success(buildDateRange()));
-    input.addEventListener("blur", () => success(buildDateRange()));
+    input.addEventListener("blur-sm", () => success(buildDateRange()));
   });
 
   // Submit new value on Enter, cancel on Esc

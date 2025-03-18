@@ -1,9 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin '@tailwindcss/typography';
+
+@theme {
+	--color-brand-50: #f9f6f1;
+	--color-brand-100: #f6f0e6;
+	--color-brand-300: #e9dfcd;
+	--color-brand-600: #953c04;
+	--color-brand-800: #6d2b02;
+
+	--color-neutral-50: #f9f6f1;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
+}
 
 :root {
-	--brand-600: #953c04;
+	--brand-50: #f9f6f1;
 }
 
 /* background color of all headers */
@@ -18,7 +46,7 @@
 
 /* Ensure header filter inputs match the styling */
 .tabulator .tabulator-header-filter input {
-	@apply bg-white text-gray-700 border-gray-300 px-2 py-1 rounded;
+	@apply bg-white text-gray-700 border-gray-300 px-2 py-1 rounded-sm;
 }
 
 /* sorting arrow color */
@@ -26,7 +54,7 @@
 	@apply text-brand-800;
 }
 
-@screen md {
+@media (width >= theme(--breakpoint-md)) {
 	.tabulator .tabulator-row:nth-child(even) {
 		@apply bg-brand-50;
 	}
@@ -37,7 +65,7 @@
 /* Apply styles only for small screens (Mobile: <640px) */
 @media (max-width: 639px) {
 	.tabulator .tabulator-cell {
-		@apply font-semibold text-brand-800 bg-brand-100 bg-opacity-50;
+		@apply font-semibold text-brand-800 bg-brand-100;
 	}
 }
 /* Styles for ALGOLIA widgets */
@@ -72,12 +100,17 @@
 }
 
 /* Styles for Algolia search box */
+
+#searchbox .ais-SearchBox {
+	@apply relative w-full bg-brand-600;
+}
+
 .ais-SearchBox-form {
-	@apply relative w-full;
+	@apply relative w-full bg-white rounded-lg;
 }
 
 .ais-SearchBox-input {
-	@apply w-full py-2 pl-10 pr-3 border rounded-lg border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-800 focus:border-transparent h-12;
+	@apply w-full py-2 pl-10 pr-3 border rounded-lg border-gray-300 focus:outline-hidden focus:ring-1 focus:ring-brand-800 focus:border-transparent h-12;
 }
 
 /* Position the existing SVG icon inside the input */
@@ -102,7 +135,7 @@
 
 /* Main panel container */
 .ais-Panel {
-	@apply md:mb-4 md:rounded-lg md:border border-brand-300 bg-white overflow-hidden md:shadow-sm;
+	@apply md:mb-4 md:rounded-lg md:border border-brand-300 bg-white overflow-hidden md:shadow-xs;
 }
 
 /* Panel header */
@@ -162,13 +195,13 @@
 
 /* Checkbox */
 .ais-RefinementList-checkbox {
-	@apply mr-2 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600;
+	@apply mr-2 h-4 w-4 rounded-sm border-gray-300 text-brand-600 focus:ring-brand-600;
 	accent-color: var(--brand-600, #d44807);
 }
 
 /* Label text */
 .ais-RefinementList-labelText {
-	@apply text-gray-700 flex-grow;
+	@apply text-gray-700 grow;
 }
 
 /* Count badge */
@@ -178,7 +211,7 @@
 
 /* Show more button */
 .ais-RefinementList-showMore {
-	@apply mt-2 text-sm text-brand-600 hover:text-brand-800 focus:outline-none;
+	@apply mt-2 text-sm text-brand-600 hover:text-brand-800 focus:outline-hidden;
 }
 
 /* Disabled show more button */
@@ -196,7 +229,7 @@
 }
 
 .ais-RefinementList-searchBox .ais-SearchBox-input {
-	@apply w-full text-sm py-1.5 pl-8 pr-2 border border-gray-300 rounded;
+	@apply w-full text-sm py-1.5 pl-8 pr-2 border border-gray-300 rounded-sm;
 }
 
 .ais-RefinementList-searchBox .ais-SearchBox-submit {
@@ -222,7 +255,7 @@
 }
 
 .ais-Hits-item {
-	@apply border-l-4 border-brand-600 hover:bg-brand-50 rounded-md shadow-sm;
+	@apply border-l-4 border-brand-600 hover:bg-brand-50 rounded-md shadow-xs;
 }
 
 /* Base Pagination List */

@@ -7,8 +7,8 @@ const data = await response.text();
 ---
 
 <PageLayout title="Imprint">
-	<div class="mx-auto w-full max-w-screen-xl px-16">
-		<div class="prose max-w-screen-md">
+	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-16">
+		<div class="prose max-w-(--breakpoint-md)">
 			<h1>Imprint</h1>
 			<div set:html={data} />
 		</div>

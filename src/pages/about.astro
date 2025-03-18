@@ -3,8 +3,8 @@ import PageLayout from "../layouts/page-layout.astro";
 ---
 
 <PageLayout title="About">
-	<div class="mx-auto w-full max-w-screen-xl px-16 py-10">
-		<div class="prose max-w-screen-md">
+	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10">
+		<div class="prose max-w-(--breakpoint-md)">
 			<h1 class="text-2xl font-semibold">About the Project</h1>
 			<p>
 				The HIT project is a collaborative project between the <a href="https://uni-tuebingen.de/"
@@ -63,6 +63,6 @@ import PageLayout from "../layouts/page-layout.astro";
 			</p>
 		</div>
 	</div>
-	<div class="prose max-w-screen-md py-5"></div>
+	<div class="prose max-w-(--breakpoint-md) py-5"></div>
 	<div></div>
 </PageLayout>

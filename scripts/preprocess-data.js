@@ -591,6 +591,7 @@ const worksPlus = works.map((work) => {
 			};
 		});
 	return {
+		id: work.id,
 		hit_id: work.hit_id,
 		title: work.title,
 		gnd_url: work.gnd_url,
