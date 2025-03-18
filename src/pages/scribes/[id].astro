@@ -38,7 +38,7 @@ const { data: scribe } = Astro.props;
 			<section>
 				<h2 class="text-2xl text-brand-800 p-5 sr-only">Eingaben über den/die SchreiberIn</h2>
 				<dl
-					class="border-2 rounded-sm shadow-sm border-gray-200 bg-brand-100 grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
+					class="border-2 rounded-xs shadow-xs border-gray-200 bg-brand-100 grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
 				>
 					<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
 					<dd class="pl-5">{scribe?.description}</dd>
@@ -89,7 +89,7 @@ const { data: scribe } = Astro.props;
                 <h2 class="sr-only">Zugewiesene Schreiberhände</h2>
                 {scribe.hands.map((hand) => {
                     return (
-                        <div class="border-2 rounded-sm shadow-sm border-gray-200 bg-brand-100 my-5">
+                        <div class="border-2 rounded-xs shadow-xs border-gray-200 bg-brand-100 my-5">
                             <h3 class="text-xl font-semibold py-3 text-brand-800 p-5">
                                 <NavLink href={`/hands/${hand.hit_id}`}
                                 class="hover:text-brand-800 underline decoration-dotted underline-offset-4">
@@ -173,7 +173,7 @@ const { data: scribe } = Astro.props;
                             </div>
                             <div class="m-5 overflow-x-auto">
                                 <h4 class="sr-only">Beteiligung der Hand innerhalb der Handschrift</h2>
-                                <table class="w-full bg-brand-100 shadow-sm border-t border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
+                                <table class="w-full bg-brand-100 shadow-xs border-t border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
                                     <thead>
                                         <tr> 
                                             <th class="text-center p-2 font-semibold border border-gray-300">Locus</th>
