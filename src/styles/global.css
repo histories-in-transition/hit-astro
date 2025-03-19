@@ -3,13 +3,50 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
+	/* Brand Colors - Warm, earthy tones */
 	--color-brand-50: #f9f6f1;
 	--color-brand-100: #f6f0e6;
+	--color-brand-200: #f0e5d8;
 	--color-brand-300: #e9dfcd;
+	--color-brand-400: #d9c7a9;
+	--color-brand-500: #c4a87d;
 	--color-brand-600: #953c04;
+	--color-brand-700: #7f3303;
 	--color-brand-800: #6d2b02;
+	--color-brand-900: #5a2102;
+	--color-brand-950: #2f1100;
 
+	/* Neutral Colors - Sophisticated grays with warm undertones */
 	--color-neutral-50: #f9f6f1;
+	--color-neutral-100: #f1ece5;
+	--color-neutral-200: #e2dcd2;
+	--color-neutral-300: #d3cbbf;
+	--color-neutral-400: #b8ada0;
+	--color-neutral-500: #9c8f7f;
+	--color-neutral-600: #847566;
+	--color-neutral-700: #6c5e50;
+	--color-neutral-800: #574b3e;
+	--color-neutral-900: #433a2f;
+	--color-neutral-950: #282218;
+
+	/* Accent Colors - Complementary palette */
+	--color-accent-sage-50: #f4f7f4;
+	--color-accent-sage-100: #e5ebe3;
+	--color-accent-sage-500: #7d9279;
+	--color-accent-sage-700: #4a5e46;
+	--color-accent-sage-900: #2a3828;
+
+	--color-accent-terracotta-50: #fbf2ef;
+	--color-accent-terracotta-100: #f7e5df;
+	--color-accent-terracotta-500: #c26d57;
+	--color-accent-terracotta-700: #a24534;
+	--color-accent-terracotta-900: #5e2a21;
+
+	--color-accent-blue-50: #f0f6fb;
+	--color-accent-blue-100: #e0ecf5;
+	--color-accent-blue-500: #537fa2;
+	--color-accent-blue-700: #335873;
+	--color-accent-blue-900: #1e3548;
 }
 
 /*
