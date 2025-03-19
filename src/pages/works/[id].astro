@@ -133,23 +133,103 @@ const { data: work } = Astro.props;
 			{work.ms_transmission.length > 0 && (
 			<section class="m-5 overflow-x-auto" aria-labelledby="transmission">
 				<h2 id="transmission" class="text-xl font-semibold text-brand-800 mb-5">Überlieferung:</h2>
+				<div class="space-y-4 md:hidden">
+					{work.ms_transmission.map((item) => (
+						<div class="border border-brand-800 rounded-md overflow-hidden">
+						<details class="group">
+							<summary class="flex cursor-pointer bg-brand-50 p-4 font-semibold text-brand-800 space-x-1.5">
+								<span>{item.manuscript[0].value}</span>
+									<Icon
+											class=" transition-transform duration-200 group-open:rotate-90 inline-flex ml-auto size-6"
+											aria-hidden="true"
+											name="lucide:circle-chevron-right"
+										/>
+							</summary>
+							<div class="bg-white p-4 space-y-3 text-sm lg:text-base text-brand-900">
+								<dl class="grid grid-cols-[1fr_6fr]">
+									<dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Handschrift</dt>
+									<dd class="pl-5">
+										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
+								{item.manuscript[0].value}
+							</NavLink>
+								</dd>
+								<dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Locus</dt>
+								<dd class="pl-5">
+								<NavLink href={`/msitems/${item.hit_id}`}>
+									{item.locus}
+								</NavLink>
+								</dd>
+								
+								{item?.role !== undefined && (
+								<>
+									<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Role</dt>
+									<dd class="pl-5">
+									{item.role}
+									{item.function.length > 0 && ` (${item.function})`}
+									{item.commented_msitem.length > 0 && (
+										<ul class="list-disc list-inside mt-1">
+										{item.commented_msitem.map((msitem, i) => (
+											<li key={i}>
+											<NavLink href={`/msitems/${msitem.hit_id}`}>
+												{msitem.title}
+											</NavLink>
+											</li>
+										))}
+										</ul>
+									)}
+									</dd>
+								</>
+								)}
+								
+								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Schreibort</dt>
+								<dd class="pl-5">
+								{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}
+								</dd>
+								
+								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Datierung</dt>
+								<dd class="pl-5">
+								{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
+								</dd>
+								
+								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
+								<dd class="pl-5">
+								{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
+								</dd>
+								
+								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Annotationen - Typ</dt>
+								<dd class="pl-5">
+								{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
+								</dd>
+								
+								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Dekoration</dt>
+								<dd class="pl-5">
+								{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
+								</dd>
+							</dl>
+							</div>
+						</details>
+						</div>
+					))}
+					</div>
+					<div class="hidden md:block">
+						<div class="overflow-hidden rounded-md border border-neutral-400">
 				<table
-					class="w-full shadow-xs border-1 border-brand-800 lg:leading-7 text-sm lg:text-base data-table"
+					class="w-full shadow-xs lg:leading-7 text-sm lg:text-base data-table rounded-xl"
 				>
-					<thead class="bg-brand-300">
+					<thead class="bg-brand-200">
 						<tr>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Handschrift</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Locus</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Handschrift</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Locus</th>
 							{work.ms_transmission.some((item) => item.role !== undefined) && (
-								<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Role</th>)}
-							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Schreibort</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Datierung</th>
-							<th colspan="2" class="text-center p-2 font-semibold border border-gray-300">Annotationen</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-gray-300">Dekoration</th>
+								<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Role</th>)}
+							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Schreibort</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Datierung</th>
+							<th colspan="2" class="text-center p-2 font-semibold border border-neutral-300">Annotationen</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Dekoration</th>
 						</tr>
 						<tr>
-							<th class="text-center p-2 font-semibold border border-gray-300">Datierung</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Typ</th>
+							<th class="text-center p-2 font-semibold border border-neutral-300">Datierung</th>
+							<th class="text-center p-2 font-semibold border border-neutral-300">Typ</th>
 						</tr>
 					</thead>
 
@@ -157,18 +237,18 @@ const { data: work } = Astro.props;
 						{
 							work.ms_transmission.map((item) => (
 								<tr class="odd:bg-brand-50 even:bg-brand-100">
-									<td class="p-2 border border-gray-300">
+									<td class="p-2 border border-neutral-300">
 										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
 											{item.manuscript[0].value}
 										</NavLink>
 									</td>
-									<td class="p-2 border border-gray-300">
+									<td class="p-2 border border-neutral-300">
 										<NavLink  href={`/msitems/${item.hit_id}`}>
 											{item.locus}
 										</NavLink>
 									</td>
 									{item?.role !== undefined && (
-										<td class="p-2 border border-gray-300">
+										<td class="p-2 border border-neutral-300">
 										{item.role}
 										{item.function.length > 0 &&
 											<>
@@ -190,17 +270,17 @@ const { data: work } = Astro.props;
 
 									</td>
 									)}
-									<td class="p-2 border border-gray-300">{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}</td>
-									<td class="p-2 border border-gray-300">
+									<td class="p-2 border border-neutral-300">{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}</td>
+									<td class="p-2 border border-neutral-300">
 										{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 									</td>
-									<td class="p-2 border border-gray-300">
+									<td class="p-2 border border-neutral-300">
 										{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
 									</td>
-									<td class="p-2 border border-gray-300">
+									<td class="p-2 border border-neutral-300">
 										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
 									</td>
-									<td class="p-2 border border-gray-300">
+									<td class="p-2 border border-neutral-300">
 										{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
 									</td>
 								</tr>
@@ -208,6 +288,8 @@ const { data: work } = Astro.props;
 						}
 					</tbody>
 				</table>
+				</div>
+				</div>
 			</section>
 			)}
 		</div>
