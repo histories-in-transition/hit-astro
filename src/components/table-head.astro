@@ -30,9 +30,9 @@ const { title, definition } = Astro.props;
 						</span>
 					</span>
 					<span class="hidden group md:flex gap-2 items-start relative">
-						<Icon name="lucide:info" aria-hidden="true" />
+						<Icon name="lucide:info" aria-hidden="true" class="hover:bg-brand-800 hover:text-brand-50 rounded-full" />
 						<span class="sr-only">Definition des Begriffes</span>
-						<span class="invisible group-hover:visible border-2 border-brand-800 rounded-md p-3 text-sm md:text-base font-medium  bg-brand-100 text-brand-800 w-96 z-10 absolute left-8 shadow-xs">
+						<span class="invisible group-hover:visible rounded-md p-3 text-sm md:text-base font-medium bg-brand-900/90 text-brand-50 w-96 z-10 absolute left-8">
 							{definition}
 						</span>
 					</span>
@@ -47,6 +47,6 @@ const { title, definition } = Astro.props;
 		<span id="counter2"></span> Einträgen angezeigt
 	</div>
 	<div class="text-sm md:text-base">
-		<table id="tabulator-table"></table>
+		<div id="tabulator-table"></div>
 	</div>
 </div>

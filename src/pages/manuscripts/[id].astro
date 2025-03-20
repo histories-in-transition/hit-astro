@@ -34,128 +34,150 @@ const { data: manuscript } = Astro.props;
           <div class="flex justify-between">
             <div class="flex gap-2 justify-start">
               {manuscript.handschriftenportal_url &&
-              <NavLink href={manuscript.handschriftenportal_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.handschriftenportal_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600  text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >HSP</NavLink>}
             {manuscript.manuscripta_url &&
-              <NavLink href={manuscript.manuscripta_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.manuscripta_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >manuscripta</NavLink>}
             {manuscript.digi_url &&
-              <NavLink href={manuscript.digi_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.digi_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >Digitalisat</NavLink>}
             {manuscript.catalog_url &&
-              <NavLink href={manuscript.catalog_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              <NavLink href={manuscript.catalog_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
             >Katalog</NavLink>}
             </div>
             {manuscript.status.some(status => status.includes('Bearbeitung')) && (
-  <div class="flex items-center gap-x-1.5 justify-center text-brand-800 font-semibold">
-    <Icon aria-hidden="true" name="lucide:construction" />
-    <span> {manuscript.status.join(' | ')} </span>
-    <Icon aria-hidden="true" name="lucide:construction" />
-  </div>
-)}
-
-            <div class="flex gap-2 justify-end">
-              <button class="border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition" 
+           
+              <div class="flex items-center gap-x-1.5 justify-center text-brand-800 font-semibold text-xs md:text-base p-2 md:p-0">
+                  <Icon aria-hidden="true" name="lucide:construction" />
+                  <span> {manuscript.status.join(' | ')} </span>
+                  <Icon aria-hidden="true" name="lucide:construction" />
+                </div>
+             )}
+            <div class="hidden md:flex gap-2 justify-end">
+              <button class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition" 
               id="download-pdf">PDF</button>
             </div>
           </div>
          
-          <section aria-labelledby="msInfo" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base p-5">
-            <h2 id="msInfo" class="text-xl font-semibold text-brand-800">Überblick:</h2>
-            <dl class="grid grid-cols-[1fr_5fr] p-3">
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-              <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>              
+          <section aria-labelledby="msInfo" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
+            
+            <details class="group">
+              <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+               <h2 id="msInfo" class="text-xl font-semibold text-brand-800">Überblick</h2>
+                  <Icon
+                      class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                      aria-hidden="true"
+                      name="lucide:circle-chevron-right"
+                    />
+              </summary>
+                <dl class="grid grid-cols-[1fr_5fr] p-3">
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
+                  <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>
               
-              <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-              <dd class="pl-5">
-                {manuscript.library_full}
-              </dd>
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
+                  <dd class="pl-5">
+                    {manuscript.library_full}
+                  </dd>
               
-              <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
-              <dd class="pl-5">{manuscript?.shelfmark.split(',')[1]}</dd>
-
-              {manuscript.idno_former &&
-              <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
-              <dd class="pl-5">{manuscript?.idno_former}</dd>}
-              {manuscript.charakter.length > 0 &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
-                <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
-              }
-              {manuscript.case_study.length > 0 &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
-                <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
-             
-              {manuscript.content_summary &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
-                <dd class="pl-5">{manuscript.content_summary}</dd>}
-            </dl>
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
+                  <dd class="pl-5">{manuscript?.shelfmark.split(',')[1]}</dd>
+                  {manuscript.idno_former &&
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
+                  <dd class="pl-5">{manuscript?.idno_former}</dd>}
+                  {manuscript.charakter.length > 0 &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
+                    <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
+                  }
+                  {manuscript.case_study.length > 0 &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
+                    <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
+              
+                  {manuscript.content_summary &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
+                    <dd class="pl-5">{manuscript.content_summary}</dd>}
+                </dl>
+            </details>
           </section>
           <section aria-labelledby="msMaterial" class="border rounded-sm border-gray-200 shadow-sm 
-          bg-brand-100 text-sm md:leading-7 md:text-base p-5">
-            <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Materialität:</h2>
-            <dl class=" grid grid-cols-[1fr_5fr] p-3">
-              <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
-              <dd class="pl-5">
-                  {manuscript?.material === "parchment" && <span>Pergament</span>}
-                  {manuscript?.material === "mixed" && <span>Mischung</span>}
-                  {manuscript?.material === "paper" && <span>Papier</span>}
-                  {manuscript?.material_spec && 
-                    <span>
-                       <Icon class="inline-flex" aria-hidden="true" name="lucide:arrow-right"/>  
-                       {manuscript?.material_spec}</span>
-                   
-                  }
-              </dd>
-                   
-              <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
-              <dd class="pl-5">{manuscript?.extent} Bll.</dd> 
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-              <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd> 
-
-              <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-              <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
-
-              {manuscript.quiremarks && (
-                <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
-                <dd class="pl-5">{manuscript?.quiremarks}</dd>
-               )} 
-              {manuscript.catchwords && (
-                   <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
-                   <dd class="pl-5">{manuscript?.catchwords}</dd>
-              )}
-              <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
-              <dd class="pl-5">
-                {manuscript.quire_structure && (
-                   <span set:html={manuscript?.quire_structure}></span>
-                )}
-              </dd>            
+          bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
+            <details class="group">
+              <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+                <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Materialität</h2>
+                <Icon
+                      class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                      aria-hidden="true"
+                      name="lucide:circle-chevron-right"
+                    />
+              </summary>
+              <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
+                <dd class="pl-5">
+                    {manuscript?.material === "parchment" && <span>Pergament</span>}
+                    {manuscript?.material === "mixed" && <span>Mischung</span>}
+                    {manuscript?.material === "paper" && <span>Papier</span>}
+                    {manuscript?.material_spec &&
+                      <span>
+                         <Icon class="inline-flex" aria-hidden="true" name="lucide:arrow-right"/>
+                         {manuscript?.material_spec}</span>
               
-              <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
-              <dd class="pl-5">
-                {manuscript?.binding_date.map(date => (
-                  <span>{date?.value}</span>
-                ))}
-                {manuscript?.binding}</dd>
-              
-                {manuscript?.acc_mat && (
-                   <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
-                    <dd class="pl-5">
-                  {manuscript?.acc_mat}
+                    }
                 </dd>
-                )}                
-            </dl>
+              
+                <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
+                <dd class="pl-5">{manuscript?.extent} Bll.</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+                <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd>
+                <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
+                <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
+                {manuscript.quiremarks && (
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+                  <dd class="pl-5">{manuscript?.quiremarks}</dd>
+                 )}
+                {manuscript.catchwords && (
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
+                     <dd class="pl-5">{manuscript?.catchwords}</dd>
+                )}
+                <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
+                <dd class="pl-5">
+                  {manuscript.quire_structure && (
+                     <span set:html={manuscript?.quire_structure}></span>
+                  )}
+                </dd>
+              
+                <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
+                <dd class="pl-5">
+                  {manuscript?.binding_date.map(date => (
+                    <span>{date?.value}</span>
+                  ))}
+                  {manuscript?.binding}</dd>
+              
+                  {manuscript?.acc_mat && (
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
+                      <dd class="pl-5">
+                    {manuscript?.acc_mat}
+                  </dd>
+                  )}
+              </dl>
+            </details>
           </section> 
           
           {manuscript?.cod_units?.length > 0 
           ?
                     <section aria-labelledby="codUnits" class="border rounded-sm border-gray-200 shadow-sm 
-                    bg-brand-100 text-sm md:leading-7 md:text-base p-5">
+                    bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
                     
                     {manuscript.cod_units.map((unit) => (
-                      <> 
-                          <h2 id="codUnits" class="text-lg font-semibold text-brand-800">Kodikologische Einheit {unit.number}: </h2>
+                      <>  <details class="group">
+              <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+                <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Kodikologische Einheit {unit.number}</h2>
+                <Icon
+                      class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                      aria-hidden="true"
+                      name="lucide:circle-chevron-right"
+                    />
+              </summary>
+                          
                           <dl class=" grid grid-cols-[1fr_5fr] p-3">
                             <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
                             <dd class="pl-5">
@@ -248,14 +270,24 @@ const { data: manuscript } = Astro.props;
                               </dd>
                               }          
                           </dl>
+                          </details>
                       </>
                     ))}
 
                     </section>
                     : ''  
           } 
-          <section aria-labelledby="msHistory" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base p-5">
-            <h2 id="msHistory" class="text-xl font-semibold text-brand-800">Geschichte:</h2>
+          <section aria-labelledby="msHistory" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
+            <details class="group">
+              <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+                <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Geschichte</h2>
+                <Icon
+                      class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                      aria-hidden="true"
+                      name="lucide:circle-chevron-right"
+                    />
+              </summary>
+          
            
             <dl class=" grid grid-cols-[1fr_5fr] p-5">               
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
@@ -284,21 +316,40 @@ const { data: manuscript } = Astro.props;
               {manuscript?.history !== undefined 
             ? <p class="p-5">{manuscript?.history}</p>
             : ''}
+            </details>
           </section> 
 
           {manuscript.bibliography.length > 0 
-            ? <section aria-labelledby="bibl" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base p-5">
-              <h2 id="bibl" class="text-xl font-semibold text-brand-800">Bibliographie:</h2>    
+            ? <section aria-labelledby="bibl" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
+               <details class="group">
+              <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+                <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Bibliographie</h2>
+                <Icon
+                      class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                      aria-hidden="true"
+                      name="lucide:circle-chevron-right"
+                    />
+              </summary>    
               <ul>
                 {manuscript.bibliography.map(bibl => 
                 (<li>{bibl}</li>))}
               </ul>
+               </details>
             </section>
             : ''
           }
 
-        <section aria-labelledby="msContent" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base p-5">
-          <h2 id="msContent" class="text-xl font-semibold text-brand-800">Inhalt:</h2>           
+        <section aria-labelledby="msContent" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
+          <details class="group">
+            <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+              <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Inhalt</h2>
+              <Icon
+                    class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                    aria-hidden="true"
+                    name="lucide:circle-chevron-right"
+                  />
+            </summary>
+                    
             {manuscript.cod_units.map((unit) => (
                 <dl class="grid grid-cols-[1fr_5fr] p-3">
                 <dt class="font-semibold border-r border-gray-300 pr-2">
@@ -405,12 +456,22 @@ const { data: manuscript } = Astro.props;
                   ))}
                   </dl>
             ))}
+          </details>
         </section> 
         
         {manuscript.strata.length > 0 
         ?                    
-           <section aria-labelledby="msStrata" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base p-5">
-            <h2 id="msStrata" class="text-xl font-semibold text-brand-800">Strata:</h2> 
+           <section aria-labelledby="msStrata" class="border rounded-xs border-gray-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:p-5">
+             <details class="group">
+              <summary class="flex cursor-pointer p-4 font-semibold text-brand-800 space-x-1.5">
+                <h2 id="msMaterial" class="text-xl font-semibold text-brand-800">Strata</h2>
+                <Icon
+                      class=" transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+                      aria-hidden="true"
+                      name="lucide:circle-chevron-right"
+                    />
+              </summary>
+           
             <dl class="grid grid-cols-[1fr_5fr] p-3">
                   {manuscript.strata.map(stratum => {
                       return <>
@@ -597,7 +658,7 @@ const { data: manuscript } = Astro.props;
               
               </table>
             </div> 
-          
+             </details>
           </section>
           : ""} 
         

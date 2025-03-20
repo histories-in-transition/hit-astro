@@ -63,17 +63,20 @@
 	::before,
 	::backdrop,
 	::file-selector-button {
-		border-color: var(--color-gray-200, currentColor);
+		border-color: var(--color-neutral-300, currentColor);
 	}
 }
 
 :root {
 	--brand-50: #f9f6f1;
 }
+/* ############################################# */
+/* ################ TABULATOR ################# */
+/* ############################################# */
 
 /* background color of all headers */
 .tabulator .tabulator-header {
-	@apply bg-brand-100 text-brand-800; /* Adjust to your Tailwind colors */
+	@apply bg-brand-100 text-brand-800;
 }
 
 /* background, font, text size of each header column */
@@ -83,7 +86,7 @@
 
 /* Ensure header filter inputs match the styling */
 .tabulator .tabulator-header-filter input {
-	@apply bg-white text-gray-700 border-gray-300 px-2 py-1 rounded-sm;
+	@apply bg-white text-neutral-800 border-neutral-300 px-2 py-1 rounded-sm;
 }
 
 /* sorting arrow color */
@@ -91,7 +94,7 @@
 	@apply text-brand-800;
 }
 
-@media (width >= theme(--breakpoint-md)) {
+@media (width >= theme(--breakpoint-xl)) {
 	.tabulator .tabulator-row:nth-child(even) {
 		@apply bg-brand-50;
 	}
@@ -100,12 +103,14 @@
 	}
 }
 /* Apply styles only for small screens (Mobile: <640px) */
-@media (max-width: 639px) {
+@media (width < theme(--breakpoint-xl)) {
 	.tabulator .tabulator-cell {
 		@apply font-semibold text-brand-800 bg-brand-100;
 	}
 }
-/* Styles for ALGOLIA widgets */
+/* ###################################################### */
+/* ################ Algolia / TYPESENSE ################# */
+/* ###################################################### */
 
 /* For the current refinements */
 .ais-CurrentRefinements-list {

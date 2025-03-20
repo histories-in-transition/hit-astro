@@ -5,12 +5,12 @@ import { Icon } from "astro-icon/components";
 const { prevLink, nextLink, mainLink, mainTitle, subtitle } = Astro.props;
 ---
 
-<article class="mx-auto md:w-3/4 sm:w-5/6 grid grid-cols-1 p-5 pb-10 gap-y-2">
+<article class="mx-auto lg:w-3/4 md:w-5/6 grid grid-cols-1 p-2 md:p-5 pb-10 gap-y-2">
 	<div class="flex justify-between gap-3 text-brand-800 md:text-3xl text-xl">
 		{
 			prevLink && (
 				<NavLink href={prevLink} class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:circle-chevron-left" />
+					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="size-8" />
 					<span class="sr-only">zum vorherigen Eintrag</span>
 				</NavLink>
 			)
@@ -30,7 +30,7 @@ const { prevLink, nextLink, mainLink, mainTitle, subtitle } = Astro.props;
 		{
 			nextLink && (
 				<NavLink href={nextLink} class="flex items-center">
-					<Icon aria-hidden="true" name="lucide:circle-chevron-right" />
+					<Icon aria-hidden="true" name="lucide:circle-chevron-right" class="size-8" />
 					<span class="sr-only">zum nächsten Eintrag</span>
 				</NavLink>
 			)

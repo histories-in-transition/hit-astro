@@ -135,7 +135,7 @@ const { data: work } = Astro.props;
 				<h2 id="transmission" class="text-xl font-semibold text-brand-800 mb-5">Überlieferung:</h2>
 				<div class="space-y-4 md:hidden">
 					{work.ms_transmission.map((item) => (
-						<div class="border border-brand-800 rounded-md overflow-hidden">
+						<div class="border border-neutral-300 rounded-md overflow-hidden">
 						<details class="group">
 							<summary class="flex cursor-pointer bg-brand-50 p-4 font-semibold text-brand-800 space-x-1.5">
 								<span>{item.manuscript[0].value}</span>
@@ -147,13 +147,13 @@ const { data: work } = Astro.props;
 							</summary>
 							<div class="bg-white p-4 space-y-3 text-sm lg:text-base text-brand-900">
 								<dl class="grid grid-cols-[1fr_6fr]">
-									<dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Handschrift</dt>
+									<dt class="font-semibold border-r border-neutral-300 pr-2 justify-self-end">Handschrift</dt>
 									<dd class="pl-5">
 										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
 								{item.manuscript[0].value}
 							</NavLink>
 								</dd>
-								<dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Locus</dt>
+								<dt class="font-semibold border-r border-neutral-300 pr-2 justify-self-end">Locus</dt>
 								<dd class="pl-5">
 								<NavLink href={`/msitems/${item.hit_id}`}>
 									{item.locus}
@@ -162,7 +162,7 @@ const { data: work } = Astro.props;
 								
 								{item?.role !== undefined && (
 								<>
-									<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Role</dt>
+									<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Role</dt>
 									<dd class="pl-5">
 									{item.role}
 									{item.function.length > 0 && ` (${item.function})`}
@@ -181,27 +181,27 @@ const { data: work } = Astro.props;
 								</>
 								)}
 								
-								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Schreibort</dt>
+								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Schreibort</dt>
 								<dd class="pl-5">
 								{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}
 								</dd>
 								
-								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Datierung</dt>
+								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Datierung</dt>
 								<dd class="pl-5">
 								{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 								</dd>
 								
-								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
+								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
 								<dd class="pl-5">
 								{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
 								</dd>
 								
-								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Annotationen - Typ</dt>
+								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Typ</dt>
 								<dd class="pl-5">
 								{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
 								</dd>
 								
-								<dt class="font-semibold border-r border-gray-300 pr-2  justify-self-end">Dekoration</dt>
+								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Dekoration</dt>
 								<dd class="pl-5">
 								{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
 								</dd>
