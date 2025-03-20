@@ -435,6 +435,7 @@ const manuscriptsPlus = manuscripts.map((manuscript) => {
 		status: manuscript.status?.map((s) => s.value) ?? [],
 		cod_units: cod_unit,
 		strata: strata,
+		author_entry: manuscript.author_entry.map((a) => a.value),
 	};
 });
 
