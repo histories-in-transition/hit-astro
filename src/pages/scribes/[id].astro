@@ -1,7 +1,6 @@
 ---
 import PageLayout from "@/layouts/page-layout.astro";
 import Button from "@/components/button.astro";
-import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import scribesJson from "@/content/data/scribes.json";
@@ -31,10 +30,10 @@ const { data: scribe } = Astro.props;
           >          
             
 
-			<div class="flex gap-2 justify-end">
+			<!-- <div class="flex gap-2 justify-end">
 				<Button>TEI-XML</Button>
 				<Button>PDF</Button>
-			</div>
+			</div> -->
 			<section>
 				<h2 class="text-2xl text-brand-800 p-5 sr-only">Eingaben über den/die SchreiberIn</h2>
 				<dl
@@ -46,7 +45,7 @@ const { data: scribe } = Astro.props;
 					<dt class="font-semibold border-r border-gray-300 pr-2">Datierung der Hände:</dt>
 					<dd class="pl-5">
                         <ul>
-                            {scribe.date.map((dating, index) => {
+                            {scribe.date.map((dating) => {
                                 return (
                                     <li>
                                     {dating.dated.map(date => date.value)} 
@@ -56,8 +55,7 @@ const { data: scribe } = Astro.props;
                                                             ? aut.citation 
                                                             : 'N/A').join(', ')})`
                                                      : ''
-                                                }
-                                               {index < scribe.date.length - 1 && ' | '}  
+                                                } 
                                     </li>
                                 );
                             })}
@@ -65,10 +63,10 @@ const { data: scribe } = Astro.props;
                     </dd>
 					<dt class="font-semibold border-r border-gray-300 pr-2">Lokalisierung:</dt>
 					<dd class="pl-5">
-                        <ul>
-                            {scribe.places.map((placement, index) => {
+                        <ul class="list-disc">
+                            {scribe.places.map((placement) => {
                                  return (
-                                            <>
+                                            <li>
                                             {placement.place.map(location => location.value).join(', ')}                                             
                                             {placement.authority.length > 0
                                                      ? ` (${placement.authority.map((aut) => 
@@ -77,8 +75,8 @@ const { data: scribe } = Astro.props;
                                                             : 'N/A').join(', ')})`
                                                      : ''
                                                 }
-                                               {index < scribe.places.length - 1 && ' | '}
-                                                </>
+                                             
+                                                </li>
                                         );
                                         })}
                         </ul>
