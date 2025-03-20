@@ -1,7 +1,7 @@
 ---
 import "@fontsource-variable/inter";
-import "../styles/global.css";
-
+import "@/styles/global.css";
+import ScrollToTop from "@/components/scroll-to-top.astro";
 import PageFooter from "@/components/page-footer.astro";
 import PageHeader from "@/components/page-header.astro";
 import BreadCrumbs from "@/components/breadcrumbs.astro";
@@ -20,12 +20,13 @@ const { title = "Histories in transition" } = Astro.props;
 		<title>HiT · {title}</title>
 		<meta name="description" content="" />
 	</head>
-	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brand-50">
+	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brand-50 text-brand-950">
 		<PageHeader />
 		<main>
 			{title !== "Home" && <BreadCrumbs />}
 			<slot />
 		</main>
 		<PageFooter />
+		<ScrollToTop />
 	</body>
 </html>
