@@ -3,11 +3,15 @@ import PageLayout from "@/layouts/page-layout.astro";
 import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
-import new_works from "@/content/data/works.json"
+import worksjson from "@/content/data/works.json";
+
+import MapLeaflet from "@/components/map-leaflet.jsx";
+
+import {processWorksData} from "@/lib/make-geojson.js";
 
 export async function getStaticPaths() {
 	
-const works = Object.values(new_works);
+const works = Object.values(worksjson);
 	const paths = works.map((work) => {
 		const workId = work.hit_id;
 
@@ -21,6 +25,7 @@ const works = Object.values(new_works);
 }
 
 const { data: work } = Astro.props;
+const geoJsonData = processWorksData(work);
 ---
 
 <PageLayout title={work?.title}>
@@ -41,6 +46,7 @@ const { data: work } = Astro.props;
 		>
 			<section class="m-5 overflow-x-auto" aria-labelledby="workInfo">
 				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">Allgemeine Info zum Werk:</h2>
+				<div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start ">
 					<dl class="grid grid-cols-[1fr_6fr]">
 						<dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
 						<dd class="pl-5">
@@ -128,12 +134,18 @@ const { data: work } = Astro.props;
 							</dd>
 									}
 					</dl>
+					
+				</div>
 			</section>
 
 			{work.ms_transmission.length > 0 && (
-			<section class="m-5 overflow-x-auto" aria-labelledby="transmission">
-				<h2 id="transmission" class="text-xl font-semibold text-brand-800 mb-5">Überlieferung:</h2>
-				<div class="space-y-4 md:hidden">
+			<section class="m-5 overflow-x-auto space-y-5" aria-labelledby="transmission">
+				<h2 id="transmission" class="text-xl font-semibold text-brand-800">Überlieferung:</h2>
+				{work.ms_transmission?.map(tr => tr.orig_place).flat().length > 0 &&					
+					<MapLeaflet client:only="react" geoJsonData={geoJsonData}/>
+				}
+					
+					<div class="space-y-4 md:hidden mt-3">
 					{work.ms_transmission.map((item) => (
 						<div class="border border-neutral-300 rounded-md overflow-hidden">
 						<details class="group">
@@ -211,7 +223,7 @@ const { data: work } = Astro.props;
 						</div>
 					))}
 					</div>
-					<div class="hidden md:block">
+					<div class="hidden md:block mt-3">
 						<div class="overflow-hidden rounded-md border border-neutral-400">
 				<table
 					class="w-full shadow-xs lg:leading-7 text-sm lg:text-base data-table rounded-xl"

@@ -1,9 +1,11 @@
 ---
 import PageLayout from "@/layouts/page-layout.astro";
-import Button from "@/components/button.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import scribesJson from "@/content/data/scribes.json";
+
+import MapLeaflet from "@/components/map-leaflet.jsx";
+import {processScribesData} from "@/lib/make-geojson.js";
 
 export async function getStaticPaths() {
 	const scribes = Object.values(scribesJson);
@@ -18,6 +20,7 @@ export async function getStaticPaths() {
 }
 
 const { data: scribe } = Astro.props;
+const geoJson = processScribesData(scribe);
 ---
 
 <PageLayout title={scribe.name}>
@@ -34,15 +37,16 @@ const { data: scribe } = Astro.props;
 				<Button>TEI-XML</Button>
 				<Button>PDF</Button>
 			</div> -->
-			<section>
-				<h2 class="sr-only">Eingaben über den/die SchreiberIn</h2>
+			<section class="border-2 rounded-xs shadow-xs border-neutral-200 bg-brand-100  p-5">
+				<h2 class="text-lg md:text-xl font-semibold py-3 text-brand-800">Eingaben über den/die SchreiberIn</h2>
+                <div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start ">
 				<dl
-					class="border-2 rounded-xs shadow-xs border-gray-200 bg-brand-100 grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5"
+					class="grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base"
 				>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+					<dt class="font-semibold border-r border-neutral-200 pr-2">Beschreibung:</dt>
 					<dd class="pl-5">{scribe?.description}</dd>
 					
-					<dt class="font-semibold border-r border-gray-300 pr-2">Datierung der Hände:</dt>
+					<dt class="font-semibold border-r border-neutral-200 pr-2">Datierung der Hände:</dt>
 					<dd class="pl-5">
                         <ul>
                             {scribe.date.map((dating) => {
@@ -61,7 +65,7 @@ const { data: scribe } = Astro.props;
                             })}
                         </ul>
                     </dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Lokalisierung:</dt>
+					<dt class="font-semibold border-r border-neutral-200 pr-2">Lokalisierung:</dt>
 					<dd class="pl-5">
                         <ul>
                             {scribe.places.map((placement) => {
@@ -82,35 +86,38 @@ const { data: scribe } = Astro.props;
                         </ul>
                     </dd>
 				</dl>
+                <MapLeaflet client:only="react"
+                    geoJsonData={geoJson}></MapLeaflet>
+                </div>
             </section>
             <section>
                 <h2 class="sr-only">Zugewiesene Schreiberhände</h2>
                 {scribe.hands.map((hand) => {
                     return (
-                        <details open class="border-2 rounded-xs shadow-xs border-gray-200 bg-brand-100 my-5">
+                        <details open class="border-2 rounded-xs shadow-xs border-neutral-200 bg-brand-100 my-5">
                             <summary class="text-lg md:text-xl font-semibold py-3 text-brand-800 p-5">
                                 Schreiber in {hand.manuscript[0]?.value}
                             </summary>
                             <div>
-                                <h4 class="sr-only">Eingaben über die Schreiberhand</h4>
+                                <h3 class="sr-only">Eingaben über die Schreiberhand</h3>
                                 <dl class="grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base p-5">
-                                    <dt class="font-semibold border-r border-gray-300 pr-2">Hand:</dt>
+                                    <dt class="font-semibold border-r border-neutral-200 pr-2">Hand:</dt>
                                     <dd class="pl-5">
                                         <NavLink href={`/hands/${hand.hit_id}`}
                                 class="hover:text-brand-800 underline decoration-dotted underline-offset-4">{hand.label.split('_')[1]}
                                     </NavLink>
                                     </dd>
-                                    <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+                                    <dt class="font-semibold border-r border-neutral-200 pr-2">Handschrift:</dt>
                                     <dd class="pl-5">
                                     <NavLink href={`/manuscripts/hit_manuscript__${hand.hand_roles[0]?.content[0]?.manuscript[0]?.id}`}>
                                         {hand.manuscript[0]?.value}
                                     </NavLink>
                                     </dd>
-                                    <dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+                                    <dt class="font-semibold border-r border-neutral-200 pr-2">Beschreibung:</dt>
                                     <dd class="pl-5">{hand?.description}</dd>
 
                                     {hand.similar_hands?.length > 0 &&
-                                        <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
+                                        <dt class="font-semibold border-r border-neutral-200 pr-2">Ähnliche Hände:</dt>
                                         <dd class="pl-5">
                                             {hand.similar_hands.map((h, index) => (
                                                 <span>
@@ -124,7 +131,7 @@ const { data: scribe } = Astro.props;
                                             }
                                         </dd>
                                     }
-                                    <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
+                                    <dt class="font-semibold border-r border-neutral-200 pr-2">Datiert:</dt>
                                     <dd class="pl-5">
                                         {hand.date.map(dating => {
                                             return (
@@ -140,7 +147,7 @@ const { data: scribe } = Astro.props;
                                         })}
                                     </dd> 
 
-                                    <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
+                                    <dt class="font-semibold border-r border-neutral-200 pr-2">Lokalisiert:</dt>
                                     <dd class="pl-5">
                                         {hand.placed.map((placing, index) => {
                                         return (
@@ -161,11 +168,11 @@ const { data: scribe } = Astro.props;
                                                 
 
                                     {hand.nr_daniel &&
-                                        <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
+                                        <dt class="font-semibold border-r border-neutral-200 pr-2">Nummer Daniel:</dt>
                                         <dd class="pl-5">{hand.nr_daniel}</dd>                
                                     }
 
-                                    <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
+                                    <dt class="font-semibold border-r border-neutral-200 pr-2">Rolle:</dt>
                                     <dd class="pl-5">
                                         {(hand.roles).join(', ')}
                                     </dd>   
@@ -173,17 +180,17 @@ const { data: scribe } = Astro.props;
                                 </dl>
                             </div>
                             <div class="m-5 overflow-x-auto">
-                                <h4 class="sr-only">Beteiligung der Hand innerhalb der Handschrift</h2>
+                                <h3 class="sr-only">Beteiligung der Hand innerhalb der Handschrift</h3>
                                 <table class="w-full bg-brand-100 shadow-xs border-t border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
                                     <thead>
                                         <tr> 
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Locus</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Werk</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Rolle</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Schreiber-Typ</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Funktion</th>              
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Mise-en-page</th>
-                                            <th class="text-center p-2 font-semibold border border-gray-300">Umfang</th>
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Locus</th>
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Werk</th>
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Rolle</th>
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Schreiber-Typ</th>
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Funktion</th>              
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Mise-en-page</th>
+                                            <th class="text-center p-2 font-semibold border border-neutral-200">Umfang</th>
                                         
                                         </tr>
                                     </thead>                                    
@@ -194,22 +201,22 @@ const { data: scribe } = Astro.props;
                                                     return (
                                                         <tr  class="odd:bg-brand-50 even:bg-brand-100">
                                                             
-                                                            <td class="p-2 border border-gray-300">
+                                                            <td class="p-2 border border-neutral-200">
                                                                     <NavLink href={`/msitems/${msItem.hit_id}`}>
                                                                         {msItem.locus}
                                                                     </NavLink>
                                                                 </td>
-                                                                <td class="p-2 border border-gray-300">{msItem.title_work?.map(work => (
+                                                                <td class="p-2 border border-neutral-200">{msItem.title_work?.map(work => (
                                                                     <NavLink href={`/works/${work.hit_id}`}>
                                                                         {work.author ? `${work.author}: ${work.title}` : work.title                                                            
                                                                     }
                                                                     </NavLink>  ))}
                                                                     </td>
-                                                                <td class="p-2 border border-gray-300">{(role.role).join(' und ')}</td>
-                                                                <td class="p-2 border border-gray-300">{role.scribe_type?.join(', ')}</td>
-                                                               <td class="p-2 border border-gray-300">{role.function?.join(', ')}</td>
-                                                               <td class="p-2 border border-gray-300">{role.locus_layout?.join(', ')}</td>
-                                                               <td class="p-2 border border-gray-300">{role.scope}</td>
+                                                                <td class="p-2 border border-neutral-200">{(role.role).join(' und ')}</td>
+                                                                <td class="p-2 border border-neutral-200">{role.scribe_type?.join(', ')}</td>
+                                                               <td class="p-2 border border-neutral-200">{role.function?.join(', ')}</td>
+                                                               <td class="p-2 border border-neutral-200">{role.locus_layout?.join(', ')}</td>
+                                                               <td class="p-2 border border-neutral-200">{role.scope}</td>
                                                             
                                                         </tr>)
                                                 })
