@@ -59,3 +59,54 @@ export function processScribesData(scribesData) {
 		),
 	};
 }
+
+// geoJson data for manuscripts.json
+export function processMSSData(mssData) {
+	return {
+		type: "FeatureCollection",
+		features: [
+			// Library Place Features
+			...mssData.library_place.flatMap((placement) =>
+				placement.place.map((pl) => ({
+					type: "Feature",
+					geometry: {
+						type: "Point",
+						coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
+					},
+					properties: {
+						title: pl.value,
+						description: `Aktueller Standort`,
+					},
+				})),
+			),
+			// Origin Place Features
+			...mssData.orig_place.flatMap((pl) => ({
+				type: "Feature",
+				geometry: {
+					type: "Point",
+					coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
+				},
+				properties: {
+					title: pl.value,
+					description: `Entstehungsort`,
+				},
+			})),
+			// Origin Place Cod unitsFeatures
+			...mssData.cod_units.flatMap((unit) =>
+				unit.prov_place.flatMap((prov) =>
+					prov.place.map((pl) => ({
+						type: "Feature",
+						geometry: {
+							type: "Point",
+							coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
+						},
+						properties: {
+							title: pl.value,
+							description: `Entstehungsort ${unit.value}`,
+						},
+					})),
+				),
+			),
+		].filter((f) => f.geometry.coordinates.every((coord) => !isNaN(coord))), // Filter out invalid coordinates
+	};
+}

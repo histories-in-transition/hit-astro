@@ -3,7 +3,8 @@ import {Icon} from "astro-icon/components";
 import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
-import type {Manuscript} from "@/lib/data";
+import {processMSSData} from "@/lib/make-geojson.js";
+import MapLeaf from "@/components/map-leaflet.jsx";
 
 import manuscripts from "@/content/data/manuscripts.json";
 
@@ -22,6 +23,7 @@ export async function getStaticPaths() {
 }
 
 const { data: manuscript } = Astro.props;
+const geoData = processMSSData(manuscript)
 
 ---
 
@@ -65,7 +67,7 @@ const { data: manuscript } = Astro.props;
               <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msInfo" >
                 Überblick               
               </summary>
-          
+              <MapLeaf client:only="react" geoJsonData={geoData}/>
                 <dl class="grid grid-cols-[1fr_5fr] p-3">
                   <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
                   <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>
