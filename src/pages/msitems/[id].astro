@@ -132,29 +132,34 @@ const { data: item } = Astro.props;
                 .map(filteredHand => {
                   return <ul>
                           <li>
-                            <NavLink 
-                              href={`/hands/${filteredHand.hit_id}`}>{filteredHand.label}
+                            <NavLink href={`/hands/${filteredHand.hit_id}`}>
+                              {filteredHand.label}
                             </NavLink>
-                            {filteredHand.dating?.length > 0
-  ?                           
-                            <span>Datierung: 
-                              <Icon
-                                class="inline-flex align-middle"
-                                aria-hidden="true"
-                                name="lucide:arrow-right"
-                              />                             
-                             {filteredHand.dating.map(d => d.date?.map(date => date.value).join(', ')).join('; ')
-  }
-                            
-                            </span> 
-                            : ''}
-                           {filteredHand.jobs.some(j => j.role_context.length > 0)
-                             ? <span>(Typ: 
-                              {filteredHand.jobs.flatMap(job => job.role_context.map(rc => rc.value)).join(', ')})
-                            </span>
-                            : ''
+
+                            {(filteredHand.place.length > 0 || 
+                              filteredHand.dating.length > 0 || 
+                              filteredHand.jobs.some(j => j.role_context.length > 0)) && 
+                              <span> 
+                                <Icon class="inline-flex align-middle" aria-hidden="true" name="lucide:arrow-right" />                               
+                                {filteredHand.place.length > 0 && 
+                                  filteredHand.place.map(pl => 
+                                    pl.place?.map(place => place.value).join(', ')
+                                  ).join('; ')}
+
+                                {filteredHand.dating?.length > 0 && 
+                                  `| ${filteredHand.dating.map(d => 
+                                    d.date?.map(date => date.value).join(', ')
+                                  ).join('; ')}`}
+
+                                {filteredHand.jobs.some(j => j.role_context.length > 0) && 
+                                  `| ${filteredHand.jobs.flatMap(job => 
+                                    job.role_context.map(rc => rc.value)
+                                  ).join(', ')}`}
+                                
+                              </span>
                             }
                           </li>
+
                   </ul>
           
                 })}

@@ -35,6 +35,8 @@ export function enrichPlaces(placeArray, places) {
 			value: place.value,
 			geonames_url: place_geo.geonames_url ?? "",
 			hit_id: place_geo.hit_id ?? "",
+			lat: place_geo.lat ?? "",
+			long: place_geo.long ?? "",
 		};
 	});
 }
