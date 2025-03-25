@@ -67,33 +67,36 @@ const geoData = processMSSData(manuscript)
               <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msInfo" >
                 Überblick               
               </summary>
-              <MapLeaf client:only="react" geoJsonData={geoData}/>
-                <dl class="grid grid-cols-[1fr_5fr] p-3">
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-                  <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>
-              
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-                  <dd class="pl-5">
-                    {manuscript.library_full}
-                  </dd>
-              
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
-                  <dd class="pl-5">{manuscript?.shelfmark.split(',')[1]}</dd>
-                  {manuscript.idno_former &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
-                  <dd class="pl-5">{manuscript?.idno_former}</dd>}
-                  {manuscript.charakter.length > 0 &&
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
-                    <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
-                  }
-                  {manuscript.case_study.length > 0 &&
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
-                    <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
-              
-                  {manuscript.content_summary &&
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
-                    <dd class="pl-5">{manuscript.content_summary}</dd>}
-                </dl>
+             <div class="lg:grid lg:grid-cols-[2fr_5fr] items-start lg:gap-4 p-3">
+               
+                  <dl class="grid grid-cols-[1fr_5fr] p-3">
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
+                    <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>
+               
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
+                    <dd class="pl-5">
+                      {manuscript.library_full}
+                    </dd>
+               
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
+                    <dd class="pl-5">{manuscript?.shelfmark.split(',')[1]}</dd>
+                    {manuscript.idno_former &&
+                    <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
+                    <dd class="pl-5">{manuscript?.idno_former}</dd>}
+                    {manuscript.charakter.length > 0 &&
+                      <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
+                      <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
+                    }
+                    {manuscript.case_study.length > 0 &&
+                      <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
+                      <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
+               
+                    {manuscript.content_summary &&
+                      <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
+                      <dd class="pl-5">{manuscript.content_summary}</dd>}
+                  </dl>
+                  <MapLeaf client:only="react" geoJsonData={geoData}/>
+             </div>
             </details>
           </section>
           <section aria-labelledby="msMaterial" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
