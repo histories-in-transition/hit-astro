@@ -19,7 +19,7 @@ export default function LeafletMap({
 			const map = L.map(mapRef.current).setView(initialView, initialZoom);
 
 			// Add OpenStreetMap tiles
-			L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+			L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
 				attribution:
 					'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 				maxZoom: 19,
@@ -46,18 +46,7 @@ export default function LeafletMap({
 		}
 
 		// Create marker cluster group
-		const markers = L.markerClusterGroup({
-			// Customize the cluster icon styling
-			iconCreateFunction: function (cluster) {
-				return L.divIcon({
-					className: "custom-cluster-icon",
-					html: `<div class="bg-red-600 bg-opacity-70 rounded-full w-4 h-4 flex items-center justify-center shadow-md">
-						<span class="text-white font-bold text-sm">${cluster.getChildCount()}</span>
-					</div>`,
-					iconSize: L.point(40, 40),
-				});
-			},
-		});
+		const markers = L.markerClusterGroup();
 
 		// Add markers
 		geoJsonData.features.forEach((feature) => {
@@ -71,14 +60,7 @@ export default function LeafletMap({
 				!isNaN(geometry.coordinates[0]) &&
 				!isNaN(geometry.coordinates[1])
 			) {
-				const marker = L.marker([geometry.coordinates[1], geometry.coordinates[0]], {
-					icon: L.divIcon({
-						className: "custom-marker",
-						html: `<div class="bg-red-600 rounded-full p-1 h-3 w-3">
-              >
-            </div>`,
-					}),
-				});
+				const marker = L.marker([geometry.coordinates[1], geometry.coordinates[0]]); // Default Leaflet marker
 
 				// Add popup if properties exist
 				if (properties) {
