@@ -1,14 +1,20 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
+import MapLeaf from "@/components/map-leaflet.jsx";
+import data from "@/content/data/scribes.json";
+import { processScribesData } from "@/lib/make-geojson.js";
 ---
 
 <PageLayout title="Schreiber">
 	<TableHead
 		title="Schreiber"
 		definition="Liste aller Schreiber (einzeln oder als Gruppe erfasst), deren Hände in mehr als einer Handschrift nachgewiesen werden konnten."
-	/>
+	>
+		<MapLeaf client:only="react" geoJsonData={processScribesData(data)} />
+	</TableHead>
 	<script>
+		// Wait for the page to load before initializing
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 
@@ -21,115 +27,129 @@ import TableHead from "../components/table-head.astro";
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
-		var tabledata = [...Object.values(data)];
+		document.addEventListener("DOMContentLoaded", () => {
+			var tabledata = [...Object.values(data)];
 
-		var table = new Tabulator("#tabulator-table", {
-			headerFilterLiveFilterDelay: 600,
-			height: 900,
-			data: tabledata,
-			layout: "fitColumns",
-			responsiveLayout: "collapse",
-			columns: [
-				{
-					title: "Benennung",
-					field: "name",
-					minWidth: 150,
-					headerFilter: "input",
-					formatter: "textarea",
-					widthGrow: 1,
-				},
-				{
-					title: "Hand",
-					field: "hands",
-					minWidth: 150,
-					mutator: jsonpathLookup,
-					mutatorParams: {
-						path: "$[*].label",
-						separator: "\n",
+			var table = new Tabulator("#tabulator-table", {
+				headerFilterLiveFilterDelay: 600,
+				height: 900,
+				data: tabledata,
+				layout: "fitColumns",
+				responsiveLayout: "collapse",
+				columns: [
+					{
+						title: "Benennung",
+						field: "name",
+						minWidth: 150,
+						headerFilter: "input",
+						formatter: "textarea",
+						widthGrow: 1,
 					},
-					headerFilter: "input",
-					formatter: "textarea",
-					widthGrow: 1,
-				},
-				{
-					title: "Datierung",
-					field: "date",
-					mutator: jsonpathsDateRanges,
-					mutatorParams: {
-						paths: ["$[*].dated[*]"],
-						separator: ", ",
+					{
+						title: "Hand",
+						field: "hands",
+						minWidth: 150,
+						mutator: jsonpathLookup,
+						mutatorParams: {
+							path: "$[*].label",
+							separator: "\n",
+						},
+						headerFilter: "input",
+						formatter: "textarea",
+						widthGrow: 1,
 					},
-					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-					headerFilterFuncParams: {
-						paths: [
-							"$[*].hands_dated[*].dated[*].not_before",
-							"$[*].hands_dated[*].dated[*].not_after",
-						],
+					{
+						title: "Datierung",
+						field: "date",
+						mutator: jsonpathsDateRanges,
+						mutatorParams: {
+							paths: ["$[*].dated[*]"],
+							separator: ", ",
+						},
+						headerFilter: "input",
+						headerFilterFunc: dateRangeFilter,
+						headerFilterFuncParams: {
+							paths: [
+								"$[*].hands_dated[*].dated[*].not_before",
+								"$[*].hands_dated[*].dated[*].not_after",
+							],
+						},
 					},
-				},
-				{
-					title: "Ort",
-					field: "places",
-					minWidth: 150,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*].place[*].value", separator: ", " },
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Gruppe",
-					field: "group",
-					sorter: "boolean",
-					formatter: "tickCross",
-					width: 120,
-					headerFilter: "tickCross",
-					headerFilterParams: { tristate: true },
-					headerFilterEmptyCheck: function (value) {
-						return value === null;
+					{
+						title: "Ort",
+						field: "places",
+						minWidth: 150,
+						mutator: jsonpathDistinctLookup,
+						mutatorParams: { path: "$[*].place[*].value", separator: ", " },
+						headerFilter: "input",
+						responsive: 2,
 					},
-				},
-			],
-		});
+					{
+						title: "Gruppe",
+						field: "group",
+						sorter: "boolean",
+						formatter: "tickCross",
+						width: 120,
+						headerFilter: "tickCross",
+						headerFilterParams: { tristate: true },
+						headerFilterEmptyCheck: function (value) {
+							return value === null;
+						},
+					},
+				],
+			});
 
-		//trigger download of data.csv file
-		document.getElementById("download-csv")!.addEventListener("click", function () {
-			table.download("csv", "data.csv");
-		});
+			//trigger download of data.csv file
+			document.getElementById("download-csv")!.addEventListener("click", function () {
+				table.download("csv", "data.csv");
+			});
 
-		//trigger download of data.json file
-		document.getElementById("download-json")!.addEventListener("click", function () {
-			table.download("json", "data.json");
-		});
+			//trigger download of data.json file
+			document.getElementById("download-json")!.addEventListener("click", function () {
+				table.download("json", "data.json");
+			});
 
-		//trigger download of data.html file
-		document.getElementById("download-html")!.addEventListener("click", function () {
-			table.download("html", "data.html", { style: true });
-		});
+			//trigger download of data.html file
+			document.getElementById("download-html")!.addEventListener("click", function () {
+				table.download("html", "data.html", { style: true });
+			});
 
-		// event listeners set:
-		// href to the work detail view page
-		table.on("rowClick", function (e, row) {
-			var data = row.getData();
-			var url = withBasePath(`/scribes/${data["hit_id"]}`);
-			window.open(url, "_self");
-		});
-		table.on("dataLoaded", function (data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-			var el = document.getElementById("counter2");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
+			// event listeners set:
+			// href to the work detail view page
+			table.on("rowClick", function (e, row) {
+				var data = row.getData();
+				var url = withBasePath(`/scribes/${data["hit_id"]}`);
+				window.open(url, "_self");
+			});
+			table.on("dataLoaded", function (data) {
+				var el = document.getElementById("counter1");
+				if (el) {
+					el.innerHTML = `${data.length}`;
+				}
+				var el = document.getElementById("counter2");
+				if (el) {
+					el.innerHTML = `${data.length}`;
+				}
+			});
 
-		table.on("dataFiltered", function (filters, data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
+			table.on("dataFiltered", function (filters, data) {
+				var el = document.getElementById("counter1");
+				if (el) {
+					el.innerHTML = `${data.length}`;
+				}
+				// Extract raw data from each RowComponent
+				const filteredData = data.map((row) => row.getData());
+
+				// Extract hit_ids from filtered data
+				const filteredHitIds = filteredData.map((row) => row.hit_id);
+
+				// Update the map with the filtered hit_ids
+				if (window.updateMapWithFilteredIds) {
+					window.updateMapWithFilteredIds(filteredHitIds);
+				} else {
+					console.warn("Map update function not available");
+				}
+			});
 		});
 	</script>
 </PageLayout>
