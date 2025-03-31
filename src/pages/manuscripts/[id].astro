@@ -3,7 +3,7 @@ import {Icon} from "astro-icon/components";
 import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
-import {processMSSData} from "@/lib/make-geojson.js";
+import {processMSData} from "@/lib/make-geojson.js";
 import MapLeaf from "@/components/map-leaflet.jsx";
 
 import manuscripts from "@/content/data/manuscripts.json";
@@ -23,7 +23,7 @@ export async function getStaticPaths() {
 }
 
 const { data: manuscript } = Astro.props;
-const geoData = processMSSData(manuscript)
+const geoData = processMSData(manuscript)
 
 ---
 
