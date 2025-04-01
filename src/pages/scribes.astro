@@ -1,6 +1,6 @@
 ---
-import PageLayout from "../layouts/page-layout.astro";
-import TableHead from "../components/table-head.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import TableHead from "@/components/table-head.astro";
 import MapLeaf from "@/components/map-leaflet.jsx";
 import data from "@/content/data/scribes.json";
 import { processScribesData } from "@/lib/make-geojson.js";
@@ -24,8 +24,8 @@ import { processScribesData } from "@/lib/make-geojson.js";
 			jsonpathsDateRanges,
 			dateRangeFilter,
 			jsonpathDistinctLookup,
-		} from "../lib/tabulator-utils.js";
-		import { withBasePath } from "../lib/withBasePath";
+		} from "@/lib/tabulator-utils.js";
+		import { withBasePath } from "@/lib/withBasePath";
 
 		document.addEventListener("DOMContentLoaded", () => {
 			var tabledata = [...Object.values(data)];
@@ -40,6 +40,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Benennung",
 						field: "name",
+						headerFilterPlaceholder: "e.g. Baldo",
 						minWidth: 150,
 						headerFilter: "input",
 						formatter: "textarea",
@@ -48,6 +49,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Hand",
 						field: "hands",
+						headerFilterPlaceholder: "e.g. Clm. 6380",
 						minWidth: 150,
 						mutator: jsonpathLookup,
 						mutatorParams: {
@@ -61,6 +63,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Datierung",
 						field: "date",
+						headerFilterPlaceholder: "e.g. 840",
 						mutator: jsonpathsDateRanges,
 						mutatorParams: {
 							paths: ["$[*].dated[*]"],
@@ -78,6 +81,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Ort",
 						field: "places",
+						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
 						mutator: jsonpathDistinctLookup,
 						mutatorParams: { path: "$[*].place[*].value", separator: ", " },

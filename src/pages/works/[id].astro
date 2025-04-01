@@ -7,7 +7,7 @@ import worksjson from "@/content/data/works.json";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
 
-import {processWorksData} from "@/lib/make-geojson.js";
+import {processWorkData} from "@/lib/make-geojson.js";
 
 export async function getStaticPaths() {
 	
@@ -25,7 +25,8 @@ const works = Object.values(worksjson);
 }
 
 const { data: work } = Astro.props;
-const geoJsonData = processWorksData(work);
+// tranform the data from the to geojson using processWorksData script
+const geoJsonData = processWorkData(work);
 ---
 
 <PageLayout title={work?.title}>

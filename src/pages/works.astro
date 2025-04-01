@@ -1,12 +1,18 @@
 ---
-import PageLayout from "../layouts/page-layout.astro";
-import TableHead from "../components/table-head.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import TableHead from "@/components/table-head.astro";
+import MapLeaf from "@/components/map-leaflet.jsx";
+import data from "@/content/data/works.json";
+import { processWorksData } from "@/lib/make-geojson.js";
 ---
 
 <PageLayout title="Works">
-	<TableHead title="Werke" />
+	<TableHead title="Werke">
+		<MapLeaf client:only="react" geoJsonData={processWorksData(data)} />
+	</TableHead>
 
 	<script>
+		// Wait for the page to load before initializing
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		import data from "@/content/data/works.json";
@@ -14,8 +20,8 @@ import TableHead from "../components/table-head.astro";
 			jsonpathLookup,
 			jsonpathDistinctLookup,
 			jsonpathsDistinctLookup,
-		} from "../lib/tabulator-utils.js";
-		import { withBasePath } from "../lib/withBasePath";
+		} from "@/lib/tabulator-utils.js";
+		import { withBasePath } from "@/lib/withBasePath";
 
 		const tabledata = Object.values(data).map((work) => {
 			return {
@@ -48,6 +54,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Titel",
 					field: "title",
+					headerFilterPlaceholder: "e.g. De temporum ratione",
 					headerFilter: "input",
 					formatter: "textarea",
 					minWidth: 150,
@@ -57,6 +64,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Autor",
 					field: "author",
+					headerFilterPlaceholder: "e.g. Isidor",
 					minWidth: 100,
 					mutator: jsonpathLookup,
 					mutatorParams: {
@@ -71,6 +79,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Genre",
 					field: "genre",
+					headerFilterPlaceholder: "e.g. Historiographie",
 					minWidth: 150,
 					mutator: jsonpathLookup,
 					mutatorParams: { path: "$..value", reverse: true },
@@ -82,6 +91,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Überlieferung: HSS",
 					field: "ms_transmission",
+					headerFilterPlaceholder: "e.g. Clm. 6380",
 					minWidth: 150,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: {
@@ -96,6 +106,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Ort der Überlieferung",
 					field: "origPlaces",
+					headerFilterPlaceholder: "e.g. Freising",
 					minWidth: 150,
 					mutator: jsonpathDistinctLookup,
 					mutatorParams: { path: "$[*]", separator: ", " },
@@ -105,6 +116,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Datum der Überlieferung",
 					field: "origDate",
+					headerFilterPlaceholder: "e.g. 840",
 					minWidth: 150,
 					headerFilter: "input",
 					formatter: "textarea",
@@ -114,6 +126,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Quelle",
 					field: "source_text",
+					headerFilterPlaceholder: "e.g. Gregor",
 					minWidth: 150,
 					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {

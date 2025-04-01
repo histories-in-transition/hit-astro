@@ -19,7 +19,7 @@ export function processHandsData(handsData) {
 }
 
 // geoJson data for works.json
-export function processWorksData(worksData) {
+export function processWorkData(worksData) {
 	// Create a map to track unique places
 	const uniquePlaces = new Map();
 
@@ -50,6 +50,146 @@ export function processWorksData(worksData) {
 		features: Array.from(uniquePlaces.values()), // Extract unique features
 	};
 }
+
+// geoJson data for works.json
+export function processWorksData(worksData) {
+	// Check if used on detail view page for single work (props object not array) or for works table page
+	// If the input is not an array, wrap it in an array
+	const works = Array.isArray(worksData) ? worksData : [worksData];
+	// Create a map to track unique places
+	const workPlaces = new Map(); // Use a Map with `place.id` as key
+	works.forEach((workData) => {
+		// Ensure `ms_transmission` is not empty
+		workData.ms_transmission.length > 0 &&
+			workData.ms_transmission?.forEach((tr) => {
+				tr.orig_place?.forEach((orig_pl) => {
+					orig_pl.place?.forEach((pl) => {
+						// Check if coordinates are valid
+						const long = parseFloat(pl.long);
+						const lat = parseFloat(pl.lat);
+						if (!isNaN(long) && !isNaN(lat) && pl.id) {
+							// Use pl.id (unique identifier) as the map key
+							if (!workPlaces.has(pl.id)) {
+								workPlaces.set(pl.id, {
+									type: "Feature",
+									geometry: {
+										type: "Point",
+										coordinates: [long, lat],
+									},
+									properties: {
+										title: workData.title || "",
+										place: pl.value || "",
+										description: [],
+										url: `/works/${workData.hit_id}`,
+										hit_id: workData.hit_id,
+									},
+								});
+							}
+							// Add manuscript values to the description
+							const feature = workPlaces.get(pl.id);
+							tr.manuscript?.forEach((ms) => {
+								// make sure the ms.value is unique and shown only once
+								if (ms.value && !feature.properties.description.includes(ms.value)) {
+									feature.properties.description.push(ms.value);
+								}
+							});
+						}
+					});
+				});
+			});
+	});
+
+	// Convert the description array to a string for each feature
+	workPlaces.forEach((feature) => {
+		feature.properties.description = feature.properties.description.join(", ");
+	});
+
+	// Return the GeoJSON object
+	return {
+		type: "FeatureCollection",
+		features: Array.from(workPlaces.values()),
+	};
+}
+
+// geoJson data for single work
+export function processWorkData(worksData) {
+	// Check if used on detail view page for single work (props object not array) or for works table page
+	// If the input is not an array, wrap it in an array
+	const works = Array.isArray(worksData) ? worksData : [worksData];
+	// Create a map to track unique places
+	const workPlaces = new Map(); // Use a Map with `place.id` as key
+	works.forEach((workData) => {
+		workData.ms_transmission.length > 0 &&
+			worksData.ms_transmission?.flatMap((tr) => {
+				tr.orig_place.flatMap((orig_pl) => {
+					orig_pl.place.map((pl) => {
+						// Use pl.id (unique identifier) as the map key
+						if (!workPlaces.has(pl.id)) {
+							workPlaces.set(pl.id, {
+								type: "Feature",
+								geometry: {
+									type: "Point",
+									coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
+								},
+								properties: {
+									title: pl.value,
+									description: [],
+									url: `/places/${pl.hit_id}`,
+									hit_id: workData.hit_id,
+								},
+							});
+						}
+						// Add manuscript values to the description
+						const feature = workPlaces.get(pl.id);
+						tr.manuscript?.forEach((ms) => {
+							// make ssure the ms.value is unique and shown only once
+							if (!feature.properties.description.includes(ms.value)) {
+								feature.properties.description.push(ms.value);
+							}
+						});
+					});
+				});
+			});
+	});
+
+	// Convert the description array to a string for each feature
+	workPlaces.forEach((feature) => {
+		feature.properties.description = feature.properties.description.join(", ");
+	});
+
+	// Return the GeoJSON object
+	return {
+		type: "FeatureCollection",
+		features: Array.from(workPlaces.values()),
+	};
+}
+
+/* return Array.from(workPlaces.values()).map((pl) => ({
+				type: "Feature",
+				geometry: {
+					type: "Point",
+					coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
+				},
+				properties: {
+					title: workData.title || "",
+					place: pl.value || "",
+					description:
+						workData.ms_transmission.length > 0
+							? `<ul>${workData.ms_transmission
+									.filter((tr) =>
+										tr.manuscript?.some((ms) =>
+											ms.orig_place?.some((orig) => orig.place?.some((p) => p.id === pl.id)),
+										),
+									)
+									.map((tr) => `<li>${tr.manuscript[0].value}</li>`)}</ul>`
+							: "N/A",
+					url: `/works/${workData.hit_id}`,
+					hit_id: workData.hit_id,
+				},
+			}));
+		}),
+	};
+} */
 
 // geoJson data for scribes.json
 export function processScribesData(input) {

@@ -86,7 +86,7 @@
 
 /* Ensure header filter inputs match the styling */
 .tabulator .tabulator-header-filter input {
-	@apply bg-white text-neutral-800 border-neutral-300 px-2 py-1 rounded-sm;
+	@apply bg-white text-neutral-800 border-neutral-300 px-2 py-1 rounded-sm font-normal text-sm;
 }
 
 /* sorting arrow color */
@@ -108,6 +108,7 @@
 		@apply font-semibold text-brand-800 bg-brand-100;
 	}
 }
+
 /* ###################################################### */
 /* ################ Algolia / TYPESENSE ################# */
 /* ###################################################### */
