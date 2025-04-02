@@ -19,25 +19,27 @@ import { processWorksData } from "@/lib/make-geojson.js";
 			jsonpathLookup,
 			jsonpathDistinctLookup,
 			jsonpathsDistinctLookup,
+			dateRangeFilter,
 		} from "@/lib/tabulator-utils.js";
 		import { withBasePath } from "@/lib/withBasePath";
 
 		const tabledata = Object.values(data).map((work) => {
+			// orig_Date and orig_place are both in ms_transmission
+			// so need to extract them to new Sets to acces in tabulator
 			return {
 				...work,
 				origDate: [
-					...new Set(
-						work.ms_transmission.flatMap((ms) =>
-							ms.orig_date.flatMap((d) => d.date.map((dt) => dt.value)),
-						),
-					),
-				].join(" | "),
-				origPlaces: [
-					...new Set(
-						work.ms_transmission.flatMap((ms) =>
+					...new Set(work.ms_transmission.flatMap((ms) => ms.orig_date.flatMap((d) => d.date))),
+				],
+				// create a Set with all places from orig_place and provenance
+				// and convert it to an array
+				places: [
+					...new Set([
+						...work.ms_transmission.flatMap((ms) =>
 							ms.orig_place.flatMap((p) => p.place.map((pl) => pl.value)),
 						),
-					),
+						...(work.ms_transmission.flatMap((ms) => ms.provenance?.map((p) => p.value)) || []),
+					]),
 				],
 			};
 		});
@@ -105,7 +107,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 					},
 					{
 						title: "Ort der Überlieferung",
-						field: "origPlaces",
+						field: "places",
 						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
 						mutator: jsonpathDistinctLookup,
@@ -119,8 +121,19 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "origDate",
 						headerFilterPlaceholder: "e.g. 840",
 						minWidth: 150,
+						accessor: function (value, data, type, params, component) {
+							if (!value || !Array.isArray(value)) return "";
+							return value.map((dateObj) => dateObj.range || "").join(", "); // Ensure valid output
+						},
+
+						formatter: function (cell, formatterParams, onRendered) {
+							const value = cell.getValue();
+							if (!value || !Array.isArray(value)) return ""; // Ensure value is an array
+							return value.map((dateObj) => dateObj.value || "").join(" | "); // Extract the "value" property
+						},
+
 						headerFilter: "input",
-						formatter: "textarea",
+						headerFilterFunc: dateRangeFilter,
 						responsive: 2,
 					},
 

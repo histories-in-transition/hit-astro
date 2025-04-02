@@ -157,6 +157,7 @@ export function jsonpathGetCentury(value, data, type, params, component) {
 
   return [...new Set(allResults)].join(separator); // Remove duplicates
 } */
+
 export function dateRangeFilter(headerValue, rowValue, rowData, filterParams) {
 	// Allow all rows if the filter is empty or invalid
 	if (!headerValue || isNaN(headerValue)) {

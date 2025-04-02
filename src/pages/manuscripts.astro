@@ -38,6 +38,7 @@ import TableHead from "../components/table-head.astro";
 			columns: [
 				{
 					title: "Standort",
+					headerFilterPlaceholder: "e.g. Wien",
 					field: "library_place",
 					sorter: "string",
 					minWidth: 200,
@@ -50,6 +51,7 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Bibliothek",
+					headerFilterPlaceholder: "e.g. Österreichische Nationalbibliothek",
 					field: "library_full",
 					sorter: "string",
 					minWidth: 200,
@@ -58,6 +60,7 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Signatur",
+					headerFilterPlaceholder: "e.g. Cod. 2090",
 					minWidth: 200,
 					sorter: "string",
 					field: "shelfmark",
@@ -67,6 +70,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Entstehungsort",
 					field: "orig_place",
+					headerFilterPlaceholder: "e.g. Freising",
 					minWidth: 200,
 					mutator: jsonpathLookup,
 					mutatorParams: { path: "$[*].value" },
@@ -76,6 +80,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Entstehungsdatum",
 					field: "orig_date",
+					headerFilterPlaceholder: "e.g. 840",
 					minWidth: 200,
 					mutator: jsonpathsDateRanges,
 					mutatorParams: {
@@ -90,6 +95,7 @@ import TableHead from "../components/table-head.astro";
 				},
 				{
 					title: "Case study",
+					headerFilterPlaceholder: "e.g. Freising",
 					field: "case_study",
 					minWidth: 200,
 					mutator: jsonpathLookup,
