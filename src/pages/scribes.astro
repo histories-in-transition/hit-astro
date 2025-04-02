@@ -19,10 +19,9 @@ import { processScribesData } from "@/lib/make-geojson.js";
 
 		import data from "@/content/data/scribes.json";
 		import {
-			jsonpathLookup,
-			jsonpathsDateRanges,
+			jsonpathFlexibleLookup,
 			dateRangeFilter,
-			jsonpathDistinctLookup,
+			jsonpathsDistinctLookup,
 		} from "@/lib/tabulator-utils.js";
 		import { withBasePath } from "@/lib/withBasePath";
 
@@ -51,7 +50,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 						field: "hands",
 						headerFilterPlaceholder: "e.g. Clm. 6380",
 						minWidth: 150,
-						mutator: jsonpathLookup,
+						mutator: jsonpathFlexibleLookup,
 						mutatorParams: {
 							path: "$[*].label",
 							separator: "\n",
@@ -64,17 +63,17 @@ import { processScribesData } from "@/lib/make-geojson.js";
 						title: "Datierung",
 						field: "date",
 						headerFilterPlaceholder: "e.g. 840",
-						mutator: jsonpathsDateRanges,
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: {
-							paths: ["$[*].dated[*]"],
+							path: "$[*].dated[*].range",
 							separator: ", ",
 						},
 						headerFilter: "input",
 						headerFilterFunc: dateRangeFilter,
 						headerFilterFuncParams: {
 							paths: [
-								"$[*].hands_dated[*].dated[*].not_before",
-								"$[*].hands_dated[*].dated[*].not_after",
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
 							],
 						},
 					},
@@ -83,7 +82,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 						field: "places",
 						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
-						mutator: jsonpathDistinctLookup,
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: { path: "$[*].place[*].value", separator: ", " },
 						headerFilter: "input",
 						responsive: 2,

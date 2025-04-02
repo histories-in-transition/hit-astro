@@ -10,17 +10,18 @@ import TableHead from "../components/table-head.astro";
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		import data from "@/content/data/manuscripts.json";
-		import {
-			jsonpathLookup,
-			dateRangeFilter,
-			jsonpathsDateRanges,
-		} from "../lib/tabulator-utils.js";
+		import { jsonpathFlexibleLookup, dateRangeFilter } from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
-
+		const tabledata = data.map((ms) => {
+			return {
+				...ms,
+				origDate: [...new Set(ms.orig_date.flatMap((d) => d.date))],
+			};
+		});
 		var table = new Tabulator("#tabulator-table", {
 			headerFilterLiveFilterDelay: 600,
 			height: 900,
-			data: data,
+			data: tabledata,
 			layout: "fitColumns",
 			responsiveLayout: "collapse",
 			initialSort: [
@@ -42,7 +43,7 @@ import TableHead from "../components/table-head.astro";
 					field: "library_place",
 					sorter: "string",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*].place[*].value",
 					},
@@ -72,33 +73,41 @@ import TableHead from "../components/table-head.astro";
 					field: "orig_place",
 					headerFilterPlaceholder: "e.g. Freising",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: { path: "$[*].value" },
 					headerFilter: "input",
 					formatter: "textarea",
 				},
 				{
 					title: "Entstehungsdatum",
-					field: "orig_date",
+					field: "origDate",
 					headerFilterPlaceholder: "e.g. 840",
 					minWidth: 200,
-					mutator: jsonpathsDateRanges,
-					mutatorParams: {
-						paths: ["$[*].date[*]"],
-						separator: ", ",
+					accessor: function (value, data, type, params, component) {
+						if (!value || !Array.isArray(value)) return "";
+						return value.map((dateObj) => dateObj.range || "").join(", "); // Ensure valid output
 					},
+
+					formatter: function (cell, formatterParams, onRendered) {
+						const value = cell.getValue();
+						if (!value || !Array.isArray(value)) return ""; // Ensure value is an array
+						return value.map((dateObj) => dateObj.value || "").join(" | "); // Extract the "value" property
+					},
+
 					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-					headerFilterFuncParams: {
-						paths: ["$[*].date[*].not_before", "$[*].date[*].not_after"],
-					},
+					headerFilterFunc: (headerValue, rowValue, rowData, filterParams) =>
+						dateRangeFilter(headerValue, rowValue, rowData, filterParams, (rowValue) => {
+							// Use the same accessor logic here
+							if (!rowValue || !Array.isArray(rowValue)) return "";
+							return rowValue.map((dateObj) => dateObj.range || "").join(", ");
+						}),
 				},
 				{
 					title: "Case study",
 					headerFilterPlaceholder: "e.g. Freising",
 					field: "case_study",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*]",
 					},

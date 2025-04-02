@@ -16,8 +16,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		import data from "@/content/data/works.json";
 		import {
-			jsonpathLookup,
-			jsonpathDistinctLookup,
+			jsonpathFlexibleLookup,
 			jsonpathsDistinctLookup,
 			dateRangeFilter,
 		} from "@/lib/tabulator-utils.js";
@@ -31,9 +30,16 @@ import { processWorksData } from "@/lib/make-geojson.js";
 				origDate: [
 					...new Set(work.ms_transmission.flatMap((ms) => ms.orig_date.flatMap((d) => d.date))),
 				],
-				// create a Set with all places from orig_place and provenance
-				// and convert it to an array
-				places: [
+				// create a Set with orig_place
+				origPlace: [
+					...new Set(
+						work.ms_transmission.flatMap((ms) =>
+							ms.orig_place.flatMap((p) => p.place.map((pl) => pl.value)),
+						),
+					),
+				],
+				// create a Set with provenance places
+				provenance: [
 					...new Set([
 						...work.ms_transmission.flatMap((ms) =>
 							ms.orig_place.flatMap((p) => p.place.map((pl) => pl.value)),
@@ -68,7 +74,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "author",
 						headerFilterPlaceholder: "e.g. Isidor",
 						minWidth: 100,
-						mutator: jsonpathLookup,
+						mutator: jsonpathFlexibleLookup,
 						mutatorParams: {
 							path: "$[*].name",
 							separator: "; ",
@@ -83,7 +89,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "genre",
 						headerFilterPlaceholder: "e.g. Historiographie",
 						minWidth: 150,
-						mutator: jsonpathLookup,
+						mutator: jsonpathFlexibleLookup,
 						mutatorParams: { path: "$..value", reverse: true },
 						headerFilter: "list",
 						headerFilterParams: { valuesLookup: true, clearable: true },
@@ -95,7 +101,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "ms_transmission",
 						headerFilterPlaceholder: "e.g. Clm. 6380",
 						minWidth: 150,
-						mutator: jsonpathDistinctLookup,
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: {
 							path: "$..manuscript..value",
 							separator: "\n ",
@@ -105,12 +111,24 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						widthGrow: 1,
 						responsive: 2,
 					},
+
 					{
-						title: "Ort der Überlieferung",
-						field: "places",
+						title: "Entstehungsort",
+						field: "origPlace",
+						headerFilterPlaceholder: "e.g. Reims",
+						minWidth: 150,
+						mutator: jsonpathsDistinctLookup,
+						mutatorParams: { path: "$[*]", separator: "\n" },
+						headerFilter: "input",
+						formatter: "textarea",
+						responsive: 2,
+					},
+					{
+						title: "Provenienz",
+						field: "provenance",
 						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
-						mutator: jsonpathDistinctLookup,
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: { path: "$[*]", separator: "\n" },
 						headerFilter: "input",
 						formatter: "textarea",
@@ -133,7 +151,12 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						},
 
 						headerFilter: "input",
-						headerFilterFunc: dateRangeFilter,
+						headerFilterFunc: (headerValue, rowValue, rowData, filterParams) =>
+							dateRangeFilter(headerValue, rowValue, rowData, filterParams, (rowValue) => {
+								// Use the same accessor logic here
+								if (!rowValue || !Array.isArray(rowValue)) return "";
+								return rowValue.map((dateObj) => dateObj.range || "").join(", ");
+							}),
 						responsive: 2,
 					},
 
@@ -142,9 +165,9 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "source_text",
 						headerFilterPlaceholder: "e.g. Gregor",
 						minWidth: 150,
-						mutator: jsonpathsDistinctLookup,
+						mutator: jsonpathFlexibleLookup,
 						mutatorParams: {
-							paths: ["$[*].author", "$[*].title"],
+							path: ["$[*].author", "$[*].title"],
 							separator: ": ",
 						},
 						headerFilter: "list",
