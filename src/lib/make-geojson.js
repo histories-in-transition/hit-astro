@@ -19,177 +19,58 @@ export function processHandsData(handsData) {
 }
 
 // geoJson data for works.json
-export function processWorkData(worksData) {
-	// Create a map to track unique places
-	const uniquePlaces = new Map();
-
-	// Iterate through ms_transmission to collect unique places
-	worksData.ms_transmission.forEach((tr) => {
-		tr.orig_place.forEach((orig_pl) => {
-			orig_pl.place.forEach((place) => {
-				// Use place.id (or another unique identifier) as the map key
-				if (!uniquePlaces.has(place.id)) {
-					uniquePlaces.set(place.id, {
-						type: "Feature",
-						geometry: {
-							type: "Point",
-							coordinates: [parseFloat(place.long), parseFloat(place.lat)],
-						},
-						properties: {
-							title: place.value,
-							description: `HS: ${tr.manuscript?.map((ms) => ms.value).join(", ") || "N/A"}`,
-						},
-					});
-				}
-			});
-		});
-	});
-
-	return {
-		type: "FeatureCollection",
-		features: Array.from(uniquePlaces.values()), // Extract unique features
-	};
-}
-
-// geoJson data for works.json
 export function processWorksData(worksData) {
 	// Check if used on detail view page for single work (props object not array) or for works table page
 	// If the input is not an array, wrap it in an array
 	const works = Array.isArray(worksData) ? worksData : [worksData];
-	// Create a map to track unique places
-	const workPlaces = new Map(); // Use a Map with `place.id` as key
-	works.forEach((workData) => {
-		// Ensure `ms_transmission` is not empty
-		workData.ms_transmission.length > 0 &&
-			workData.ms_transmission?.forEach((tr) => {
-				tr.orig_place?.forEach((orig_pl) => {
-					orig_pl.place?.forEach((pl) => {
+
+	// Create array to store all features
+	const features = [];
+
+	// Process each manuscript transmission entry
+	works.forEach((workData) =>
+		workData.ms_transmission.forEach((tr) => {
+			// For each transmission, create a new Set of unique places
+			const uniquePlaces = new Set();
+
+			tr.orig_place?.forEach((orig_pl) => {
+				orig_pl.place?.forEach((pl) => {
+					if (!uniquePlaces.has(pl.id)) {
+						uniquePlaces.add(pl.id);
 						// Check if coordinates are valid
 						const long = parseFloat(pl.long);
 						const lat = parseFloat(pl.lat);
-						if (!isNaN(long) && !isNaN(lat) && pl.id) {
-							// Use pl.id (unique identifier) as the map key
-							if (!workPlaces.has(pl.id)) {
-								workPlaces.set(pl.id, {
-									type: "Feature",
-									geometry: {
-										type: "Point",
-										coordinates: [long, lat],
-									},
-									properties: {
-										title: workData.title || "",
-										place: pl.value || "",
-										description: [],
-										url: `/works/${workData.hit_id}`,
-										hit_id: workData.hit_id,
-									},
-								});
-							}
-							// Add manuscript values to the description
-							const feature = workPlaces.get(pl.id);
-							tr.manuscript?.forEach((ms) => {
-								// make sure the ms.value is unique and shown only once
-								if (ms.value && !feature.properties.description.includes(ms.value)) {
-									feature.properties.description.push(ms.value);
-								}
-							});
-						}
-					});
-				});
-			});
-	});
 
-	// Convert the description array to a string for each feature
-	workPlaces.forEach((feature) => {
-		feature.properties.description = feature.properties.description.join(", ");
-	});
-
-	// Return the GeoJSON object
-	return {
-		type: "FeatureCollection",
-		features: Array.from(workPlaces.values()),
-	};
-}
-
-// geoJson data for single work
-export function processWorkData(worksData) {
-	// Check if used on detail view page for single work (props object not array) or for works table page
-	// If the input is not an array, wrap it in an array
-	const works = Array.isArray(worksData) ? worksData : [worksData];
-	// Create a map to track unique places
-	const workPlaces = new Map(); // Use a Map with `place.id` as key
-	works.forEach((workData) => {
-		workData.ms_transmission.length > 0 &&
-			worksData.ms_transmission?.flatMap((tr) => {
-				tr.orig_place.flatMap((orig_pl) => {
-					orig_pl.place.map((pl) => {
-						// Use pl.id (unique identifier) as the map key
-						if (!workPlaces.has(pl.id)) {
-							workPlaces.set(pl.id, {
+						if (!isNaN(long) && !isNaN(lat)) {
+							// Create new feature and push to features array
+							features.push({
 								type: "Feature",
 								geometry: {
 									type: "Point",
-									coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
+									coordinates: [long, lat],
 								},
 								properties: {
-									title: pl.value,
-									description: [],
-									url: `/places/${pl.hit_id}`,
+									title: workData.title || "N/A",
+									place: pl.value || "",
+									description: `Entstehungsort: ${tr.manuscript[0]?.value || "N/A"}`,
+									period: tr.orig_date[0]?.date[0]?.value,
+									url: `/works/${workData.hit_id}`,
 									hit_id: workData.hit_id,
 								},
 							});
 						}
-						// Add manuscript values to the description
-						const feature = workPlaces.get(pl.id);
-						tr.manuscript?.forEach((ms) => {
-							// make ssure the ms.value is unique and shown only once
-							if (!feature.properties.description.includes(ms.value)) {
-								feature.properties.description.push(ms.value);
-							}
-						});
-					});
+					}
 				});
 			});
-	});
+		}),
+	);
 
-	// Convert the description array to a string for each feature
-	workPlaces.forEach((feature) => {
-		feature.properties.description = feature.properties.description.join(", ");
-	});
-
-	// Return the GeoJSON object
+	// Return the GeoJSON object with all collected features
 	return {
 		type: "FeatureCollection",
-		features: Array.from(workPlaces.values()),
+		features: features,
 	};
 }
-
-/* return Array.from(workPlaces.values()).map((pl) => ({
-				type: "Feature",
-				geometry: {
-					type: "Point",
-					coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
-				},
-				properties: {
-					title: workData.title || "",
-					place: pl.value || "",
-					description:
-						workData.ms_transmission.length > 0
-							? `<ul>${workData.ms_transmission
-									.filter((tr) =>
-										tr.manuscript?.some((ms) =>
-											ms.orig_place?.some((orig) => orig.place?.some((p) => p.id === pl.id)),
-										),
-									)
-									.map((tr) => `<li>${tr.manuscript[0].value}</li>`)}</ul>`
-							: "N/A",
-					url: `/works/${workData.hit_id}`,
-					hit_id: workData.hit_id,
-				},
-			}));
-		}),
-	};
-} */
 
 // geoJson data for scribes.json
 export function processScribesData(input) {

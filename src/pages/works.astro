@@ -12,7 +12,6 @@ import { processWorksData } from "@/lib/make-geojson.js";
 	</TableHead>
 
 	<script>
-		// Wait for the page to load before initializing
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		import data from "@/content/data/works.json";
@@ -42,144 +41,159 @@ import { processWorksData } from "@/lib/make-geojson.js";
 				],
 			};
 		});
-
-		var table = new Tabulator("#tabulator-table", {
-			headerFilterLiveFilterDelay: 600,
-			height: 900,
-			data: tabledata,
-			layout: "fitColumns",
-			responsiveLayout: "collapse",
-			initialSort: [{ column: "title", dir: "asc" }],
-			columns: [
-				{
-					title: "Titel",
-					field: "title",
-					headerFilterPlaceholder: "e.g. De temporum ratione",
-					headerFilter: "input",
-					formatter: "textarea",
-					minWidth: 150,
-					widthGrow: 3,
-					responsive: 0,
-				},
-				{
-					title: "Autor",
-					field: "author",
-					headerFilterPlaceholder: "e.g. Isidor",
-					minWidth: 100,
-					mutator: jsonpathLookup,
-					mutatorParams: {
-						path: "$[*].name",
-						separator: "; ",
+		// Wait for the page to load before initializing
+		document.addEventListener("DOMContentLoaded", () => {
+			var table = new Tabulator("#tabulator-table", {
+				headerFilterLiveFilterDelay: 600,
+				height: 900,
+				data: tabledata,
+				layout: "fitColumns",
+				responsiveLayout: "collapse",
+				initialSort: [{ column: "title", dir: "asc" }],
+				columns: [
+					{
+						title: "Titel",
+						field: "title",
+						headerFilterPlaceholder: "e.g. De temporum ratione",
+						headerFilter: "input",
+						formatter: "textarea",
+						minWidth: 150,
+						widthGrow: 3,
+						responsive: 0,
 					},
-					headerFilter: "input",
-					widthGrow: 2,
-					responsive: 1,
-				},
-
-				{
-					title: "Genre",
-					field: "genre",
-					headerFilterPlaceholder: "e.g. Historiographie",
-					minWidth: 150,
-					mutator: jsonpathLookup,
-					mutatorParams: { path: "$..value", reverse: true },
-					headerFilter: "list",
-					headerFilterParams: { valuesLookup: true, clearable: true },
-					widthGrow: 1,
-					responsive: 2,
-				},
-				{
-					title: "Überlieferung: HSS",
-					field: "ms_transmission",
-					headerFilterPlaceholder: "e.g. Clm. 6380",
-					minWidth: 150,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: {
-						path: "$..manuscript..value",
-						separator: "\n ",
+					{
+						title: "Autor",
+						field: "author",
+						headerFilterPlaceholder: "e.g. Isidor",
+						minWidth: 100,
+						mutator: jsonpathLookup,
+						mutatorParams: {
+							path: "$[*].name",
+							separator: "; ",
+						},
+						headerFilter: "input",
+						widthGrow: 2,
+						responsive: 1,
 					},
-					headerFilter: "input",
-					formatter: "textarea",
-					widthGrow: 1,
-					responsive: 2,
-				},
-				{
-					title: "Ort der Überlieferung",
-					field: "origPlaces",
-					headerFilterPlaceholder: "e.g. Freising",
-					minWidth: 150,
-					mutator: jsonpathDistinctLookup,
-					mutatorParams: { path: "$[*]", separator: ", " },
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Datum der Überlieferung",
-					field: "origDate",
-					headerFilterPlaceholder: "e.g. 840",
-					minWidth: 150,
-					headerFilter: "input",
-					formatter: "textarea",
-					responsive: 2,
-				},
 
-				{
-					title: "Quelle",
-					field: "source_text",
-					headerFilterPlaceholder: "e.g. Gregor",
-					minWidth: 150,
-					mutator: jsonpathsDistinctLookup,
-					mutatorParams: {
-						paths: ["$[*].author", "$[*].title"],
-						separator: ": ",
+					{
+						title: "Genre",
+						field: "genre",
+						headerFilterPlaceholder: "e.g. Historiographie",
+						minWidth: 150,
+						mutator: jsonpathLookup,
+						mutatorParams: { path: "$..value", reverse: true },
+						headerFilter: "list",
+						headerFilterParams: { valuesLookup: true, clearable: true },
+						widthGrow: 1,
+						responsive: 2,
 					},
-					headerFilter: "list",
-					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
-					formatter: "textarea",
-					responsive: 2,
-				},
-			],
-		});
+					{
+						title: "Überlieferung: HSS",
+						field: "ms_transmission",
+						headerFilterPlaceholder: "e.g. Clm. 6380",
+						minWidth: 150,
+						mutator: jsonpathDistinctLookup,
+						mutatorParams: {
+							path: "$..manuscript..value",
+							separator: "\n ",
+						},
+						headerFilter: "input",
+						formatter: "textarea",
+						widthGrow: 1,
+						responsive: 2,
+					},
+					{
+						title: "Ort der Überlieferung",
+						field: "origPlaces",
+						headerFilterPlaceholder: "e.g. Freising",
+						minWidth: 150,
+						mutator: jsonpathDistinctLookup,
+						mutatorParams: { path: "$[*]", separator: "\n" },
+						headerFilter: "input",
+						formatter: "textarea",
+						responsive: 2,
+					},
+					{
+						title: "Datum der Überlieferung",
+						field: "origDate",
+						headerFilterPlaceholder: "e.g. 840",
+						minWidth: 150,
+						headerFilter: "input",
+						formatter: "textarea",
+						responsive: 2,
+					},
 
-		//trigger download of data.csv file
-		document.getElementById("download-csv")!.addEventListener("click", function () {
-			table.download("csv", "data.csv");
-		});
+					{
+						title: "Quelle",
+						field: "source_text",
+						headerFilterPlaceholder: "e.g. Gregor",
+						minWidth: 150,
+						mutator: jsonpathsDistinctLookup,
+						mutatorParams: {
+							paths: ["$[*].author", "$[*].title"],
+							separator: ": ",
+						},
+						headerFilter: "list",
+						headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
+						formatter: "textarea",
+						responsive: 2,
+					},
+				],
+			});
 
-		//trigger download of data.json file
-		document.getElementById("download-json")!.addEventListener("click", function () {
-			table.download("json", "data.json");
-		});
+			//trigger download of data.csv file
+			document.getElementById("download-csv")!.addEventListener("click", function () {
+				table.download("csv", "data.csv");
+			});
 
-		//trigger download of data.html file
-		document.getElementById("download-html")!.addEventListener("click", function () {
-			table.download("html", "data.html", { style: true });
-		});
+			//trigger download of data.json file
+			document.getElementById("download-json")!.addEventListener("click", function () {
+				table.download("json", "data.json");
+			});
 
-		// event listeners set:
-		// href to the work detail view page
-		table.on("rowClick", function (e, row) {
-			var data = row.getData();
-			var url = withBasePath(`/works/${data["hit_id"]}`);
-			window.open(url, "_self");
-		});
+			//trigger download of data.html file
+			document.getElementById("download-html")!.addEventListener("click", function () {
+				table.download("html", "data.html", { style: true });
+			});
 
-		table.on("dataLoaded", function (data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-			var el = document.getElementById("counter2");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
+			// event listeners set:
+			// href to the work detail view page
+			table.on("rowClick", function (e, row) {
+				var data = row.getData();
+				var url = withBasePath(`/works/${data["hit_id"]}`);
+				window.open(url, "_self");
+			});
 
-		table.on("dataFiltered", function (filters, data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
+			table.on("dataLoaded", function (data) {
+				var el = document.getElementById("counter1");
+				if (el) {
+					el.innerHTML = `${data.length}`;
+				}
+				var el = document.getElementById("counter2");
+				if (el) {
+					el.innerHTML = `${data.length}`;
+				}
+			});
+
+			table.on("dataFiltered", function (filters, data) {
+				var el = document.getElementById("counter1");
+				if (el) {
+					el.innerHTML = `${data.length}`;
+				}
+				// Extract raw data from each RowComponent
+				const filteredData = data.map((row) => row.getData());
+
+				// Extract hit_ids from filtered data
+				const filteredHitIds = filteredData.map((row) => row.hit_id);
+
+				// Update the map with the filtered hit_ids
+				if (window.updateMapWithFilteredIds) {
+					window.updateMapWithFilteredIds(filteredHitIds);
+				} else {
+					console.warn("Map update function not available");
+				}
+			});
 		});
 	</script>
 </PageLayout>

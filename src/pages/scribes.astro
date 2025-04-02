@@ -14,7 +14,6 @@ import { processScribesData } from "@/lib/make-geojson.js";
 		<MapLeaf client:only="react" geoJsonData={processScribesData(data)} />
 	</TableHead>
 	<script>
-		// Wait for the page to load before initializing
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 
@@ -27,6 +26,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 		} from "@/lib/tabulator-utils.js";
 		import { withBasePath } from "@/lib/withBasePath";
 
+		// Wait for the page to load before initializing
 		document.addEventListener("DOMContentLoaded", () => {
 			var tabledata = [...Object.values(data)];
 
