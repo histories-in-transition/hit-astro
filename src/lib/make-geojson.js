@@ -1,3 +1,5 @@
+import { type } from "os";
+
 // script to process hands.json to GeoJSON
 export function processHandsData(handsData) {
 	return {
@@ -20,34 +22,86 @@ export function processHandsData(handsData) {
 
 // geoJson data for works.json
 export function processWorksData(worksData) {
-	// Create a map to track unique places
-	const uniquePlaces = new Map();
+	// Check if used on detail view page for single work (props object not array) or for works table page
+	// If the input is not an array, wrap it in an array
+	const works = Array.isArray(worksData) ? worksData : [worksData];
 
-	// Iterate through ms_transmission to collect unique places
-	worksData.ms_transmission.forEach((tr) => {
-		tr.orig_place.forEach((orig_pl) => {
-			orig_pl.place.forEach((place) => {
-				// Use place.id (or another unique identifier) as the map key
-				if (!uniquePlaces.has(place.id)) {
-					uniquePlaces.set(place.id, {
-						type: "Feature",
-						geometry: {
-							type: "Point",
-							coordinates: [parseFloat(place.long), parseFloat(place.lat)],
-						},
-						properties: {
-							title: place.value,
-							description: `HS: ${tr.manuscript?.map((ms) => ms.value).join(", ") || "N/A"}`,
-						},
-					});
-				}
+	// Create array to store all features
+	const features = [];
+
+	works.forEach((workData) => {
+		workData.ms_transmission.forEach((tr) => {
+			// For each transmission, create a new Set of unique places
+			const uniquePlaces = new Set();
+			const uniqueProvenances = new Set();
+			// Process each origin place
+			tr.orig_place?.forEach((orig_pl) => {
+				orig_pl.place?.forEach((pl) => {
+					if (!uniquePlaces.has(pl.id)) {
+						uniquePlaces.add(pl.id);
+						// Check if coordinates are valid
+						const long = parseFloat(pl.long);
+						const lat = parseFloat(pl.lat);
+
+						if (!isNaN(long) && !isNaN(lat)) {
+							// Create new feature and push to features array
+							features.push({
+								type: "Feature",
+								geometry: {
+									type: "Point",
+									coordinates: [long, lat],
+								},
+								properties: {
+									title: workData.title || "N/A",
+									place: pl.value || "",
+									description: `Entstehungsort: ${tr.manuscript[0]?.value || "N/A"}`,
+									period: tr.orig_date[0]?.date[0]?.value,
+									url: `/works/${workData.hit_id}`,
+									hit_id: workData.hit_id,
+									type: "origin",
+								},
+							});
+						}
+					}
+				});
 			});
+			tr.provenance.length > 0 &&
+				tr.provenance.forEach((pl) => {
+					if (!uniqueProvenances.has(pl.id)) {
+						uniqueProvenances.add(pl.id);
+						// Check if coordinates are valid
+						const long = parseFloat(pl.long);
+						const lat = parseFloat(pl.lat);
+
+						if (!isNaN(long) && !isNaN(lat)) {
+							// Create new feature and push to features array
+							features.push({
+								type: "Feature",
+								geometry: {
+									type: "Point",
+									coordinates: [long, lat],
+								},
+								properties: {
+									title: workData.title || "N/A",
+									place: pl.value || "",
+									description: `Provenienz: ${tr.manuscript[0]?.value || "N/A"}`,
+									url: `/works/${workData.hit_id}`,
+									hit_id: workData.hit_id,
+									type: "provenance",
+								},
+							});
+						}
+					}
+				});
 		});
+
+		// Process each provenance entry
 	});
 
+	// Return the GeoJSON object with all collected features
 	return {
 		type: "FeatureCollection",
-		features: Array.from(uniquePlaces.values()), // Extract unique features
+		features: features,
 	};
 }
 

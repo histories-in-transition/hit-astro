@@ -46,11 +46,9 @@ import TableHead from "../components/table-head.astro";
 		});
 
 		import {
-			jsonpathLookup,
-			jsonpathsLookup,
+			jsonpathFlexibleLookup,
 			dateRangeFilter,
-			jsonpathDistinctLookup,
-			jsonpathsDistinctRanges,
+			jsonpathsDistinctLookup,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
@@ -73,7 +71,7 @@ import TableHead from "../components/table-head.astro";
 					title: "Handschrift",
 					field: "manuscript",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*].value",
 						separator: "; ",
@@ -90,9 +88,9 @@ import TableHead from "../components/table-head.astro";
 					title: "Werk",
 					field: "title_work",
 					minWidth: 200,
-					mutator: jsonpathsLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
-						paths: ["$[*].author[*].name", "$[*].title"],
+						path: ["$[*].author[*].name", "$[*].title"],
 						separator: ": ",
 					},
 					headerFilter: "input",
@@ -101,7 +99,7 @@ import TableHead from "../components/table-head.astro";
 					title: "Dekoration",
 					field: "decoration",
 					minWidth: 100,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: { path: "$[*].value" },
 					headerFilter: "input",
 					responsive: 2,
@@ -110,7 +108,7 @@ import TableHead from "../components/table-head.astro";
 					title: "Schreiberort",
 					field: "orig_place",
 					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
+					mutator: jsonpathsDistinctLookup,
 					mutatorParams: { path: "$[*].place[*].value" },
 					headerFilter: "input",
 				},
@@ -118,7 +116,7 @@ import TableHead from "../components/table-head.astro";
 					title: "Datum der Niederschrift",
 					field: "orig_date",
 					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
+					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {
 						path: "$[*].date[*].range",
 						separator: ", ",
@@ -137,7 +135,7 @@ import TableHead from "../components/table-head.astro";
 					title: "Datum der Bearbeitung",
 					field: "editings",
 					minWidth: 200,
-					mutator: jsonpathDistinctLookup,
+					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {
 						path: "$[*].date[*].range",
 						separator: ", ",

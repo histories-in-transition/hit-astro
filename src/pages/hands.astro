@@ -14,8 +14,8 @@ import TableHead from "@/components/table-head.astro";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 		import data from "@/content/data/hands.json";
 		import {
-			jsonpathLookup,
-			jsonpathsDateRanges,
+			jsonpathFlexibleLookup,
+			jsonpathsDistinctLookup,
 			dateRangeFilter,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
@@ -39,10 +39,11 @@ import TableHead from "@/components/table-head.astro";
 			columns: [
 				{
 					title: "Handschrift",
+					headerFilterPlaceholder: "e.g. Clm. 6326",
 					resizable: true,
 					field: "manuscript",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*].value",
 						separator: "; ",
@@ -52,6 +53,7 @@ import TableHead from "@/components/table-head.astro";
 				},
 				{
 					title: "#",
+					headerFilterPlaceholder: "e.g. H. 2",
 					field: "view_label",
 					width: 100,
 					mutator: (view_label) => {
@@ -64,9 +66,10 @@ import TableHead from "@/components/table-head.astro";
 				},
 				{
 					title: "Text",
+					headerFilterPlaceholder: "e.g. De temporum ratione",
 					field: "texts",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*]",
 					},
@@ -75,9 +78,10 @@ import TableHead from "@/components/table-head.astro";
 				},
 				{
 					title: "Rolle",
+					headerFilterPlaceholder: "e.g. Korrektor",
 					field: "roles",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*]",
 					},
@@ -89,22 +93,27 @@ import TableHead from "@/components/table-head.astro";
 					title: "Datiert",
 					field: "date",
 					minWidth: 100,
-					mutator: jsonpathsDateRanges,
+					headerFilterPlaceholder: "e.g. 840",
+					mutator: jsonpathsDistinctLookup,
 					mutatorParams: {
-						paths: ["$[*].dated[*]"],
+						path: "$[*].dated[*].range",
 						separator: ", ",
 					},
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
 					headerFilterFuncParams: {
-						paths: ["$[*].dated[*].not_before", "$[*].dated[*].not_after"],
+						paths: [
+							"$[*].hands_dated[*].dated[*].yearRange.start",
+							"$[*].hands_dated[*].dated[*].yearRange.end",
+						],
 					},
 				},
 				{
 					title: "Lokalisiert",
+					headerFilterPlaceholder: "e.g. Freising",
 					field: "placed",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*].place[*].value",
 						separator: "; ",
@@ -114,9 +123,10 @@ import TableHead from "@/components/table-head.astro";
 				,
 				{
 					title: "Schreiber",
+					headerFilterPlaceholder: "e.g. Baldo",
 					field: "scribe",
 					minWidth: 200,
-					mutator: jsonpathLookup,
+					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
 						path: "$[*].value",
 					},

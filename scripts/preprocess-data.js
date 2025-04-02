@@ -561,10 +561,14 @@ const worksPlus = works.map((work) => {
 				locus: msi.locus,
 				orig_date: msi.orig_date,
 				orig_place: msi.orig_place,
+				provenance: msi.provenance,
 				decoration: msi.decoration,
 				annotation_date: msi.hands
 					.filter((h) => !h.jobs.some((j) => j.role.includes("Schreiber")))
 					.flatMap((hand) => hand.dating),
+				annotation_place: msi.hands
+					.filter((h) => !h.jobs.some((j) => j.role.includes("Schreiber")))
+					.flatMap((hand) => hand.place),
 				annotation_typ: [
 					...new Set(
 						msi.hands

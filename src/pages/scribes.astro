@@ -1,6 +1,6 @@
 ---
-import PageLayout from "../layouts/page-layout.astro";
-import TableHead from "../components/table-head.astro";
+import PageLayout from "@/layouts/page-layout.astro";
+import TableHead from "@/components/table-head.astro";
 import MapLeaf from "@/components/map-leaflet.jsx";
 import data from "@/content/data/scribes.json";
 import { processScribesData } from "@/lib/make-geojson.js";
@@ -14,19 +14,18 @@ import { processScribesData } from "@/lib/make-geojson.js";
 		<MapLeaf client:only="react" geoJsonData={processScribesData(data)} />
 	</TableHead>
 	<script>
-		// Wait for the page to load before initializing
 		import { TabulatorFull as Tabulator } from "tabulator-tables";
 		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 
 		import data from "@/content/data/scribes.json";
 		import {
-			jsonpathLookup,
-			jsonpathsDateRanges,
+			jsonpathFlexibleLookup,
 			dateRangeFilter,
-			jsonpathDistinctLookup,
-		} from "../lib/tabulator-utils.js";
-		import { withBasePath } from "../lib/withBasePath";
+			jsonpathsDistinctLookup,
+		} from "@/lib/tabulator-utils.js";
+		import { withBasePath } from "@/lib/withBasePath";
 
+		// Wait for the page to load before initializing
 		document.addEventListener("DOMContentLoaded", () => {
 			var tabledata = [...Object.values(data)];
 
@@ -40,6 +39,7 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Benennung",
 						field: "name",
+						headerFilterPlaceholder: "e.g. Baldo",
 						minWidth: 150,
 						headerFilter: "input",
 						formatter: "textarea",
@@ -48,8 +48,9 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Hand",
 						field: "hands",
+						headerFilterPlaceholder: "e.g. Clm. 6380",
 						minWidth: 150,
-						mutator: jsonpathLookup,
+						mutator: jsonpathFlexibleLookup,
 						mutatorParams: {
 							path: "$[*].label",
 							separator: "\n",
@@ -61,25 +62,27 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Datierung",
 						field: "date",
-						mutator: jsonpathsDateRanges,
+						headerFilterPlaceholder: "e.g. 840",
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: {
-							paths: ["$[*].dated[*]"],
+							path: "$[*].dated[*].range",
 							separator: ", ",
 						},
 						headerFilter: "input",
 						headerFilterFunc: dateRangeFilter,
 						headerFilterFuncParams: {
 							paths: [
-								"$[*].hands_dated[*].dated[*].not_before",
-								"$[*].hands_dated[*].dated[*].not_after",
+								"$[*].hands_dated[*].dated[*].yearRange.start",
+								"$[*].hands_dated[*].dated[*].yearRange.end",
 							],
 						},
 					},
 					{
 						title: "Ort",
 						field: "places",
+						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
-						mutator: jsonpathDistinctLookup,
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: { path: "$[*].place[*].value", separator: ", " },
 						headerFilter: "input",
 						responsive: 2,

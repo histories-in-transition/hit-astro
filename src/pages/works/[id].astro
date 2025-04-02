@@ -25,6 +25,7 @@ const works = Object.values(worksjson);
 }
 
 const { data: work } = Astro.props;
+// tranform the data from the to geojson using processWorksData script
 const geoJsonData = processWorksData(work);
 ---
 
