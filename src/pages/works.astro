@@ -24,31 +24,33 @@ import { processWorksData } from "@/lib/make-geojson.js";
 
 		const tabledata = Object.values(data).map((work) => {
 			// orig_Date and orig_place are both in ms_transmission
-			// so need to extract them to new Sets to acces in tabulator
+			// so need to extract them to Map (for unique deep objects) to acces in tabulator
 			return {
 				...work,
 				origDate: [
-					...new Set(work.ms_transmission.flatMap((ms) => ms.orig_date.flatMap((d) => d.date))),
+					...new Map(
+						work.ms_transmission
+							.flatMap((ms) => ms.orig_date.flatMap((d) => d.date))
+							.map((date) => [date.id, date]), // Use ID as a unique key
+					).values(),
 				],
-				// create a Set with orig_place
+				// create a Map with orig_place
 				origPlace: [
-					...new Set(
-						work.ms_transmission.flatMap((ms) =>
-							ms.orig_place.flatMap((p) => p.place.map((pl) => pl.value)),
-						),
-					),
+					...new Map(
+						work.ms_transmission
+							.flatMap((ms) => ms.orig_place.flatMap((p) => p.place))
+							.map((place) => [place.id, place]),
+					).values(),
 				],
-				// create a Set with provenance places
+				// create a Map with provenance places
 				provenance: [
-					...new Set([
-						...work.ms_transmission.flatMap((ms) =>
-							ms.orig_place.flatMap((p) => p.place.map((pl) => pl.value)),
-						),
-						...(work.ms_transmission.flatMap((ms) => ms.provenance?.map((p) => p.value)) || []),
-					]),
+					...new Map(
+						work.ms_transmission.flatMap((ms) => ms.provenance.map((place) => [place.id, place])),
+					).values(),
 				],
 			};
 		});
+		console.log(tabledata);
 		// Wait for the page to load before initializing
 		document.addEventListener("DOMContentLoaded", () => {
 			var table = new Tabulator("#tabulator-table", {
@@ -97,14 +99,14 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						responsive: 2,
 					},
 					{
-						title: "Überlieferung: HSS",
+						title: "Überlieferung",
 						field: "ms_transmission",
 						headerFilterPlaceholder: "e.g. Clm. 6380",
 						minWidth: 150,
 						mutator: jsonpathsDistinctLookup,
 						mutatorParams: {
 							path: "$..manuscript..value",
-							separator: "\n ",
+							separator: "\n",
 						},
 						headerFilter: "input",
 						formatter: "textarea",
@@ -117,8 +119,8 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "origPlace",
 						headerFilterPlaceholder: "e.g. Reims",
 						minWidth: 150,
-						mutator: jsonpathsDistinctLookup,
-						mutatorParams: { path: "$[*]", separator: "\n" },
+						mutator: jsonpathFlexibleLookup,
+						mutatorParams: { path: "$[*].value", separator: "\n" },
 						headerFilter: "input",
 						formatter: "textarea",
 						responsive: 2,
@@ -128,16 +130,16 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						field: "provenance",
 						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
-						mutator: jsonpathsDistinctLookup,
-						mutatorParams: { path: "$[*]", separator: "\n" },
+						mutator: jsonpathFlexibleLookup,
+						mutatorParams: { path: "$[*].value", separator: "\n" },
 						headerFilter: "input",
 						formatter: "textarea",
 						responsive: 2,
 					},
 					{
-						title: "Datum der Überlieferung",
+						title: "Datum",
 						field: "origDate",
-						headerFilterPlaceholder: "e.g. 840",
+						headerFilterPlaceholder: "e.g. 840; <850; >850",
 						minWidth: 150,
 						accessor: function (value, data, type, params, component) {
 							if (!value || !Array.isArray(value)) return "";
@@ -149,14 +151,14 @@ import { processWorksData } from "@/lib/make-geojson.js";
 							if (!value || !Array.isArray(value)) return ""; // Ensure value is an array
 							return value.map((dateObj) => dateObj.value || "").join(" | "); // Extract the "value" property
 						},
-
 						headerFilter: "input",
 						headerFilterFunc: (headerValue, rowValue, rowData, filterParams) =>
 							dateRangeFilter(headerValue, rowValue, rowData, filterParams, (rowValue) => {
-								// Use the same accessor logic here
+								// Ensure rowValue is an array and transform it into a comma-separated string of ranges
 								if (!rowValue || !Array.isArray(rowValue)) return "";
 								return rowValue.map((dateObj) => dateObj.range || "").join(", ");
 							}),
+
 						responsive: 2,
 					},
 
