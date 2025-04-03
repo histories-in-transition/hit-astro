@@ -21,7 +21,10 @@ import { processScribesData } from "@/lib/make-geojson.js";
 		import {
 			jsonpathFlexibleLookup,
 			dateRangeFilter,
+			jsonpathsDistinctMapLookup,
 			jsonpathsDistinctLookup,
+			dateAccessor,
+			dateFormatter,
 		} from "@/lib/tabulator-utils.js";
 		import { withBasePath } from "@/lib/withBasePath";
 
@@ -62,19 +65,21 @@ import { processScribesData } from "@/lib/make-geojson.js";
 					{
 						title: "Datierung",
 						field: "date",
-						headerFilterPlaceholder: "e.g. 840",
-						mutator: jsonpathsDistinctLookup,
+						headerFilterPlaceholder: "e.g. nach 810",
+						mutator: jsonpathsDistinctMapLookup,
 						mutatorParams: {
-							path: "$[*].dated[*].range",
+							path: "$[*].dated[*]",
 							separator: ", ",
 						},
+						// Ensures filtering and sorting work correctly
+						accessor: dateAccessor,
+						// Formatting the displayed values
+						formatter: dateFormatter,
+
 						headerFilter: "input",
 						headerFilterFunc: dateRangeFilter,
 						headerFilterFuncParams: {
-							paths: [
-								"$[*].hands_dated[*].dated[*].yearRange.start",
-								"$[*].hands_dated[*].dated[*].yearRange.end",
-							],
+							paths: ["$[*].dated[*].range"],
 						},
 					},
 					{

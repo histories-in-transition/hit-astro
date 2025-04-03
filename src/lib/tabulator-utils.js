@@ -1,4 +1,19 @@
 import { JSONPath } from "jsonpath-plus";
+
+// function for tabulator accessor  Ensures filtering and sorting work correctly
+export function dateAccessor(value) {
+	if (!value || !Array.isArray(value)) return "";
+	return value.map((dateObj) => dateObj.range || "").join(", ");
+}
+
+//  function for tabulator formatter - Formatting the displayed values
+export function dateFormatter(cell) {
+	const value = cell.getValue();
+	if (!value || !Array.isArray(value)) return "not array";
+	return value.map((dateObj) => dateObj.value || "").join(" | ");
+}
+
+// Function to get the value of a specific path from a JSON object
 export function jsonpathFlexibleLookup(value, data, type, params, component) {
 	const paths = Array.isArray(params.path) ? params.path : [params.path]; // Ensure paths is always an array
 	const separator = params.separator || ", ";
@@ -37,43 +52,69 @@ export function jsonpathsDistinctLookup(value, data, type, params, component) {
 	return distinctValues.join(separator);
 }
 
-// functio to filter date ranges with operator <>
+//function for array with unique objects using Map
+// returns an array of unique objects based on the 'id' property
+// used to pass the data to accessor
+export function jsonpathsDistinctMapLookup(value, data, type, params, component) {
+	const paths = Array.isArray(params.path) ? params.path : [params.path];
+
+	// Use a Map to ensure uniqueness based on 'range'
+	const uniqueEntries = new Map();
+
+	paths.forEach((path) => {
+		const results = JSONPath({ path: path, json: value });
+
+		results.forEach((obj) => {
+			if (obj && typeof obj === "object" && obj.id) {
+				uniqueEntries.set(obj.id, obj); // Store by 'id' to avoid duplicates
+			}
+		});
+	});
+
+	return Array.from(uniqueEntries.values()); // Convert back to array
+}
+
 export function dateRangeFilter(headerValue, rowValue, rowData, filterParams, accessor) {
 	// Allow all rows if the filter is empty or invalid
-	if (!headerValue || (isNaN(headerValue) && !/^([<>])\d+$/.test(headerValue))) {
+	if (
+		!headerValue ||
+		(!/^\d+$/.test(headerValue) &&
+			!/^vor \d+$/.test(headerValue) &&
+			!/^nach \d+$/.test(headerValue))
+	) {
 		return true;
 	}
 
-	// Extract the operator (if present) and the numeric value
-	const operatorMatch = headerValue.match(/^([<>])?(\d+)$/);
+	// Determine operator and filter year from input
+	const operatorMatch = headerValue.match(/^(vor|nach)?\s?(\d+)$/);
 	const operator = operatorMatch?.[1] || null;
 	const filterYear = parseInt(operatorMatch?.[2], 10);
 
 	// Use the accessor to preprocess the rowValue if provided
 	const processedRowValue = accessor ? accessor(rowValue, rowData) : rowValue;
 
-	// Ensure processedRowValue is a string and process multiple ranges (e.g., "821-930, 950-999")
-	if (typeof processedRowValue === "string") {
-		const ranges = processedRowValue.split(",").map((range) => range.trim());
-
-		// Iterate over all ranges and apply the appropriate filtering logic
-		return ranges.some((range) => {
-			const [start, end] = range.split("-").map(Number);
-			if (!isNaN(start) && !isNaN(end)) {
-				if (operator === "<") {
-					return end < filterYear; // Match ranges where the end is smaller
-				} else if (operator === ">") {
-					return start > filterYear; // Match ranges where the start is larger
-				} else {
-					return filterYear >= start && filterYear <= end; // Default range check
-				}
-			}
-			return false; // Skip invalid ranges
-		});
+	// Ensure processedRowValue is an array of strings
+	if (!Array.isArray(processedRowValue)) {
+		console.warn("Unexpected non-array value in date filtering:", processedRowValue);
+		return false;
 	}
 
-	console.warn("Row value is not a valid string:", processedRowValue);
-	return false; // Filter out rows with invalid rowValue
+	const ranges = processedRowValue.map((dateObj) => dateObj.range || "");
+
+	// Iterate over all ranges and apply the appropriate filtering logic
+	return ranges.some((range) => {
+		const [start, end] = range.split("-").map(Number);
+		if (!isNaN(start) && !isNaN(end)) {
+			if (operator === "vor") {
+				return end > filterYear; // terminus ante quem using end
+			} else if (operator === "nach") {
+				return start < filterYear; // terminus post quem using start
+			} else {
+				return filterYear >= start && filterYear <= end; // Default range check (inclusive)
+			}
+		}
+		return false; // Skip invalid ranges
+	});
 }
 
 /* / OUTDATED function for header filtering with one input

@@ -19,6 +19,8 @@ import { processWorksData } from "@/lib/make-geojson.js";
 			jsonpathFlexibleLookup,
 			jsonpathsDistinctLookup,
 			dateRangeFilter,
+			dateAccessor,
+			dateFormatter,
 		} from "@/lib/tabulator-utils.js";
 		import { withBasePath } from "@/lib/withBasePath";
 
@@ -139,29 +141,16 @@ import { processWorksData } from "@/lib/make-geojson.js";
 					{
 						title: "Datum",
 						field: "origDate",
-						headerFilterPlaceholder: "e.g. 840; <850; >850",
+						headerFilterPlaceholder: "e.g. 850, nach 850",
 						minWidth: 150,
-						accessor: function (value, data, type, params, component) {
-							if (!value || !Array.isArray(value)) return "";
-							return value.map((dateObj) => dateObj.range || "").join(", "); // Ensure valid output
-						},
-
-						formatter: function (cell, formatterParams, onRendered) {
-							const value = cell.getValue();
-							if (!value || !Array.isArray(value)) return ""; // Ensure value is an array
-							return value.map((dateObj) => dateObj.value || "").join(" | "); // Extract the "value" property
-						},
+						// Ensures filtering and sorting work correctly
+						accessor: dateAccessor,
+						// Formatting the displayed values
+						formatter: dateFormatter,
 						headerFilter: "input",
-						headerFilterFunc: (headerValue, rowValue, rowData, filterParams) =>
-							dateRangeFilter(headerValue, rowValue, rowData, filterParams, (rowValue) => {
-								// Ensure rowValue is an array and transform it into a comma-separated string of ranges
-								if (!rowValue || !Array.isArray(rowValue)) return "";
-								return rowValue.map((dateObj) => dateObj.range || "").join(", ");
-							}),
-
+						headerFilterFunc: dateRangeFilter,
 						responsive: 2,
 					},
-
 					{
 						title: "Quelle",
 						field: "source_text",
