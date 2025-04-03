@@ -49,6 +49,9 @@ import TableHead from "../components/table-head.astro";
 			jsonpathFlexibleLookup,
 			dateRangeFilter,
 			jsonpathsDistinctLookup,
+			jsonpathsDistinctMapLookup,
+			dateAccessor,
+			dateFormatter,
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 
@@ -115,19 +118,21 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Datum der Niederschrift",
 					field: "orig_date",
-					minWidth: 200,
-					mutator: jsonpathsDistinctLookup,
+					headerFilterPlaceholder: "e.g. nach 810",
+					mutator: jsonpathsDistinctMapLookup,
 					mutatorParams: {
-						path: "$[*].date[*].range",
+						path: "$[*].date[*]",
 						separator: ", ",
 					},
+					// Ensures filtering and sorting work correctly
+					accessor: dateAccessor,
+					// Formatting the displayed values
+					formatter: dateFormatter,
+
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
 					headerFilterFuncParams: {
-						paths: [
-							"$[*].hands_dated[*].dated[*].yearRange.start",
-							"$[*].hands_dated[*].dated[*].yearRange.end",
-						],
+						paths: ["$[*].dated[*].range"],
 					},
 				},
 
@@ -135,18 +140,29 @@ import TableHead from "../components/table-head.astro";
 					title: "Datum der Bearbeitung",
 					field: "editings",
 					minWidth: 200,
-					mutator: jsonpathsDistinctLookup,
+					headerFilterPlaceholder: "e.g. nach 810",
+					mutator: jsonpathsDistinctMapLookup,
 					mutatorParams: {
-						path: "$[*].date[*].range",
+						path: "$[*].date[*]",
 						separator: ", ",
 					},
+					// Ensures filtering and sorting work correctly
+					accessor: function (value) {
+						if (!value || !Array.isArray(value)) return "";
+						return value.map((dateObj) => dateObj.range || "").join(", ");
+					},
+
+					// Formatting the displayed values
+					formatter: function (cell) {
+						const value = cell.getValue();
+						if (!value || !Array.isArray(value)) return "not array";
+						return value.map((dateObj) => dateObj.value || "").join(" | ");
+					},
+
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
 					headerFilterFuncParams: {
-						paths: [
-							"$[*].hands_dated[*].dated[*].yearRange.start",
-							"$[*].hands_dated[*].dated[*].yearRange.end",
-						],
+						paths: ["$[*].dated[*].range"],
 					},
 				},
 			],
