@@ -95,8 +95,8 @@ const geoJson = processScribesData(scribe);
                 <h2 class="sr-only">Zugewiesene Schreiberhände</h2>
                 {scribe.hands.map((hand) => {
                     return (
-                        <details open class="border-2 rounded-xs shadow-xs border-neutral-200 bg-brand-100 my-5">
-                            <summary class="text-lg md:text-xl font-semibold py-3 text-brand-800 p-5">
+                        <details open class=" border-2 rounded-xs shadow-xs border-neutral-200 bg-brand-100 my-5">
+                            <summary class="cursor-pointer text-lg md:text-xl font-semibold py-3 text-brand-800 p-5">
                                 Schreiber in {hand.manuscript[0]?.value}
                             </summary>
                             <div>

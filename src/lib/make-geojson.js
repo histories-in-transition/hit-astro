@@ -1,5 +1,3 @@
-import { type } from "os";
-
 // script to process hands.json to GeoJSON
 export function processHandsData(handsData) {
 	return {
