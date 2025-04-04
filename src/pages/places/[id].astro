@@ -3,6 +3,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import placesJson from "@/content/data/places.json";
+import mss from "@/content/data/manuscripts.json";
 
 //import MapLeaflet from "@/components/map-leaflet.jsx";
 //import {processScribesData} from "@/lib/make-geojson.js";
@@ -25,16 +26,42 @@ const { data: place } = Astro.props;
 
 <PageLayout title={place.name}>
 	<Article
-		prevLink={`/scribes/${place.prev.id}`}
-		nextLink={`/scribes/${place.next.id}`}
+		prevLink={`/places/${place.prev.id}`}
+		nextLink={`/places/${place.next.id}`}
 		mainTitle={`Ort: ${place.name}`}
 	>
 		<section class="border-2 rounded-xs shadow-xs border-neutral-200 bg-brand-100 p-5">
-			<h2 class="text-lg md:text-xl font-semibold py-3 text-brand-800"></h2>
+			<h2 class="text-lg md:text-xl font-semibold py-3 text-brand-800">Handschriften</h2>
 			<div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start">
-				<dl class="grid grid-cols-[1fr_6fr] text-sm md:leading-7 md:text-base">
-					<dt class="font-semibold border-r border-neutral-200 pr-2">To do:</dt>
-					<dd class="pl-5">{place?.name}</dd>
+				<dl class="grid grid-cols-[1fr_4fr] text-sm md:leading-7 md:text-base">
+					<dt class="font-semibold border-r border-neutral-200 pr-2">Aktueller Standort</dt>
+					<dd class="pl-5">
+						<ul>
+							{
+								mss
+									.filter((ms) => ms.library_place[0].place[0].id === place.id)
+									.map((ms) => (
+										<li>
+											<NavLink href={`/manuscripts/${ms.hit_id}`}>{ms.shelfmark}</NavLink>
+										</li>
+									))
+							}
+						</ul>
+					</dd>
+					<dt class="font-semibold border-r border-neutral-200 pr-2">Enstehungsort</dt>
+					<dd class="pl-5">
+						<ul>
+							{
+								mss
+									.filter((ms) => ms.orig_place.some((orPlace) => orPlace.id === place.id))
+									.map((ms) => (
+										<li>
+											<NavLink href={`/manuscripts/${ms.hit_id}`}>{ms.shelfmark}</NavLink>
+										</li>
+									))
+							}
+						</ul>
+					</dd>
 				</dl>
 			</div>
 		</section>
