@@ -163,6 +163,8 @@ export function processMSData(input) {
 						properties: {
 							title: pl.value,
 							description: `Aktueller Standort`,
+							type: "provenance",
+							url: `/places/${pl.hit_id}`,
 						},
 					})),
 				) || []),
@@ -179,10 +181,13 @@ export function processMSData(input) {
 								},
 								properties: {
 									title: pl.value,
+
+									url: `/places/${pl.hit_id}`,
 									description: `${mssData.cod_units.length > 1 ? unit.value : ""} 
                                              ${prov.type === "orig" ? "~> Entstehungsort" : "~> Provenienz"}`,
 									period: formatPeriod(prov), // Calls a helper function for cleaner logic
 									provenanceType: prov.type || "N/A", // Handles undefined types
+									type: `${prov.type === "orig" ? "origin" : "provenance"}`,
 								},
 							})),
 					),

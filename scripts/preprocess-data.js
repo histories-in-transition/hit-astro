@@ -32,6 +32,27 @@ const works = Object.values(loadJSON("works.json"));
 const folderPath = join(process.cwd(), "src", "content", "data");
 mkdirSync(folderPath, { recursive: true });
 
+//rewrite places
+
+const placesPlus = places.map((place) => {
+	return {
+		id: place.id,
+		hit_id: place.hit_id,
+		name: place.name,
+		geonames_url: place.geonames_url,
+		wikidata_url: place.wikidata_url,
+		lat: place.lat ?? "",
+		long: place.long ?? "",
+	};
+});
+
+const updatedPlaces = addPrevNextToMsItems(placesPlus);
+
+// Save the merged msitems in json
+writeFileSync(join(folderPath, "places.json"), JSON.stringify(updatedPlaces, null, 2), {
+	encoding: "utf-8",
+});
+
 // merge data for msItems
 
 const msItemsPlus = msitems
