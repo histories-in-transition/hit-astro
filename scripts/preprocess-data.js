@@ -237,228 +237,230 @@ writeFileSync(join(folderPath, "ms_items.json"), JSON.stringify(updatedMsItems, 
 
 // merge data for manuscripts
 
-const manuscriptsPlus = manuscripts.map((manuscript) => {
-	// find and prune related dating from manuscripts_Dated.json
-	const ms_dating = manuscripts_dated
-		.filter((mDated) => mDated.manuscript.some((m) => m.id === manuscript.id))
-		.map((mDated) => {
-			return {
-				date: enrichDates(mDated.date, dates),
-				authority: enrichBibl(mDated.authority, bibliography),
-				page: mDated.page,
-				preferred_date: mDated.preferred_date,
-			};
-		});
-	const cod_unit = cod_units
-		.filter((unit) => unit.manuscript.some((m) => m.id === manuscript.id))
-		.map((unit) => {
-			// enrich with data from cod_unit_placed.json
-			const prov_place = cod_unitsprov
-				.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
-				.map((prov) => {
-					return {
-						place: enrichPlaces(prov.place, places),
-						from: enrichDates(prov.from, dates),
-						till: enrichDates(prov.till, dates),
-						uncertain_from: prov.uncertain_from,
-						uncertain_till: prov.uncertain_till,
-						type: prov.type.map((t) => t.value).join(", "),
-					};
-				});
-			return {
-				id: unit.id,
-				hit_id: unit.hit_id,
-				value: unit.label[0].value,
-				number: unit.number,
-				notes: unit.notes,
-				locus: unit.locus,
-				quires_number: unit.quires_number ?? "",
-				heigth: unit.heigth ?? "",
-				width: unit.width ?? "",
-				written_height: unit.written_height ?? "",
-				written_width: unit.written_width ?? "",
-				columns: unit.columns.map((c) => c.value) ?? "",
-				lines_number: unit.lines_number ?? "",
-				decoration: unit.decorations ?? "",
-				codicological_reworking: unit.codicological_reworking.map((re) => re.value),
-				basic_structure: unit.basic_structure.map((str) => str.value),
+const manuscriptsPlus = manuscripts
+	.filter((manuscript) => manuscript.shelfmark.length > 0)
+	.map((manuscript) => {
+		// find and prune related dating from manuscripts_Dated.json
+		const ms_dating = manuscripts_dated
+			.filter((mDated) => mDated.manuscript.some((m) => m.id === manuscript.id))
+			.map((mDated) => {
+				return {
+					date: enrichDates(mDated.date, dates),
+					authority: enrichBibl(mDated.authority, bibliography),
+					page: mDated.page,
+					preferred_date: mDated.preferred_date,
+				};
+			});
+		const cod_unit = cod_units
+			.filter((unit) => unit.manuscript.some((m) => m.id === manuscript.id))
+			.map((unit) => {
+				// enrich with data from cod_unit_placed.json
+				const prov_place = cod_unitsprov
+					.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
+					.map((prov) => {
+						return {
+							place: enrichPlaces(prov.place, places),
+							from: enrichDates(prov.from, dates),
+							till: enrichDates(prov.till, dates),
+							uncertain_from: prov.uncertain_from,
+							uncertain_till: prov.uncertain_till,
+							type: prov.type.map((t) => t.value).join(", "),
+						};
+					});
+				return {
+					id: unit.id,
+					hit_id: unit.hit_id,
+					value: unit.label[0].value,
+					number: unit.number,
+					notes: unit.notes,
+					locus: unit.locus,
+					quires_number: unit.quires_number ?? "",
+					heigth: unit.heigth ?? "",
+					width: unit.width ?? "",
+					written_height: unit.written_height ?? "",
+					written_width: unit.written_width ?? "",
+					columns: unit.columns.map((c) => c.value) ?? "",
+					lines_number: unit.lines_number ?? "",
+					decoration: unit.decorations ?? "",
+					codicological_reworking: unit.codicological_reworking.map((re) => re.value),
+					basic_structure: unit.basic_structure.map((str) => str.value),
 
-				prov_place: prov_place,
-				content: msItemsPlus
-					// get the msitems which belong to this unit
-					.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
-					// clean up unnecessary fields by map and return the prune rest
-					.map(({ manuscript, cod_unit, hands, view_label, ...rest }) => rest),
-			};
-		});
+					prov_place: prov_place,
+					content: msItemsPlus
+						// get the msitems which belong to this unit
+						.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
+						// clean up unnecessary fields by map and return the prune rest
+						.map(({ manuscript, cod_unit, hands, view_label, ...rest }) => rest),
+				};
+			});
 
-	const strata = strataa
-		// get strata for specific manuscript based on ms_id
-		.filter((stratum) => stratum.manuscript.some((ms) => ms.id === manuscript.id))
-		.map((stratum) => {
-			// get corresponding hand_roles data from hands_role.json
-			const h_roles = handsrole
-				.filter((h_role) => stratum.hand_role.some((s_h_role) => s_h_role.id === h_role.id))
-				.map((h_role) => {
-					const hand = hands
-						.filter((hand) => h_role.hand.some((hand_r) => hand_r.id === hand.id))
-						.map((hand) => {
-							// enrich hands with data from hands_Dated.json
-							const dhand = handsdated
-								// filter hands_dated.json for hands (hand => hand.id)
-								.filter((hand_d) => hand_d.hand.some((h) => hand.id === h.id))
-								.flatMap((dhand) => enrichDates(dhand.dated, dates));
-							return {
-								hit_id: hand.hit_id,
-								label: hand.label[0].value,
-								date: dhand,
-							};
-						});
-					const mssitems = msItemsPlus
-						.filter((mitem) => h_role.ms_item.some((item) => item.id === mitem.id))
-						.map((item) => {
-							return {
-								id: item.id,
-								hit_id: item.hit_id,
-								title: item.title_work.map((t) => t.title),
-								author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
-								locus: item.locus,
-							};
-						});
-					return {
-						hit_id: h_role.hit_id,
-						hand: hand,
-						ms_item: mssitems,
-						role: h_role.role.map((r) => r.value),
-						locus: h_role.locus,
-						scribe_type: h_role.scribe_type.map((type) => type.value),
-						function: h_role.function.map((func) => func.value),
-						locus_layout: h_role.locus_layout.map((layout) => layout.value),
-					};
-				});
-			return {
-				id: stratum.id,
-				number: stratum.number,
-				hit_id: stratum.hit_id,
-				label: stratum.label[0].value,
-				character: stratum.character.map((c) => c.value),
-				hand_roles: h_roles,
-				note: stratum.note ?? "",
-			};
-		});
-	// some hand_roles are not yet assigned to a stratum, need to collect them in a separate 'TBD' stratum
-	const uncharted_roles = handsrole
-		.filter((h_role) =>
-			msItemsPlus.some(
-				(item) =>
-					item.manuscript.some((ms) => ms.id === manuscript.id) &&
-					item.hands.some((hand) => hand.jobs.some((j) => j.id === h_role.id)),
-			),
-		)
-		.filter((h_role) => !strataa.some((str) => str.hand_role.some((r) => r.id === h_role.id)))
-		.map((h_role) => {
-			// Enrich hands with data from hands_Dated.json
-			const hand = hands
-				.filter((hand) => h_role.hand.some((hand_r) => hand_r.id === hand.id))
-				.map((hand) => {
-					// enrich hands with data from hands_Dated.json
-					const dhand = handsdated
-						// filter hands_dated.json for hands (hand => hand.id)
-						.filter((hand_d) => hand_d.hand.some((h) => hand.id === h.id))
-						.flatMap((dhand) => enrichDates(dhand.dated, dates));
-					return {
-						hit_id: hand.hit_id,
-						label: hand.label[0].value,
-						date: dhand,
-					};
-				});
+		const strata = strataa
+			// get strata for specific manuscript based on ms_id
+			.filter((stratum) => stratum.manuscript.some((ms) => ms.id === manuscript.id))
+			.map((stratum) => {
+				// get corresponding hand_roles data from hands_role.json
+				const h_roles = handsrole
+					.filter((h_role) => stratum.hand_role.some((s_h_role) => s_h_role.id === h_role.id))
+					.map((h_role) => {
+						const hand = hands
+							.filter((hand) => h_role.hand.some((hand_r) => hand_r.id === hand.id))
+							.map((hand) => {
+								// enrich hands with data from hands_Dated.json
+								const dhand = handsdated
+									// filter hands_dated.json for hands (hand => hand.id)
+									.filter((hand_d) => hand_d.hand.some((h) => hand.id === h.id))
+									.flatMap((dhand) => enrichDates(dhand.dated, dates));
+								return {
+									hit_id: hand.hit_id,
+									label: hand.label[0].value,
+									date: dhand,
+								};
+							});
+						const mssitems = msItemsPlus
+							.filter((mitem) => h_role.ms_item.some((item) => item.id === mitem.id))
+							.map((item) => {
+								return {
+									id: item.id,
+									hit_id: item.hit_id,
+									title: item.title_work.map((t) => t.title),
+									author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
+									locus: item.locus,
+								};
+							});
+						return {
+							hit_id: h_role.hit_id,
+							hand: hand,
+							ms_item: mssitems,
+							role: h_role.role.map((r) => r.value),
+							locus: h_role.locus,
+							scribe_type: h_role.scribe_type.map((type) => type.value),
+							function: h_role.function.map((func) => func.value),
+							locus_layout: h_role.locus_layout.map((layout) => layout.value),
+						};
+					});
+				return {
+					id: stratum.id,
+					number: stratum.number,
+					hit_id: stratum.hit_id,
+					label: stratum.label[0].value,
+					character: stratum.character.map((c) => c.value),
+					hand_roles: h_roles,
+					note: stratum.note ?? "",
+				};
+			});
+		// some hand_roles are not yet assigned to a stratum, need to collect them in a separate 'TBD' stratum
+		const uncharted_roles = handsrole
+			.filter((h_role) =>
+				msItemsPlus.some(
+					(item) =>
+						item.manuscript.some((ms) => ms.id === manuscript.id) &&
+						item.hands.some((hand) => hand.jobs.some((j) => j.id === h_role.id)),
+				),
+			)
+			.filter((h_role) => !strataa.some((str) => str.hand_role.some((r) => r.id === h_role.id)))
+			.map((h_role) => {
+				// Enrich hands with data from hands_Dated.json
+				const hand = hands
+					.filter((hand) => h_role.hand.some((hand_r) => hand_r.id === hand.id))
+					.map((hand) => {
+						// enrich hands with data from hands_Dated.json
+						const dhand = handsdated
+							// filter hands_dated.json for hands (hand => hand.id)
+							.filter((hand_d) => hand_d.hand.some((h) => hand.id === h.id))
+							.flatMap((dhand) => enrichDates(dhand.dated, dates));
+						return {
+							hit_id: hand.hit_id,
+							label: hand.label[0].value,
+							date: dhand,
+						};
+					});
 
-			// Enrich ms_items
-			const mssitems = msItemsPlus
-				.filter((mitem) => h_role.ms_item.some((item) => item.id === mitem.id))
-				.map((item) => ({
-					id: item.id,
-					hit_id: item.hit_id,
-					title: item.title_work.map((t) => t.title),
-					author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
-					locus: item.locus,
-				}));
+				// Enrich ms_items
+				const mssitems = msItemsPlus
+					.filter((mitem) => h_role.ms_item.some((item) => item.id === mitem.id))
+					.map((item) => ({
+						id: item.id,
+						hit_id: item.hit_id,
+						title: item.title_work.map((t) => t.title),
+						author: item.title_work.flatMap((t) => t.author?.map((a) => a.name) || []),
+						locus: item.locus,
+					}));
 
-			return {
-				hit_id: h_role.hit_id,
-				hand: hand,
-				ms_item: mssitems,
-				role: h_role.role.map((r) => r.value),
-				locus: h_role.locus,
-				scribe_type: h_role.scribe_type.map((type) => type.value),
-				function: h_role.function.map((func) => func.value),
-				locus_layout: h_role.locus_layout.map((layout) => layout.value),
-			};
-		});
-	uncharted_roles.length > 0 &&
-		strata.push({
-			id: "TBD",
-			number: "TBD",
-			label: "undefined stratum",
-			character: ["TBD"],
-			hand_roles: uncharted_roles,
-			note: "These hand-roles are not yet assigned to a stratum",
-		});
+				return {
+					hit_id: h_role.hit_id,
+					hand: hand,
+					ms_item: mssitems,
+					role: h_role.role.map((r) => r.value),
+					locus: h_role.locus,
+					scribe_type: h_role.scribe_type.map((type) => type.value),
+					function: h_role.function.map((func) => func.value),
+					locus_layout: h_role.locus_layout.map((layout) => layout.value),
+				};
+			});
+		uncharted_roles.length > 0 &&
+			strata.push({
+				id: "TBD",
+				number: "TBD",
+				label: "undefined stratum",
+				character: ["TBD"],
+				hand_roles: uncharted_roles,
+				note: "These hand-roles are not yet assigned to a stratum",
+			});
 
-	const library_place = libraries
-		.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
-		.map((library) => {
-			return {
-				id: library.id,
-				hit_id: library.hit_id,
-				place: enrichPlaces(library.settlement, places),
-			};
-		});
-	return {
-		id: manuscript.id,
-		hit_id: manuscript.hit_id,
-		shelfmark: manuscript.shelfmark[0].value,
-		library: manuscript.library[0].value,
-		library_full: manuscript.library_full[0].value,
-		library_place: library_place,
-		manuscripta_url: manuscript.manuscripta_url,
-		handschriftenportal_url: manuscript.handschriftenportal_url,
-		catalog_url: manuscript.catalog_url,
-		digi_url: manuscript.digi_url,
-		idno_former: manuscript.idno_former ?? "",
-		quire_structure: manuscript.quire_structure,
-		extent: manuscript.extent ?? "",
-		foliation: manuscript.foliation ?? "",
-		acc_mat: manuscript.acc_mat ?? "",
-		binding: manuscript.binding ?? "",
-		binding_date: manuscript.binding_date.map((date) => {
-			return {
-				id: date.id,
-				value: date.value,
-			};
-		}),
-		bibliography: manuscript.bibliography,
-		height: manuscript.height ?? "",
-		width: manuscript.width ?? "",
-		material: manuscript.material?.value,
-		material_spec: manuscript.material_spec,
-		catchwords: manuscript.catchwords ?? "",
-		quiremarks: manuscript.quiremarks ?? "",
-		history: manuscript.history,
-		orig_place: enrichPlaces(manuscript.orig_place, places),
+		const library_place = libraries
+			.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
+			.map((library) => {
+				return {
+					id: library.id,
+					hit_id: library.hit_id,
+					place: enrichPlaces(library.settlement, places),
+				};
+			});
+		return {
+			id: manuscript.id,
+			hit_id: manuscript.hit_id,
+			shelfmark: manuscript.shelfmark[0].value,
+			library: manuscript.library[0].value,
+			library_full: manuscript.library_full[0].value,
+			library_place: library_place,
+			manuscripta_url: manuscript.manuscripta_url,
+			handschriftenportal_url: manuscript.handschriftenportal_url,
+			catalog_url: manuscript.catalog_url,
+			digi_url: manuscript.digi_url,
+			idno_former: manuscript.idno_former ?? "",
+			quire_structure: manuscript.quire_structure,
+			extent: manuscript.extent ?? "",
+			foliation: manuscript.foliation ?? "",
+			acc_mat: manuscript.acc_mat ?? "",
+			binding: manuscript.binding ?? "",
+			binding_date: manuscript.binding_date.map((date) => {
+				return {
+					id: date.id,
+					value: date.value,
+				};
+			}),
+			bibliography: manuscript.bibliography,
+			height: manuscript.height ?? "",
+			width: manuscript.width ?? "",
+			material: manuscript.material?.value,
+			material_spec: manuscript.material_spec,
+			catchwords: manuscript.catchwords ?? "",
+			quiremarks: manuscript.quiremarks ?? "",
+			history: manuscript.history,
+			orig_place: enrichPlaces(manuscript.orig_place, places),
 
-		provenance: enrichPlaces(manuscript.provenance, places),
-		orig_date: ms_dating,
-		content_summary: manuscript.content_summary ?? "",
+			provenance: enrichPlaces(manuscript.provenance, places),
+			orig_date: ms_dating,
+			content_summary: manuscript.content_summary ?? "",
 
-		charakter: manuscript.charakter.map((char) => char.value),
-		case_study: manuscript.case_study.map((c) => c.value),
-		status: manuscript.status?.map((s) => s.value) ?? [],
-		cod_units: cod_unit,
-		strata: strata,
-		author_entry: manuscript.author_entry.map((a) => a.value),
-	};
-});
+			charakter: manuscript.charakter.map((char) => char.value),
+			case_study: manuscript.case_study.map((c) => c.value),
+			status: manuscript.status?.map((s) => s.value) ?? [],
+			cod_units: cod_unit,
+			strata: strata,
+			author_entry: manuscript.author_entry.map((a) => a.value),
+		};
+	});
 
 const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus, "hit_id", "shelfmark");
 
