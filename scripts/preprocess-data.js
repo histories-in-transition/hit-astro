@@ -184,6 +184,7 @@ const msItemsPlus = msitems
 
 		// get provenance based on cod_unit_placed.json
 		const provenance = cod_unitsprov
+			.filter((unit_pr) => unit_pr.cod_unit.length > 0)
 			.filter((unit_pr) => item.cod_unit.some((c) => c.id === unit_pr.cod_unit[0].id))
 			.flatMap((unit_pr) => enrichPlaces(unit_pr.place, places));
 		// Return the enriched msitem

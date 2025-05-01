@@ -290,7 +290,7 @@ const geoData = processMSData(manuscript)
                     {manuscript?.orig_date.length > 0 &&
                     <ul>
                       {manuscript.orig_date.map((dating) => (
-                        <li>{dating.date.map(d => d.value)} nach {dating.authority[0]?.author} <span>({dating.authority[0].citation || 'N/A'})</span></li>
+                        <li>{dating.date.map(d => d.value || 'N/A')} nach {dating.authority[0]?.author || 'N/A'} <span>({dating.authority[0]?.citation || 'N/A'})</span></li>
                       ))}
                       </ul>}
                 </dd>
