@@ -66,8 +66,21 @@ export function enrichDates(dateArray, dates) {
 			range: `${not_before}-${not_after}`,
 			not_before,
 			not_after,
+			century: [
+				...new Set([getCentury(dateRange.not_before || ""), getCentury(dateRange.not_after || "")]),
+			],
 		};
 	});
+}
+
+// Helper function to calculate the century of not_before not_after dates
+
+function getCentury(year) {
+	if (!year) return "N/A"; // Handle null or undefined dates
+
+	const century = Math.ceil((parseInt(year) + 1) / 100);
+
+	return `${century}. Jh.`;
 }
 
 export function enrichBibl(biblArray, bibliography) {

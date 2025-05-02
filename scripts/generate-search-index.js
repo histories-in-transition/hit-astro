@@ -41,7 +41,9 @@ async function generate() {
 			{ name: "orig_date", type: "object[]", facet: true, optional: true },
 			{ name: "orig_place", type: "object[]", facet: true, optional: true },
 			{ name: "provenance", type: "object[]", facet: true, optional: true },
-			{ name: "hands", type: "object[]", facet: true, optional: true },
+			{ name: "hands", type: "object[]", facet: true, optional: true }, // get dates as separate numbers for filtering 'from -to' in the frontend
+			{ name: "terminus_post_quem", type: "string[]", facet: true, optional: true },
+			{ name: "terminus_ante_quem", type: "string[]", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -56,6 +58,23 @@ async function generate() {
 	// transform data so it conforms to the typesense collection shape
 	const records = [];
 	Object.values(data).forEach((value) => {
+		const origDates = value?.orig_date || [];
+		const terminus_post_quem = [];
+		const terminus_ante_quem = [];
+
+		origDates.forEach((d) => {
+			if (Array.isArray(d.date)) {
+				d.date.forEach((dateObj) => {
+					if (dateObj.not_before !== undefined) {
+						terminus_post_quem.push(dateObj.not_before);
+					}
+					if (dateObj.not_after !== undefined) {
+						terminus_ante_quem.push(dateObj.not_after);
+					}
+				});
+			}
+		});
+
 		const item = {
 			sort_id: value?.id,
 			hit_id: value?.hit_id,
@@ -71,9 +90,12 @@ async function generate() {
 			orig_place: value?.orig_place || [],
 			provenance: value?.provenance || [],
 			hands: value?.hands || [],
+			terminus_post_quem,
+			terminus_ante_quem,
 		};
 		records.push(item);
 	});
+
 	// - import data into typesense collection
 
 	try {

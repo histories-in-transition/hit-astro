@@ -39,6 +39,17 @@ const search = instantsearch({
 	indexName: project_collection_name,
 });
 
+// Custom comparator function to sort century arrays for the refinement list 'Century of work'
+const centuryComparator = (a, b) => {
+	const extractCentury = (str) => {
+		const value = str?.name || str; // Handle both direct strings and refinement objects
+		const match = value.match(/(\d+)/);
+		return match ? parseInt(match[1], 10) : 0;
+	};
+
+	return extractCentury(a) - extractCentury(b);
+};
+
 const refinementListAuthor = wrapInPanel("Autor");
 
 const refinementListWork = wrapInPanel("Werk");
@@ -50,6 +61,8 @@ const refinementListRepo = wrapInPanel("Bibliothek");
 const refinementListRepoPlace = wrapInPanel("Aktuellen Standort");
 
 const refinementListOrigDate = wrapInPanel("Entstehungszeit");
+
+const refinementListCentury = wrapInPanel("Entstehungs Jh");
 
 const refinementListOrigPlace = wrapInPanel("Entstehungsort");
 
@@ -213,6 +226,17 @@ search.addWidgets([
 		showMoreLimit: 50,
 		limit: 10,
 		searchablePlaceholder: "",
+	}),
+
+	refinementListCentury({
+		container: "#refinement-list-century",
+		attribute: "orig_date.date.century",
+		searchable: true,
+		sortBy: centuryComparator,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "e.g. 9th c.",
 	}),
 
 	refinementListOrigPlace({
