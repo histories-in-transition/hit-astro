@@ -41,9 +41,10 @@ async function generate() {
 			{ name: "orig_date", type: "object[]", facet: true, optional: true },
 			{ name: "orig_place", type: "object[]", facet: true, optional: true },
 			{ name: "provenance", type: "object[]", facet: true, optional: true },
-			{ name: "hands", type: "object[]", facet: true, optional: true }, // get dates as separate numbers for filtering 'from -to' in the frontend
-			{ name: "terminus_post_quem", type: "string[]", facet: true, optional: true },
-			{ name: "terminus_ante_quem", type: "string[]", facet: true, optional: true },
+			{ name: "hands", type: "object[]", facet: true, optional: true },
+			// get dates as separate numbers for filtering 'from -to' in the frontend
+			{ name: "terminus_post_quem", type: "int32", facet: true, optional: true },
+			{ name: "terminus_ante_quem", type: "int32", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -75,6 +76,11 @@ async function generate() {
 			}
 		});
 
+		// Get the earliest not_before and latest not_after
+		const minNotBefore =
+			terminus_post_quem.length > 0 ? Math.min(...terminus_post_quem) : undefined;
+		const maxNotAfter = terminus_ante_quem.length > 0 ? Math.max(...terminus_ante_quem) : undefined;
+
 		const item = {
 			sort_id: value?.id,
 			hit_id: value?.hit_id,
@@ -90,8 +96,8 @@ async function generate() {
 			orig_place: value?.orig_place || [],
 			provenance: value?.provenance || [],
 			hands: value?.hands || [],
-			terminus_post_quem,
-			terminus_ante_quem,
+			terminus_post_quem: minNotBefore !== undefined ? minNotBefore : null,
+			terminus_ante_quem: maxNotAfter !== undefined ? maxNotAfter : null,
 		};
 		records.push(item);
 	});

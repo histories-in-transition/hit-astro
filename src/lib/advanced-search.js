@@ -76,6 +76,139 @@ const refinementListHandsContextRole = wrapInPanel("Schreiber Typ");
 
 const refinementListDecoration = wrapInPanel("Ausstatung");
 
+// Initialize a custom Algolia widget to allow users to filter results by a range of years
+// filter input from and to to two different attributes in the schema (not possible with the default range input widget)
+// init() required function when building a custom widget
+// inside it 1. create the HTML structure
+// 2. add event listeners to the form
+// 3. use the helper to add the filter to the search, clear the old refinements
+// 4. add real-time validation to the inputs
+// 5. add getWidgetRenderState() to allow the currentRefinements widget to "see" this refinement
+const customDateRangeWidget = (containerId) => {
+	return {
+		init({ helper, state, createURL }) {
+			// Create the HTML structure for the date range widget with two inputs and apply button
+			const container = document.querySelector(containerId);
+			container.innerHTML = `
+		  <div class="ais-Panel md:mb-4 md:rounded-lg md:border border-brand-300 bg-white overflow-hidden md:shadow-xs">
+          <details class="group">
+            <summary class="pl-4 pr-2 py-2 md:bg-brand-50 flex justify-between items-center md:border-b border-gray-200">
+              <span class="text-brand-800 font-medium">Entstehungsdatum</span>
+              <button type="button" class=" w-auto h-auto bg-transparent flex items-center justify-start ">
+                <svg class="transform text-brand-800 rotate-90 group-open:rotate-270" style="width: 1em; height: 1em;" viewBox="0 0 500 500">
+                  <path d="M100 250l300-150v300z" fill="currentColor"></path>
+                </svg>
+              </button>
+            </summary>
+            <div class="ais-Panel-body px-4 py-2">
+              <div class="mt-2">
+                <form class="flex flex-col gap-2">
+                  <div class="flex gap-2 items-center">
+                    <input class="w-full text-sm py-1.5 px-2 border border-gray-300 rounded-sm" type="number" id="date-from-year" min="70" max="1600" placeholder="Von">
+                    <span class="text-gray-500">-</span>
+                    <input class="w-full text-sm py-1.5 px-2 border border-gray-300 rounded-sm" type="number" id="date-to-year" min="70" max="1600" placeholder="Bis">
+                  </div>
+                  <button type="submit" class="w-full py-1.5 text-sm bg-brand-600 text-white rounded-sm hover:bg-brand-700 transition">Suche</button>
+                </form>
+              </div>
+            </div>
+          </details>
+        </div>
+		`;
+
+			const form = container.querySelector("form");
+			const fromInput = container.querySelector("#date-from-year");
+			const toInput = container.querySelector("#date-to-year");
+
+			// add event listeners to the inputs
+			form.addEventListener("submit", (e) => {
+				e.preventDefault();
+
+				// Clear old refinements
+				helper.clearRefinements("terminus_post_quem");
+				helper.clearRefinements("terminus_ante_quem");
+
+				const from = parseInt(fromInput.value, 10);
+				const to = parseInt(toInput.value, 10);
+				// Validate: Ensure 'From year' < 'To year'
+				if (from >= to) {
+					toInput.setCustomValidity("The 'To year' must be greater than the 'From year'.");
+					// Don't submit if validation fails
+					return;
+				} else {
+					toInput.setCustomValidity(""); // Reset the error message if valid
+				}
+
+				// Proceed if both values are valid numbers;
+				// helper.addNummericRefinemnt - standard Algolia method to add a numeric filter
+				if (!isNaN(from)) {
+					helper.addNumericRefinement("terminus_post_quem", ">=", from);
+				}
+				if (!isNaN(to)) {
+					helper.addNumericRefinement("terminus_ante_quem", "<=", to);
+				}
+
+				// Perform the search after validation
+				helper.search();
+			});
+			// Add real-time validation reset to allow resubmission after correcting the input
+			fromInput.addEventListener("input", () => {
+				toInput.setCustomValidity(""); // Reset error if the user changes 'From year'
+				toInput.reportValidity(); // Show the validity message (if any)
+			});
+
+			toInput.addEventListener("input", () => {
+				const from = parseInt(fromInput.value, 10);
+				const to = parseInt(toInput.value, 10);
+
+				// Re-check the condition if the 'To year' is still valid after the change
+				if (from >= to) {
+					toInput.setCustomValidity("Das „Bis-Jahr“ muss größer sein als das „Von-Jahr“.");
+				} else {
+					toInput.setCustomValidity(""); // Reset the error if condition is met
+				}
+
+				toInput.reportValidity(); // Show the validity message (if any)
+			});
+		},
+
+		getWidgetRenderState({ helper }) {
+			// Required so currentRefinements widget can "see" this refinement
+			const refinements = [];
+
+			const from = helper.getNumericRefinements("terminus_post_quem");
+			if (from["≥"]) {
+				refinements.push({
+					attribute: "terminus_post_quem",
+					type: "numeric",
+					value: () => {
+						helper.removeNumericRefinement("terminus_post_quem", ">=");
+						helper.search();
+					},
+					label: `From ${from["≥"][0]}`,
+				});
+			}
+
+			const to = helper.getNumericRefinements("terminus_ante_quem");
+			if (to["≤"]) {
+				refinements.push({
+					attribute: "terminus_ante_quem",
+					type: "numeric",
+					value: () => {
+						helper.removeNumericRefinement("terminus_ante_quem", "<=");
+						helper.search();
+					},
+					label: `To ${to["≤"][0]}`,
+				});
+			}
+
+			return {
+				refinements,
+			};
+		},
+	};
+};
+
 // add widgets
 search.addWidgets([
 	searchBox({
@@ -83,7 +216,7 @@ search.addWidgets([
 		autofocus: true,
 		placeholder: "Suche nach einem Titel oder einer Handschrift",
 	}),
-
+	customDateRangeWidget("#date-range-widget"),
 	hits({
 		container: "#hits",
 		templates: {
@@ -342,7 +475,11 @@ search.addWidgets([
 																? "Schreiber Typ"
 																: item.attribute === "decoration.value"
 																	? "Decoration"
-																	: item.label,
+																	: item.attribute === "terminus_ante_quem"
+																		? "Terminus ante quem"
+																		: item.attribute === "terminus_post_quem"
+																			? "Termininus post quem"
+																			: item.label,
 			}));
 		},
 	}),
