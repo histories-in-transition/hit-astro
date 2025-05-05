@@ -516,14 +516,31 @@ const handsPlus = hands
 							locus: msit.locus,
 						};
 					});
+				let hand_qualities = "";
+				if (hand_r.scribe_type.length > 0) {
+					hand_qualities = `${hand_r.role.map((r) => r.value)} (${hand_r.scribe_type.map((s) => s.value)})`;
+				}
+				if (hand_r.scribe_type.length > 0 && hand_r.function.length > 0) {
+					hand_qualities = `${hand_r.role.map((r) => r.value)} (${hand_r.scribe_type.map((s) => s.value)} — ${hand_r.function.map((f) => f.value)})`;
+				} else {
+					hand_qualities = hand_r.role.map((r) => r.value).join(", ");
+				}
+
 				return {
 					hit_id: hand_r.hit_id,
 					content: msitem,
 					scope: hand_r.locus ?? "",
-					role: hand_r.role.map((r) => r.value),
-					function: hand_r.function.map((f) => f.value),
-					scribe_type: hand_r.scribe_type.map((sc) => sc.value),
+					role: hand_r.role.map((r) => {
+						return { value: r.value };
+					}),
+					function: hand_r.function.map((f) => {
+						return { value: f.value };
+					}),
+					scribe_type: hand_r.scribe_type.map((sc) => {
+						return { value: sc.value };
+					}),
 					locus_layout: hand_r.locus_layout.map((l) => l.value),
+					all_in_one: hand_qualities,
 				};
 			});
 

@@ -13,7 +13,7 @@ export function dateFormatter(cell) {
 	return value.map((dateObj) => dateObj.value || "").join(" | ");
 }
 
-// Function to get the value of a specific path from a JSON object
+// Function to get the value of a specific path or several paths from a JSON object
 export function jsonpathFlexibleLookup(value, data, type, params, component) {
 	const paths = Array.isArray(params.path) ? params.path : [params.path]; // Ensure paths is always an array
 	const separator = params.separator || ", ";
@@ -72,6 +72,26 @@ export function jsonpathsDistinctMapLookup(value, data, type, params, component)
 	});
 
 	return Array.from(uniqueEntries.values()); // Convert back to array
+}
+
+// simple function to get distinct string values
+
+export function distinctStringMutator(value, data, type, params, component) {
+	const paths = Array.isArray(params.path) ? params.path : [params.path];
+	const separator = params?.separator || ", ";
+
+	const distinctValues = new Set();
+
+	paths.forEach((path) => {
+		const results = JSONPath({ path, json: value });
+		results.forEach((result) => {
+			if (typeof result === "string" && result.trim()) {
+				distinctValues.add(result.trim());
+			}
+		});
+	});
+
+	return Array.from(distinctValues).join(separator);
 }
 
 export function dateRangeFilter(headerValue, rowValue, rowData, filterParams, accessor) {

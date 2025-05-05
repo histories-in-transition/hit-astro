@@ -16,6 +16,7 @@ import TableHead from "@/components/table-head.astro";
 		import {
 			jsonpathFlexibleLookup,
 			jsonpathsDistinctMapLookup,
+			distinctStringMutator,
 			dateRangeFilter,
 			dateAccessor,
 			dateFormatter,
@@ -78,6 +79,7 @@ import TableHead from "@/components/table-head.astro";
 					headerFilter: "input",
 					formatter: "textarea",
 				},
+				/* 	// column for Rolle outdated?
 				{
 					title: "Rolle",
 					headerFilterPlaceholder: "e.g. Korrektor",
@@ -88,6 +90,19 @@ import TableHead from "@/components/table-head.astro";
 						path: "$[*]",
 					},
 					headerFilter: "list",
+					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
+					formatter: "textarea",
+				}, */
+				{
+					title: "Rolle | Typ | Funktion",
+					headerFilterPlaceholder: "e.g. Erweiterung",
+					field: "hand_roles",
+					minWidth: 200,
+					mutator: distinctStringMutator,
+					mutatorParams: {
+						path: "$[*].all_in_one",
+					},
+					headerFilter: "input",
 					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
 					formatter: "textarea",
 				},
@@ -101,9 +116,7 @@ import TableHead from "@/components/table-head.astro";
 						path: "$[*].dated[*]",
 						separator: ", ",
 					},
-					// Ensures filtering and sorting work correctly
 					accessor: dateAccessor,
-					// Formatting the displayed values
 					formatter: dateFormatter,
 					headerFilter: "input",
 					headerFilterFunc: dateRangeFilter,
