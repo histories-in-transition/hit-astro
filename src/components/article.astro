@@ -2,7 +2,7 @@
 import NavLink from "./nav-link.astro";
 import { Icon } from "astro-icon/components";
 // Props for the component
-const { prevLink, nextLink, mainLink, mainTitle, subtitle } = Astro.props;
+const { prevLink, nextLink, mainLink, mainTitle, subtitle, authorEntry } = Astro.props;
 ---
 
 <article class="mx-auto lg:w-3/4 md:w-5/6 grid grid-cols-1 p-2 md:p-5 pb-10 gap-y-2">
@@ -37,4 +37,14 @@ const { prevLink, nextLink, mainLink, mainTitle, subtitle } = Astro.props;
 		}
 	</div>
 	<slot />
+	<div class="border-t border-neutral-300 py-5 space-y-2 text-brand-900 p-4 md:px-0">
+		<p class="text-brand-700 font-semibold">Zitierhinweis:</p>
+		<p>
+			{authorEntry ? authorEntry + ", " : ""} "{mainTitle}",
+			<span class="italic">Histories in Transition</span> (2025). URL: <span
+				id="pathname-placeholder"></span>.
+		</p>
+	</div>
+
+	<script src="@/lib/getCurrentURL.js"></script>
 </article>

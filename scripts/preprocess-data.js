@@ -59,6 +59,10 @@ const msItemsPlus = msitems
 	//filter out all entries without a manuscript, title OR title_note
 	.filter((item) => item.manuscript.length > 0 && (item.title_work.length > 0 || item.title_note))
 	.map((item) => {
+		// get author_entry from manuscript
+		const author_entry = manuscripts
+			.filter((ms) => ms.id === item.manuscript[0]?.id)
+			.flatMap((ms) => ms.author_entry.map((a) => a.value));
 		// get library and library place for each msitem
 		const library = manuscripts
 			.filter((ms) => ms.id === item.manuscript[0]?.id)
@@ -226,6 +230,7 @@ const msItemsPlus = msitems
 				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
 				.flatMap((hand) => hand.place),
 			provenance: provenance,
+			author_entry: author_entry,
 		};
 	});
 
@@ -561,6 +566,7 @@ const handsPlus = hands
 			hand_roles: h_roles,
 			placed: h_placed,
 			texts: [...new Set(hand.texts.map((text) => text.value))],
+			author_entry: hand.author_entry.map((a) => a.value),
 		};
 	});
 
@@ -670,6 +676,7 @@ const scribesPlus = scribes.map((scribe) => {
 		hands: scribalHands,
 		date: date,
 		places: place,
+		author_entry: scribe.author_entry.map((a) => a.value),
 	};
 });
 

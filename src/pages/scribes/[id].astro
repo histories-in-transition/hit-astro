@@ -30,6 +30,7 @@ const geoJson = processScribesData(scribe);
             prevLink={`/scribes/${scribe.prev.id}`}
             nextLink={`/scribes/${scribe.next.id}`}
             mainTitle={`Schreiber: ${scribe.name}`}
+            authorEntry={scribe?.author_entry.map(a => a).join(', ')}
           >          
             
 
