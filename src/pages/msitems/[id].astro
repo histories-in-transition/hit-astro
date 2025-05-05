@@ -30,7 +30,8 @@ const { data: item } = Astro.props;
   <Article
           prevLink={`/msitems/${item.prev.id}`}
           nextLink={`/msitems/${item.next.id}`}
-          mainTitle={item.view_label}
+          mainTitle={item.library_place.map(p => p.value) + ', ' + item.view_label}
+          authorEntry={item.author_entry}
         > 
       <div
         class="border-2 rounded-sm border-brandBrown bg-brand-100
@@ -44,7 +45,7 @@ const { data: item } = Astro.props;
             <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>  
             <dd class="pl-5">
               <NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`} >
-                {item.manuscript[0]?.value}
+                {item.library_place.map(p => p.value) + ', ' + item.manuscript[0]?.value}
               </NavLink>
             </dd>
             <dt class="font-semibold border-r border-gray-300 pr-2">Locus:</dt>  
