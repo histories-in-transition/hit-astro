@@ -128,7 +128,7 @@ export function dateRangeFilter(headerValue, rowValue, rowData, filterParams, ac
 			if (operator === "vor") {
 				return start < filterYear; // terminus ante quem using end
 			} else if (operator === "nach") {
-				return start > filterYear; // terminus post quem using start
+				return end > filterYear; // terminus post quem using start
 			} else {
 				return filterYear >= start && filterYear <= end; // Default range check (inclusive)
 			}
