@@ -106,9 +106,9 @@ export function dateRangeFilter(headerValue, rowValue, rowData, filterParams, ac
 		const [start, end] = range.split("-").map(Number);
 		if (!isNaN(start) && !isNaN(end)) {
 			if (operator === "vor") {
-				return end > filterYear && start < filterYear; // terminus ante quem using end
+				return start < filterYear; // terminus ante quem using end
 			} else if (operator === "nach") {
-				return start < filterYear && end > filterYear; // terminus post quem using start
+				return start > filterYear; // terminus post quem using start
 			} else {
 				return filterYear >= start && filterYear <= end; // Default range check (inclusive)
 			}
