@@ -10,6 +10,8 @@ import {
 	clearRefinements,
 	currentRefinements,
 } from "instantsearch.js/es/widgets";
+
+import { simple } from "instantsearch.js/es/lib/stateMappings";
 import { withBasePath } from "./withBasePath";
 const project_collection_name = "hit__msitems";
 const main_search_field = "title";
@@ -37,6 +39,9 @@ const searchClient = typesenseInstantsearchAdapter.searchClient;
 const search = instantsearch({
 	searchClient,
 	indexName: project_collection_name,
+	routing: {
+		stateMapping: simple(),
+	},
 });
 
 // Custom comparator function to sort century arrays for the refinement list 'Century of work'
@@ -205,6 +210,35 @@ const customDateRangeWidget = (containerId) => {
 			return {
 				refinements,
 			};
+		},
+		getWidgetState(uiState, { searchParameters }) {
+			const from = searchParameters.getNumericRefinements("terminus_post_quem")?.[">="]?.[0];
+			const to = searchParameters.getNumericRefinements("terminus_ante_quem")?.["<="]?.[0];
+
+			if (from !== undefined || to !== undefined) {
+				return {
+					...uiState,
+					dateRange: {
+						from,
+						to,
+					},
+				};
+			}
+			return uiState;
+		},
+
+		getWidgetSearchParameters(searchParameters, { uiState }) {
+			const dateRange = uiState.dateRange || {};
+			let params = searchParameters
+				.clearRefinements("terminus_post_quem")
+				.clearRefinements("terminus_ante_quem");
+			if (dateRange.from !== undefined) {
+				params = params.addNumericRefinement("terminus_post_quem", ">=", Number(dateRange.from));
+			}
+			if (dateRange.to !== undefined) {
+				params = params.addNumericRefinement("terminus_ante_quem", "<=", Number(dateRange.to));
+			}
+			return params;
 		},
 	};
 };
