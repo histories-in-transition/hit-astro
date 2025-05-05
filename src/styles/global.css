@@ -341,3 +341,13 @@
 .ais-Pagination-item--nextPage .ais-Pagination-link {
 	@apply font-bold;
 }
+.ais-RangeInput-form {
+	@apply flex items-center gap-2;
+}
+
+.ais-RangeInput-input {
+	@apply w-1/3 px-3 py-2 border rounded-md;
+}
+.ais-RangeInput-submit {
+	@apply w-1/4 px-4 py-2  rounded-md border text-brand-900 hover:bg-brand-100;
+}
