@@ -187,7 +187,7 @@ const geoData = processMSData(manuscript)
                             {unit.basic_structure.length > 0 && 
                             <dt class="font-semibold border-r border-gray-300 pr-2">Grundstruktur:</dt>
                             <dd class="pl-5">
-                                {unit.basic_structure.map(struct => struct.value).join(', ')} 
+                                {unit.basic_structure.map(struct => struct).join(', ')} 
                             </dd>
                             }
                             
@@ -230,7 +230,7 @@ const geoData = processMSData(manuscript)
                             {unit.codicological_reworking.length > 0 &&
                             <dt class="font-semibold border-r border-gray-300 pr-2">Rework:</dt>
                             <dd class="pl-5">
-                                {unit.codicological_reworking.map(rework => rework.value).join(', ')} 
+                                {unit.codicological_reworking.map(rework => rework).join(', ')} 
                             </dd>    
                             }
                             {unit.prov_place.length > 0 &&

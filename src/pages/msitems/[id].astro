@@ -124,6 +124,15 @@ const { data: item } = Astro.props;
                 <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
                 <dd class="pl-5">{item?.decoration.map(d => d.value).join(', ')}</dd>
               }
+
+              { item.form.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Form:</dt>
+                <dd class="pl-5">{item?.form.map(f => f.value).join(', ')}
+                {item.form_note && 
+                  <span class="italic"> ({item.form_note})</span>
+                }
+                </dd>
+              }
             <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
               <dd class="pl-5">
                 {item.hands.map(hand => hand.jobs.length > 0) && 

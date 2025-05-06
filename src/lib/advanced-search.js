@@ -9,6 +9,7 @@ import {
 	refinementList,
 	clearRefinements,
 	currentRefinements,
+	hierarchicalMenu,
 } from "instantsearch.js/es/widgets";
 
 import { simple } from "instantsearch.js/es/lib/stateMappings";
@@ -80,6 +81,10 @@ const refinementListHandsRole = wrapInPanel("Schreiberaktivitäten");
 const refinementListHandsContextRole = wrapInPanel("Schreiber Typ");
 
 const refinementListDecoration = wrapInPanel("Ausstatung");
+
+const refinementListForm = wrapInPanel("Form");
+
+const hierarchicalMenuGenre = wrapHierarcicalMenuInPanel("Genre");
 
 // Initialize a custom Algolia widget to allow users to filter results by a range of years
 // filter input from and to to two different attributes in the schema (not possible with the default range input widget)
@@ -242,6 +247,35 @@ const customDateRangeWidget = (containerId) => {
 		},
 	};
 };
+
+// Utility to show/hide the notification
+function showServerErrorNotification(message) {
+	const el = document.getElementById("server-error-notification");
+	if (el) {
+		el.textContent = message || "Serverfehler: Die Suche ist derzeit nicht verfügbar.";
+		el.style = "block";
+	}
+}
+function hideServerErrorNotification() {
+	const el = document.getElementById("server-error-notification");
+	if (el) el.style = "hiden";
+}
+
+// Patch the search client to catch errors
+const originalSearch = searchClient.search.bind(searchClient);
+searchClient.search = function (requests) {
+	return originalSearch(requests).catch((err) => {
+		showServerErrorNotification(
+			"Serverfehler: Die Suche ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.",
+		);
+		throw err; // rethrow so InstantSearch knows
+	});
+};
+
+// Optionally, hide notification on successful search
+search.on("render", () => {
+	hideServerErrorNotification();
+});
 
 // add widgets
 search.addWidgets([
@@ -475,6 +509,26 @@ search.addWidgets([
 		searchablePlaceholder: "",
 	}),
 
+	refinementListForm({
+		container: "#refinement-list-form",
+		attribute: "form.value",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	hierarchicalMenuGenre({
+		container: "#refinement-list-genre",
+		attributes: ["main_genre", "sub_genre"],
+		separator: " > ",
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "e.g. Historiographie",
+	}),
+
 	clearRefinements({
 		container: "#clear-refinements",
 	}),
@@ -513,7 +567,9 @@ search.addWidgets([
 																		? "Terminus ante quem"
 																		: item.attribute === "terminus_post_quem"
 																			? "Termininus post quem"
-																			: item.label,
+																			: item.attribute === "main_genre"
+																				? "Hauptgenre"
+																				: item.label,
 			}));
 		},
 	}),
@@ -536,6 +592,23 @@ function wrapInPanel(title) {
 			root: "border-b",
 		},
 	})(refinementList);
+}
+
+function wrapHierarcicalMenuInPanel(title) {
+	return panel({
+		collapsed: ({ state }) => {
+			return state.query.length === 0;
+		},
+		templates: {
+			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
+		},
+		cssClasses: {
+			header: "cursor-pointer relative z-10",
+			collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+			collapseIcon: "",
+			root: "border-b",
+		},
+	})(hierarchicalMenu);
 }
 
 // Back to top functionality

@@ -42,9 +42,12 @@ async function generate() {
 			{ name: "orig_place", type: "object[]", facet: true, optional: true },
 			{ name: "provenance", type: "object[]", facet: true, optional: true },
 			{ name: "hands", type: "object[]", facet: true, optional: true },
+			{ name: "genre", type: "string[]", facet: true, optional: true },
+			{ name: "main_genre", type: "string[]", facet: true, optional: true },
 			// get dates as separate numbers for filtering 'from -to' in the frontend
 			{ name: "terminus_post_quem", type: "int32", facet: true, optional: true },
 			{ name: "terminus_ante_quem", type: "int32", facet: true, optional: true },
+			{ name: "form", type: "object[]", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -98,6 +101,9 @@ async function generate() {
 			hands: value?.hands || [],
 			terminus_post_quem: minNotBefore !== undefined ? minNotBefore : null,
 			terminus_ante_quem: maxNotAfter !== undefined ? maxNotAfter : null,
+			sub_genre: value.title_work[0].subGenre || [],
+			main_genre: value.title_work[0].mainGenre || [],
+			form: value.form || [],
 		};
 		records.push(item);
 	});

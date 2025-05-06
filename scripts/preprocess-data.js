@@ -95,7 +95,15 @@ const msItemsPlus = msitems
 							return author.length > 0 ? author : null; // returns valid authors or null
 						})
 						.filter((author) => author !== null); // remove null authors
-
+					const mainGenres = genres
+						.filter((genre) => work.genre.some((g) => g.id === genre.id))
+						.flatMap((genre) => {
+							return {
+								subGenre: genre.genre,
+								mainGenre:
+									genre.main_genre.length > 0 ? genre.main_genre.map((mg) => mg.value) : "N/A",
+							};
+						});
 					// Return the work with its related authors
 					return {
 						id: work.id,
@@ -106,7 +114,10 @@ const msItemsPlus = msitems
 						note: work.note ?? "",
 						bibliography: work.bibliography,
 						source_text: work.source_text,
-						genre: work.genre.map((genre) => genre.value),
+						mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
+						subGenre: mainGenres.map((genre) => {
+							return `${genre.mainGenre} > ${genre.subGenre}`;
+						}),
 						note_source: work.note_source ?? "",
 					};
 				}
@@ -222,6 +233,8 @@ const msItemsPlus = msitems
 			}),
 			hands: relatedHand, // enriched with dating, placement and hand roles
 			decoration: item.decoration.map(({ value }) => ({ value })),
+			form: item.form.map(({ value }) => ({ value })),
+			form_note: item.form_note ?? "",
 			note: item.note ?? "",
 			orig_date: relatedHand
 				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
