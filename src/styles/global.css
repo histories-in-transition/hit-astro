@@ -253,12 +253,14 @@
 }
 
 /* Show more button */
-.ais-RefinementList-showMore {
+.ais-RefinementList-showMore,
+.ais-HierarchicalMenu-showMore {
 	@apply mt-2 text-sm text-brand-600 hover:text-brand-800 focus:outline-hidden;
 }
 
 /* Disabled show more button */
-.ais-RefinementList-showMore--disabled {
+.ais-RefinementList-showMore--disabled,
+.ais-HierarchicalMenu-showMore--disabled {
 	@apply text-gray-400 cursor-not-allowed hover:text-gray-400;
 }
 
@@ -350,4 +352,38 @@
 }
 .ais-RangeInput-submit {
 	@apply w-1/4 px-4 py-2  rounded-md border text-brand-900 hover:bg-brand-100;
+}
+/* Hierarchical Menu Container */
+.ais-HierarchicalMenu-list {
+	@apply space-y-2 mt-2;
+}
+
+/* Hierarchical Menu Item */
+.ais-HierarchicalMenu-item {
+	@apply text-sm;
+}
+
+/* Active (selected) item */
+.ais-HierarchicalMenu-item--selected > .ais-HierarchicalMenu-link {
+	@apply bg-brand-50 rounded-md font-semibold;
+}
+
+/* Hierarchical Menu Link */
+.ais-HierarchicalMenu-link {
+	@apply flex items-center py-1 px-2 rounded-md hover:bg-brand-100 hover:text-brand-600 transition-colors;
+	text-decoration: none;
+}
+
+/* Hierarchical Menu Label */
+.ais-HierarchicalMenu-label {
+	@apply text-gray-700 grow;
+}
+
+/* Hierarchical Menu Count */
+.ais-HierarchicalMenu-count {
+	@apply ml-2 bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full;
+}
+
+.ais-HierarchicalMenu-list--child .ais-HierarchicalMenu-list {
+	@apply list-disc pl-8;
 }
