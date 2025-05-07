@@ -9,6 +9,14 @@ const base = import.meta.env.BASE_URL; // Base URL
 const path = pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
 // Split the remaining path into segments
 const segments = path.split("/").filter((segment) => segment);
+const translationMap = {
+	manuscripts: "Handschriften",
+	works: "Werke",
+	scribes: "Schreiber",
+	hands: "Hände",
+	search: "Suche",
+	about: "Über das Projekt",
+};
 ---
 
 {
@@ -19,14 +27,16 @@ const segments = path.split("/").filter((segment) => segment);
 			<ol class="flex items-center text-brand-800 gap-1 p-3">
 				<li>
 					<NavLink href="/" class="flex items-center text-brand-800 hover:underline">
-						<span>Home</span>
+						<span>Startseite</span>
 					</NavLink>
 				</li>
 				{segments.map((segment, index) => {
 					// Rebuild the URL for the current segment without prepending the base
 					// base comes with NavLink
 					const url = `/${segments.slice(0, index + 1).join("/")}/`;
-					const displayName = segment.replace("hit_", " ").replace("__", " #"); // Format the segment name
+					const rawName = segment.replace("hit_", " ").replace("__", " #");
+					const displayName = translationMap[rawName] || rawName;
+
 					// If it's the last segment, render as plain text
 					const isLastSegment = index === segments.length - 1;
 					return (
