@@ -42,7 +42,7 @@ async function generate() {
 			{ name: "orig_place", type: "object[]", facet: true, optional: true },
 			{ name: "provenance", type: "object[]", facet: true, optional: true },
 			{ name: "hands", type: "object[]", facet: true, optional: true },
-			{ name: "genre", type: "string[]", facet: true, optional: true },
+			{ name: "sub_genre", type: "string[]", facet: true, optional: true },
 			{ name: "main_genre", type: "string[]", facet: true, optional: true },
 			// get dates as separate numbers for filtering 'from -to' in the frontend
 			{ name: "terminus_post_quem", type: "int32", facet: true, optional: true },
@@ -109,13 +109,8 @@ async function generate() {
 	});
 
 	// - import data into typesense collection
-
-	try {
-		const results = await client.collections(collectionName).documents().import(records);
-		console.log("Import results:", records.length);
-	} catch (error) {
-		console.error("Import error details:", JSON.stringify(error.importResults, null, 2));
-	}
+	await client.collections(collectionName).documents().import(records);
+	log.success("All imported");
 }
 
 generate()

@@ -462,7 +462,11 @@ const geoData = processMSData(manuscript)
                   })}
             </dl>
           {/* Table for displaying information about the strata - each strata is defined by the hands_role */}
-          <div class="overflow-x-auto">
+            <div class="overflow-x-auto mb-5">
+            <div class="flex justify-end">
+              <button id="download-table-btn" class="mb-2 border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+              >CSV</button>
+            </div>
               <table class="w-full bg-brand-100 rounded-xs shadow-xs border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
                 <thead class="bg-brand-300">
                   <tr>

@@ -78,18 +78,27 @@ const base = import.meta.env.BASE_URL;
 				>
 					<NavLink class="none" href="/hands">Hände</NavLink>
 				</li>
-				<li
-					class={`${pathname === base + "/search" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
-				>
-					<NavLink class="none" href="/search">Suche</NavLink>
-				</li>
+
 				<li
 					class={`${pathname === base + "/about" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/about">Über das Projekt</NavLink>
 				</li>
+				<form id="searchForm" class="hidden md:flex items-center gap-x-2">
+					<input
+						type="text"
+						id="searchInput"
+						class="hidden md:block px-2 w-64 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
+						placeholder="Autor, Werk, Handschrift ..."
+					/>
+					<button
+						id="searchButton"
+						type="submit"
+						class={`${pathname === base + "/search" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}>Suche</button
+					>
+				</form>
 			</ul>
 		</nav>
 	</div>
@@ -109,13 +118,14 @@ const base = import.meta.env.BASE_URL;
 		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/msitems">
 			MS Elemente
 		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/search">
-			Suche
-		</NavLink>
 		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/about">
 			Über uns
+		</NavLink>
+		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/search">
+			Suche
 		</NavLink>
 	</div>
 
 	<script src="../lib/menu.js"></script>
+	<script src="@/lib/search-link.js"></script>
 </header>

@@ -17,6 +17,7 @@ import { withBasePath } from "./withBasePath";
 const project_collection_name = "hit__msitems";
 const main_search_field = "title";
 const secondary_search_field = "manuscript";
+const third_search_field = "work.author.name";
 const search_api_key = "m4HIiAYUUfemilHQ5LvSTC6hqEiNCjSX"; // custom search only key
 
 const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
@@ -31,7 +32,7 @@ const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
 		],
 	},
 	additionalSearchParameters: {
-		query_by: `${main_search_field},${secondary_search_field}`,
+		query_by: `${main_search_field},${secondary_search_field}, ${third_search_field}`,
 	},
 });
 
@@ -579,9 +580,10 @@ search.start();
 // function to wrap refinements filter in a panel
 function wrapInPanel(title) {
 	return panel({
-		collapsed: ({ state }) => {
+		collapsed: () => true, // Always collapsed by default
+		/* collapsed: ({ state }) => {
 			return state.query.length === 0;
-		},
+		}, // collapse if no query */
 		templates: {
 			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
 		},
@@ -596,9 +598,10 @@ function wrapInPanel(title) {
 
 function wrapHierarcicalMenuInPanel(title) {
 	return panel({
-		collapsed: ({ state }) => {
+		collapsed: () => true, // Always collapsed by default
+		/* collapsed: ({ state }) => {
 			return state.query.length === 0;
-		},
+		}, // collapse if no query */
 		templates: {
 			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
 		},
