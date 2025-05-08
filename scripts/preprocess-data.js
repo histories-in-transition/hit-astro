@@ -97,11 +97,11 @@ const msItemsPlus = msitems
 						.filter((author) => author !== null); // remove null authors
 					const mainGenres = genres
 						.filter((genre) => work.genre.some((g) => g.id === genre.id))
-						.flatMap((genre) => {
+						.map((genre) => {
 							return {
-								subGenre: genre.genre,
-								mainGenre:
-									genre.main_genre.length > 0 ? genre.main_genre.map((mg) => mg.value) : "N/A",
+								label: `${genre.main || "Varia"} > ${genre.sub_genre}`,
+								subGenre: genre.sub_genre,
+								mainGenre: genre.main_genre || "Varia",
 							};
 						});
 					// Return the work with its related authors
@@ -115,9 +115,7 @@ const msItemsPlus = msitems
 						bibliography: work.bibliography,
 						source_text: work.source_text,
 						mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
-						subGenre: mainGenres.map((genre) => {
-							return `${genre.mainGenre} > ${genre.subGenre}`;
-						}),
+						subGenre: mainGenres.filter((genre) => genre.subGenre).map((g) => g.label),
 						note_source: work.note_source ?? "",
 					};
 				}
@@ -642,8 +640,9 @@ const worksPlus = works.map((work) => {
 		.filter((genre) => work.genre.some((g) => g.id === genre.id))
 		.map((genre) => {
 			return {
-				value: genre.genre,
-				main_genre: genre.main_genre.map((mg) => mg.value),
+				value: `${genre.main_genre || "Varia"} > ${genre.sub_genre}`,
+				sub_genre: genre.sub_genre,
+				main_genre: genre.main_genre || "Varia",
 			};
 		});
 	const relatedSourceTexts = works

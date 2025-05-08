@@ -96,7 +96,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						mutator: jsonpathFlexibleLookup,
 						mutatorParams: { path: "$..value", reverse: true },
 						headerFilter: "list",
-						headerFilterParams: { valuesLookup: true, clearable: true },
+						headerFilterParams: { valuesLookup: true, clearable: true, sort: "asc" },
 						widthGrow: 1,
 						responsive: 2,
 					},

@@ -109,8 +109,7 @@ const geoJsonData = processWorksData(work);
 											return (
 												<>
 													{item.main_genre.length > 0 &&
-														item.main_genre.map((item) => `${item}: `)}
-													{item.value}
+														item.value}
 													{index < work.genre.length - 1 && " | "}
 												</>
 											);
