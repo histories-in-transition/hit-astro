@@ -1,0 +1,49 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://diglib.hab.de/rules/schema/mss/v1.0/cataloguing.xsd"
+    version="5" xml:lang="deu">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Beschreibung von <%= it.shelfmark %></title>
+                <respStmt>
+                    <resp>Beschrieben durch </resp>
+                    <name type="person"><%= it.author_entry %></name>
+                </respStmt>
+            </titleStmt>
+            <editionStmt>
+                <edition>Digitale Ausgabe nach TEI P5</edition>
+                <respStmt>
+                    <resp>TEI-P5 konforme Kodierung durch </resp>
+                    <name type="person">Ivana Dobcheva</name>
+                    <name type="org">Österreichische Akademie der Wissenschaften</name>
+                </respStmt>
+            </editionStmt>
+            <publicationStmt>
+                <publisher>
+                    <name type="org">Österreichische Akademie der Wissenschaften</name>
+                    <ptr target="www.oeaw.ac.at"/>
+                </publisher>
+                <date when="2025" type="issued">2025</date>
+                <distributor></distributor>
+                <availability status="restricted">
+                    <licence target="http://creativecommons.org/licenses/by-sa/3.0/de/" notBefore="2013-03-01">
+                        <p>Dieses Dokument steht unter einer Creative Commons Namensnennung-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz (CC BY-SA 3.0 AT).</p>
+                        <p> (<ref target="https://creativecommons.org/licenses/by-sa/3.0/at/">Copyright Information</ref>)</p>
+                    </licence>
+                </availability>
+                <pubPlace>
+                    <!--<ptr type="purl" target="http://"/>-->
+                </pubPlace>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc xml:id="<%= it.hit_id %>" xml:lang="deu">
+                    <msIdentifier>
+                        <settlement><%= it.library_place[0].place[0].value %></settlement>
+                        <repository><%= it.library_full %></repository>
+                        <idno><%= it.shelfmark %></idno>
+                    </msIdentifier>
+                    </msDesc>
+                    </sourceDesc>
+                    </fileDesc>
+                    </teiHeader>
+</TEI>
