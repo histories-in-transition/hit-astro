@@ -99,7 +99,7 @@ const msItemsPlus = msitems
 						.filter((genre) => work.genre.some((g) => g.id === genre.id))
 						.map((genre) => {
 							return {
-								label: `${genre.main || "Varia"} > ${genre.sub_genre}`,
+								label: `${genre.main_genre || "Varia"} > ${genre.sub_genre}`,
 								subGenre: genre.sub_genre,
 								mainGenre: genre.main_genre || "Varia",
 							};
