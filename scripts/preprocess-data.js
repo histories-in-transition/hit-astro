@@ -307,7 +307,19 @@ const manuscriptsPlus = manuscripts
 						// get the msitems which belong to this unit
 						.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
 						// clean up unnecessary fields by map and return the prune rest
-						.map(({ manuscript, cod_unit, hands, view_label, ...rest }) => rest),
+						.map(
+							({
+								manuscript,
+								cod_unit,
+								hands,
+								view_label,
+								library,
+								library_place,
+								prev,
+								next,
+								...rest
+							}) => rest,
+						),
 				};
 			});
 
@@ -436,7 +448,7 @@ const manuscriptsPlus = manuscripts
 		return {
 			id: manuscript.id,
 			hit_id: manuscript.hit_id,
-			shelfmark: manuscript.shelfmark[0].value,
+			shelfmark: manuscript.shelfmark[0].value.split(",")[1].trim(),
 			library: manuscript.library[0].value,
 			library_full: manuscript.library_full[0].value,
 			library_place: library_place,

@@ -31,7 +31,7 @@ const geoData = processMSData(manuscript)
     <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
-            mainTitle={manuscript?.library_place[0]?.place[0]?.value + ', ' + manuscript.shelfmark}
+            mainTitle={manuscript?.library_place[0]?.place[0]?.value + ', ' + manuscript.library + ', ' + manuscript.shelfmark}
             authorEntry={manuscript?.author_entry.map(a => a).join(', ')}
           >          
           <div class="flex justify-between">
@@ -80,7 +80,7 @@ const geoData = processMSData(manuscript)
                     </dd>
                
                     <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
-                    <dd class="pl-5">{manuscript?.shelfmark.split(',')[1]}</dd>
+                    <dd class="pl-5">{manuscript?.shelfmark}</dd>
                     {manuscript.idno_former &&
                     <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
                     <dd class="pl-5">{manuscript?.idno_former}</dd>}
