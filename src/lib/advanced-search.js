@@ -569,7 +569,7 @@ search.addWidgets([
 																		: item.attribute === "terminus_post_quem"
 																			? "Termininus post quem"
 																			: item.attribute === "main_genre"
-																				? "Hauptgenre"
+																				? "Genre"
 																				: item.label,
 			}));
 		},
