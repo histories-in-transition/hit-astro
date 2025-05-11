@@ -462,12 +462,7 @@ const manuscriptsPlus = manuscripts
 			foliation: manuscript.foliation ?? "",
 			acc_mat: manuscript.acc_mat ?? "",
 			binding: manuscript.binding ?? "",
-			binding_date: manuscript.binding_date.map((date) => {
-				return {
-					id: date.id,
-					value: date.value,
-				};
-			}),
+			binding_date: enrichDates(manuscript.binding_date, dates),
 			bibliography: manuscript.bibliography,
 			height: manuscript.height ?? "",
 			width: manuscript.width ?? "",

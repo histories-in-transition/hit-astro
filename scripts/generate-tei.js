@@ -26,3 +26,4 @@ mss.forEach((ms) => {
 	// Write the XML file
 	writeFileSync(join(mssFolderPath, filename), xml);
 });
+console.log(`Generated TEI for ${mss.length} manuuscripts.`);

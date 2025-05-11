@@ -42,6 +42,158 @@
                         <repository><%= it.library_full %></repository>
                         <idno><%= it.shelfmark %></idno>
                     </msIdentifier>
+                    <head>
+                        <title></title>
+                        <note type="caption"><%= it.material %> 
+                        <% if (it.extent) { %>
+                                    <%= it.extent %> Bl.
+                                    <% } 
+                                %>  <% if (it.height && it.width) {%> <%= it.height %>×<%= it.width %>. <% } %> <origPlace></origPlace>, <origDate></origDate></note>
+                    </head>
+                    <msContents>
+                        <textLang mainLang="lat"/>
+                        <msItem n="1">
+                            <locus from="#" to="#"></locus>
+                            <author ref="hit_id"></author>                            
+                            <title ref="hit_id"></title>
+                            <note type="title"></note>
+                            <rubric></rubric>
+                            <incipit></incipit>
+                            <explicit></explicit>
+                            <finalRubric></finalRubric>
+                            <decoNote type="initial">
+                                <term></term>
+                            </decoNote>
+                            <listBibl>
+                                 <bibl><abbr></abbr></bibl>
+                            </listBibl>
+                            <note type="form">
+                                <term></term>
+                                <p></p>
+                            </note>     
+                            <note type="columns"></note>
+                            <filiation></filiation>
+                    <!-- ######## commentary of the current msItem -->
+                            <msItem n="1" class="#historiographie-tractatus">
+                                <locus from="#" to="#"></locus>
+                                <author ref="hit_id"></author>                            
+                                <title ref="hit_id"></title>
+                                <note type="title"></note>
+                                <rubric></rubric>
+                                <incipit></incipit>
+                                <explicit></explicit>
+                                <finalRubric></finalRubric>
+                                <decoNote type="initial">
+                                    <term></term>
+                                </decoNote>
+                                <listBibl>
+                                    <bibl><abbr></abbr></bibl>
+                                </listBibl>
+                                <note type="form">
+                                    <term></term>
+                                    <p></p>
+                                </note>     
+                                <note type="columns"></note>
+                                <filiation></filiation>
+                            </msItem>  
+                        </msItem>   
+                    </msContents>
+                    <physDesc>
+                        <objectDesc form="codex">
+                            <supportDesc material="perg">
+                                <support>
+                                        <material><%= it.material %>. <%= it.material_spec %></material>
+                                </support>
+                                <extent>
+                                 <% if (it.extent) { %>
+                                    <measure type="leavesCount"><%= it.extent %> Bl.</measure>
+                                    <% } 
+                                %>
+                                    
+                                    <% if (it.height && it.width) { %>
+                                        <dimensions type="leaf" unit="mm">
+                                        <height><%= it.height %></height>
+                                        <width><%= it.width %></width>
+                                    </dimensions>
+                                   <% } %>
+                                </extent>
+                                <% if (it.foliation) { %>
+                                    <foliation><%= it.foliation %></foliation>
+                                    <% } 
+                                %>
+                                 <% if (it.quire_structure) { %>
+                                    <collation>
+                                        Lagenformel: <formula><%= it.quire_structure %><hi rend="sup"></hi></formula>
+                                    </collation>
+                                    <% } %> 
+                                 
+                                <% if (it.catchwords) { %>
+                                    <catchwords><%= it.catchwords %></catchwords>
+                                    <% } %>                                    
+                                <% if (it.signatures) { %>
+                                    <signatures><%= it.signatures %></signatures>
+                                    <% } %>
+                            </supportDesc>
+                            <layoutDesc>
+                                <layout columns="1" writtenLines="1" >
+                                    <dimensions type="written" unit="mm">
+                                        <height></height>
+                                        <width></width>
+                                    </dimensions> 
+                                    <p>mm, 1 Spalte zu XX Zeilen.</p>
+                                   
+                                </layout>                                
+                            </layoutDesc>
+                        </objectDesc>
+                        <scriptDesc>
+                            <scriptNote>
+                                <p>
+                                    <term type="script"></term> </p>
+                            </scriptNote>
+                        </scriptDesc>
+                        <decoDesc>
+                            <decoNote>
+                            </decoNote>
+                        </decoDesc>
+                        <additions/>
+                        <bindingDesc>
+                            <% if (it.binding_date && it.binding_date.length > 0) { %>
+                                <binding 
+                                <% if (it.binding_date[0].not_before) { %>notBefore="<%= it.binding_date[0].not_before %>"<% } %>
+                                <% if (it.binding_date[0].not_after) { %> notAfter="<%= it.binding_date[0].not_after %>"<% } %>
+                                >
+                                <p><%= it.binding %></p>
+                                </binding>
+                            <% } else { %>
+                                <binding>
+                                <% if (it.binding) { %>
+                                    <p><%= it.binding %></p>
+                            <% } %>
+                            </binding>
+                            <% } %>
+                        </bindingDesc>
+                        <% if (it.acc_mat) { %>
+                                    <accMat><%= it.acc_mat %></accMat>
+                                    <% } %> 
+                    </physDesc>
+                    <history>                   
+                     <% if (it.history) { %>  <summary><%= it.history %> </summary> <% } %>                   
+                        <origin>
+                        <% if (it.orig_place.length > 0) { %>  <origPlace ref="<%~ it.orig_place[0].hit_id || '' %>"><%= it.orig_place %> </origPlace> <% } %>
+                            <p/>
+                        </origin>
+                        <provenance>
+                            <p/>
+                        </provenance>                    
+                        <acquisition>
+                            <p/>
+                        </acquisition>
+                    </history>
+                    <additional>               
+                        <listBibl>
+                            <bibl/>                            
+                        </listBibl>
+                    </additional>
                     </msDesc>
                     </sourceDesc>
                     </fileDesc>
