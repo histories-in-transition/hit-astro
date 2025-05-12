@@ -298,6 +298,7 @@ const manuscriptsPlus = manuscripts
 					written_width: unit.written_width ?? "",
 					columns: unit.columns.map((c) => c.value) ?? "",
 					lines_number: unit.lines_number ?? "",
+					ruling: unit.ruling ?? "",
 					decoration: unit.decorations ?? "",
 					codicological_reworking: unit.codicological_reworking.map((re) => re.value),
 					basic_structure: unit.basic_structure.map((str) => str.value),
