@@ -96,7 +96,9 @@ const geoData = processMSData(manuscript)
                       <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
                       <dd class="pl-5">{manuscript.content_summary}</dd>}
                   </dl>
-                  <MapLeaf client:only="react" geoJsonData={geoData}/>
+                  <div class="print:hidden">
+                    <MapLeaf client:only="react" geoJsonData={geoData}/>
+                  </div>
              </div>
             </details>
           </section>

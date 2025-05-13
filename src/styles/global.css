@@ -387,3 +387,23 @@
 .ais-HierarchicalMenu-list--child .ais-HierarchicalMenu-list {
 	@apply list-disc pl-8;
 }
+
+@media print {
+	#download-pdf {
+		display: none !important;
+	}
+	/* Optionally, show only the article */
+	body * {
+		visibility: hidden;
+	}
+	article,
+	article * {
+		visibility: visible;
+	}
+	article {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100vw;
+	}
+}
