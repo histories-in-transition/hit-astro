@@ -88,6 +88,7 @@ export function enrichBibl(biblArray, bibliography) {
 		// find matching bibl entreis in bibl_entries.json
 		const bibl_entries = bibliography.find((bibl_entry) => bibl_entry.id === bibl.id);
 		return {
+			hit_id: bibl_entries.hit_id,
 			citation: bibl_entries.citation ?? "",
 			link: bibl_entries.link ?? "",
 			author: bibl_entries.author ?? "",

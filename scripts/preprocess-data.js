@@ -464,7 +464,7 @@ const manuscriptsPlus = manuscripts
 			acc_mat: manuscript.acc_mat ?? "",
 			binding: manuscript.binding ?? "",
 			binding_date: enrichDates(manuscript.binding_date, dates),
-			bibliography: manuscript.bibliography,
+			bibliography: enrichBibl(manuscript.bibliography, bibliography),
 			height: manuscript.height ?? "",
 			width: manuscript.width ?? "",
 			material: manuscript.material?.value,

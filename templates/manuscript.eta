@@ -54,14 +54,36 @@
                      <msContents>
   <textLang mainLang="lat"/>
   <% it.cod_units[0].content.forEach(function(item, index) { %>
-    <msItem n="<%= index + 1 %>">
-      <% if (item.locus) { 
-           const fromTo = item.locus.split('-');
+    <msItem xml:id="<%= item.hit_id %>" n="<%= index + 1 %>">
+         <% if (item.locus) { 
+      // Split by | if present, otherwise treat as single locus
+      const loci = item.locus.split('|').map(l => l.trim());
+      if (loci.length > 1) { %>
+        <locusGrp>
+          <% loci.forEach(function(loc) { 
+            if (loc.includes('-')) {
+              const [from, to] = loc.split('-').map(s => s.trim());
+          %>
+            <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
+          <%   } else { %>
+            <locus from="<%= loc %>"><%= loc %></locus>
+          <%   }
+          }); %>
+        </locusGrp>
+      <% } else {
+        // Only one locus, could be "14r-15v" or "14r"
+        const single = loci[0];
+        if (single.includes('-')) {
+          const [from, to] = single.split('-').map(s => s.trim());
       %>
-        <locus from="<%= fromTo[0] %>" to="<%= fromTo[1] %>"><%= item.locus %></locus>
-      <% } %>
+          <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
+      <% } else { %>
+          <locus from="<%= single %>"><%= single %></locus>
+      <% }
+      }
+    } %>
       <% if (item.title_work[0] && item.title_work[0].author && item.title_work[0].author.length > 0) { %>
-        <% item.title_work[0].author.forEach(function(author) { %>
+        <% item.title_work[0].author.forEach((author) => { %>
           <author ref="#<%= author.hit_id %>"><%= author.name %></author>
         <% }) %>
       <% } %>
@@ -85,22 +107,22 @@
       <% } %>
       <% if (item.decoration.length > 0) { %>
         <decoNote type="initial">
-          <% item.decoration.forEach(function(deco) { %>
-            <term><%= deco %></term>
+          <% item.decoration.forEach((deco) => { %>
+            <term><%= deco.value %></term>
           <% }) %>
         </decoNote>
       <% } %>
       <% if (item.bibl && item.bibl.length > 0) { %>
         <listBibl>
-          <% item.bibl.forEach(function(b) { %>
+          <% item.bibl.forEach((b) => { %>
             <bibl><abbr><%= b %></abbr></bibl>
           <% }) %>
         </listBibl>
       <% } %>
       <% if (item.form && item.form.length > 0 || item.form_note) { %>
         <note type="form">
-          <% item.form.forEach(function(f) { %>
-            <term><%= f %></term>
+          <% item.form.forEach((f) => { %>
+            <term><%= f.value %></term>
           <% }) %>
           <% if (item.form_note) { %>
             <p><%= item.form_note %></p>
@@ -193,12 +215,24 @@
                             <% } %>       
                             
                         </objectDesc>
-                        <scriptDesc>
-                            <scriptNote>
-                                <p>
-                                    <term type="script"></term> </p>
-                            </scriptNote>
-                        </scriptDesc>
+                       <handDesc>
+                            <handNote xml:id="hit_hand__1" scribeRef="#hit_scribe__1">
+                                <name></name>
+                                <desc></desc>
+                                <date notBefore="" notAfter="" resp=""></date>
+                                <placeName></placeName>
+                                <listRelation>
+                                    <relation xml:id="hit_hand_roles__1" active="#hit_hand__1" passive="#hit_ms_item__1" type="schreiber">
+                                        <desc>
+                                            <locus></locus>
+                                            <term type="scribe_type"></term>
+                                            <term type="function"></term>
+                                            <term type="locus_layout"></term>
+                                        </desc>
+                                    </relation>
+                                </listRelation>
+                            </handNote>
+                        </handDesc>
                          <% if (it.cod_units.length == 1) { %>
                         <decoDesc>
                             <decoNote><%= it.cod_units[0].decoration %>                                       
@@ -230,18 +264,18 @@
                      <% if (it.history) { %>  <summary><%= it.history %> </summary> <% } %>                   
                         <origin>
                         <% if (it.orig_place.length > 0) { %>
-                        <% it.orig_place.forEach(function(place){ %>
+                        <% it.orig_place.forEach((place) => { %>
                         <origPlace ref="#<%= place.hit_id %>"><%= place.value %> </origPlace> 
                         <% }) %>
                         <% }  %> 
                        <% if (it.orig_date && it.orig_date.length > 0) { %>
-                        <% it.orig_date.forEach(function(oDate) { %>
-                            <% oDate.date.forEach(function(date) { %>
-                            <origDate notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>"><%= date.value %></origDate>
+                        <% it.orig_date.forEach((oDate) => { %>
+                            <% oDate.date.forEach((date) => { %>
+                            <p><origDate notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>" resp="<%= oDate.authority[0].hit_id %>"><%= date.value %></origDate>
                             <% }) %>
 
                             <% if (oDate.authority && oDate.authority.length > 0) { %>
-                            <% oDate.authority.forEach(function(auth) { %>
+                            <% oDate.authority.forEach((auth) => { %>
                                 <bibl>
                                 <% if (auth.link) { %>
                                     <ref target="<%= auth.link %>"><%= auth.citation || auth.title || auth.author %></ref>
@@ -252,13 +286,13 @@
                                 </bibl>
                             <% }) %>
                             <% } %>
-                        <% }) %>
+                        <% }) %></p>
                         <% } %>
                        
                         </origin>
                         <provenance>
                         <% if (it.provenance.length > 0) { %>
-                            <% it.provenance.forEach(function(prov){ %>
+                            <% it.provenance.forEach((prov) => { %>
                             <placeName ref="#<%= prov.hit_id %>"><%= prov.value %></placeName> 
                             <% }) %>
                         <% } %>
@@ -269,8 +303,8 @@
                         </acquisition>
                     </history>
                     <additional>  
-                     <%- if (it.digi_url) { %>
-                            <surrogates>
+                        <%- if (it.digi_url) { %>
+                        <surrogates>
                             <listBibl>
                                 <bibl type="digital-facsimile">
                                 <ref target="<%= it.digi_url %>">
@@ -278,45 +312,146 @@
                                 </ref>
                                 </bibl>
                             </listBibl>
-                            </surrogates>
+                        </surrogates>
                         <% } %>               
                         <listBibl>
-                        <%- if (it.manuscripta_url) { %>
-                            <bibl>
-                                <ref target="<%= it.manuscripta_url %>">
-                                    Manuscripta.at
-                                </ref>
-                            </bibl>
-                        <% } %>
-                            <%- if (it.handschriftenportal_url) { %>
-                            <bibl>
-                                <ref target="<%= it.handschriftenportal_url %>">
-                                    Handschriftenportal
-                                </ref>
-                            </bibl>
-                        <% } %>     
-                        <%- if (it.catalog_url) { %>
-                            <bibl>
-                                <ref target="<%= it.catalog_url %>">
-                                    Bibliothekskatalog
-                                </ref>
-                            </bibl>
-                        <% } %>  
-                                          
+                            <%- if (it.manuscripta_url) { %>
+                                <bibl>
+                                    <ref target="<%= it.manuscripta_url %>">
+                                        Manuscripta.at
+                                    </ref>
+                                </bibl>
+                            <% } %>
+                                <%- if (it.handschriftenportal_url) { %>
+                                <bibl>
+                                    <ref target="<%= it.handschriftenportal_url %>">
+                                        Handschriftenportal
+                                    </ref>
+                                </bibl>
+                            <% } %>     
+                            <%- if (it.catalog_url) { %>
+                                <bibl>
+                                    <ref target="<%= it.catalog_url %>">
+                                        Bibliothekskatalog
+                                    </ref>
+                                </bibl>
+                            <% } %>                                            
                         </listBibl>
                     </additional>
+                    <% if (it.cod_units.length > 1) { %>
+                    <% it.cod_units.forEach(function(unit, index) { %>
+                        <msPart>
+                            <msIdentifier>
+                                <idno>Kodikologische Einheit <%= unit.number %></idno>
+                            </msIdentifier>
+                            <msContents>
+                            <% unit.content.forEach(function(item, index) { %>
+    <msItem xml:id="<%= item.hit_id %>" n="<%= index + 1 %>">     
+          <% if (item.locus) { 
+      // Split by | if present, otherwise treat as single locus
+      const loci = item.locus.split('|').map(l => l.trim());
+      if (loci.length > 1) { %>
+        <locusGrp>
+          <% loci.forEach(function(loc) { 
+            if (loc.includes('-')) {
+              const [from, to] = loc.split('-').map(s => s.trim());
+          %>
+            <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
+          <%   } else { %>
+            <locus from="<%= loc %>"><%= loc %></locus>
+          <%   }
+          }); %>
+        </locusGrp>
+      <% } else {
+        // Only one locus, could be "14r-15v" or "14r"
+        const single = loci[0];
+        if (single.includes('-')) {
+          const [from, to] = single.split('-').map(s => s.trim());
+      %>
+          <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
+      <% } else { %>
+          <locus from="<%= single %>"><%= single %></locus>
+      <% }
+      }
+    } %>
+      <% if (item.title_work[0] && item.title_work[0].author && item.title_work[0].author.length > 0) { %>
+        <% item.title_work[0].author.forEach((author) => { %>
+          <author ref="#<%= author.hit_id %>"><%= author.name %></author>
+        <% }) %>
+      <% } %>
+      <% if (item.title_work.length > 0) { %>
+        <title ref="#<%= item.title_work[0].hit_id %>"><%= item.title_work[0].title %></title>
+      <% } %>
+      <% if (item.title_note) { %>
+        <note type="title"><%= item.title_note %></note>
+      <% } %>
+      <% if (item.rubric) { %>
+        <rubric><%= item.rubric %></rubric>
+      <% } %>
+      <% if (item.incipit) { %>
+        <incipit><%= item.incipit %></incipit>
+      <% } %>
+      <% if (item.explicit) { %>
+        <explicit><%= item.explicit %></explicit>
+      <% } %>
+      <% if (item.final_rubric) { %>
+        <finalRubric><%= item.final_rubric %></finalRubric>
+      <% } %>
+      <% if (item.decoration.length > 0) { %>
+        <decoNote type="initial">
+          <% item.decoration.forEach((deco) => { %>
+            <term><%= deco.value %></term>
+          <% }) %>
+        </decoNote>
+      <% } %>
+      <% if (item.bibl && item.bibl.length > 0) { %>
+        <listBibl>
+          <% item.bibl.forEach((b) => { %>
+            <bibl><abbr><%= b %></abbr></bibl>
+          <% }) %>
+        </listBibl>
+      <% } %>
+      <% if (item.form && item.form.length > 0 || item.form_note) { %>
+        <note type="form">
+          <% item.form.forEach((f) => { %>
+            <term><%= f.value %></term>
+          <% }) %>
+          <% if (item.form_note) { %>
+            <p><%= item.form_note %></p>
+          <% } %>
+        </note>
+      <% } %>
+      <% if (item.note) { %>
+        <note><%= item.note %></note>
+      <% } %>   
+    </msItem>
+  <% }) %>
+</msContents>
+
+                        </msPart>
+                        <% }) %>
+                    <% } %>
                     </msDesc>
-                     <listPerson type="scribes">
+            <listPerson type="scribes">
                 <person xml:id="hit_scribes__1">
+                    
+                </person>
+            </listPerson>
+            <listPerson type="authors">
+                <person xml:id="hit_authors__1">
                     
                 </person>
             </listPerson>
             <listPlace>
                 <place xml:id="hit_place__1"></place>
             </listPlace>
-            <list type="works">
-                <item></item>
-            </list>
+           <listBibl type="works">
+                <bibl xml:id="hit_works__1">
+                    <title></title>
+                    <author ref="#hit_authors__1"></author>
+                    <ref type="gnd" target="http"></ref>
+                </bibl>
+            </listBibl>
                     </sourceDesc>
                     </fileDesc>
                     </teiHeader>
