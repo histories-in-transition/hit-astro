@@ -353,17 +353,34 @@
                                     <name><%= hand.label%></name>
                                     <desc><%= hand.description%></desc>
                                     <placeName/>
-                                    <listRelation>
-                                        <relation xml:id="" active="#"
-                                            passive="#hit_ms_item__1" type="schreiber">
-                                            <desc>
-                                                <locus/>
-                                                <term type="scribe_type"/>
-                                                <term type="function"/>
-                                                <term type="locus_layout"/>
-                                            </desc>
-                                        </relation>
+                                    <% if (hand.hand_roles.length > 0) {
+                                      %> <listRelation>
+                                     <% hand.hand_roles.forEach(role => {
+                                      %>
+                                     <%
+                                      const passive = role.content.map(item => `#${item.hit_id}`).join(' #');
+                                      const msItems = role.content.map(item => `<title ref="#${item.hit_id}">${item.title_work[0].title}</title>`).join(' ')
+                                    %>
+                                    <relation xml:id="<%= role.hit_id %>"
+                                              active="#<%= hand.hit_id %>"
+                                              passive="<%= passive %>"
+                                              type="schreiber">
+                                      <desc>
+                                        <% msItems %>
+                                        <locus><%= role.scope %></locus>
+                                        <term type="scribe_type"><%= role.scribe_type.join(', ' ) %></term>
+                                        <term type="function"><%= role.function.map(f => f.value).join(', ') %></term>
+                                        <term type="locus_layout"><%= role.locus_layout.join(', ') %></term>
+                                      </desc>
+                                    </relation>
+
+                                      <%
+                                     })                                       
+                                         %>
                                     </listRelation>
+                                      <%
+                                    }%>
+                                    
                                 </handNote>
                                   <%
                                 }) %>
