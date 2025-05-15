@@ -1,0 +1,77 @@
+<msItem xml:id="<%= it.item.hit_id %>" n="<%= it.index + 1 %>">
+  <% if (it.item.locus) { 
+    const loci = it.item.locus.split('|').map(l => l.trim());
+    if (loci.length > 1) { %>
+      <locusGrp>
+      <% loci.forEach(function(loc) { 
+        if (loc.includes('-')) {
+          const [from, to] = loc.split('-').map(s => s.trim());
+      %>
+        <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
+      <%   } else { %>
+        <locus from="<%= loc %>"><%= loc %></locus>
+      <%   }
+      }); %>
+      </locusGrp>
+    <% } else {
+      const single = loci[0];
+      if (single.includes('-')) {
+        const [from, to] = single.split('-').map(s => s.trim());
+    %>
+      <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
+    <% } else { %>
+      <locus from="<%= single %>"><%= single %></locus>
+    <% }
+    }
+  } %>
+  <% if (it.item.title_work[0] && it.item.title_work[0].author && it.item.title_work[0].author.length > 0) { %>
+    <% it.item.title_work[0].author.forEach((author) => { %>
+      <author ref="#<%= author.hit_id %>"><%= author.name %></author>
+    <% }) %>
+  <% } %>
+  <% if (it.item.title_work.length > 0) { %>
+    <title ref="#<%= it.item.title_work[0].hit_id %>"><%= it.item.title_work[0].title %></title>
+  <% } %>
+  <% if (it.item.title_note) { %>
+    <note type="title"><%= it.item.title_note %></note>
+  <% } %>
+  <% if (it.item.rubric) { %>
+    <rubric><%= it.item.rubric %></rubric>
+  <% } %>
+  <% if (it.item.incipit) { %>
+    <incipit><%= it.item.incipit %></incipit>
+  <% } %>
+  <% if (it.item.explicit) { %>
+    <explicit><%= it.item.explicit %></explicit>
+  <% } %>
+  <% if (it.item.final_rubric) { %>
+    <finalRubric><%= it.item.final_rubric %></finalRubric>
+  <% } %>
+  <% if (it.item.decoration.length > 0) { %>
+    <decoNote type="initial">
+      <% it.item.decoration.forEach((deco) => { %>
+        <term><%= deco.value %></term>
+      <% }) %>
+    </decoNote>
+  <% } %>
+  <% if (it.item.bibl && it.item.bibl.length > 0) { %>
+    <listBibl>
+      <% it.item.bibl.forEach((b) => { %>
+        <bibl><abbr><%= b %></abbr></bibl>
+      <% }) %>
+    </listBibl>
+  <% } %>
+  <% if (it.item.form && it.item.form.length > 0 || it.item.form_note) { %>
+    <note type="form">
+      <% it.item.form.forEach((f) => { %>
+        <term><%= f.value %></term>
+      <% }) %>
+      <% if (it.item.form_note) { %>
+        <p><%= it.item.form_note %></p>
+      <% } %>
+    </note>
+  <% } %>
+  <% if (it.item.note) { %>
+    <note><%= it.item.note %></note>
+  <% } %>   
+</msItem>
