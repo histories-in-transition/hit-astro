@@ -140,7 +140,10 @@
                     <% } %>
                     <physDesc>
                         <objectDesc form="codex">
-                            <supportDesc material="perg">
+                            <supportDesc material="<% if (it.material == 'Pergament') { %>perg<% }
+                            else if (it.material == 'Papier') { %>chart<% }  
+                            else if (it.material == 'Mischung') { %>mixed<% } 
+                            else { %>other<% } %>">
                                 <support>
                                         <material><%= it.material %>. <%= it.material_spec %></material>
                                 </support>
@@ -160,31 +163,24 @@
                                 <% if (it.foliation) { %>
                                     <foliation><%= it.foliation %></foliation>
                                     <% } 
-                                %>
-                                 <% if (it.quire_structure) { %>
-                                    <collation>
-                                        Lagenformel: <formula>
-      <%~ it.quire_structure.replace(/\*\*(.*?)\*\*/g, '<hi rend="sup">$1</hi>') %>
-      
-    </formula>
+                                %>                                 
+                                  <collation>
+                                    <% if (it.quire_structure) { %>
+                                        Lagenformel: <formula><%~ it.quire_structure.replace(/\*\*(.*?)\*\*/g, '<hi rend="sup">$1</hi>') %></formula>
+                                    <% } %> 
                                  <% if (it.cod_units.length == 1 && it.cod_units[0].basic_structure.length > 0) { %>
                                  <p><%= it.cod_units[0].basic_structure.join(', ') %></p> <% } %>
-                                    </collation>
-                                    <% } %> 
-                                 
-                                <% if (it.catchwords) { %>
+                                    <% if (it.catchwords) { %>
                                     <catchwords><%= it.catchwords %></catchwords>
                                     <% } %>                                    
                                 <% if (it.signatures) { %>
                                     <signatures><%= it.signatures %></signatures>
-                                    <% } %>
+                                    <% } %> 
+                                 </collation>
                             </supportDesc>
                             <% if (it.cod_units.length == 1) { %>
                            <layoutDesc>
-                            <layout
-                                <% if (it.cod_units[0].columns && it.cod_units[0].columns.length > 0) { %>
-                                columns="<%= it.cod_units[0].columns.join(' ') %>"
-                                <% } %>
+                            <layout                                
                                 <% if (it.cod_units[0].lines_number) { %>
                                 writtenLines="<%= it.cod_units[0].lines_number %>"
                                 <% } %>
@@ -271,13 +267,11 @@
                        <% if (it.orig_date && it.orig_date.length > 0) { %>
                         <% it.orig_date.forEach((oDate) => { %>
                             <% oDate.date.forEach((date) => { %>
-                            <p><origDate notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>" resp="<%= oDate.authority[0].hit_id %>"><%= date.value %></origDate>
+                            <origDate notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>" resp="<%= oDate.authority[0].hit_id %>"><%= date.value %></origDate>
                             <% }) %>
-
                             <% if (oDate.authority && oDate.authority.length > 0) { %>
                             <% oDate.authority.forEach((auth) => { %>
-                                <bibl>
-                                <% if (auth.link) { %>
+                                <bibl><% if (auth.link) { %>
                                     <ref target="<%= auth.link %>"><%= auth.citation || auth.title || auth.author %></ref>
                                 <% } else { %>
                                     <%= auth.citation || auth.title || auth.author %>
@@ -315,17 +309,18 @@
                         </surrogates>
                         <% } %>               
                         <listBibl>
+                          <head>Literatur:</head>
                             <%- if (it.manuscripta_url) { %>
                                 <bibl>
                                     <ref target="<%= it.manuscripta_url %>">
-                                        Manuscripta.at
+                                       Eintrag in Manuscripta.at
                                     </ref>
                                 </bibl>
                             <% } %>
                                 <%- if (it.handschriftenportal_url) { %>
                                 <bibl>
                                     <ref target="<%= it.handschriftenportal_url %>">
-                                        Handschriftenportal
+                                        Eintrag im Handschriftenportal
                                     </ref>
                                 </bibl>
                             <% } %>     
@@ -335,7 +330,14 @@
                                         Bibliothekskatalog
                                     </ref>
                                 </bibl>
-                            <% } %>                                            
+                            <% } %>     
+                            <%- if (it.bibliography.length > 0) {
+                                it.bibliography.forEach((bibl) => { %>
+                                <bibl xml:id="<%= bibl.hit_id %>">
+                                        <%= bibl.citation || bibl.title || bibl.author %>
+                                    <% if (bibl.page) { %> S. <%= bibl.page %><% } %>
+                                </bibl>
+                            }                                     
                         </listBibl>
                     </additional>
                     <% if (it.cod_units.length > 1) { %>
@@ -344,89 +346,159 @@
                             <msIdentifier>
                                 <idno>Kodikologische Einheit <%= unit.number %></idno>
                             </msIdentifier>
+                            <% if(unit.content.length > 0) { %>
                             <msContents>
                             <% unit.content.forEach(function(item, index) { %>
-    <msItem xml:id="<%= item.hit_id %>" n="<%= index + 1 %>">     
-          <% if (item.locus) { 
-      // Split by | if present, otherwise treat as single locus
-      const loci = item.locus.split('|').map(l => l.trim());
-      if (loci.length > 1) { %>
-        <locusGrp>
-          <% loci.forEach(function(loc) { 
-            if (loc.includes('-')) {
-              const [from, to] = loc.split('-').map(s => s.trim());
-          %>
-            <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
-          <%   } else { %>
-            <locus from="<%= loc %>"><%= loc %></locus>
-          <%   }
-          }); %>
-        </locusGrp>
-      <% } else {
-        // Only one locus, could be "14r-15v" or "14r"
-        const single = loci[0];
-        if (single.includes('-')) {
-          const [from, to] = single.split('-').map(s => s.trim());
-      %>
-          <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
-      <% } else { %>
-          <locus from="<%= single %>"><%= single %></locus>
-      <% }
-      }
-    } %>
-      <% if (item.title_work[0] && item.title_work[0].author && item.title_work[0].author.length > 0) { %>
-        <% item.title_work[0].author.forEach((author) => { %>
-          <author ref="#<%= author.hit_id %>"><%= author.name %></author>
-        <% }) %>
-      <% } %>
-      <% if (item.title_work.length > 0) { %>
-        <title ref="#<%= item.title_work[0].hit_id %>"><%= item.title_work[0].title %></title>
-      <% } %>
-      <% if (item.title_note) { %>
-        <note type="title"><%= item.title_note %></note>
-      <% } %>
-      <% if (item.rubric) { %>
-        <rubric><%= item.rubric %></rubric>
-      <% } %>
-      <% if (item.incipit) { %>
-        <incipit><%= item.incipit %></incipit>
-      <% } %>
-      <% if (item.explicit) { %>
-        <explicit><%= item.explicit %></explicit>
-      <% } %>
-      <% if (item.final_rubric) { %>
-        <finalRubric><%= item.final_rubric %></finalRubric>
-      <% } %>
-      <% if (item.decoration.length > 0) { %>
-        <decoNote type="initial">
-          <% item.decoration.forEach((deco) => { %>
-            <term><%= deco.value %></term>
-          <% }) %>
-        </decoNote>
-      <% } %>
-      <% if (item.bibl && item.bibl.length > 0) { %>
-        <listBibl>
-          <% item.bibl.forEach((b) => { %>
-            <bibl><abbr><%= b %></abbr></bibl>
-          <% }) %>
-        </listBibl>
-      <% } %>
-      <% if (item.form && item.form.length > 0 || item.form_note) { %>
-        <note type="form">
-          <% item.form.forEach((f) => { %>
-            <term><%= f.value %></term>
-          <% }) %>
-          <% if (item.form_note) { %>
-            <p><%= item.form_note %></p>
-          <% } %>
-        </note>
-      <% } %>
-      <% if (item.note) { %>
-        <note><%= item.note %></note>
-      <% } %>   
-    </msItem>
-  <% }) %>
-</msContents>
+                              <msItem xml:id="<%= item.hit_id %>" n="<%= index + 1 %>">     
+                                    <% if (item.locus) { 
+                                // Split by | if present, otherwise treat as single locus
+                                const loci = item.locus.split('|').map(l => l.trim());
+                                if (loci.length > 1) { %>
+                                  <locusGrp>
+                                    <% loci.forEach(function(loc) { 
+                                      if (loc.includes('-')) {
+                                        const [from, to] = loc.split('-').map(s => s.trim());
+                                    %>
+                                      <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
+                                    <%   } else { %>
+                                      <locus from="<%= loc %>"><%= loc %></locus>
+                                    <%   }
+                                    }); %>
+                                  </locusGrp>
+                                <% } else {
+                                  // Only one locus, could be "14r-15v" or "14r"
+                                  const single = loci[0];
+                                  if (single.includes('-')) {
+                                    const [from, to] = single.split('-').map(s => s.trim());
+                                %>
+                                    <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
+                                <% } else { %>
+                                    <locus from="<%= single %>"><%= single %></locus>
+                                <% }
+                                }
+                              } %>
+                                <% if (item.title_work[0] && item.title_work[0].author && item.title_work[0].author.length > 0) { %>
+                                  <% item.title_work[0].author.forEach((author) => { %>
+                                    <author ref="#<%= author.hit_id %>"><%= author.name %></author>
+                                  <% }) %>
+                                <% } %>
+                                <% if (item.title_work.length > 0) { %>
+                                  <title ref="#<%= item.title_work[0].hit_id %>"><%= item.title_work[0].title %></title>
+                                <% } %>
+                                <% if (item.title_note) { %>
+                                  <note type="title"><%= item.title_note %></note>
+                                <% } %>
+                                <% if (item.rubric) { %>
+                                  <rubric><%= item.rubric %></rubric>
+                                <% } %>
+                                <% if (item.incipit) { %>
+                                  <incipit><%= item.incipit %></incipit>
+                                <% } %>
+                                <% if (item.explicit) { %>
+                                  <explicit><%= item.explicit %></explicit>
+                                <% } %>
+                                <% if (item.final_rubric) { %>
+                                  <finalRubric><%= item.final_rubric %></finalRubric>
+                                <% } %>
+                                <% if (item.decoration.length > 0) { %>
+                                  <decoNote type="initial">
+                                    <% item.decoration.forEach((deco) => { %>
+                                      <term><%= deco.value %></term>
+                                    <% }) %>
+                                  </decoNote>
+                                <% } %>
+                                <% if (item.bibl && item.bibl.length > 0) { %>
+                                  <listBibl>
+                                    <% item.bibl.forEach((b) => { %>
+                                      <bibl><abbr><%= b %></abbr></bibl>
+                                    <% }) %>
+                                  </listBibl>
+                                <% } %>
+                                <% if (item.form && item.form.length > 0 || item.form_note) { %>
+                                  <note type="form">
+                                    <% item.form.forEach((f) => { %>
+                                      <term><%= f.value %></term>
+                                    <% }) %>
+                                    <% if (item.form_note) { %>
+                                      <p><%= item.form_note %></p>
+                                    <% } %>
+                                  </note>
+                                <% } %>
+                                <% if (item.note) { %>
+                                  <note><%= item.note %></note>
+                                <% } %>   
+                              </msItem>
+                            <% }) %>
+                          </msContents>
+                            <% } %>
+                            <physDesc>
+                                <objectDesc form="fascicle">
+                                 <supportDesc material="<% if (it.material == 'Pergament') { %>perg<% }
+                            else if (it.material == 'Papier') { %>chart<% }  
+                            else if (it.material == 'Mischung') { %>mixed<% } 
+                            else { %>other<% } %>">                               
+                                        <% if (unit.material && unit.material_spec) { %>
+                                        <support>
+                                            <material><%= unit.material %>. <%= unit.material_spec %>
+                                            <% if (unit.basic_structure && unit.basic_structure.length > 0) { %>
+                                                <%= unit.basic_structure.join(', ') %>
+                                            <% } %>
+                                            </material>
+                                        </support>
+                                        <% } %>
+                                        <extent>                                           
+                                            <% if (unit.height && unit.width) { %>
+                                                <dimensions type="leaf" ununit="mm">
+                                                    <height><%= unit.height %></height>
+                                                    <width><%= unit.width %></width>
+                                                </dimensions>
+                                            <% } %>
+                                        </extent>
+                                        <collation>
+                                        <% if (unit.quire_number) { %>
+                                            <p>Lagen: <%= unit.quire_number %> (fol. <%= unit.locus %>)</p>
+                                        <% } %>
+                                         <% if (unit.codicological_reworking.length > 0) { %>
+                                            <p><%= unit.codicological_reworking.join(', ') %></p>
+                                        <% } %>
+                                        </collation>
+                                    </supportDesc>
+                                    <layoutDesc>
+                                      <layout
+                                          <% if (unit.lines_number) { %>
+                                          writtenLines="<%= unit.lines_number %>"
+                                          <% } %>
+                                      >
+                                          <% if (unit.written_height && unit.written_width) { %>
+                                          <dimensions type="written" unit="mm">                                   
+                                              <height><%= unit.written_height %></height>                                   
+                                              <width><%= unit.written_width %></width>
+                                          </dimensions>
+                                          <p>Schriftspiegel: <%= unit.written_height %>×<%= unit.written_width %> mm.</p>
+                                          <% } %>
+                                          <% if ((unit.columns.length > 0) || unit.lines_number || unit.ruling) { %>
+                                              <p>
+                                                  <% if (unit.columns && unit.columns.length > 0) { %>
+                                                  Spalte: <%= unit.columns.join(', ') %>
+                                                  <% } %>
+                                                  <% if (unit.lines_number) { %>
+                                                  zu <%= unit.lines_number %> Zeilen.
+                                                  <% } else {%> . <% } %>
+                                                  <% if (unit.ruling) { %>
+                                                      <%= unit.ruling %>
+                                                          <% } %>
+                                              </p>
+                                              <% } %>
+                                      </layout>
+                                      </layoutDesc>
+                                </objectDesc>
+                                 <% if (unit.decoration) { %>
+                                  <decoDesc>
+                                      <decoNote><%= unit.decoration %>                                       
+                                      </decoNote>
+                                  </decoDesc>
+                                  <% } %> 
+                            </physDesc>
 
                         </msPart>
                         <% }) %>
