@@ -477,7 +477,26 @@ const manuscriptsPlus = manuscripts
 			provenance: enrichPlaces(manuscript.provenance, places),
 			orig_date: ms_dating,
 			content_summary: manuscript.content_summary ?? "",
-
+			content: msItemsPlus
+				// get the msitems not belonging to any cod. unit
+				.filter(
+					(item) =>
+						item.manuscript.some((ms) => ms.id === manuscript.id) && item.cod_unit.length == 0,
+				)
+				// clean up unnecessary fields by map and return the prune rest
+				.map(
+					({
+						manuscript,
+						cod_unit,
+						hands,
+						view_label,
+						library,
+						library_place,
+						prev,
+						next,
+						...rest
+					}) => rest,
+				),
 			charakter: manuscript.charakter.map((char) => char.value),
 			case_study: manuscript.case_study.map((c) => c.value),
 			status: manuscript.status?.map((s) => s.value) ?? [],

@@ -325,7 +325,7 @@ const geoData = processMSData(manuscript)
             <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msContent" >
               Inhalt               
             </summary>
-                    
+             <p>
             {manuscript.cod_units.map((unit) => (
                 <dl class="grid grid-cols-[1fr_5fr] p-3">
                 <dt class="font-semibold border-r border-gray-300 pr-2">
@@ -432,6 +432,112 @@ const geoData = processMSData(manuscript)
                   ))}
                   </dl>
             ))}
+             {manuscript.content.length > 0 &&
+              <dl class="grid grid-cols-[1fr_5fr] p-3">
+              <dt class="font-semibold border-r border-gray-300 pr-2">
+                Einträge die zu keiner kod. Einheit zugewiesen sind</dt>
+              <dd class="pl-5"></dd>
+
+              {manuscript.content
+                 .sort((a, b) => {
+              const parseLocus = (locus) => {
+                return locus.split('-').map(part => {
+                  const match = part.match(/^(\d+)([rv]?)$/);
+                  if (!match) return [Infinity, "z"]; // Default if parsing fails
+                  return [parseInt(match[1], 10), match[2] || ""]; // Extract number & letter
+                });
+              };
+
+              // Extract start and end locus parts for both items
+              const [startA, endA = startA] = parseLocus(a.locus);
+              const [startB, endB = startB] = parseLocus(b.locus);
+
+              return (
+                startA[0] - startB[0] ||  // Compare start numbers
+                startA[1].localeCompare(startB[1]) || // "r" before "v"
+                endA[0] - endB[0] || // Compare end numbers
+                endA[1].localeCompare(endB[1]) // Compare end suffix
+              );
+            })
+                .map(filteredItem => (
+                  
+                    <dt class="border-r border-gray-300 pr-2 justify-self-end">
+                      <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
+                    </dt>
+                    <dd class="pl-5">
+                     {filteredItem.title_work.map(work => (
+                      <span class="font-semibold">
+                        {work.author?.length > 0 ? (
+                          work.hit_id ? (
+                            <NavLink class ="underline underline-offset-2 hover:text-brand-800" href={`/works/${work.hit_id}`}>
+                              {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                            </NavLink>
+                          ) : (
+                            <span>
+                              {work.author.map(aut => aut.name).join(', ')}: {work.title}
+                            </span>
+                          )
+                        ) : (
+                          work.hit_id ? (
+                            <NavLink href={`/works/${work.hit_id}`}>
+                              {work.title}
+                            </NavLink>
+                          ) : (
+                            <span>{work.title}</span>
+                          )
+                        )}
+                      </span>
+                    ))}
+
+
+                      {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
+                      {filteredItem.rubric && (
+                        <span> 
+                          {/* check for [text] shouldl be not-italic */}
+                          ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part: string) =>
+                            part.startsWith('[') && part.endsWith(']')
+                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                              : <span class="italic">{part}</span> // Italic for other text
+                          )}‹
+                        </span>
+                      )}                          
+                      
+                      {filteredItem.incipit && (
+                        <span>
+                          {filteredItem.incipit.split(/(\[ *.*?\])/).map((part: string) =>
+                            part.startsWith('[') && part.endsWith(']')
+                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                              : <span class="italic">{part}</span> // Italic for other text
+                          )}
+                          {filteredItem.incipit.trim().endsWith('…') ? '' : '…'}
+                        </span>
+                      )}
+                      {filteredItem.explicit && (
+                        <span class="italic">
+                          {filteredItem.explicit.split(/(\[.*?\])/).map((part: string) =>
+                            part.startsWith('[') && part.endsWith(']')
+                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                              : <span>{part}</span> // Italic for other text
+                          )}
+                          {filteredItem.explicit.trim().startsWith('…') ? '' : '…'}
+                        </span>
+                      )}
+
+                      {filteredItem.final_rubric && 
+                      <span class="italic">
+                        ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part: string) =>
+                            part.startsWith('[') && part.endsWith(']')
+                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
+                              : <span class="italic">{part}</span> // Italic for other text
+                          )}‹
+                        </span>}
+
+                      {filteredItem.decoration.length > 0 && (<br/><span>Ausstattung: {filteredItem.decoration.map(deco => deco.value).join(', ')}</span>)}
+                      
+                    </dd>
+                ))}
+                </dl>
+   }</p>
           </details>
         </section> 
         
