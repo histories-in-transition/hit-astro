@@ -298,6 +298,7 @@ const manuscriptsPlus = manuscripts
 					written_width: unit.written_width ?? "",
 					columns: unit.columns.map((c) => c.value) ?? "",
 					lines_number: unit.lines_number ?? "",
+					ruling: unit.ruling ?? "",
 					decoration: unit.decorations ?? "",
 					codicological_reworking: unit.codicological_reworking.map((re) => re.value),
 					basic_structure: unit.basic_structure.map((str) => str.value),
@@ -307,7 +308,19 @@ const manuscriptsPlus = manuscripts
 						// get the msitems which belong to this unit
 						.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
 						// clean up unnecessary fields by map and return the prune rest
-						.map(({ manuscript, cod_unit, hands, view_label, ...rest }) => rest),
+						.map(
+							({
+								manuscript,
+								cod_unit,
+								hands,
+								view_label,
+								library,
+								library_place,
+								prev,
+								next,
+								...rest
+							}) => rest,
+						),
 				};
 			});
 
@@ -436,7 +449,7 @@ const manuscriptsPlus = manuscripts
 		return {
 			id: manuscript.id,
 			hit_id: manuscript.hit_id,
-			shelfmark: manuscript.shelfmark[0].value,
+			shelfmark: manuscript.shelfmark[0].value.split(",")[1].trim(),
 			library: manuscript.library[0].value,
 			library_full: manuscript.library_full[0].value,
 			library_place: library_place,
@@ -450,13 +463,8 @@ const manuscriptsPlus = manuscripts
 			foliation: manuscript.foliation ?? "",
 			acc_mat: manuscript.acc_mat ?? "",
 			binding: manuscript.binding ?? "",
-			binding_date: manuscript.binding_date.map((date) => {
-				return {
-					id: date.id,
-					value: date.value,
-				};
-			}),
-			bibliography: manuscript.bibliography,
+			binding_date: enrichDates(manuscript.binding_date, dates),
+			bibliography: enrichBibl(manuscript.bibliography, bibliography),
 			height: manuscript.height ?? "",
 			width: manuscript.width ?? "",
 			material: manuscript.material?.value,
@@ -469,7 +477,26 @@ const manuscriptsPlus = manuscripts
 			provenance: enrichPlaces(manuscript.provenance, places),
 			orig_date: ms_dating,
 			content_summary: manuscript.content_summary ?? "",
-
+			content: msItemsPlus
+				// get the msitems not belonging to any cod. unit
+				.filter(
+					(item) =>
+						item.manuscript.some((ms) => ms.id === manuscript.id) && item.cod_unit.length == 0,
+				)
+				// clean up unnecessary fields by map and return the prune rest
+				.map(
+					({
+						manuscript,
+						cod_unit,
+						hands,
+						view_label,
+						library,
+						library_place,
+						prev,
+						next,
+						...rest
+					}) => rest,
+				),
 			charakter: manuscript.charakter.map((char) => char.value),
 			case_study: manuscript.case_study.map((c) => c.value),
 			status: manuscript.status?.map((s) => s.value) ?? [],

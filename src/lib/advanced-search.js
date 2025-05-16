@@ -217,7 +217,7 @@ const customDateRangeWidget = (containerId) => {
 				refinements,
 			};
 		},
-		getWidgetState(uiState, { searchParameters }) {
+		getWidgetUiState(uiState, { searchParameters }) {
 			const from = searchParameters.getNumericRefinements("terminus_post_quem")?.[">="]?.[0];
 			const to = searchParameters.getNumericRefinements("terminus_ante_quem")?.["<="]?.[0];
 
@@ -254,12 +254,12 @@ function showServerErrorNotification(message) {
 	const el = document.getElementById("server-error-notification");
 	if (el) {
 		el.textContent = message || "Serverfehler: Die Suche ist derzeit nicht verfügbar.";
-		el.style = "block";
+		el.classList = "block";
 	}
 }
 function hideServerErrorNotification() {
 	const el = document.getElementById("server-error-notification");
-	if (el) el.style = "hiden";
+	if (el) el.classList = "hidden";
 }
 
 // Patch the search client to catch errors

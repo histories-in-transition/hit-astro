@@ -26,3 +26,5 @@ pnpm-debug.log*
 
 # don't check in src/content/data folder
 src/content
+
+*.xml
