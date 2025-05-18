@@ -134,24 +134,7 @@
                             <% } %>       
                             
                         </objectDesc>
-                       <handDesc>
-                            <handNote xml:id="hit_hand__1" scribeRef="#hit_scribe__1">
-                                <name></name>
-                                <desc></desc>
-                                <date notBefore="" notAfter="" resp=""></date>
-                                <placeName></placeName>
-                                <listRelation>
-                                    <relation xml:id="hit_hand_roles__1" active="#hit_hand__1" passive="#hit_ms_item__1" type="schreiber">
-                                        <desc>
-                                            <locus></locus>
-                                            <term type="scribe_type"></term>
-                                            <term type="function"></term>
-                                            <term type="locus_layout"></term>
-                                        </desc>
-                                    </relation>
-                                </listRelation>
-                            </handNote>
-                        </handDesc>
+                      
                          <% if (it.cod_units.length == 1) { %>
                         <decoDesc>
                             <decoNote><%= it.cod_units[0].decoration %>                                       
@@ -358,24 +341,25 @@
                                      <% hand.hand_roles.forEach(role => {
                                       %>
                                      <%
-                                      const passive = role.content.map(item => `#${item.hit_id}`).join(' #');
-                                      const msItems = role.content.map(item => `<title ref="#${item.hit_id}">${item.title_work[0].title}</title>`).join(' ')
+                                      const passive = (role.content || []).map(item => `#${item.hit_id}`).join(' #');
+                                      const msItems = (role.content || []).map(item => (item.title_work && item.title_work[0] ? item.title_work[0].title : '')).join(' ')
                                     %>
                                     <relation xml:id="<%= role.hit_id %>"
                                               active="#<%= hand.hit_id %>"
-                                              passive="<%= passive %>"
-                                              type="schreiber">
+                                              passive="<%= passive || '' %>"
+                                              >
                                       <desc>
-                                        <% msItems %>
-                                        <locus><%= role.scope %></locus>
-                                        <term type="scribe_type"><%= role.scribe_type.join(', ' ) %></term>
+                                        <term type="role"><%= role.role.map(r => r.value).join(', ') %></term>                                        
+                                        <title ref="<%= passive %>"><%= msItems %></title>
+                                        <locus><% if (role.scope) { %> <%= role.scope %> <% } else { %> <%= role.content.map(item => item.locus).join(', ') %> <% } %></locus>
+                                        <term type="scribe_type"><%= role.scribe_type.map(st => st.value).join(', ' ) %></term>
                                         <term type="function"><%= role.function.map(f => f.value).join(', ') %></term>
                                         <term type="locus_layout"><%= role.locus_layout.join(', ') %></term>
                                       </desc>
                                     </relation>
 
                                       <%
-                                     })                                       
+                                     }  )                                   
                                          %>
                                     </listRelation>
                                       <%

@@ -412,9 +412,27 @@ const manuscriptsPlus = manuscripts
 							),
 						),
 					)
-					.map(
-						({ view_label, manuscript, roles, texts, author_entry, prev, next, ...rest }) => rest,
-					);
+					.map((hand) => {
+						return {
+							hit_id: hand.hit_id,
+							label: hand.label,
+							description: hand.description,
+							similar_hands: hand.similar_hands,
+							nr_daniel: hand.nr_daniel,
+							note: hand.note,
+							scribe: hand.scribe,
+							group: hand.group,
+							date: hand.date,
+							// Need only those hand_roles which
+							// pertain to the particular cod. unit
+							hand_roles: hand.hand_roles.filter((h_role) =>
+								h_role.content.some((content) =>
+									relevantMsItems.some((item) => item.hit_id === content.hit_id),
+								),
+							),
+							placed: hand.placed,
+						};
+					});
 				return {
 					id: unit.id,
 					hit_id: unit.hit_id,
