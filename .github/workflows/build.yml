@@ -57,6 +57,9 @@ jobs:
         with:
           enablement: true
 
+      - name: generate tei
+        run: pnpm run generate-tei
+
       - name: build website
         run: pnpm run build
 
