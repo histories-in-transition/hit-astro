@@ -31,7 +31,7 @@ const geoData = processMSData(manuscript)
     <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
-            mainTitle={manuscript?.library_place[0]?.place[0]?.value + ', ' + manuscript.library + ', ' + manuscript.shelfmark}
+            mainTitle={manuscript?.library[0]?.place[0]?.value + ', ' + manuscript.library[0].abbreviation + ', ' + manuscript.shelfmark}
             authorEntry={manuscript?.author_entry.map(a => a).join(', ')}
           >          
           <div class="flex justify-between">
@@ -57,10 +57,16 @@ const geoData = processMSData(manuscript)
                   <Icon aria-hidden="true" name="lucide:construction" />
                 </div>
              )}
-            <div class="hidden md:flex gap-2 justify-end">
-              <button class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition" 
-              id="download-pdf">PDF</button>
-            </div>
+             <div class="flex gap-2">
+               <div class="flex gap-2 ">
+                <NavLink href=`/tei/manuscripts/${manuscript.hit_id}.xml` class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+                id="download-tei">TEI</NavLink>
+              </div>
+              <div class="flex gap-2 ">
+                <button class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+                id="download-pdf">PDF</button>
+                </div>
+             </div>
           </div>
          
           <section aria-labelledby="msInfo" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
@@ -72,11 +78,11 @@ const geoData = processMSData(manuscript)
                
                   <dl class="grid grid-cols-[1fr_5fr] p-3">
                     <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-                    <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>
+                    <dd class="pl-5">{manuscript?.library[0]?.place[0]?.value}</dd>
                
                     <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
                     <dd class="pl-5">
-                      {manuscript.library_full}
+                      {manuscript.library[0].library_full}
                     </dd>
                
                     <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
@@ -282,7 +288,7 @@ const geoData = processMSData(manuscript)
                 <dd class="pl-5">
                   {
                       manuscript?.provenance.map((entry, index) => (
-                        <>{entry.value}                         
+                        <>{entry.abbreviation}                         
               
                           {index < manuscript.provenance.length - 1 && ', '}
                         </>

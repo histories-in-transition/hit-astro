@@ -39,7 +39,7 @@ const { data: place } = Astro.props;
 						<ul>
 							{
 								mss
-									.filter((ms) => ms.library_place[0].place[0].id === place.id)
+									.filter((ms) => ms.library[0].place[0].id === place.id)
 									.map((ms) => (
 										<li>
 											<NavLink href={`/manuscripts/${ms.hit_id}`}>{ms.shelfmark}</NavLink>

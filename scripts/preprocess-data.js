@@ -32,6 +32,24 @@ const works = Object.values(loadJSON("works.json"));
 const folderPath = join(process.cwd(), "src", "content", "data");
 mkdirSync(folderPath, { recursive: true });
 
+//rewrite organisations aka libraries
+
+const librariesPlus = libraries.map((library) => {
+	return {
+		id: library.id,
+		hit_id: library.hit_id,
+		abbreviation: library.label,
+		library_full: library.library_full,
+		place: enrichPlaces(library.settlement, places),
+		wikidata: library.wikidata,
+	};
+});
+
+// Save
+writeFileSync(join(folderPath, "libraries.json"), JSON.stringify(librariesPlus, null, 2), {
+	encoding: "utf-8",
+});
+
 //rewrite places
 
 const placesPlus = places.map((place) => {
@@ -67,9 +85,9 @@ const msItemsPlus = msitems
 		const library = manuscripts
 			.filter((ms) => ms.id === item.manuscript[0]?.id)
 			.flatMap((ms) => ms.library_full);
-		const library_place = libraries
+		const library_place = librariesPlus
 			.filter((lib) => library.some((libr) => libr.id === lib.id))
-			.flatMap((lib) => enrichPlaces(lib.settlement, places));
+			.flatMap((lib) => lib.place);
 
 		// Add info to related works
 		const relatedWorks = works
@@ -252,6 +270,136 @@ writeFileSync(join(folderPath, "ms_items.json"), JSON.stringify(updatedMsItems, 
 	encoding: "utf-8",
 });
 
+// Merge data for hands
+const handsPlus = hands
+	.filter((hand) => hand.label.length > 0) // skip hands with empty labels
+	.map((hand) => {
+		// find matching dating for the hands from hands_Dated.json
+		const h_dated = handsdated
+			.filter((dhand) => dhand.hand.some((h) => h.id === hand.id))
+			.map((dathand) => {
+				return {
+					hit_id: dathand.hit_id,
+					authority: enrichBibl(dathand.authority, bibliography),
+					page: dathand.page ?? "",
+					dated: enrichDates(dathand.dated, dates),
+					dating: dathand.new_dating,
+					note: dathand.note ?? "",
+				};
+			});
+		const h_placed = handsplaced
+			.filter((hplaced) => hplaced.hand.some((h) => h.id === hand.id))
+			.map((p_hand) => {
+				return {
+					hit_id: p_hand.hit_id,
+					authority: enrichBibl(p_hand.authority, bibliography),
+					page: p_hand.page,
+					place: enrichPlaces(p_hand.place, places),
+				};
+			});
+		const h_roles = handsrole
+			.filter((hrol) => hrol.hand.some((h) => h.id === hand.id))
+			.map((hand_r) => {
+				const msitem = msItemsPlus
+					.filter((m) => m.hands.some((han) => han.jobs.some((j) => j.hit_id === hand_r.hit_id)))
+					.map((msit) => {
+						return {
+							hit_id: msit.hit_id,
+							title_work: msit.title_work.map((t) => {
+								return {
+									hit_id: t.hit_id,
+									title: t.title,
+									author: t.author,
+								};
+							}),
+							locus: msit.locus,
+						};
+					});
+				let hand_qualities = "";
+				if (hand_r.scribe_type.length > 0) {
+					hand_qualities = `${hand_r.role.map((r) => r.value)} (${hand_r.scribe_type.map((s) => s.value)})`;
+				}
+				if (hand_r.scribe_type.length > 0 && hand_r.function.length > 0) {
+					hand_qualities = `${hand_r.role.map((r) => r.value)} (${hand_r.scribe_type.map((s) => s.value)} — ${hand_r.function.map((f) => f.value)})`;
+				} else {
+					hand_qualities = hand_r.role.map((r) => r.value).join(", ");
+				}
+
+				return {
+					hit_id: hand_r.hit_id,
+					content: msitem,
+					scope: hand_r.locus ?? "",
+					role: hand_r.role.map((r) => {
+						return { value: r.value };
+					}),
+					function: hand_r.function.map((f) => {
+						return { value: f.value };
+					}),
+					scribe_type: hand_r.scribe_type.map((sc) => {
+						return { value: sc.value };
+					}),
+					locus_layout: hand_r.locus_layout.map((l) => l.value),
+					all_in_one: hand_qualities,
+				};
+			});
+
+		return {
+			id: hand.id,
+			hit_id: hand.hit_id,
+			label: hand.label[0].value,
+			view_label: hand.label[0].value,
+			description: hand.description,
+			similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
+			nr_daniel: hand.nr_daniel ?? "",
+			manuscript: hand.manuscript.map(({ order, ...rest }) => rest),
+			note: hand.note ?? "",
+			roles: [...new Set(hand.role.flatMap((r) => r.value.map((v) => v.value)))],
+			scribe: hand.scribe.map(({ order, ...rest }) => rest),
+			group: hand.gruppe,
+			date: h_dated,
+			hand_roles: h_roles,
+			placed: h_placed,
+			texts: [...new Set(hand.texts.map((text) => text.value))],
+			author_entry: hand.author_entry.map((a) => a.value),
+		};
+	});
+
+const scribesPlus = scribes.map((scribe) => {
+	const scribalHands = handsPlus.filter((hand) => hand.scribe.some((s) => s.id === scribe.id));
+	const date = scribalHands.flatMap((hand) => hand.date);
+	const place = scribalHands.flatMap((hand) => hand.placed);
+	return {
+		id: scribe.id,
+		hit_id: scribe.hit_id,
+		name: scribe.name ?? "N/A",
+		description: scribe.description ?? "N/A",
+		group: scribe.group,
+		hands: scribalHands.map(({ scribe, author_entry, places, dated, ...rest }) => rest),
+		date: date,
+		places: place,
+		author_entry: scribe.author_entry.map((a) => a.value),
+	};
+});
+const updatedScribes = addPrevNextToMsItems(scribesPlus, "hit_id", "name");
+
+writeFileSync(join(folderPath, "scribes.json"), JSON.stringify(updatedScribes, null, 2), {
+	encoding: "utf-8",
+});
+
+// enrich hands with full scribe data from scribesPlus
+// match scribe data by id
+// return empty array if no match / no scribe assigned to this hand
+const handsWithScribe = handsPlus.map((hand) => {
+	const scribe = scribesPlus.filter((sPlus) => hand.scribe.some((s) => sPlus.id === s.id)) || [];
+	return { ...hand, scribe };
+});
+
+const updatedHands = addPrevNextToMsItems(handsWithScribe);
+
+writeFileSync(join(folderPath, "hands.json"), JSON.stringify(updatedHands, null, 2), {
+	encoding: "utf-8",
+});
+
 // merge data for manuscripts
 
 const manuscriptsPlus = manuscripts
@@ -284,6 +432,25 @@ const manuscriptsPlus = manuscripts
 							type: prov.type.map((t) => t.value).join(", "),
 						};
 					});
+				const relevantMsItems = msItemsPlus
+					// get the msitems which belong to this unit
+					.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
+					// clean up unnecessary fields by map and return the prune rest
+					.map(
+						({
+							manuscript,
+							cod_unit,
+							hands,
+							view_label,
+							library,
+							library_place,
+							author_entry,
+							prev,
+							next,
+							...rest
+						}) => rest,
+					);
+
 				return {
 					id: unit.id,
 					hit_id: unit.hit_id,
@@ -304,23 +471,7 @@ const manuscriptsPlus = manuscripts
 					basic_structure: unit.basic_structure.map((str) => str.value),
 
 					prov_place: prov_place,
-					content: msItemsPlus
-						// get the msitems which belong to this unit
-						.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
-						// clean up unnecessary fields by map and return the prune rest
-						.map(
-							({
-								manuscript,
-								cod_unit,
-								hands,
-								view_label,
-								library,
-								library_place,
-								prev,
-								next,
-								...rest
-							}) => rest,
-						),
+					content: relevantMsItems,
 				};
 			});
 
@@ -437,22 +588,43 @@ const manuscriptsPlus = manuscripts
 				note: "These hand-roles are not yet assigned to a stratum",
 			});
 
-		const library_place = libraries
+		const library = libraries
 			.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
 			.map((library) => {
 				return {
 					id: library.id,
 					hit_id: library.hit_id,
+					abbreviation: manuscript.library[0].value,
+					library_full: manuscript.library_full[0].value,
 					place: enrichPlaces(library.settlement, places),
 				};
 			});
+
+		const relevantHands = handsWithScribe
+			.filter((hand) => hand.manuscript[0].id === manuscript.id)
+			.map((hand) => {
+				return {
+					hit_id: hand.hit_id,
+					label: hand.label,
+					description: hand.description,
+					similar_hands: hand.similar_hands,
+					nr_daniel: hand.nr_daniel,
+					note: hand.note,
+					scribe: hand.scribe,
+					group: hand.group,
+					date: hand.date,
+					hand_roles: hand.hand_roles,
+					placed: hand.placed,
+				};
+			});
+		const provenance = librariesPlus.filter((lib) =>
+			manuscript.provenance.some((prov) => prov.id === lib.id),
+		);
 		return {
 			id: manuscript.id,
 			hit_id: manuscript.hit_id,
 			shelfmark: manuscript.shelfmark[0].value.split(",")[1].trim(),
-			library: manuscript.library[0].value,
-			library_full: manuscript.library_full[0].value,
-			library_place: library_place,
+			library: library,
 			manuscripta_url: manuscript.manuscripta_url,
 			handschriftenportal_url: manuscript.handschriftenportal_url,
 			catalog_url: manuscript.catalog_url,
@@ -474,7 +646,7 @@ const manuscriptsPlus = manuscripts
 			history: manuscript.history,
 			orig_place: enrichPlaces(manuscript.orig_place, places),
 
-			provenance: enrichPlaces(manuscript.provenance, places),
+			provenance: provenance,
 			orig_date: ms_dating,
 			content_summary: manuscript.content_summary ?? "",
 			content: msItemsPlus
@@ -492,6 +664,7 @@ const manuscriptsPlus = manuscripts
 						view_label,
 						library,
 						library_place,
+						author_entry,
 						prev,
 						next,
 						...rest
@@ -500,6 +673,7 @@ const manuscriptsPlus = manuscripts
 			charakter: manuscript.charakter.map((char) => char.value),
 			case_study: manuscript.case_study.map((c) => c.value),
 			status: manuscript.status?.map((s) => s.value) ?? [],
+			hands: relevantHands || [],
 			cod_units: cod_unit,
 			strata: strata,
 			author_entry: manuscript.author_entry.map((a) => a.value),
@@ -510,107 +684,6 @@ const updatedManuscripts = addPrevNextToMsItems(manuscriptsPlus, "hit_id", "shel
 
 // Save the merged json
 writeFileSync(join(folderPath, "manuscripts.json"), JSON.stringify(updatedManuscripts, null, 2), {
-	encoding: "utf-8",
-});
-
-// Merge data for hands
-const handsPlus = hands
-	.filter((hand) => hand.label.length > 0) // skip hands with empty labels
-	.map((hand) => {
-		// find matching dating for the hands from hands_Dated.json
-		const h_dated = handsdated
-			.filter((dhand) => dhand.hand.some((h) => h.id === hand.id))
-			.map((dathand) => {
-				return {
-					hit_id: dathand.hit_id,
-					authority: enrichBibl(dathand.authority, bibliography),
-					page: dathand.page ?? "",
-					dated: enrichDates(dathand.dated, dates),
-					dating: dathand.new_dating,
-					note: dathand.note ?? "",
-				};
-			});
-		const h_placed = handsplaced
-			.filter((hplaced) => hplaced.hand.some((h) => h.id === hand.id))
-			.map((p_hand) => {
-				return {
-					hit_id: p_hand.hit_id,
-					authority: enrichBibl(p_hand.authority, bibliography),
-					page: p_hand.page,
-					place: enrichPlaces(p_hand.place, places),
-				};
-			});
-		const h_roles = handsrole
-			.filter((hrol) => hrol.hand.some((h) => h.id === hand.id))
-			.map((hand_r) => {
-				const msitem = msItemsPlus
-					.filter((m) => m.hands.some((han) => han.jobs.some((j) => j.hit_id === hand_r.hit_id)))
-					.map((msit) => {
-						return {
-							manuscript: msit.manuscript,
-							hit_id: msit.hit_id,
-							title_work: msit.title_work.map((t) => {
-								return {
-									hit_id: t.hit_id,
-									title: t.title,
-									author: t.author.map((a) => a.name).join("; "),
-								};
-							}),
-							locus: msit.locus,
-						};
-					});
-				let hand_qualities = "";
-				if (hand_r.scribe_type.length > 0) {
-					hand_qualities = `${hand_r.role.map((r) => r.value)} (${hand_r.scribe_type.map((s) => s.value)})`;
-				}
-				if (hand_r.scribe_type.length > 0 && hand_r.function.length > 0) {
-					hand_qualities = `${hand_r.role.map((r) => r.value)} (${hand_r.scribe_type.map((s) => s.value)} — ${hand_r.function.map((f) => f.value)})`;
-				} else {
-					hand_qualities = hand_r.role.map((r) => r.value).join(", ");
-				}
-
-				return {
-					hit_id: hand_r.hit_id,
-					content: msitem,
-					scope: hand_r.locus ?? "",
-					role: hand_r.role.map((r) => {
-						return { value: r.value };
-					}),
-					function: hand_r.function.map((f) => {
-						return { value: f.value };
-					}),
-					scribe_type: hand_r.scribe_type.map((sc) => {
-						return { value: sc.value };
-					}),
-					locus_layout: hand_r.locus_layout.map((l) => l.value),
-					all_in_one: hand_qualities,
-				};
-			});
-
-		return {
-			id: hand.id,
-			hit_id: hand.hit_id,
-			label: hand.label[0].value,
-			view_label: hand.label[0].value,
-			description: hand.description,
-			similar_hands: hand.similar_hands.map(({ order, ...rest }) => rest),
-			nr_daniel: hand.nr_daniel ?? "",
-			manuscript: hand.manuscript.map(({ order, ...rest }) => rest),
-			note: hand.note ?? "",
-			roles: [...new Set(hand.role.flatMap((r) => r.value.map((v) => v.value)))],
-			scribe: hand.scribe.map(({ order, ...rest }) => rest),
-			group: hand.gruppe,
-			date: h_dated,
-			hand_roles: h_roles,
-			placed: h_placed,
-			texts: [...new Set(hand.texts.map((text) => text.value))],
-			author_entry: hand.author_entry.map((a) => a.value),
-		};
-	});
-
-const updatedHands = addPrevNextToMsItems(handsPlus);
-
-writeFileSync(join(folderPath, "hands.json"), JSON.stringify(updatedHands, null, 2), {
 	encoding: "utf-8",
 });
 
@@ -699,29 +772,6 @@ const worksPlus = works.map((work) => {
 const updatedWorks = addPrevNextToMsItems(worksPlus, "hit_id", "title");
 
 writeFileSync(join(folderPath, "works.json"), JSON.stringify(updatedWorks, null, 2), {
-	encoding: "utf-8",
-});
-
-const scribesPlus = scribes.map((scribe) => {
-	const scribalHands = handsPlus.filter((hand) => hand.scribe.some((s) => s.id === scribe.id));
-	const date = scribalHands.flatMap((hand) => hand.date);
-	const place = scribalHands.flatMap((hand) => hand.placed);
-	return {
-		id: scribe.id,
-		hit_id: scribe.hit_id,
-		name: scribe.name ?? "N/A",
-		description: scribe.description ?? "N/A",
-		group: scribe.group,
-		hands: scribalHands,
-		date: date,
-		places: place,
-		author_entry: scribe.author_entry.map((a) => a.value),
-	};
-});
-
-const updatedScribes = addPrevNextToMsItems(scribesPlus, "hit_id", "name");
-
-writeFileSync(join(folderPath, "scribes.json"), JSON.stringify(updatedScribes, null, 2), {
 	encoding: "utf-8",
 });
 

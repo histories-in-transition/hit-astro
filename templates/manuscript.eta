@@ -38,8 +38,8 @@
             <sourceDesc>
                 <msDesc xml:id="<%= it.hit_id %>" xml:lang="deu">
                     <msIdentifier>
-                        <settlement><%= it.library_place[0].place[0].value %></settlement>
-                        <repository><%= it.library_full %></repository>
+                        <settlement><%= it.library[0].place[0].value %></settlement>
+                        <repository><%= it.library[0].library_full %></repository>
                         <idno><%= it.shelfmark %></idno>
                     </msIdentifier>
                     <head>
@@ -50,100 +50,26 @@
                                     <% } 
                                 %>  <% if (it.height && it.width) {%> <%= it.height %>×<%= it.width %>. <% } %> <origPlace></origPlace>, <origDate></origDate></note>
                     </head>
+                      <msContents>
+                      <textLang mainLang="lat"/>
                      <% if (it.cod_units.length == 1 && it.cod_units[0].content.length > 0) { %>
-                     <msContents>
-  <textLang mainLang="lat"/>
-  <% it.cod_units[0].content.forEach(function(item, index) { %>
-    <msItem xml:id="<%= item.hit_id %>" n="<%= index + 1 %>">
-         <% if (item.locus) { 
-      // Split by | if present, otherwise treat as single locus
-      const loci = item.locus.split('|').map(l => l.trim());
-      if (loci.length > 1) { %>
-        <locusGrp>
-          <% loci.forEach(function(loc) { 
-            if (loc.includes('-')) {
-              const [from, to] = loc.split('-').map(s => s.trim());
-          %>
-            <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
-          <%   } else { %>
-            <locus from="<%= loc %>"><%= loc %></locus>
-          <%   }
-          }); %>
-        </locusGrp>
-      <% } else {
-        // Only one locus, could be "14r-15v" or "14r"
-        const single = loci[0];
-        if (single.includes('-')) {
-          const [from, to] = single.split('-').map(s => s.trim());
-      %>
-          <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
-      <% } else { %>
-          <locus from="<%= single %>"><%= single %></locus>
-      <% }
-      }
-    } %>
-      <% if (item.title_work[0] && item.title_work[0].author && item.title_work[0].author.length > 0) { %>
-        <% item.title_work[0].author.forEach((author) => { %>
-          <author ref="#<%= author.hit_id %>"><%= author.name %></author>
-        <% }) %>
-      <% } %>
-      <% if (item.title_work.length > 0) { %>
-        <title ref="#<%= item.title_work[0].hit_id %>"><%= item.title_work[0].title %></title>
-      <% } %>
-      <% if (item.title_note) { %>
-        <note type="title"><%= item.title_note %></note>
-      <% } %>
-      <% if (item.rubric) { %>
-        <rubric><%= item.rubric %></rubric>
-      <% } %>
-      <% if (item.incipit) { %>
-        <incipit><%= item.incipit %></incipit>
-      <% } %>
-      <% if (item.explicit) { %>
-        <explicit><%= item.explicit %></explicit>
-      <% } %>
-      <% if (item.final_rubric) { %>
-        <finalRubric><%= item.final_rubric %></finalRubric>
-      <% } %>
-      <% if (item.decoration.length > 0) { %>
-        <decoNote type="initial">
-          <% item.decoration.forEach((deco) => { %>
-            <term><%= deco.value %></term>
-          <% }) %>
-        </decoNote>
-      <% } %>
-      <% if (item.bibl && item.bibl.length > 0) { %>
-        <listBibl>
-          <% item.bibl.forEach((b) => { %>
-            <bibl><abbr><%= b %></abbr></bibl>
-          <% }) %>
-        </listBibl>
-      <% } %>
-      <% if (item.form && item.form.length > 0 || item.form_note) { %>
-        <note type="form">
-          <% item.form.forEach((f) => { %>
-            <term><%= f.value %></term>
-          <% }) %>
-          <% if (item.form_note) { %>
-            <p><%= item.form_note %></p>
-          <% } %>
-        </note>
-      <% } %>
-      <% if (item.note) { %>
-        <note><%= item.note %></note>
-      <% } %>   
-    </msItem>
-  <% }) %>
-</msContents>
-
-                   
-                    <% } %>
+                      // check if there is only one cod. unit then render its content here
+                      // otherwise render later in the msPart
+                      <% it.cod_units[0].content.forEach(function(item, index) { %>
+                            // use partial ms_item.eta                            
+                          <%~ include('partials/ms_item', { item, index }) %>
+                              <% }) %>
+                              <% } %>
+                          </msContents>
                     <physDesc>
                         <objectDesc form="codex">
-                            <supportDesc material="<% if (it.material == 'Pergament') { %>perg<% }
-                            else if (it.material == 'Papier') { %>chart<% }  
-                            else if (it.material == 'Mischung') { %>mixed<% } 
-                            else { %>other<% } %>">
+                            <%
+                              let mat = "other";
+                              if (it.material == "Pergament") mat = "perg";
+                              else if (it.material == "Papier") mat = "chart";
+                              else if (it.material == "Mischung") mat = "mixed";
+                            %>
+                            <supportDesc material="<%= mat %>">
                                 <support>
                                         <material><%= it.material %>. <%= it.material_spec %></material>
                                 </support>
@@ -180,11 +106,7 @@
                             </supportDesc>
                             <% if (it.cod_units.length == 1) { %>
                            <layoutDesc>
-                            <layout                                
-                                <% if (it.cod_units[0].lines_number) { %>
-                                writtenLines="<%= it.cod_units[0].lines_number %>"
-                                <% } %>
-                            >
+                            <layout>
                                 <% if (it.cod_units[0].written_height && it.cod_units[0].written_width) { %>
                                 <dimensions type="written" unit="mm">                                   
                                     <height><%= it.cod_units[0].written_height %></height>                                   
@@ -210,25 +132,92 @@
                             </layoutDesc>
                             <% } %>       
                             
-                        </objectDesc>
-                       <handDesc>
-                            <handNote xml:id="hit_hand__1" scribeRef="#hit_scribe__1">
-                                <name></name>
-                                <desc></desc>
-                                <date notBefore="" notAfter="" resp=""></date>
-                                <placeName></placeName>
-                                <listRelation>
-                                    <relation xml:id="hit_hand_roles__1" active="#hit_hand__1" passive="#hit_ms_item__1" type="schreiber">
-                                        <desc>
-                                            <locus></locus>
-                                            <term type="scribe_type"></term>
-                                            <term type="function"></term>
-                                            <term type="locus_layout"></term>
-                                        </desc>
+                        </objectDesc> 
+                        <!-- All hands from all cod. units are added here -->                       
+                            <handDesc>
+                               <% it.hands.forEach((hand) => {
+                                  %>
+                                  <handNote xml:id="<%= hand.hit_id %>" 
+                                  <% if (hand.scribe.length > 0) {
+                                    %> scribeRef="<%= hand.scribe[0].hit_id %>"<% } %>>
+                                    <name><%= hand.label%></name>
+                                    <desc><%= hand.description%></desc>
+                                   <% if (hand.date && hand.date.length > 0) { %>
+                                    <% hand.date.forEach((oDate) => { %>
+                                        <% oDate.dated.forEach((date) => { %>
+                                        <date notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>">
+                                          <%= date.value %>
+                                           <% if (oDate.authority && oDate.authority.length > 0) { %>
+                                            <% oDate.authority.forEach((auth) => { %>
+                                                <% if (auth.hit_id) { %>
+                                                    <ref target="#<%= auth.hit_id %>"><%= auth.citation || auth.title || auth.author %>
+                                                    <% if (oDate.page) { %> 
+                                                      , S. <%= oDate.page %>
+                                                    <%} %>
+                                                    </ref>
+                                                <% }%> 
+                                            <% }) %>
+                                          <% } %>
+                                        </date>
+                                        <% }) %>                                       
+                                    <% }) %>
+                                    
+                                    <% } %>
+
+                                    <% if (hand.placed && hand.placed.length > 0) { %>
+                                    <% hand.placed.forEach((oPlace) => { %>
+                                        <% oPlace.place.forEach((place) => { %>
+                                        <placeName ref="<%= place.hit_id %>">
+                                          <%= place.value %>
+                                           <% if (oPlace.authority && oPlace.authority.length > 0) { %>
+                                            <% oPlace.authority.forEach((auth) => { %>
+                                                <% if (auth.hit_id) { %>
+                                                    <ref target="#<%= auth.hit_id %>"><%= auth.citation || auth.title || auth.author %>
+                                                    <% if (oPlace.page) { %> 
+                                                      , S. <%= oPlace.page %>
+                                                    <%} %>
+                                                    </ref>
+                                                <% }%> 
+                                            <% }) %>
+                                          <% } %>
+                                        </placeName>
+                                        <% }) %>                                       
+                                    <% }) %>
+                                    <% } %>
+                                    
+                                    <% if (hand.hand_roles.length > 0) {
+                                      %> <listRelation>
+                                     <% hand.hand_roles.forEach(role => {
+                                      %>
+                                     <%
+                                      const passive = (role.content || []).map(item => `#${item.hit_id}`).join(' #');
+                                      const msItems = (role.content || []).map(item => (item.title_work && item.title_work[0] ? item.title_work[0].title : '')).join(' ')
+                                    %>
+                                    <relation xml:id="<%= role.hit_id %>"
+                                              active="#<%= hand.hit_id %>"
+                                              passive="<%= passive || '' %>"
+                                              >
+                                      <desc>
+                                        <term type="role"><%= role.role.map(r => r.value).join(', ') %></term>                                        
+                                        <title ref="<%= passive %>"><%= msItems %></title>
+                                        <locus><% if (role.scope) { %> <%= role.scope %> <% } else { %> <%= role.content.map(item => item.locus).join(', ') %> <% } %></locus>
+                                        <term type="scribe_type"><%= role.scribe_type.map(st => st.value).join(', ' ) %></term>
+                                        <term type="function"><%= role.function.map(f => f.value).join(', ') %></term>
+                                        <term type="locus_layout"><%= role.locus_layout.join(', ') %></term>
+                                      </desc>
                                     </relation>
-                                </listRelation>
-                            </handNote>
-                        </handDesc>
+
+                                      <%
+                                     }  )                                   
+                                         %>
+                                    </listRelation>
+                                      <%
+                                    }%>
+                                    
+                                </handNote>
+                                  <%
+                                }) %>
+                               </handDesc> 
                          <% if (it.cod_units.length == 1) { %>
                         <decoDesc>
                             <decoNote><%= it.cod_units[0].decoration %>                                       
@@ -280,7 +269,7 @@
                                 </bibl>
                             <% }) %>
                             <% } %>
-                        <% }) %></p>
+                        <% }) %>
                         <% } %>
                        
                         </origin>
@@ -337,10 +326,12 @@
                                         <%= bibl.citation || bibl.title || bibl.author %>
                                     <% if (bibl.page) { %> S. <%= bibl.page %><% } %>
                                 </bibl>
-                            }                                     
+                                <% }) %>
+                              <% } %>
+                                                                 
                         </listBibl>
                     </additional>
-                    <% if (it.cod_units.length > 1) { %>
+                    <% if (it.cod_units.length > 1) { %>                   
                     <% it.cod_units.forEach(function(unit, index) { %>
                         <msPart>
                             <msIdentifier>
@@ -348,95 +339,21 @@
                             </msIdentifier>
                             <% if(unit.content.length > 0) { %>
                             <msContents>
-                            <% unit.content.forEach(function(item, index) { %>
-                              <msItem xml:id="<%= item.hit_id %>" n="<%= index + 1 %>">     
-                                    <% if (item.locus) { 
-                                // Split by | if present, otherwise treat as single locus
-                                const loci = item.locus.split('|').map(l => l.trim());
-                                if (loci.length > 1) { %>
-                                  <locusGrp>
-                                    <% loci.forEach(function(loc) { 
-                                      if (loc.includes('-')) {
-                                        const [from, to] = loc.split('-').map(s => s.trim());
-                                    %>
-                                      <locus from="<%= from %>" to="<%= to %>"><%= loc %></locus>
-                                    <%   } else { %>
-                                      <locus from="<%= loc %>"><%= loc %></locus>
-                                    <%   }
-                                    }); %>
-                                  </locusGrp>
-                                <% } else {
-                                  // Only one locus, could be "14r-15v" or "14r"
-                                  const single = loci[0];
-                                  if (single.includes('-')) {
-                                    const [from, to] = single.split('-').map(s => s.trim());
-                                %>
-                                    <locus from="<%= from %>" to="<%= to %>"><%= single %></locus>
-                                <% } else { %>
-                                    <locus from="<%= single %>"><%= single %></locus>
-                                <% }
-                                }
-                              } %>
-                                <% if (item.title_work[0] && item.title_work[0].author && item.title_work[0].author.length > 0) { %>
-                                  <% item.title_work[0].author.forEach((author) => { %>
-                                    <author ref="#<%= author.hit_id %>"><%= author.name %></author>
-                                  <% }) %>
-                                <% } %>
-                                <% if (item.title_work.length > 0) { %>
-                                  <title ref="#<%= item.title_work[0].hit_id %>"><%= item.title_work[0].title %></title>
-                                <% } %>
-                                <% if (item.title_note) { %>
-                                  <note type="title"><%= item.title_note %></note>
-                                <% } %>
-                                <% if (item.rubric) { %>
-                                  <rubric><%= item.rubric %></rubric>
-                                <% } %>
-                                <% if (item.incipit) { %>
-                                  <incipit><%= item.incipit %></incipit>
-                                <% } %>
-                                <% if (item.explicit) { %>
-                                  <explicit><%= item.explicit %></explicit>
-                                <% } %>
-                                <% if (item.final_rubric) { %>
-                                  <finalRubric><%= item.final_rubric %></finalRubric>
-                                <% } %>
-                                <% if (item.decoration.length > 0) { %>
-                                  <decoNote type="initial">
-                                    <% item.decoration.forEach((deco) => { %>
-                                      <term><%= deco.value %></term>
-                                    <% }) %>
-                                  </decoNote>
-                                <% } %>
-                                <% if (item.bibl && item.bibl.length > 0) { %>
-                                  <listBibl>
-                                    <% item.bibl.forEach((b) => { %>
-                                      <bibl><abbr><%= b %></abbr></bibl>
-                                    <% }) %>
-                                  </listBibl>
-                                <% } %>
-                                <% if (item.form && item.form.length > 0 || item.form_note) { %>
-                                  <note type="form">
-                                    <% item.form.forEach((f) => { %>
-                                      <term><%= f.value %></term>
-                                    <% }) %>
-                                    <% if (item.form_note) { %>
-                                      <p><%= item.form_note %></p>
-                                    <% } %>
-                                  </note>
-                                <% } %>
-                                <% if (item.note) { %>
-                                  <note><%= item.note %></note>
-                                <% } %>   
-                              </msItem>
-                            <% }) %>
+                              <% unit.content.forEach(function(item, index)  //use partial ms_item.eta
+                              { %>
+                                <%~ include('partials/ms_item', { item, index }) %>
+                              <% }) %>
                           </msContents>
                             <% } %>
                             <physDesc>
                                 <objectDesc form="fascicle">
-                                 <supportDesc material="<% if (it.material == 'Pergament') { %>perg<% }
-                            else if (it.material == 'Papier') { %>chart<% }  
-                            else if (it.material == 'Mischung') { %>mixed<% } 
-                            else { %>other<% } %>">                               
+                                <%
+                                  let mat = "other";
+                                  if (it.material == "Pergament") mat = "perg";
+                                  else if (it.material == "Papier") mat = "chart";
+                                  else if (it.material == "Mischung") mat = "mixed";
+                                %>
+                                <supportDesc material="<%= mat %>">                               
                                         <% if (unit.material && unit.material_spec) { %>
                                         <support>
                                             <material><%= unit.material %>. <%= unit.material_spec %>
@@ -492,6 +409,7 @@
                                       </layout>
                                       </layoutDesc>
                                 </objectDesc>
+                             
                                  <% if (unit.decoration) { %>
                                   <decoDesc>
                                       <decoNote><%= unit.decoration %>                                       
@@ -504,27 +422,144 @@
                         <% }) %>
                     <% } %>
                     </msDesc>
-            <listPerson type="scribes">
-                <person xml:id="hit_scribes__1">
-                    
-                </person>
-            </listPerson>
+
+             <% 
+             // recursive collectio function to get all references based on type of hit_id pass as prefix
+                function collectByHitId(obj, map, prefix) {
+                  if (obj && typeof obj === 'object') {
+                    if (obj.hit_id && obj.hit_id.startsWith(prefix)) {
+                      map.set(obj.hit_id, obj);
+                    }
+                    for (const key in obj) {
+                      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                        collectByHitId(obj[key], map, prefix);
+                      }
+                    }
+                  } else if (Array.isArray(obj)) {
+                    obj.forEach(item => collectByHitId(item, map, prefix));
+                  }
+                }
+
+                // Use to populate Maps:
+                const placeMap = new Map();
+                collectByHitId(it, placeMap, 'hit_place__');
+
+                const scribesMap = new Map();
+                collectByHitId(it, scribesMap, 'hit_scribe__');
+
+                const orgMap = new Map();
+                collectByHitId(it, orgMap, 'hit_org__');
+
+                const personMap = new Map();
+                collectByHitId(it, personMap, 'hit_people__')
+
+                const worksMap = new Map();
+                collectByHitId(it, worksMap, 'hit_works__')
+
+                const biblMap = new Map();
+                collectByHitId(it, biblMap, 'hit_bibl__')
+              %>  
+
+            <% if(scribesMap.size > 0) { %>
+               <listPerson type="scribes">                 
+                <% scribesMap.forEach((scribe, id) => { %>
+                    <place xml:id="<%= id %>">
+                      <placeName><%= place.value %>
+                      <% if (place.geonames_url) { %>
+                    <ptr type="geonames" target="<%= place.geonames_url %>"/>
+                    <% } %>
+                      </placeName>
+                      <location>
+                        <geo><%= place.lat %> <%= place.long %></geo>
+                      </location>
+                    </place>
+                  <% }) %>
+                </listPerson>
+              <%}  %>   
+           
+            <% if (personMap.size > 0) { %>
             <listPerson type="authors">
-                <person xml:id="hit_authors__1">
-                    
+              <% personMap.forEach((a, id) => { %>
+                <person xml:id="<%= id %>">
+                  <persName><%= a.name %>
+                  <% if (a.gnd_url) { %>
+                    <ptr type="gnd" target="<%= a.gnd_url %>"/>
+                  <% } %>
+                  </persName>
                 </person>
+              <% }) %>
             </listPerson>
+          <% } %>
+          
+          <% if (placeMap.size > 0) { %>
             <listPlace>
-                <place xml:id="hit_place__1"></place>
+              <% placeMap.forEach((place, id) => { %>
+                <place xml:id="<%= id %>">
+                  <placeName><%= place.value %>
+                    <% if (place.geonames_url) { %>
+                      <ptr type="geonames" target="<%= place.geonames_url %>"/>
+                    <% } %>
+                  </placeName>
+                  <location>
+                    <geo><%= place.lat %> <%= place.long %></geo>
+                  </location>
+                </place>
+              <% }) %>
             </listPlace>
-           <listBibl type="works">
-                <bibl xml:id="hit_works__1">
-                    <title></title>
-                    <author ref="#hit_authors__1"></author>
-                    <ref type="gnd" target="http"></ref>
+          <% } %>
+          
+          <% if (orgMap.size > 0) { %>
+            <listOrg>
+              <% orgMap.forEach((org, id) => { %>
+                <org xml:id="<%= id %>">
+                  <name><%= org.library_full %>
+                    <% if (org.wikidata) { %>
+                      <ptr type="wikidata" target="<%= org.wikidata %>"/>
+                    <% } %>
+                  </name>
+                  <placeName ref="#<%= org.place[0].hit_id %>"><%= org.place[0].value %></placeName>
+                </org>
+              <% }) %>
+            </listOrg>
+          <% } %>
+          
+          <% if (worksMap.size > 0) { %>
+            <listBibl type="works">
+              <% worksMap.forEach((work, id) => { %>
+                <bibl xml:id="<%= id %>">
+                  <title><%= work.title %></title>
+                  <% if (work.author?.length > 0) { %>
+                    <% work.author.forEach(author => { %>
+                      <author ref="#<%= author.hit_id %>"><%= author.name %></author>
+                    <% }); %>
+                  <% } %>
+                  <% if (work.gnd_url) { %>
+                    <ref type="gnd" target="<%= work.gnd_url %>"></ref>
+                  <% } %>
                 </bibl>
+              <% }); %>
             </listBibl>
-                    </sourceDesc>
-                    </fileDesc>
-                    </teiHeader>
+          <% } %>
+
+           <% if (biblMap.size > 0) { %>
+            <listBibl type="bibliography">
+              <% biblMap.forEach((bibl, id) => { %>
+                <bibl xml:id="<%= bibl.hit_id %>">
+                  <author><%= bibl.author %></author>
+                  <title><%= bibl.title %></title>                  
+                  <% if (bibl.link) { %>
+                    <ref type="zotero" target="<%= bibl.link %>"></ref>
+                  <% } %>
+                </bibl>
+              <% }); %>
+            </listBibl>
+          <% } %>
+      </sourceDesc>
+    </fileDesc>
+  </teiHeader>
+  <text>
+      <body>
+        <p></p>
+      </body>
+  </text>
 </TEI>
