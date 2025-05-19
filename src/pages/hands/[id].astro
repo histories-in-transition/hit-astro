@@ -191,7 +191,7 @@ const geoJsonData = processHandsData(item);
                     <td class="p-2 border border-gray-300">
                       {msItem.title_work?.map(work => (
                         <NavLink href={`/msitems/${msItem.hit_id}`}>
-                          {work.author ? `${work.author}: ${work.title}` : work.title}
+                          {work.author.length > 0 ? `${work.author.map(a => a.name).join(', ')}: ${work.title}` : work.title}
                         </NavLink>
                       ))}
                     </td>

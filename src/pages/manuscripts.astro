@@ -43,24 +43,15 @@ import TableHead from "../components/table-head.astro";
 			},
 			columns: [
 				{
-					title: "Standort",
-					headerFilterPlaceholder: "e.g. Wien",
-					field: "library_place",
+					title: "Bibliothek",
+					headerFilterPlaceholder: "e.g. Staatsbibliothek",
+					field: "library",
 					sorter: "string",
 					minWidth: 200,
 					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
-						path: "$[*].place[*].value",
+						path: ["$[*].place[*].value", "$[*].library_full"],
 					},
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Bibliothek",
-					headerFilterPlaceholder: "e.g. Österreichische Nationalbibliothek",
-					field: "library_full",
-					sorter: "string",
-					minWidth: 200,
 					headerFilter: "input",
 					responsive: 2,
 				},

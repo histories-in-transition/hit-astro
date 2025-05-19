@@ -31,7 +31,7 @@ const geoData = processMSData(manuscript)
     <Article
             prevLink={`/manuscripts/${manuscript.prev.id}`}
             nextLink={`/manuscripts/${manuscript.next.id}`}
-            mainTitle={manuscript?.library_place[0]?.place[0]?.value + ', ' + manuscript.library + ', ' + manuscript.shelfmark}
+            mainTitle={manuscript?.library[0]?.place[0]?.value + ', ' + manuscript.library[0].abbreviation + ', ' + manuscript.shelfmark}
             authorEntry={manuscript?.author_entry.map(a => a).join(', ')}
           >          
           <div class="flex justify-between">
@@ -72,11 +72,11 @@ const geoData = processMSData(manuscript)
                
                   <dl class="grid grid-cols-[1fr_5fr] p-3">
                     <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-                    <dd class="pl-5">{manuscript?.library_place[0]?.place[0]?.value}</dd>
+                    <dd class="pl-5">{manuscript?.library[0]?.place[0]?.value}</dd>
                
                     <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
                     <dd class="pl-5">
-                      {manuscript.library_full}
+                      {manuscript.library[0].library_full}
                     </dd>
                
                     <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
@@ -280,7 +280,7 @@ const geoData = processMSData(manuscript)
                 <dd class="pl-5">
                   {
                       manuscript?.provenance.map((entry, index) => (
-                        <>{entry.value}                         
+                        <>{entry.abbreviation}                         
               
                           {index < manuscript.provenance.length - 1 && ', '}
                         </>
