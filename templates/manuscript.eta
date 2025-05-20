@@ -53,10 +53,9 @@
                       <msContents>
                       <textLang mainLang="lat"/>
                      <% if (it.cod_units.length == 1 && it.cod_units[0].content.length > 0) { %>
-                      // check if there is only one cod. unit then render its content here
-                      // otherwise render later in the msPart
-                      <% it.cod_units[0].content.forEach(function(item, index) { %>
-                            // use partial ms_item.eta                            
+                      <!-- check if there is only one cod. unit then render its content here
+                        otherwise render later in the msPart -->
+                      <% it.cod_units[0].content.forEach(function(item, index) { %>                                                      
                           <%~ include('partials/ms_item', { item, index }) %>
                               <% }) %>
                               <% } %>
@@ -167,7 +166,7 @@
                                     <% if (hand.placed && hand.placed.length > 0) { %>
                                     <% hand.placed.forEach((oPlace) => { %>
                                         <% oPlace.place.forEach((place) => { %>
-                                        <placeName ref="<%= place.hit_id %>">
+                                        <placeName ref="#<%= place.hit_id %>">
                                           <%= place.value %>
                                            <% if (oPlace.authority && oPlace.authority.length > 0) { %>
                                             <% oPlace.authority.forEach((auth) => { %>
@@ -190,17 +189,32 @@
                                      <% hand.hand_roles.forEach(role => {
                                       %>
                                      <%
-                                      const passive = (role.content || []).map(item => `#${item.hit_id}`).join(' #');
+                                      const passiveIds = (role.content || []).map(item => `#${item.hit_id}`).join(' ');
                                       const msItems = (role.content || []).map(item => (item.title_work && item.title_work[0] ? item.title_work[0].title : '')).join(' ')
                                     %>
                                     <relation xml:id="<%= role.hit_id %>"
                                               active="#<%= hand.hit_id %>"
-                                              passive="<%= passive || '' %>"
+                                              passive="<%= passiveIds || '' %>"
                                               >
                                       <desc>
-                                        <term type="role"><%= role.role.map(r => r.value).join(', ') %></term>                                        
-                                        <title ref="<%= passive %>"><%= msItems %></title>
-                                        <locus><% if (role.scope) { %> <%= role.scope %> <% } else { %> <%= role.content.map(item => item.locus).join(', ') %> <% } %></locus>
+                                        <term type="role"><%= role.role.map(r => r.value).join(', ') %></term> 
+                                       <% if (role.content.length > 0) { %>
+                                           <list type="ms_items">
+                                           <% role.content.forEach(item => { %>                                          
+                                                <item sameAs="#<%= item.hit_id %>">
+                                                     <% if (item.title_work && item.title_work[0]) { %>
+                                                    <title ref="#<%= item.title_work[0].hit_id %>"><%= item.title_work[0].title %></title>
+                                                    <% if (item.title_work[0].author && item.title_work[0].author.length > 0) { %>
+                                                        <% item.title_work[0].author.forEach((aut) => { %>
+                                                          <author ref="#<%= aut.hit_id %>"><%= aut.name %></author>
+                                                        <% }) %>
+                                                    <% } %>
+                                                        <locus><% if (role.scope) { %><%= role.scope %><% } else { %><%= item.locus %><% } %></locus>
+                                                        <% } %>
+                                                </item>
+                                            <% }) %>
+                                            </list>                                           
+                                        <% } %>
                                         <term type="scribe_type"><%= role.scribe_type.map(st => st.value).join(', ' ) %></term>
                                         <term type="function"><%= role.function.map(f => f.value).join(', ') %></term>
                                         <term type="locus_layout"><%= role.locus_layout.join(', ') %></term>
@@ -339,7 +353,7 @@
                             </msIdentifier>
                             <% if(unit.content.length > 0) { %>
                             <msContents>
-                              <% unit.content.forEach(function(item, index)  //use partial ms_item.eta
+                              <% unit.content.forEach(function(item, index) 
                               { %>
                                 <%~ include('partials/ms_item', { item, index }) %>
                               <% }) %>

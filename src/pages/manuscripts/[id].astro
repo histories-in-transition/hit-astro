@@ -34,7 +34,7 @@ const geoData = processMSData(manuscript)
             mainTitle={manuscript?.library[0]?.place[0]?.value + ', ' + manuscript.library[0].abbreviation + ', ' + manuscript.shelfmark}
             authorEntry={manuscript?.author_entry.map(a => a).join(', ')}
           >          
-          <div class="flex justify-between">
+          <div class="md:flex justify-between">
             <div class="flex gap-2 justify-start">
               {manuscript.handschriftenportal_url &&
               <NavLink href={manuscript.handschriftenportal_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600  text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
@@ -57,15 +57,11 @@ const geoData = processMSData(manuscript)
                   <Icon aria-hidden="true" name="lucide:construction" />
                 </div>
              )}
-             <div class="flex gap-2">
-               <div class="flex gap-2 ">
+             <div class="flex gap-2">               
                 <NavLink href=`/tei/manuscripts/${manuscript.hit_id}.xml` class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-                id="download-tei">TEI</NavLink>
-              </div>
-              <div class="flex gap-2 ">
+                id="download-tei">TEI</NavLink>             
                 <button class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
                 id="download-pdf">PDF</button>
-                </div>
              </div>
           </div>
          
