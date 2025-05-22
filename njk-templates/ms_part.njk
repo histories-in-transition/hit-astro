@@ -1,0 +1,93 @@
+<msPart>
+    <msIdentifier>
+        <idno>Kodikologische Einheit {{ unit.number }}</idno>
+    </msIdentifier>
+    
+    {% if unit.content.length > 0 %}
+        <msContents>
+            {% for item in unit.content %}
+                {% include 'ms_item.njk' %}
+            {% endfor %}
+        </msContents>
+    {% endif %}
+    
+    <physDesc>
+        <objectDesc form="fascicle">
+            {% set mat = "other" %}
+            {% if manuscript.material == "Pergament" %}
+                {% set mat = "perg" %}
+            {% elif manuscript.material == "Papier" %}
+                {% set mat = "chart" %}
+            {% elif manuscript.material == "Mischung" %}
+                {% set mat = "mixed" %}
+            {% endif %}
+            
+            <supportDesc material="{{ mat }}">
+                {% if unit.material and unit.material_spec %}
+                    <support>
+                        <material>{{ unit.material }}. {{ unit.material_spec }}
+                        {% if unit.basic_structure and unit.basic_structure.length > 0 %}
+                            {{ unit.basic_structure.join(', ') }}
+                        {% endif %}
+                        </material>
+                    </support>
+                {% endif %}
+                
+                <extent>
+                    {% if unit.heigth and unit.width %}
+                        <dimensions type="leaf" unit="mm">
+                            <height>{{ unit.heigth }}</height>
+                            <width>{{ unit.width }}</width>
+                        </dimensions>
+                    {% endif %}
+                </extent>
+                
+                <collation>
+                    {% if unit.quires_number %}
+                        <p>Lagen: {{ unit.quires_number }} (fol. {{ unit.locus }})</p>
+                    {% endif %}
+                    
+                    {% if unit.codicological_reworking.length > 0 %}
+                        <p>{{ unit.codicological_reworking.join(', ') }}</p>
+                    {% endif %}
+                </collation>
+            </supportDesc>
+            
+            <layoutDesc>
+                <layout {% if unit.lines_number %}writtenLines="{{ unit.lines_number }}"{% endif %}>
+                    {% if unit.written_height and unit.written_width %}
+                        <dimensions type="written" unit="mm">
+                            <height>{{ unit.written_height }}</height>
+                            <width>{{ unit.written_width }}</width>
+                        </dimensions>
+                        <p>Schriftspiegel: {{ unit.written_height }}×{{ unit.written_width }} mm.</p>
+                    {% endif %}
+                    
+                    {% if (unit.columns.length > 0) or unit.lines_number or unit.ruling %}
+                        <p>
+                            {% if unit.columns and unit.columns.length > 0 %}
+                                Spalte: {{ unit.columns.join(', ') }}
+                            {% endif %}
+                            
+                            {% if unit.lines_number %}
+                                zu {{ unit.lines_number }} Zeilen.
+                            {% else %}
+                                .
+                            {% endif %}
+                            
+                            {% if unit.ruling %}
+                                {{ unit.ruling }}
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                </layout>
+            </layoutDesc>
+        </objectDesc>
+        
+        {% if unit.decoration %}
+            <decoDesc>
+                <decoNote>{{ unit.decoration }}</decoNote>
+            </decoDesc>
+        {% endif %}
+    </physDesc>
+</msPart>

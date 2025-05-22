@@ -1,0 +1,50 @@
+<history>
+    {% if manuscript.history %}
+        <summary>{{ manuscript.history }}</summary>
+    {% endif %}
+    
+    <origin>
+        {% if manuscript.orig_place.length > 0 %}
+            {% for place in manuscript.orig_place %}
+                <origPlace ref="#{{ place.hit_id }}">{{ place.value }}</origPlace>
+            {% endfor %}
+        {% endif %}
+        
+        {% if manuscript.orig_date and manuscript.orig_date.length > 0 %}
+            {% for oDate in manuscript.orig_date %}
+                {% for date in oDate.date %}
+                    <origDate notBefore="{{ date.not_before }}" notAfter="{{ date.not_after }}" resp="{{ oDate.authority[0].hit_id }}">{{ date.value }}</origDate>
+                {% endfor %}
+                
+                {% if oDate.authority and oDate.authority.length > 0 %}
+                    {% for auth in oDate.authority %}
+                        <bibl>
+                            {% if auth.link %}
+                                <ref target="{{ auth.link }}">{{ auth.citation or auth.title or auth.author }}</ref>
+                            {% else %}
+                                {{ auth.citation or auth.title or auth.author }}
+                            {% endif %}
+                            
+                            {% if oDate.page %}
+                                S. {{ oDate.page }}
+                            {% endif %}
+                        </bibl>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </origin>
+    
+    <provenance>
+        {% if manuscript.provenance.length > 0 %}
+            {% for prov in manuscript.provenance %}
+                <placeName ref="#{{ prov.hit_id }}">{{ prov.value }}</placeName>
+            {% endfor %}
+        {% endif %}
+        <p></p>
+    </provenance>
+    
+    <acquisition>
+        <p></p>
+    </acquisition>
+</history>

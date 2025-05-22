@@ -1,0 +1,120 @@
+<!-- All hands from all cod. units are added here -->
+<handDesc>
+    {% for hand in manuscript.hands %}
+        <handNote xml:id="{{ hand.hit_id }}" 
+            {% if hand.scribe.length > 0 %}
+                scribeRef="{{ hand.scribe[0].hit_id }}"
+            {% endif %}>
+            <name>{{ hand.label }}</name>
+            <desc>{{ hand.description }}</desc>
+            
+            {% if hand.date and hand.date.length > 0 %}
+                {% for oDate in hand.date %}
+                    {% for date in oDate.dated %}
+                        <date notBefore="{{ date.not_before }}" notAfter="{{ date.not_after }}">
+                            {{ date.value }}
+                            {% if oDate.authority and oDate.authority.length > 0 %}
+                                {% for auth in oDate.authority %}
+                                    {% if auth.hit_id %}
+                                        <ref target="#{{ auth.hit_id }}">{{ auth.citation or auth.title or auth.author }}
+                                            {% if oDate.page %}
+                                                , S. {{ oDate.page }}
+                                            {% endif %}
+                                        </ref>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </date>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if hand.placed and hand.placed.length > 0 %}
+                {% for oPlace in hand.placed %}
+                    {% for place in oPlace.place %}
+                        <placeName ref="#{{ place.hit_id }}">
+                            {{ place.value }}
+                            {% if oPlace.authority and oPlace.authority.length > 0 %}
+                                {% for auth in oPlace.authority %}
+                                    {% if auth.hit_id %}
+                                        <ref target="#{{ auth.hit_id }}">{{ auth.citation or auth.title or auth.author }}
+                                            {% if oPlace.page %}
+                                                , S. {{ oPlace.page }}
+                                            {% endif %}
+                                        </ref>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </placeName>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if hand.hand_roles.length > 0 %}
+                <listRelation>
+                    {% for role in hand.hand_roles %}
+                    {% set passiveIds = '' %}
+                        {% for item in role.content or [] %}
+                          {% set passiveIds = passiveIds + '#' + item.hit_id + ' ' %}
+                        {% endfor %}
+                    {% set passiveIds = passiveIds.trim() %}                        
+                    {% set msItems = '' %}
+                        {% for item in role.content or [] %}
+                          {% if item.title_work and item.title_work[0] %}
+                            {% set msItems = msItems + item.title_work[0].title + ' ' %}
+                          {% endif %}
+                        {% endfor %}
+                    {% set msItems = msItems.trim() %}
+                        <relation xml:id="{{ role.hit_id }}"
+                            active="#{{ hand.hit_id }}"
+                            passive="{{ passiveIds or '' }}">
+                              <desc>
+                              {% set scribal_role = [] %}
+                                {% for r in role.role or [] %}
+                                {% set _ = scribal_role.push(r.value) %}
+                                {% endfor%}
+                                <term type="role">{{ scribal_role | join(', ') }}</term>
+                                
+                                {% if role.content.length > 0 %}
+                                    <list type="ms_items">
+                                        {% for item in role.content %}
+                                            <item sameAs="#{{ item.hit_id }}">
+                                                {% if item.title_work and item.title_work[0] %}
+                                                    <title ref="#{{ item.title_work[0].hit_id }}">{{ item.title_work[0].title }}</title>
+                                                    
+                                                    {% if item.title_work[0].author and item.title_work[0].author.length > 0 %}
+                                                        {% for aut in item.title_work[0].author %}
+                                                            <persName ref="#{{ aut.hit_id }}">{{ aut.name }}</persName>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                    
+                                                    <locus>{% if role.scope %}{{ role.scope }}{% else %}{{ item.locus }}{% endif %}</locus>
+                                                {% endif %}
+                                            </item>
+                                        {% endfor %}
+                                    </list>
+                                {% endif %}
+                                
+                                {% set scribe_types = [] %}
+                                    {% for st in role.scribe_type or [] %}
+                                    {% set _ = scribe_types.push(st.value) %}
+                                    {% endfor %}
+                                <term type="scribe_type">{{ scribe_types | join(', ') }}</term>
+                                
+                                {% set functions = [] %}
+                                    {% for f in role.function or [] %}
+                                    {% set _ = functions.push(f.value) %}
+                                    {% endfor %}
+                                <term type="function">{{ functions | join(', ') }}</term>
+                                
+                                <term type="locus_layout">
+                                  {{ (role.locus_layout or []) | join(', ') }}
+                                </term>
+                            </desc>
+                        </relation>
+                    {% endfor %}
+                </listRelation>
+            {% endif %}
+        </handNote>
+    {% endfor %}
+</handDesc>

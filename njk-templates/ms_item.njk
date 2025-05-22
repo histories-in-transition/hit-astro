@@ -1,0 +1,97 @@
+<msItem xml:id="{{ item.hit_id }}" n="{{ index + 1 }}">
+      {% if item.locus %}
+        {% if item.locus.indexOf('|') != -1 %}
+            {% set loci = item.locus.split('|') %}
+        {% elif item.locus.indexOf(',') != -1 %}
+            {% set loci = item.locus.split(',') %}
+        {% else %}
+            {% set loci = [item.locus] %}
+        {% endif %}
+
+        {% if loci.length > 1 %}
+            <locusGrp>
+                {% for loc in loci %}
+                    {% set loc = loc.trim() %}
+                    {% if loc.indexOf('-') != -1 %}
+                        {% set parts = loc.split('-') %}
+                        <locus from="{{ parts[0].trim() }}" to="{{ parts[1].trim() }}">{{ loc }}</locus>
+                    {% else %}
+                        <locus from="{{ loc }}">{{ loc }}</locus>
+                    {% endif %}
+                {% endfor %}
+            </locusGrp>
+        {% else %}
+            {% set single = loci[0].trim() %}
+            {% if single.indexOf('-') != -1 %}
+                {% set parts = single.split('-') %}
+                <locus from="{{ parts[0].trim() }}" to="{{ parts[1].trim() }}">{{ single }}</locus>
+            {% else %}
+                <locus from="{{ single }}">{{ single }}</locus>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    
+    {% if item.title_work[0] and item.title_work[0].author and item.title_work[0].author.length > 0 %}
+        {% for author in item.title_work[0].author %}
+            <author ref="#{{ author.hit_id }}">{{ author.name }}</author>
+        {% endfor %}
+    {% endif %}
+    
+    {% if item.title_work.length > 0 %}
+        <title ref="#{{ item.title_work[0].hit_id }}">{{ item.title_work[0].title }}</title>
+    {% endif %}
+    
+    {% if item.title_note %}
+        <note type="title">{{ item.title_note }}</note>
+    {% endif %}
+    
+    {% if item.rubric %}
+        <rubric>{{ item.rubric }}</rubric>
+    {% endif %}
+    
+    {% if item.incipit %}
+        <incipit>{{ item.incipit }}</incipit>
+    {% endif %}
+    
+    {% if item.explicit %}
+        <explicit>{{ item.explicit }}</explicit>
+    {% endif %}
+    
+    {% if item.final_rubric %}
+        <finalRubric>{{ item.final_rubric }}</finalRubric>
+    {% endif %}
+    
+    {% if item.decoration.length > 0 %}
+        <decoNote type="initial">
+            {% for deco in item.decoration %}
+                <term>{{ deco.value }}</term>
+            {% endfor %}
+        </decoNote>
+    {% endif %}
+    
+    {% if item.bibl and item.bibl.length > 0 %}
+        <listBibl>
+            {% for b in item.bibl %}
+                <bibl><abbr>{{ b }}</abbr></bibl>
+            {% endfor %}
+        </listBibl>
+    {% endif %}
+    
+    {% if (item.form and item.form.length > 0) or item.form_note %}
+        <note type="form">
+            {% if item.form and item.form.length > 0 %}
+                {% for f in item.form %}
+                    <term>{{ f.value }}</term>
+                {% endfor %}
+            {% endif %}
+            
+            {% if item.form_note %}
+                <p>{{ item.form_note }}</p>
+            {% endif %}
+        </note>
+    {% endif %}
+    
+    {% if item.note %}
+        <note>{{ item.note }}</note>
+    {% endif %}
+</msItem>

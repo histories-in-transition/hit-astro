@@ -1,0 +1,28 @@
+<msDesc xml:id="<%= it.hit_id %>" xml:lang="deu">
+                    <msIdentifier>
+                        <settlement><%= it.library[0].place[0].value %></settlement>
+                        <repository><%= it.library[0].library_full %></repository>
+                        <idno><%= it.shelfmark %></idno>
+                    </msIdentifier>
+                    <head>
+                        <title></title>
+                        <note type="caption"><%= it.material %> 
+                        <% if (it.extent) { %>
+                                    <%= it.extent %> Bl.
+                                    <% } 
+                                %>  <% if (it.heigth && it.width) {%> <%= it.heigth %>×<%= it.width %>. <% } %> <origPlace></origPlace>, <origDate></origDate></note>
+                    </head>
+                      <msContents>
+                      <textLang mainLang="lat"/>
+                     <% if (it.cod_units.length == 1 && it.cod_units[0].content.length > 0) { %>
+                      <!-- check if there is only one cod. unit then render its content here
+                        otherwise render later in the msPart -->
+                      <% it.cod_units[0].content.forEach(function(item, index) { %>                                                      
+                          <%~ include('./ms_item', { item, index }) %>
+                              <% }) %>
+                              <% } %>
+                        </msContents> 
+                    
+                    <%~ include('./phys_desc', it) %>                 
+                    <%~ include('./history', it) %>                   
+                    </msDesc>

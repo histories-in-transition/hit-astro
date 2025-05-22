@@ -1,13 +1,10 @@
-<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://diglib.hab.de/rules/schema/mss/v1.0/cataloguing.xsd"
-    version="5" xml:lang="deu">
-    <teiHeader>
+<teiHeader>
         <fileDesc>
             <titleStmt>
-                <title>Beschreibung von <%= it.shelfmark %></title>
+                <title>Beschreibung von {{ manuscript.shelfmark }}</title>
                 <respStmt>
                     <resp>Beschrieben durch </resp>
-                    <name type="person"><%= it.author_entry %></name>
+                    <name type="person">{{ manuscript.author_entry }}</name>
                 </respStmt>
             </titleStmt>
             <editionStmt>
@@ -28,7 +25,7 @@
                 <availability status="restricted">
                     <licence target="http://creativecommons.org/licenses/by-sa/3.0/de/" notBefore="2013-03-01">
                         <p>Dieses Dokument steht unter einer Creative Commons Namensnennung-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz (CC BY-SA 3.0 AT).</p>
-                        <p> (<ref target="https://creativecommons.org/licenses/by-sa/3.0/at/">Copyright Information</ref>)</p>
+                        <p>(<ref target="https://creativecommons.org/licenses/by-sa/3.0/at/">Copyright Information</ref>)</p>
                     </licence>
                 </availability>
                 <pubPlace>
@@ -36,14 +33,8 @@
                 </pubPlace>
             </publicationStmt>
             <sourceDesc>
-            <%~ include('partials/ms_desc', it) %>
-            <%~ include('partials/register', it) %>
-      </sourceDesc>
-    </fileDesc>
-  </teiHeader>
-  <text>
-      <body>
-        <p></p>
-      </body>
-  </text>
-</TEI>
+             {% include "ms_desc.njk" %}
+            </sourceDesc>
+             {% include "entity_lists.njk" %}
+        </fileDesc>
+    </teiHeader>    

@@ -1,0 +1,90 @@
+
+<msDesc xml:id="{{ manuscript.hit_id }}" xml:lang="deu">
+    <msIdentifier>
+        <settlement>{{ manuscript.library[0].place[0].value }}</settlement>
+        <repository>{{ manuscript.library[0].library_full }}</repository>
+        <idno>{{ manuscript.shelfmark }}</idno>
+    </msIdentifier>
+    <head>
+        <title></title>
+        <note type="caption">{{ manuscript.material }} 
+        {% if manuscript.extent %}
+            {{ manuscript.extent }} Bl.
+        {% endif %}
+        {% if manuscript.height and manuscript.width %}
+            {{ manuscript.height }}×{{ manuscript.width }}.
+        {% endif %}
+        <origPlace></origPlace>, <origDate></origDate></note>
+    </head>
+    
+    <msContents>
+        <textLang mainLang="lat"/>
+        {% if manuscript.cod_units.length == 1 and manuscript.cod_units[0].content.length > 0 %}
+            {# check if there is only one cod. unit then render its content here
+            otherwise render later in the msPart #}
+            {% for item in manuscript.cod_units[0].content %}
+                {% include 'ms_item.njk' %}
+            {% endfor %}
+        {% endif %}
+    </msContents>
+    
+    {% include "phys_desc.njk"  %}
+    {% include "history.njk"  %}
+    
+    <additional>
+        {% if manuscript.digi_url %}
+        <surrogates>
+            <listBibl>
+                <bibl type="digital-facsimile">
+                    <ref target="{{ manuscript.digi_url }}">
+                        Digitalisat
+                    </ref>
+                </bibl>
+            </listBibl>
+        </surrogates>
+        {% endif %}
+        
+        <listBibl>
+            <head>Literatur:</head>
+            {% if manuscript.manuscripta_url %}
+                <bibl>
+                    <ref target="{{ manuscript.manuscripta_url }}">
+                        Eintrag in Manuscripta.at
+                    </ref>
+                </bibl>
+            {% endif %}
+            
+            {% if manuscript.handschriftenportal_url %}
+                <bibl>
+                    <ref target="{{ manuscript.handschriftenportal_url }}">
+                        Eintrag im Handschriftenportal
+                    </ref>
+                </bibl>
+            {% endif %}
+            
+            {% if manuscript.catalog_url %}
+                <bibl>
+                    <ref target="{{ manuscript.catalog_url }}">
+                        Bibliothekskatalog
+                    </ref>
+                </bibl>
+            {% endif %}
+            
+            {% if manuscript.bibliography.length > 0 %}
+                {% for bibl in manuscript.bibliography %}
+                    <bibl xml:id="{{ bibl.hit_id }}">
+                        {{ bibl.citation or bibl.title or bibl.author }}
+                        {% if bibl.page %} S. {{ bibl.page }}{% endif %}
+                    </bibl>
+                {% endfor %}
+            {% endif %}
+        </listBibl>
+
+        {% if manuscript.cod_units.length > 1 %}
+            {% for unit in manuscript.cod_units %}
+                {% include "ms_part.njk" %}
+            {% endfor %}
+        {% endif %}
+ 
+</msDesc>
+

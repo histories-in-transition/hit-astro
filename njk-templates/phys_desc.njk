@@ -1,0 +1,112 @@
+<physDesc>
+    <objectDesc form="codex">
+        {% set mat = "other" %}
+        {% if manuscript.material == "Pergament" %}
+            {% set mat = "perg" %}
+        {% elif manuscript.material == "Papier" %}
+            {% set mat = "chart" %}
+        {% elif manuscript.material == "Mischung" %}
+            {% set mat = "mixed" %}
+        {% endif %}
+        
+        <supportDesc material="{{ mat }}">
+            <support>
+                <material>{{ manuscript.material }}. {{ manuscript.material_spec }}</material>
+            </support>
+            <extent>
+                {% if manuscript.extent %}
+                    <measure type="leavesCount">{{ manuscript.extent }} Bl.</measure>
+                {% endif %}
+                
+                {% if manuscript.height and manuscript.width %}
+                    <dimensions type="leaf" unit="mm">
+                        <height>{{ manuscript.height }}</height>
+                        <width>{{ manuscript.width }}</width>
+                    </dimensions>
+                {% endif %}
+            </extent>
+            
+            {% if manuscript.foliation %}
+                <foliation>{{ manuscript.foliation }}</foliation>
+            {% endif %}
+            
+            <collation>
+                {% if manuscript.quire_structure %}
+                    Lagenformel: <formula>{{ manuscript.quire_structure }}</formula>
+                {% endif %}
+                
+                {% if manuscript.cod_units.length == 1 and manuscript.cod_units[0].basic_structure.length > 0 %}
+                    <p>{{ manuscript.cod_units[0].basic_structure.join(', ') }}</p>
+                {% endif %}
+                
+                {% if manuscript.catchwords %}
+                    <catchwords>{{ manuscript.catchwords }}</catchwords>
+                {% endif %}
+                
+                {% if manuscript.signatures %}
+                    <signatures>{{ manuscript.signatures }}</signatures>
+                {% endif %}
+            </collation>
+        </supportDesc>
+        
+        {% if manuscript.cod_units.length == 1 %}
+            <layoutDesc>
+                <layout>
+                    {% if manuscript.cod_units[0].written_height and manuscript.cod_units[0].written_width %}
+                        <dimensions type="written" unit="mm">
+                            <height>{{ manuscript.cod_units[0].written_height }}</height>
+                            <width>{{ manuscript.cod_units[0].written_width }}</width>
+                        </dimensions>
+                        <p>Schriftspiegel: {{ manuscript.cod_units[0].written_height }}×{{ manuscript.cod_units[0].written_width }} mm.</p>
+                    {% endif %}
+                    
+                    {% if (manuscript.cod_units[0].columns.length > 0) or manuscript.cod_units[0].lines_number or manuscript.cod_units[0].ruling %}
+                        <p>
+                            {% if manuscript.cod_units[0].columns and manuscript.cod_units[0].columns.length > 0 %}
+                                Spalte: {{ manuscript.cod_units[0].columns.join(', ') }}
+                            {% endif %}
+                            
+                            {% if manuscript.cod_units[0].lines_number %}
+                                zu {{ manuscript.cod_units[0].lines_number }} Zeilen.
+                            {% else %}
+                                .
+                            {% endif %}
+                            
+                            {% if manuscript.cod_units[0].ruling %}
+                                {{ manuscript.cod_units[0].ruling }}
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                </layout>
+            </layoutDesc>
+        {% endif %}
+    </objectDesc>
+    
+    {% include "hand_desc.njk" %}
+    
+    {% if manuscript.cod_units.length == 1 %}
+        <decoDesc>
+            <decoNote>{{ manuscript.cod_units[0].decoration }}</decoNote>
+        </decoDesc>
+    {% endif %}
+        
+    <bindingDesc>
+        {% if manuscript.binding_date and manuscript.binding_date.length > 0 %}
+            <binding 
+                {% if manuscript.binding_date[0].not_before %}notBefore="{{ manuscript.binding_date[0].not_before }}"{% endif %}
+                {% if manuscript.binding_date[0].not_after %}notAfter="{{ manuscript.binding_date[0].not_after }}"{% endif %}>
+                <p>{{ manuscript.binding }}</p>
+            </binding>
+        {% else %}
+            <binding>
+                {% if manuscript.binding %}
+                    <p>{{ manuscript.binding }}</p>
+                {% endif %}
+            </binding>
+        {% endif %}
+    </bindingDesc>
+    
+    {% if manuscript.acc_mat %}
+        <accMat>{{ manuscript.acc_mat }}</accMat>
+    {% endif %}
+</physDesc>

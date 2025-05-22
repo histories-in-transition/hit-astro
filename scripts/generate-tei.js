@@ -20,10 +20,15 @@ mss.forEach((ms) => {
 	// Render the template with manuscript data
 	const xml = eta.render("./manuscript.eta", ms);
 
+	const compact = xml
+		.split("\n")
+		.filter((line) => line.trim() !== "")
+		.join("\n");
 	// Use hit_id as unique identifier for the filename
 	const filename = ms.hit_id ? `${ms.hit_id}.xml` : `manuscript_${ms.id}.xml`;
-
+	const filePath = join(mssFolderPath, filename);
 	// Write the XML file
-	writeFileSync(join(mssFolderPath, filename), xml);
+	writeFileSync(join(mssFolderPath, filename), compact, "utf-8");
+	console.log(`Generated TEI for ${ms.shelfmark}: (${filePath})`);
 });
-console.log(`Generated TEI for ${mss.length} manuuscripts.`);
+console.log(`All together ${mss.length} TEI files.`);

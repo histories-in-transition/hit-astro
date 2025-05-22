@@ -42,6 +42,7 @@ const librariesPlus = libraries.map((library) => {
 		library_full: library.library_full,
 		place: enrichPlaces(library.settlement, places),
 		wikidata: library.wikidata,
+		gnd_url: library.gnd_url ?? "",
 	};
 });
 
@@ -588,17 +589,9 @@ const manuscriptsPlus = manuscripts
 				note: "These hand-roles are not yet assigned to a stratum",
 			});
 
-		const library = libraries
+		const library = librariesPlus
 			.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
-			.map((library) => {
-				return {
-					id: library.id,
-					hit_id: library.hit_id,
-					abbreviation: manuscript.library[0].value,
-					library_full: manuscript.library_full[0].value,
-					place: enrichPlaces(library.settlement, places),
-				};
-			});
+			.map(((library) => library) || "N/A");
 
 		const relevantHands = handsWithScribe
 			.filter((hand) => hand.manuscript[0].id === manuscript.id)
@@ -620,6 +613,10 @@ const manuscriptsPlus = manuscripts
 		const provenance = librariesPlus.filter((lib) =>
 			manuscript.provenance.some((prov) => prov.id === lib.id),
 		);
+		const quire_formula = manuscript.quire_structure.replace(
+			/\*\*(.*?)\*\*/g,
+			'<hi rend="sup">$1</hi>',
+		);
 		return {
 			id: manuscript.id,
 			hit_id: manuscript.hit_id,
@@ -630,7 +627,7 @@ const manuscriptsPlus = manuscripts
 			catalog_url: manuscript.catalog_url,
 			digi_url: manuscript.digi_url,
 			idno_former: manuscript.idno_former ?? "",
-			quire_structure: manuscript.quire_structure,
+			quire_structure: quire_formula,
 			extent: manuscript.extent ?? "",
 			foliation: manuscript.foliation ?? "",
 			acc_mat: manuscript.acc_mat ?? "",

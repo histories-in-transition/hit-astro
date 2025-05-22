@@ -1,0 +1,260 @@
+{# Since Nunjucks doesn't support complex JavaScript functions,  #}
+{# must collect all entities by manually traversing the manuscript object structure #}
+{# hoping to get all instances #}
+
+{# Initialize entity collections #}
+{% set places = [] %}
+{% set scribes = [] %}
+{% set orgs = [] %}
+{% set people = [] %}
+{% set works = [] %}
+{% set bibl = [] %}
+
+{# Helper macro to add entity to collection if it has the right prefix #}
+{% macro addIfMatches(entity, collection, prefix) %}
+    {% if entity and entity.hit_id and entity.hit_id.indexOf(prefix) == 0 %}
+        {# Check if entity is not already in collection #}
+        {% set found = false %}
+        {% for existing in collection %}
+            {% if existing.hit_id == entity.hit_id %}
+                {% set found = true %}
+                {% break %}
+            {% endif %}
+        {% endfor %}
+        {% if not found %}
+            {% set collection = collection.concat([entity]) %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{# Traverse manuscript object and collect entities #}
+
+{# Check bibliography #}
+{% if manuscript.bibliography %}
+    {% for item in manuscript.bibliography %}
+        {{ addIfMatches(item, bibl, 'hit_bibl__') }}
+    {% endfor %}
+{% endif %}
+
+{# Check library organizations #}
+{% if manuscript.library %}
+    {% for item in manuscript.library %}
+        {{ addIfMatches(item, orgs, 'hit_org__') }}
+        {% if item.place %}
+            {% for place in item.place %}
+                {{ addIfMatches(place, places, 'hit_place__') }}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{# Check original places #}
+{% if manuscript.orig_place %}
+    {% for item in manuscript.orig_place %}
+        {{ addIfMatches(item, places, 'hit_place__') }}
+    {% endfor %}
+{% endif %}
+
+{# Check provenance places and organizations #}
+{% if manuscript.provenance %}
+    {% for item in manuscript.provenance %}
+        {{ addIfMatches(item, places, 'hit_place__') }}
+        {{ addIfMatches(item, orgs, 'hit_org__') }}
+    {% endfor %}
+{% endif %}
+
+{# Check hands and all their nested entities #}
+{% if manuscript.hands %}
+    {% for hand in manuscript.hands %}
+        {# Check scribes #}
+        {% if hand.scribe %}
+            {% for scribe in hand.scribe %}
+                {{ addIfMatches(scribe, scribes, 'hit_scribe__') }}
+                {{ addIfMatches(scribe, people, 'hit_people__') }}
+            {% endfor %}
+        {% endif %}
+        
+        {# Check placed locations #}
+        {% if hand.placed %}
+            {% for placed in hand.placed %}
+                {% if placed.place %}
+                    {% for place in placed.place %}
+                        {{ addIfMatches(place, places, 'hit_place__') }}
+                    {% endfor %}
+                {% endif %}
+                {% if placed.authority %}
+                    {% for auth in placed.authority %}
+                        {{ addIfMatches(auth, bibl, 'hit_bibl__') }}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        {# Check date authorities #}
+        {% if hand.date %}
+            {% for dateInfo in hand.date %}
+                {% if dateInfo.authority %}
+                    {% for auth in dateInfo.authority %}
+                        {{ addIfMatches(auth, bibl, 'hit_bibl__') }}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        {# Check hand roles content #}
+        {% if hand.hand_roles %}
+            {% for role in hand.hand_roles %}
+                {% if role.content %}
+                    {% for item in role.content %}
+                        {% if item.title_work %}
+                            {% for work in item.title_work %}
+                                {{ addIfMatches(work, works, 'hit_works__') }}
+                                {% if work.author %}
+                                    {% for author in work.author %}
+                                        {{ addIfMatches(author, people, 'hit_people__') }}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{# Check cod_units content #}
+{% if manuscript.cod_units %}
+    {% for unit in manuscript.cod_units %}
+        {% if unit.content %}
+            {% for item in unit.content %}
+                {% if item.title_work %}
+                    {% for work in item.title_work %}
+                        {{ addIfMatches(work, works, 'hit_works__') }}
+                        {% if work.author %}
+                            {% for author in work.author %}
+                                {{ addIfMatches(author, people, 'hit_people__') }}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if item.bibl %}
+                    {% for biblItem in item.bibl %}
+                        {{ addIfMatches(biblItem, bibl, 'hit_bibl__') }}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{# Check original date authorities #}
+{% if manuscript.orig_date %}
+    {% for dateInfo in manuscript.orig_date %}
+        {% if dateInfo.authority %}
+            {% for auth in dateInfo.authority %}
+                {{ addIfMatches(auth, bibl, 'hit_bibl__') }}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{# Now output the collected entities #}
+
+{% if scribes.length > 0 %}
+    <listPerson type="scribes">
+        {% for scribe in scribes %}
+            <person xml:id="{{ scribe.hit_id }}">
+                <persName>{{ scribe.name }}
+                    {% if scribe.gnd_url %}
+                        <ptr type="gnd" target="{{ scribe.gnd_url }}"/>
+                    {% endif %}
+                </persName>
+            </person>
+        {% endfor %}
+    </listPerson>
+{% endif %}
+
+{% if people.length > 0 %}
+    <listPerson type="authors">
+        {% for person in people %}
+            <person xml:id="{{ person.hit_id }}">
+                <persName>{{ person.name }}
+                    {% if person.gnd_url %}
+                        <ptr type="gnd" target="{{ person.gnd_url }}"/>
+                    {% endif %}
+                </persName>
+            </person>
+        {% endfor %}
+    </listPerson>
+{% endif %}
+
+{% if places.length > 0 %}
+    <listPlace>
+        {% for place in places %}
+            <place xml:id="{{ place.hit_id }}">
+                <placeName>{{ place.value }}
+                    {% if place.geonames_url %}
+                        <ptr type="geonames" target="{{ place.geonames_url }}"/>
+                    {% endif %}
+                </placeName>
+                <location>
+                    <geo>{{ place.lat }} {{ place.long }}</geo>
+                </location>
+            </place>
+        {% endfor %}
+    </listPlace>
+{% endif %}
+
+{% if orgs.length > 0 %}
+    <listOrg>
+        {% for org in orgs %}
+            <org xml:id="{{ org.hit_id }}">
+                <n>{{ org.library_full }}
+                    {% if org.wikidata %}
+                        <ptr type="wikidata" target="{{ org.wikidata }}"/>
+                    {% endif %}
+                      {% if org.gnd_url %}
+                        <ptr type="gnd" target="{{ org.gnd_url }}"/>
+                    {% endif %}
+                </n>
+                {% if org.place and org.place.length > 0 %}
+                    <placeName ref="#{{ org.place[0].hit_id }}">{{ org.place[0].value }}</placeName>
+                {% endif %}
+            </org>
+        {% endfor %}
+    </listOrg>
+{% endif %}
+
+{% if works.length > 0 %}
+    <listBibl type="works">
+        {% for work in works %}
+            <bibl xml:id="{{ work.hit_id }}">
+                <title>{{ work.title }}</title>
+                {% if work.author and work.author.length > 0 %}
+                    {% for author in work.author %}
+                        <author ref="#{{ author.hit_id }}">{{ author.name }}</author>
+                    {% endfor %}
+                {% endif %}
+                
+                {% if work.gnd_url %}
+                    <ref type="gnd" target="{{ work.gnd_url }}"></ref>
+                {% endif %}
+            </bibl>
+        {% endfor %}
+    </listBibl>
+{% endif %}
+
+{% if bibl.length > 0 %}
+    <listBibl type="bibliography">
+        {% for biblItem in bibl %}
+            <bibl xml:id="{{ biblItem.hit_id }}">
+                <author>{{ biblItem.author }}</author>
+                <title>{{ biblItem.title }}</title>
+                {% if biblItem.link %}
+                    <ref type="zotero" target="{{ biblItem.link }}"></ref>
+                {% endif %}
+            </bibl>
+        {% endfor %}
+    </listBibl>
+{% endif %}
