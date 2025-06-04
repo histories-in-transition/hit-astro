@@ -250,13 +250,13 @@ const geoData = processMSData(manuscript)
                                   {prov_unit.from.length > 0 &&
                                     <span>ab 
                                       {prov_unit.from.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_from === false && '(?)'}
+                                      {prov_unit.uncertain_from === true && '(?)'}
                                     </span>}
                                     
                                     {prov_unit.till.length > 0 &&
                                     <span>bis 
                                       {prov_unit.till.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_till === false && '(?)'}
+                                      {prov_unit.uncertain_till === true && '(?)'}
                                     </span>}
                                   </li>
                                 ))}
