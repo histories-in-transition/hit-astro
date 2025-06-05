@@ -67,8 +67,6 @@ const refinementListRepo = wrapInPanel("Bibliothek");
 
 const refinementListRepoPlace = wrapInPanel("Aktuellen Standort");
 
-const refinementListOrigDate = wrapInPanel("Entstehungszeit");
-
 const refinementListCentury = wrapInPanel("Entstehungs Jh");
 
 const refinementListOrigPlace = wrapInPanel("Entstehungsort");
@@ -413,16 +411,6 @@ search.addWidgets([
 	refinementListWork({
 		container: "#refinement-list-work",
 		attribute: "work.title",
-		searchable: true,
-		showMore: true,
-		showMoreLimit: 50,
-		limit: 10,
-		searchablePlaceholder: "",
-	}),
-
-	refinementListOrigDate({
-		container: "#refinement-list-orig-date",
-		attribute: "orig_date.date.value",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,

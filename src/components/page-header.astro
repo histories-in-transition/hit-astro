@@ -102,29 +102,46 @@ const base = import.meta.env.BASE_URL;
 			</ul>
 		</nav>
 	</div>
-	<div id="nav-links" class="hidden rounded-xs grid grid-cols-1 p-5 bg-brand-800">
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/manuscripts">
-			Handschriften
-		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/works">
-			Werke
-		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/scribes">
-			Schreiber
-		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/hands">
-			Schreiberhände
-		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/msitems">
-			MS Elemente
-		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/about">
-			Über uns
-		</NavLink>
-		<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/search">
-			Suche
-		</NavLink>
-	</div>
+	<ul id="nav-links" class="hidden rounded-xs grid grid-cols-1 p-5 bg-brand-800">
+		<li>
+			<NavLink
+				class="py-1 px-3 hover:underline underline-offset-4 text-brand-50"
+				href="/manuscripts"
+			>
+				Handschriften
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/works">
+				Werke
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/scribes">
+				Schreiber
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/hands">
+				Schreiberhände
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/msitems">
+				MS Elemente
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/about">
+				Über uns
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/search">
+				Suche
+			</NavLink>
+		</li>
+	</ul>
 
 	<script src="../lib/menu.js"></script>
 	<script src="@/lib/search-link.js"></script>
