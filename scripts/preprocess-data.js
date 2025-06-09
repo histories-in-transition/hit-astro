@@ -217,7 +217,19 @@ const msItemsPlus = msitems
 		const provenance = cod_unitsprov
 			.filter((unit_pr) => unit_pr.cod_unit.length > 0)
 			.filter((unit_pr) => item.cod_unit.some((c) => c.id === unit_pr.cod_unit[0].id))
-			.flatMap((unit_pr) => enrichPlaces(unit_pr.place, places));
+			.flatMap((unit_pr) => {
+				return {
+					hit_id: unit_pr.hit_id,
+					type: unit_pr.type.value,
+					places: enrichPlaces(unit_pr.place, places),
+					from: enrichDates(unit_pr.from, dates),
+					till: enrichDates(unit_pr.till, dates),
+					uncertain_from: unit_pr.uncertain_from,
+					uncertain_till: unit_pr.uncertain_till,
+					authority: enrichBibl(unit_pr.authority, bibliography),
+					page: unit_pr.page ?? "",
+				};
+			});
 		// Return the enriched msitem
 		return {
 			id: item.id,
@@ -252,13 +264,48 @@ const msItemsPlus = msitems
 			form: item.form.map(({ value }) => ({ value })),
 			form_note: item.form_note ?? "",
 			note: item.note ?? "",
-			orig_date: relatedHand
-				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-				.flatMap((hand) => hand.dating),
-			orig_place: relatedHand
-				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-				.flatMap((hand) => hand.place),
-			provenance: provenance,
+			orig_date: [
+				...relatedHand
+					.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
+					.flatMap((hand) => hand.dating),
+				...provenance
+					.filter((prov) => prov.type === "orig")
+					.map((prov) => ({
+						hit_id: prov.hit_id,
+						date: prov.from,
+						authority: prov.authority,
+						page: prov.page,
+					})),
+			],
+			orig_place: [
+				...relatedHand
+					.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
+					.flatMap((hand) => hand.place),
+				...provenance
+					.filter((prov) => prov.type === "orig")
+					.map((prov) => ({
+						hit_id: prov.hit_id,
+						place: prov.places,
+						authority: prov.authority,
+						page: prov.page,
+					})),
+			],
+			provenance: [
+				...provenance.filter((prov) => prov.type === "prov"),
+				...relatedHand
+					.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value !== "Schreiber")))
+					.flatMap((hand) =>
+						hand.place.map((pl) => {
+							return {
+								hit_id: pl.hit_id,
+								places: pl.place,
+								from: hand.dating.flatMap((dating) => dating.date),
+								till: [],
+								authority: hand.dating.flatMap((d) => d.authority),
+							};
+						}),
+					),
+			],
 			author_entry: author_entry,
 		};
 	});
@@ -429,7 +476,7 @@ const manuscriptsPlus = manuscripts
 							till: enrichDates(prov.till, dates),
 							uncertain_from: prov.uncertain_from,
 							uncertain_till: prov.uncertain_till,
-							type: prov.type.map((t) => t.value).join(", "),
+							type: prov.type.value,
 						};
 					});
 				const relevantMsItems = msItemsPlus
