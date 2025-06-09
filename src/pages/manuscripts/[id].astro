@@ -73,6 +73,8 @@ const geoData = processMSData(manuscript)
              <div class="lg:grid lg:grid-cols-[2fr_5fr] items-start lg:gap-4 p-3">
                
                   <dl class="grid grid-cols-[1fr_5fr] p-3">
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
+                    <dd class="pl-5">{manuscript.title || 'TBD'}</dd>
                     <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
                     <dd class="pl-5">{manuscript?.library[0]?.place[0]?.value}</dd>
                
@@ -94,14 +96,17 @@ const geoData = processMSData(manuscript)
                       <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
                       <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
                
-                    {manuscript.content_summary &&
-                      <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
-                      <dd class="pl-5">{manuscript.content_summary}</dd>}
+                   
                   </dl>
                   <div class="print:hidden">
                     <MapLeaf client:only="react" geoJsonData={geoData}/>
                   </div>
              </div>
+              {manuscript.content_summary &&
+                      <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
+                        <dd class="pl-5">{manuscript.content_summary}</dd>
+                      </dl>}
             </details>
           </section>
           <section aria-labelledby="msMaterial" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">

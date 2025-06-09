@@ -76,6 +76,21 @@ const { data: item } = Astro.props;
                   <span>{aut.name}</span>
                   ))}</dd>
               }
+              {item.text_modification.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Textmodifikation:</dt>
+                <dd class="pl-5">{item.text_modification.map(tm => tm).join(', ')}</dd>
+              }
+              {item.interpolations.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Interpolation:</dt>
+                <dd class="pl-5"><ul>{item.interpolations.flatMap(i => 
+                  <li>
+                   <NavLink href={`/works/${i.hit_id}`}>
+                   {i.author.length > 0 
+                   ? `${i.author.map(a => a.name).join(', ')} : ${i.title}` : i.title }</NavLink>
+                      </li>
+                )}</ul>
+                </dd>
+              }
               {item.title_note &&
               <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
               <dd class="pl-5">{item?.title_note}</dd>

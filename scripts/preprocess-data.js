@@ -1,7 +1,13 @@
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { addPrevNextToMsItems, enrichPlaces, enrichDates, enrichBibl } from "./utils.js";
+import {
+	addPrevNextToMsItems,
+	enrichPlaces,
+	enrichDates,
+	enrichBibl,
+	enrichWorks,
+} from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -89,57 +95,65 @@ const msItemsPlus = msitems
 			.filter((lib) => library.some((libr) => libr.id === lib.id))
 			.flatMap((lib) => lib.place);
 
-		// Add info to related works
-		const relatedWorks = works
-			.map((work) => {
-				// Check if the msitem has any related works
-				if (item.title_work.some((title) => title.id === work.id)) {
-					// Find authors related to the work
-					const relatedAuthors = work.author
-						?.flatMap((wAuthor) => {
-							// Find the corresponding author from the people list
-							const author = people
-								.filter((person) => person.id === wAuthor.id)
-								// Return the author with only the necessary properties
-								.map((person) => {
-									return {
-										id: person.id,
-										hit_id: person.hit_id,
-										name: person.name,
-										gnd_url: person.gnd_url,
-									};
-								});
+		// 		// Add info to related works
+		// 		const relatedWorks = works
+		// 			.map((work) => {
+		// 				// Check if the msitem has any related works
+		// 				if (item.title_work.some((title) => title.id === work.id)) {
+		// 					// Find authors related to the work
+		// 					const relatedAuthors = work.author
+		// 						?.flatMap((wAuthor) => {
+		// 							// Find the corresponding author from the people list
+		// 							const author = people
+		// 								.filter((person) => person.id === wAuthor.id)
+		// 								// Return the author with only the necessary properties
+		// 								.map((person) => {
+		// 									return {
+		// 										id: person.id,
+		// 										hit_id: person.hit_id,
+		// 										name: person.name,
+		// 										gnd_url: person.gnd_url,
+		// 									};
+		// 								});
 
-							return author.length > 0 ? author : null; // returns valid authors or null
-						})
-						.filter((author) => author !== null); // remove null authors
-					const mainGenres = genres
-						.filter((genre) => work.genre.some((g) => g.id === genre.id))
-						.map((genre) => {
-							return {
-								label: `${genre.main_genre || "Varia"} > ${genre.sub_genre}`,
-								subGenre: genre.sub_genre,
-								mainGenre: genre.main_genre || "Varia",
-							};
-						});
-					// Return the work with its related authors
-					return {
-						id: work.id,
-						hit_id: work.hit_id,
-						title: work.title,
-						author: relatedAuthors,
-						gnd_url: work.gnd_url,
-						note: work.note ?? "",
-						bibliography: work.bibliography,
-						source_text: work.source_text,
-						mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
-						subGenre: mainGenres.filter((genre) => genre.subGenre).map((g) => g.label),
-						note_source: work.note_source ?? "",
-					};
-				}
-				return null; // Return null if no related works are found
-			})
-			.filter((work) => work !== null); // Remove null works
+		// 							return author.length > 0 ? author : null; // returns valid authors or null
+		// 						})
+		// 						.filter((author) => author !== null); // remove null authors
+		// 					const mainGenres = genres
+		// 						.filter((genre) => work.genre.some((g) => g.id === genre.id))
+		// 						.map((genre) => {
+		// 							return {
+		// 								label: `${genre.main_genre || "Varia"} > ${genre.sub_genre}`,
+		// 								subGenre: genre.sub_genre,
+		// 								mainGenre: genre.main_genre || "Varia",
+		// 							};
+		// 						});
+		// 					// Return the work with its related authors
+		// 					return {
+		// 						id: work.id,
+		// 						hit_id: work.hit_id,
+		// 						title: work.title,
+		// 						author: relatedAuthors,
+		// 						gnd_url: work.gnd_url,
+		// 						note: work.note ?? "",
+		// 						bibliography: work.bibliography,
+		// 						source_text: work.source_text,
+		// 						mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
+		// 						subGenre: mainGenres.filter((genre) => genre.subGenre).map((g) => g.label),
+		// 						note_source: work.note_source ?? "",
+		// 					};
+		// 				}
+		// 				return null; // Return null if no related works are found
+		// 			})
+		// 			.filter((work) => work !== null); // Remove null works
+		// // do the same with interpolations from works.json
+		// 			const interpolations = works.filter((work) => item.interpolations.some((i) => i.id === work.id))
+		// 		.map((work) => {
+		// Add info to related works
+		const relatedWorks = enrichWorks(item.title_work, works, people, genres);
+
+		// Do the same with interpolations from works.json
+		const interpolations = enrichWorks(item.interpolations, works, people, genres);
 
 		// Add related hands
 		const handLabelsSet = new Set(item.hand.map((h) => h.value));
@@ -230,6 +244,7 @@ const msItemsPlus = msitems
 					page: unit_pr.page ?? "",
 				};
 			});
+
 		// Return the enriched msitem
 		return {
 			id: item.id,
@@ -248,6 +263,8 @@ const msItemsPlus = msitems
 			title_work: relatedWorks.length > 0 ? relatedWorks : [{ title: item.title_note }],
 			title_note: relatedWorks.length > 0 ? item.title_note : "",
 			siglum: item.siglum,
+			text_modification: item.text_modification.map((modification) => modification.value),
+			interpolations: interpolations.length > 0 ? interpolations : [],
 			bibl: item.bibl,
 			commentedMsItem: item.commented_msitem.map((cItem) => {
 				// Find the corresponding msitem for the commented item
@@ -672,6 +689,7 @@ const manuscriptsPlus = manuscripts
 			hit_id: manuscript.hit_id,
 			shelfmark: manuscript.shelfmark[0].value.split(",")[1].trim(),
 			library: library,
+			title: manuscript.title ?? "",
 			manuscripta_url: manuscript.manuscripta_url,
 			handschriftenportal_url: manuscript.handschriftenportal_url,
 			catalog_url: manuscript.catalog_url,
