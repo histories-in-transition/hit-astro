@@ -132,6 +132,10 @@ export function enrichWorks(itemWorks, works, people, genres) {
 							mainGenre: genre.main_genre || "Varia",
 						};
 					});
+				// Enrich source_text
+				const enrichedSourceText = work.source_text
+					? enrichWorks(work.source_text, works, people, genres)
+					: [];
 
 				// Return the work with its related authors
 				return {
@@ -142,7 +146,7 @@ export function enrichWorks(itemWorks, works, people, genres) {
 					gnd_url: work.gnd_url,
 					note: work.note ?? "",
 					bibliography: work.bibliography,
-					source_text: work.source_text,
+					source_text: enrichedSourceText,
 					mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
 					subGenre: mainGenres.filter((genre) => genre.subGenre).map((g) => g.label),
 					note_source: work.note_source ?? "",

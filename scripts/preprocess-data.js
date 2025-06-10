@@ -95,61 +95,6 @@ const msItemsPlus = msitems
 			.filter((lib) => library.some((libr) => libr.id === lib.id))
 			.flatMap((lib) => lib.place);
 
-		// 		// Add info to related works
-		// 		const relatedWorks = works
-		// 			.map((work) => {
-		// 				// Check if the msitem has any related works
-		// 				if (item.title_work.some((title) => title.id === work.id)) {
-		// 					// Find authors related to the work
-		// 					const relatedAuthors = work.author
-		// 						?.flatMap((wAuthor) => {
-		// 							// Find the corresponding author from the people list
-		// 							const author = people
-		// 								.filter((person) => person.id === wAuthor.id)
-		// 								// Return the author with only the necessary properties
-		// 								.map((person) => {
-		// 									return {
-		// 										id: person.id,
-		// 										hit_id: person.hit_id,
-		// 										name: person.name,
-		// 										gnd_url: person.gnd_url,
-		// 									};
-		// 								});
-
-		// 							return author.length > 0 ? author : null; // returns valid authors or null
-		// 						})
-		// 						.filter((author) => author !== null); // remove null authors
-		// 					const mainGenres = genres
-		// 						.filter((genre) => work.genre.some((g) => g.id === genre.id))
-		// 						.map((genre) => {
-		// 							return {
-		// 								label: `${genre.main_genre || "Varia"} > ${genre.sub_genre}`,
-		// 								subGenre: genre.sub_genre,
-		// 								mainGenre: genre.main_genre || "Varia",
-		// 							};
-		// 						});
-		// 					// Return the work with its related authors
-		// 					return {
-		// 						id: work.id,
-		// 						hit_id: work.hit_id,
-		// 						title: work.title,
-		// 						author: relatedAuthors,
-		// 						gnd_url: work.gnd_url,
-		// 						note: work.note ?? "",
-		// 						bibliography: work.bibliography,
-		// 						source_text: work.source_text,
-		// 						mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
-		// 						subGenre: mainGenres.filter((genre) => genre.subGenre).map((g) => g.label),
-		// 						note_source: work.note_source ?? "",
-		// 					};
-		// 				}
-		// 				return null; // Return null if no related works are found
-		// 			})
-		// 			.filter((work) => work !== null); // Remove null works
-		// // do the same with interpolations from works.json
-		// 			const interpolations = works.filter((work) => item.interpolations.some((i) => i.id === work.id))
-		// 		.map((work) => {
-		// Add info to related works
 		const relatedWorks = enrichWorks(item.title_work, works, people, genres);
 
 		// Do the same with interpolations from works.json
@@ -488,7 +433,7 @@ const manuscriptsPlus = manuscripts
 					.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
 					.map((prov) => {
 						return {
-							place: enrichPlaces(prov.place, places),
+							places: enrichPlaces(prov.place, places),
 							from: enrichDates(prov.from, dates),
 							till: enrichDates(prov.till, dates),
 							uncertain_from: prov.uncertain_from,
@@ -522,7 +467,10 @@ const manuscriptsPlus = manuscripts
 					number: unit.number,
 					notes: unit.notes,
 					locus: unit.locus,
-					quires_number: unit.quires_number ?? "",
+					material: unit.material?.value ?? "",
+					material_spec: unit.material_spec ?? "",
+					catchwords: unit.catchwords ?? "",
+					quiremarks: unit.quiremarks ?? "",
 					heigth: unit.heigth ?? "",
 					width: unit.width ?? "",
 					written_height: unit.written_height ?? "",
@@ -533,7 +481,7 @@ const manuscriptsPlus = manuscripts
 					decoration: unit.decorations ?? "",
 					codicological_reworking: unit.codicological_reworking.map((re) => re.value),
 					basic_structure: unit.basic_structure.map((str) => str.value),
-
+					notes: unit.notes ?? "",
 					prov_place: prov_place,
 					content: relevantMsItems,
 				};
@@ -704,10 +652,7 @@ const manuscriptsPlus = manuscripts
 			bibliography: enrichBibl(manuscript.bibliography, bibliography),
 			height: manuscript.height ?? "",
 			width: manuscript.width ?? "",
-			material: manuscript.material?.value,
-			material_spec: manuscript.material_spec,
-			catchwords: manuscript.catchwords ?? "",
-			quiremarks: manuscript.quiremarks ?? "",
+			material: [...new Set(cod_unit.map((unit) => unit.material))] ?? "",
 			history: manuscript.history,
 			orig_place: enrichPlaces(manuscript.orig_place, places),
 

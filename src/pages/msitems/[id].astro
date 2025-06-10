@@ -3,7 +3,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
-
+import type { MsItem } from "@/types/index.ts";
 import msitems from "@/content/data/ms_items.json";
 
 export async function getStaticPaths() { 
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
    
     return {
       params: { id: msItemId }, 
-      props: { data: item }
+      props: { data: item as MsItem }
     }
   });
 
