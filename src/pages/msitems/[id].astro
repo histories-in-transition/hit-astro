@@ -3,7 +3,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
-
+import type { MsItem } from "@/types/index.ts";
 import msitems from "@/content/data/ms_items.json";
 
 export async function getStaticPaths() { 
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
    
     return {
       params: { id: msItemId }, 
-      props: { data: item }
+      props: { data: item as MsItem }
     }
   });
 
@@ -75,6 +75,21 @@ const { data: item } = Astro.props;
                   :
                   <span>{aut.name}</span>
                   ))}</dd>
+              }
+              {item.text_modification.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Textmodifikation:</dt>
+                <dd class="pl-5">{item.text_modification.map(tm => tm).join(', ')}</dd>
+              }
+              {item.interpolations.length > 0 &&
+                <dt class="font-semibold border-r border-gray-300 pr-2">Interpolation:</dt>
+                <dd class="pl-5"><ul>{item.interpolations.flatMap(i => 
+                  <li>
+                   <NavLink href={`/works/${i.hit_id}`}>
+                   {i.author.length > 0 
+                   ? `${i.author.map(a => a.name).join(', ')} : ${i.title}` : i.title }</NavLink>
+                      </li>
+                )}</ul>
+                </dd>
               }
               {item.title_note &&
               <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>

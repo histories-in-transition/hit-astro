@@ -1,7 +1,13 @@
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { addPrevNextToMsItems, enrichPlaces, enrichDates, enrichBibl } from "./utils.js";
+import {
+	addPrevNextToMsItems,
+	enrichPlaces,
+	enrichDates,
+	enrichBibl,
+	enrichWorks,
+} from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -89,57 +95,10 @@ const msItemsPlus = msitems
 			.filter((lib) => library.some((libr) => libr.id === lib.id))
 			.flatMap((lib) => lib.place);
 
-		// Add info to related works
-		const relatedWorks = works
-			.map((work) => {
-				// Check if the msitem has any related works
-				if (item.title_work.some((title) => title.id === work.id)) {
-					// Find authors related to the work
-					const relatedAuthors = work.author
-						?.flatMap((wAuthor) => {
-							// Find the corresponding author from the people list
-							const author = people
-								.filter((person) => person.id === wAuthor.id)
-								// Return the author with only the necessary properties
-								.map((person) => {
-									return {
-										id: person.id,
-										hit_id: person.hit_id,
-										name: person.name,
-										gnd_url: person.gnd_url,
-									};
-								});
+		const relatedWorks = enrichWorks(item.title_work, works, people, genres);
 
-							return author.length > 0 ? author : null; // returns valid authors or null
-						})
-						.filter((author) => author !== null); // remove null authors
-					const mainGenres = genres
-						.filter((genre) => work.genre.some((g) => g.id === genre.id))
-						.map((genre) => {
-							return {
-								label: `${genre.main_genre || "Varia"} > ${genre.sub_genre}`,
-								subGenre: genre.sub_genre,
-								mainGenre: genre.main_genre || "Varia",
-							};
-						});
-					// Return the work with its related authors
-					return {
-						id: work.id,
-						hit_id: work.hit_id,
-						title: work.title,
-						author: relatedAuthors,
-						gnd_url: work.gnd_url,
-						note: work.note ?? "",
-						bibliography: work.bibliography,
-						source_text: work.source_text,
-						mainGenre: mainGenres.flatMap((genre) => genre.mainGenre),
-						subGenre: mainGenres.filter((genre) => genre.subGenre).map((g) => g.label),
-						note_source: work.note_source ?? "",
-					};
-				}
-				return null; // Return null if no related works are found
-			})
-			.filter((work) => work !== null); // Remove null works
+		// Do the same with interpolations from works.json
+		const interpolations = enrichWorks(item.interpolations, works, people, genres);
 
 		// Add related hands
 		const handLabelsSet = new Set(item.hand.map((h) => h.value));
@@ -217,7 +176,20 @@ const msItemsPlus = msitems
 		const provenance = cod_unitsprov
 			.filter((unit_pr) => unit_pr.cod_unit.length > 0)
 			.filter((unit_pr) => item.cod_unit.some((c) => c.id === unit_pr.cod_unit[0].id))
-			.flatMap((unit_pr) => enrichPlaces(unit_pr.place, places));
+			.flatMap((unit_pr) => {
+				return {
+					hit_id: unit_pr.hit_id,
+					type: unit_pr.type.value,
+					places: enrichPlaces(unit_pr.place, places),
+					from: enrichDates(unit_pr.from, dates),
+					till: enrichDates(unit_pr.till, dates),
+					uncertain_from: unit_pr.uncertain_from,
+					uncertain_till: unit_pr.uncertain_till,
+					authority: enrichBibl(unit_pr.authority, bibliography),
+					page: unit_pr.page ?? "",
+				};
+			});
+
 		// Return the enriched msitem
 		return {
 			id: item.id,
@@ -236,6 +208,8 @@ const msItemsPlus = msitems
 			title_work: relatedWorks.length > 0 ? relatedWorks : [{ title: item.title_note }],
 			title_note: relatedWorks.length > 0 ? item.title_note : "",
 			siglum: item.siglum,
+			text_modification: item.text_modification.map((modification) => modification.value),
+			interpolations: interpolations.length > 0 ? interpolations : [],
 			bibl: item.bibl,
 			commentedMsItem: item.commented_msitem.map((cItem) => {
 				// Find the corresponding msitem for the commented item
@@ -252,13 +226,48 @@ const msItemsPlus = msitems
 			form: item.form.map(({ value }) => ({ value })),
 			form_note: item.form_note ?? "",
 			note: item.note ?? "",
-			orig_date: relatedHand
-				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-				.flatMap((hand) => hand.dating),
-			orig_place: relatedHand
-				.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-				.flatMap((hand) => hand.place),
-			provenance: provenance,
+			orig_date: [
+				...relatedHand
+					.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
+					.flatMap((hand) => hand.dating),
+				...provenance
+					.filter((prov) => prov.type === "orig")
+					.map((prov) => ({
+						hit_id: prov.hit_id,
+						date: prov.from,
+						authority: prov.authority,
+						page: prov.page,
+					})),
+			],
+			orig_place: [
+				...relatedHand
+					.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
+					.flatMap((hand) => hand.place),
+				...provenance
+					.filter((prov) => prov.type === "orig")
+					.map((prov) => ({
+						hit_id: prov.hit_id,
+						place: prov.places,
+						authority: prov.authority,
+						page: prov.page,
+					})),
+			],
+			provenance: [
+				...provenance.filter((prov) => prov.type === "prov"),
+				...relatedHand
+					.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value !== "Schreiber")))
+					.flatMap((hand) =>
+						hand.place.map((pl) => {
+							return {
+								hit_id: pl.hit_id,
+								places: pl.place,
+								from: hand.dating.flatMap((dating) => dating.date),
+								till: [],
+								authority: hand.dating.flatMap((d) => d.authority),
+							};
+						}),
+					),
+			],
 			author_entry: author_entry,
 		};
 	});
@@ -424,12 +433,12 @@ const manuscriptsPlus = manuscripts
 					.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
 					.map((prov) => {
 						return {
-							place: enrichPlaces(prov.place, places),
+							places: enrichPlaces(prov.place, places),
 							from: enrichDates(prov.from, dates),
 							till: enrichDates(prov.till, dates),
 							uncertain_from: prov.uncertain_from,
 							uncertain_till: prov.uncertain_till,
-							type: prov.type.map((t) => t.value).join(", "),
+							type: prov.type.value,
 						};
 					});
 				const relevantMsItems = msItemsPlus
@@ -458,7 +467,10 @@ const manuscriptsPlus = manuscripts
 					number: unit.number,
 					notes: unit.notes,
 					locus: unit.locus,
-					quires_number: unit.quires_number ?? "",
+					material: unit.material?.value ?? "",
+					material_spec: unit.material_spec ?? "",
+					catchwords: unit.catchwords ?? "",
+					quiremarks: unit.quiremarks ?? "",
 					heigth: unit.heigth ?? "",
 					width: unit.width ?? "",
 					written_height: unit.written_height ?? "",
@@ -469,7 +481,7 @@ const manuscriptsPlus = manuscripts
 					decoration: unit.decorations ?? "",
 					codicological_reworking: unit.codicological_reworking.map((re) => re.value),
 					basic_structure: unit.basic_structure.map((str) => str.value),
-
+					notes: unit.notes ?? "",
 					prov_place: prov_place,
 					content: relevantMsItems,
 				};
@@ -625,6 +637,7 @@ const manuscriptsPlus = manuscripts
 			hit_id: manuscript.hit_id,
 			shelfmark: manuscript.shelfmark[0].value.split(",")[1].trim(),
 			library: library,
+			title: manuscript.title ?? "",
 			manuscripta_url: manuscript.manuscripta_url,
 			handschriftenportal_url: manuscript.handschriftenportal_url,
 			catalog_url: manuscript.catalog_url,
@@ -639,10 +652,7 @@ const manuscriptsPlus = manuscripts
 			bibliography: enrichBibl(manuscript.bibliography, bibliography),
 			height: manuscript.height ?? "",
 			width: manuscript.width ?? "",
-			material: manuscript.material?.value,
-			material_spec: manuscript.material_spec,
-			catchwords: manuscript.catchwords ?? "",
-			quiremarks: manuscript.quiremarks ?? "",
+			material: [...new Set(cod_unit.map((unit) => unit.material))] ?? "",
 			history: manuscript.history,
 			orig_place: enrichPlaces(manuscript.orig_place, places),
 

@@ -5,7 +5,7 @@ import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import {processMSData} from "@/lib/make-geojson.js";
 import MapLeaf from "@/components/map-leaflet.jsx";
-
+import type { Manuscript } from "@/types/index.ts";
 import manuscripts from "@/content/data/manuscripts.json";
 
 export async function getStaticPaths() {
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
     return {
       params: { id: manuscriptId },
-      props: { data: manuscript },
+      props: { data: manuscript as Manuscript },
     };
   });
 
@@ -72,7 +72,9 @@ const geoData = processMSData(manuscript)
               </summary>
              <div class="lg:grid lg:grid-cols-[2fr_5fr] items-start lg:gap-4 p-3">
                
-                  <dl class="grid grid-cols-[1fr_5fr] p-3">
+                  <dl class="grid grid-cols-[2fr_5fr] p-3">
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
+                    <dd class="pl-5">{manuscript.title || 'TBD'}</dd>
                     <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
                     <dd class="pl-5">{manuscript?.library[0]?.place[0]?.value}</dd>
                
@@ -94,14 +96,17 @@ const geoData = processMSData(manuscript)
                       <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
                       <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
                
-                    {manuscript.content_summary &&
-                      <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
-                      <dd class="pl-5">{manuscript.content_summary}</dd>}
+                   
                   </dl>
                   <div class="print:hidden">
                     <MapLeaf client:only="react" geoJsonData={geoData}/>
                   </div>
              </div>
+              {manuscript.content_summary &&
+                      <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
+                        <dd class="pl-5">{manuscript.content_summary}</dd>
+                      </dl>}
             </details>
           </section>
           <section aria-labelledby="msMaterial" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
@@ -113,15 +118,7 @@ const geoData = processMSData(manuscript)
               <dl class=" grid grid-cols-[1fr_5fr] p-3">
                 <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
                 <dd class="pl-5">
-                    {manuscript?.material === "parchment" && <span>Pergament</span>}
-                    {manuscript?.material === "mixed" && <span>Mischung</span>}
-                    {manuscript?.material === "paper" && <span>Papier</span>}
-                    {manuscript?.material_spec &&
-                      <span>
-                         <Icon class="inline-flex" aria-hidden="true" name="lucide:arrow-right"/>
-                         {manuscript?.material_spec}</span>
-              
-                    }
+                    {manuscript?.material}
                 </dd>
               
                 <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
@@ -129,15 +126,7 @@ const geoData = processMSData(manuscript)
                 <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
                 <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd>
                 <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-                <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>
-                {manuscript.quiremarks && (
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
-                  <dd class="pl-5">{manuscript?.quiremarks}</dd>
-                 )}
-                {manuscript.catchwords && (
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
-                     <dd class="pl-5">{manuscript?.catchwords}</dd>
-                )}
+                <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>               
                 <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
                 <dd class="pl-5">
                   {manuscript.quire_structure && (
@@ -171,8 +160,21 @@ const geoData = processMSData(manuscript)
                       <details open class="border-b border-neutral-200">
                         <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="codUnits" >
                           Kodikologische Einheit {unit.number}               
-                        </summary>                          
+                        </summary> 
+                        <p class="px-3 text-brand-900">{unit.notes}</p>                         
                           <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                             <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
+                            <dd class="pl-5">
+                                {unit.material 
+                                ? unit.material
+                                : 'N/A'}
+                                {unit.material_spec 
+                                ? `: ${unit.material_spec}`
+                                : ''}
+                                {unit.basic_structure.length > 0 ? 
+                                `(${unit.basic_structure.map(struct => struct).join(', ')})` :  ''}
+                                
+                            </dd>
                             <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
                             <dd class="pl-5">
                                 {unit.locus 
@@ -180,20 +182,15 @@ const geoData = processMSData(manuscript)
                                 : 'N/A'}
                                 
                             </dd>
-                            {unit.quires_number 
-                                ? 
-                                <dt class="font-semibold border-r border-gray-300 pr-2">Lagen:</dt>
-                            <dd class="pl-5">
-                                {unit.quires_number}
-                            </dd> 
-                            : ''}
 
-                            {unit.basic_structure.length > 0 && 
-                            <dt class="font-semibold border-r border-gray-300 pr-2">Grundstruktur:</dt>
-                            <dd class="pl-5">
-                                {unit.basic_structure.map(struct => struct).join(', ')} 
-                            </dd>
-                            }
+                             {unit.quiremarks && (
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+                  <dd class="pl-5">{unit?.quiremarks}</dd>
+                 )}
+                {unit.catchwords && (
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
+                     <dd class="pl-5">{unit?.catchwords}</dd>
+                )}                            
                             
                             {unit.heigth && unit.width
                               ? 
@@ -230,22 +227,17 @@ const geoData = processMSData(manuscript)
                                 {unit.decoration} 
                             </dd>    
                             } 
-
-                            {unit.codicological_reworking.length > 0 &&
-                            <dt class="font-semibold border-r border-gray-300 pr-2">Rework:</dt>
-                            <dd class="pl-5">
-                                {unit.codicological_reworking.map(rework => rework).join(', ')} 
-                            </dd>    
-                            }
+                          
                             {unit.prov_place.length > 0 &&
-                            <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                            (
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Entstehungsort:</dt>
                             <dd class="pl-5">
                                 <ul>
-                                  {unit.prov_place.map(prov_unit => (
+                                  {unit.prov_place.filter(prov => prov.type === 'orig')
+                                  .map(prov_unit => (
                                   <li>
-                                    {prov_unit.type === 'orig' &&
-                                    <span>Entstehungsort: </span>}
-                                    {prov_unit.place.map(place => place.value)}                          
+                                    {                               
+                                    prov_unit.places.map(place => place.value)}                          
                                     {/* check if there are dates for the origin */ }
                                   {prov_unit.from.length > 0 &&
                                     <span>ab 
@@ -262,8 +254,33 @@ const geoData = processMSData(manuscript)
                                 ))}
                                   </ul>
                               </dd>
+                            
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                            <dd class="pl-5">
+                                <ul>
+                                  {unit.prov_place.filter(prov => prov.type === 'prov')
+                                  .map(prov_unit => (
+                                  <li>                                    
+                                    {prov_unit.places.map(place => place.value)}                          
+                                    {/* check if there are dates for the origin */ }
+                                  {prov_unit.from.length > 0 &&
+                                    <span>ab 
+                                      {prov_unit.from.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_from === true && '(?)'}
+                                    </span>}
+                                    
+                                    {prov_unit.till.length > 0 &&
+                                    <span>bis 
+                                      {prov_unit.till.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_till === true && '(?)'}
+                                    </span>}
+                                  </li>
+                                ))}
+                                  </ul>
+                              </dd>
+                              )
                               }          
-                          </dl>
+                          </dl>                          
                           </details>
                       </>
                     ))}
@@ -276,7 +293,11 @@ const geoData = processMSData(manuscript)
               <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msHistory" >
                 Geschichte               
               </summary>
-              <dl class=" grid grid-cols-[1fr_5fr] p-5">               
+               {manuscript?.history !== undefined 
+                  ? <p class="px-3 text-brand-900">{manuscript?.history}</p>
+                  : ''
+                }
+              <dl class=" grid grid-cols-[1fr_5fr] p-3">               
                 <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
                 <dd class="pl-5">{manuscript?.orig_place.map(place => {
                   return place.value}).join(', ')}</dd>
@@ -300,10 +321,7 @@ const geoData = processMSData(manuscript)
                       </ul>}
                 </dd>
               </dl> 
-                {manuscript?.history !== undefined 
-                  ? <p class="p-5">{manuscript?.history}</p>
-                  : ''
-                }
+               
             </details>
             </section>
 
@@ -746,7 +764,8 @@ const geoData = processMSData(manuscript)
             </div> 
              </details>
           </section>
-          : ""} 
+          : ""
+          } 
         
  
     </Article>

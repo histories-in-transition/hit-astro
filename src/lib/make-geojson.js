@@ -171,7 +171,7 @@ export function processMSData(input) {
 				// Origin Place Cod Units Features
 				...(mssData.cod_units?.flatMap((unit) =>
 					unit.prov_place.flatMap((prov) =>
-						prov.place
+						prov.places
 							.filter((pl) => pl.lat && pl.long) // Filter out invalid coordinates
 							.map((pl) => ({
 								type: "Feature",
