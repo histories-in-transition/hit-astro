@@ -83,6 +83,10 @@ const refinementListDecoration = wrapInPanel("Ausstatung");
 
 const refinementListForm = wrapInPanel("Form");
 
+const refinementListModifications = wrapInPanel("Textvariationen");
+
+const refinementListInterpolations = wrapInPanel("Interpolations");
+
 const hierarchicalMenuGenre = wrapHierarcicalMenuInPanel("Genre");
 
 // Initialize a custom Algolia widget to allow users to filter results by a range of years
@@ -441,7 +445,7 @@ search.addWidgets([
 
 	refinementListProvenance({
 		container: "#refinement-list-provenance",
-		attribute: "provenance.value",
+		attribute: "provenance.places.value",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -508,6 +512,26 @@ search.addWidgets([
 		searchablePlaceholder: "",
 	}),
 
+	refinementListModifications({
+		container: "#refinement-list-modifications",
+		attribute: "modifications",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListInterpolations({
+		container: "#refinement-list-interpolations",
+		attribute: "interpolations.title",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
 	hierarchicalMenuGenre({
 		container: "#refinement-list-genre",
 		attributes: ["main_genre", "sub_genre"],
@@ -558,7 +582,11 @@ search.addWidgets([
 																			? "Termininus post quem"
 																			: item.attribute === "main_genre"
 																				? "Genre"
-																				: item.label,
+																				: item.attribute === "interpolations.title"
+																					? "Interpolations"
+																					: item.attribute === "modifications"
+																						? "Textvariationen"
+																						: item.label,
 			}));
 		},
 	}),

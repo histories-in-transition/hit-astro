@@ -48,6 +48,8 @@ async function generate() {
 			{ name: "terminus_post_quem", type: "int32", facet: true, optional: true },
 			{ name: "terminus_ante_quem", type: "int32", facet: true, optional: true },
 			{ name: "form", type: "object[]", facet: true, optional: true },
+			{ name: "modifications", type: "string[]", facet: true, optional: true },
+			{ name: "interpolations", type: "object[]", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -104,6 +106,8 @@ async function generate() {
 			sub_genre: value.title_work[0].subGenre || [],
 			main_genre: value.title_work[0].mainGenre || [],
 			form: value.form || [],
+			modifications: value.text_modification || [],
+			interpolations: value.interpolations || [],
 		};
 		records.push(item);
 	});
