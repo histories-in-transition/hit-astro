@@ -231,7 +231,7 @@ const geoData = processMSData(manuscript)
                             {unit.prov_place.length > 0 &&
                             (
                               <dt class="font-semibold border-r border-gray-300 pr-2">Entstehungsort:</dt>
-                            <dd class="pl-5">
+                              <dd class="pl-5">
                                 <ul>
                                   {unit.prov_place.filter(prov => prov.type === 'orig')
                                   .map(prov_unit => (
@@ -246,16 +246,17 @@ const geoData = processMSData(manuscript)
                                     </span>}
                                     
                                     {prov_unit.till.length > 0 &&
-                                    <span>bis 
+                                    <span>(dort bis 
                                       {prov_unit.till.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_till === true && '(?)'}
+                                      {prov_unit.uncertain_till === true && '(?)'})
                                     </span>}
                                   </li>
                                 ))}
                                   </ul>
-                              </dd>
-                            
-                            <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                              </dd>)}
+                            {unit.prov_place.length > 0 && unit.prov_place.some(prov => prov.type === 'prov') &&
+                            (
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
                             <dd class="pl-5">
                                 <ul>
                                   {unit.prov_place.filter(prov => prov.type === 'prov')
@@ -278,8 +279,7 @@ const geoData = processMSData(manuscript)
                                 ))}
                                   </ul>
                               </dd>
-                              )
-                              }          
+                            )}    
                           </dl>                          
                           </details>
                       </>
