@@ -479,7 +479,6 @@ const manuscriptsPlus = manuscripts
 					lines_number: unit.lines_number ?? "",
 					ruling: unit.ruling ?? "",
 					decoration: unit.decorations ?? "",
-					codicological_reworking: unit.codicological_reworking.map((re) => re.value),
 					basic_structure: unit.basic_structure.map((str) => str.value),
 					notes: unit.notes ?? "",
 					prov_place: prov_place,
