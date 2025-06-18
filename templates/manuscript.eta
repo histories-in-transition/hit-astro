@@ -389,9 +389,7 @@
                                         <% if (unit.quire_number) { %>
                                             <p>Lagen: <%= unit.quire_number %> (fol. <%= unit.locus %>)</p>
                                         <% } %>
-                                         <% if (unit.codicological_reworking.length > 0) { %>
-                                            <p><%= unit.codicological_reworking.join(', ') %></p>
-                                        <% } %>
+                                         
                                         </collation>
                                     </supportDesc>
                                     <layoutDesc>
