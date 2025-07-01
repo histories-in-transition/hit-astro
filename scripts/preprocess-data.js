@@ -160,6 +160,7 @@ const msItemsPlus = msitems
 							role: hRole.role.map(({ value }) => ({ value })),
 							locus: hRole.locus,
 							locus_layout: hRole.locus_layout.map(({ value }) => ({ value })),
+							scribe_type: hRole.scribe_type.map(({ value }) => ({ value })),
 							function: hRole.function.map(({ value }) => ({ value })),
 							role_context: hRole.scribe_type.map(({ value }) => ({ value })),
 						};
@@ -794,6 +795,7 @@ const strataPlus = strataa.map((stratum) => {
 				hit_id: ms.hit_id,
 				shelfmark: ms.shelfmark,
 				library: ms.library,
+				author_entry: ms.author_entry,
 			};
 		});
 	// get all hand_roles for this stratum
@@ -838,6 +840,7 @@ const strataPlus = strataa.map((stratum) => {
 			const titles = item.title_work.map((t) => t.title).join("; ");
 
 			const w_aut = authorNames.length > 0 ? `${authorNames.join("; ")}: ${titles}` : titles;
+			// return the enriched ms_item
 			return {
 				id: item.id,
 				hit_id: item.hit_id,
@@ -853,6 +856,9 @@ const strataPlus = strataa.map((stratum) => {
 				orig_date: item.orig_date,
 				orig_place: item.orig_place,
 				provenance: item.provenance,
+				hands: item.hands.filter((hand) =>
+					hand.jobs.some((job) => stratumHandRoles.some((h_role) => h_role.hit_id === job.hit_id)),
+				),
 			};
 		});
 	//use data from msitem to get unique places and dates
@@ -875,7 +881,6 @@ const strataPlus = strataa.map((stratum) => {
 		manuscript: manuscript,
 		label: stratum.label[0].value,
 		character: stratum.character.map((c) => c.value),
-		hands: uniqueEnrichedHands,
 		note: stratum.note ?? "",
 		msitems: mssitems,
 		date: stratumDates,
