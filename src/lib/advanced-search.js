@@ -63,10 +63,6 @@ const refinementListWork = wrapInPanel("Werk");
 
 const refinementListMS = wrapInPanel("Handschrift");
 
-const refinementListRepo = wrapInPanel("Bibliothek");
-
-const refinementListRepoPlace = wrapInPanel("Aktuellen Standort");
-
 const refinementListCentury = wrapInPanel("Entstehungs Jh");
 
 const refinementListOrigPlace = wrapInPanel("Entstehungsort");
@@ -82,6 +78,10 @@ const refinementListHandsContextRole = wrapInPanel("Schreiber Typ");
 const refinementListDecoration = wrapInPanel("Ausstatung");
 
 const refinementListForm = wrapInPanel("Form");
+
+const refinementListLanguage = wrapInPanel("Sprache");
+
+const refinementListProject = wrapInPanel("Projekt");
 
 const refinementListModifications = wrapInPanel("Textvariationen");
 
@@ -383,25 +383,6 @@ search.addWidgets([
 		container: "#stats-container",
 	}),
 
-	refinementListRepo({
-		container: "#refinement-list-library",
-		attribute: "library.value",
-		searchable: true,
-		showMore: true,
-		showMoreLimit: 50,
-		limit: 10,
-		searchablePlaceholder: "",
-	}),
-
-	refinementListRepoPlace({
-		container: "#refinement-list-library-place",
-		attribute: "library_place.value",
-		searchable: true,
-		showMore: true,
-		showMoreLimit: 50,
-		limit: 10,
-		searchablePlaceholder: "",
-	}),
 	refinementListMS({
 		container: "#refinement-list-manuscripts",
 		attribute: "manuscript.value",
@@ -532,6 +513,26 @@ search.addWidgets([
 		searchablePlaceholder: "",
 	}),
 
+	refinementListLanguage({
+		container: "#refinement-list-language",
+		attribute: "language.value",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListProject({
+		container: "#refinement-list-project",
+		attribute: "project",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
 	hierarchicalMenuGenre({
 		container: "#refinement-list-genre",
 		attributes: ["main_genre", "sub_genre"],
@@ -558,35 +559,33 @@ search.addWidgets([
 							? "Werk"
 							: item.attribute === "manuscript.value"
 								? "Handschrift"
-								: item.attribute === "library.value"
-									? "Bibliothek"
-									: item.attribute === "library_place.value"
-										? "Aktuellen Standort"
-										: item.attribute === "orig_date.date.value"
-											? "Entstehungszeit"
-											: item.attribute === "orig_place.place.value"
-												? "Entstehungsort"
-												: item.attribute === "provenance.value"
-													? "Provenienz"
-													: item.attribute === "hands.jobs.function.value"
-														? "Händefunktion"
-														: item.attribute === "hands.jobs.role.value"
-															? "Schreiberaktivitäten"
-															: item.attribute === "hands.jobs.role_context.value"
-																? "Schreiber Typ"
-																: item.attribute === "decoration.value"
-																	? "Decoration"
-																	: item.attribute === "terminus_ante_quem"
-																		? "Terminus ante quem"
-																		: item.attribute === "terminus_post_quem"
-																			? "Termininus post quem"
-																			: item.attribute === "main_genre"
-																				? "Genre"
-																				: item.attribute === "interpolations.title"
-																					? "Interpolations"
-																					: item.attribute === "modifications"
-																						? "Textvariationen"
-																						: item.label,
+								: item.attribute === "orig_date.date.value"
+									? "Entstehungszeit"
+									: item.attribute === "orig_place.place.value"
+										? "Entstehungsort"
+										: item.attribute === "provenance.value"
+											? "Provenienz"
+											: item.attribute === "hands.jobs.function.value"
+												? "Händefunktion"
+												: item.attribute === "hands.jobs.role.value"
+													? "Schreiberaktivitäten"
+													: item.attribute === "hands.jobs.role_context.value"
+														? "Schreiber Typ"
+														: item.attribute === "decoration.value"
+															? "Decoration"
+															: item.attribute === "terminus_ante_quem"
+																? "Terminus ante quem"
+																: item.attribute === "terminus_post_quem"
+																	? "Termininus post quem"
+																	: item.attribute === "main_genre"
+																		? "Genre"
+																		: item.attribute === "interpolations.title"
+																			? "Interpolations"
+																			: item.attribute === "modifications"
+																				? "Textvariationen"
+																				: item.attribute === "language.value"
+																					? "Sprache"
+																					: item.label,
 			}));
 		},
 	}),

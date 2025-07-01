@@ -94,6 +94,9 @@ const msItemsPlus = msitems
 		const library_place = librariesPlus
 			.filter((lib) => library.some((libr) => libr.id === lib.id))
 			.flatMap((lib) => lib.place);
+		const project = manuscripts
+			.filter((ms) => ms.id === item.manuscript[0]?.id)
+			.flatMap((ms) => ms.case_study?.map((cs) => cs.value) || []);
 
 		const relatedWorks = enrichWorks(item.title_work, works, people, genres);
 
@@ -201,6 +204,7 @@ const msItemsPlus = msitems
 			library: library,
 			library_place: library_place,
 			cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
+			language: item.language.map(({ value }) => ({ value })),
 			locus: item.locus_grp,
 			incipit: item.incipit,
 			explicit: item.explicit,
@@ -270,6 +274,7 @@ const msItemsPlus = msitems
 					),
 			],
 			author_entry: author_entry,
+			project: project,
 		};
 	});
 

@@ -50,6 +50,8 @@ async function generate() {
 			{ name: "form", type: "object[]", facet: true, optional: true },
 			{ name: "modifications", type: "string[]", facet: true, optional: true },
 			{ name: "interpolations", type: "object[]", facet: true, optional: true },
+			{ name: "language", type: "object[]", facet: true, optional: true },
+			{ name: "project", type: "string[]", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -108,6 +110,8 @@ async function generate() {
 			form: value.form || [],
 			modifications: value.text_modification || [],
 			interpolations: value.interpolations || [],
+			language: value.language || [],
+			project: value.project || [],
 		};
 		records.push(item);
 	});

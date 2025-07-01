@@ -76,6 +76,8 @@ const { data: item } = Astro.props;
                   <span>{aut.name}</span>
                   ))}</dd>
               }
+              <dt class="font-semibold border-r border-gray-300 pr-2">Sprache:</dt>
+              <dd class="pl-5">{item.language.map(lang => lang.value).join(', ')}</dd>
               {item.text_modification.length > 0 &&
                 <dt class="font-semibold border-r border-gray-300 pr-2">Textmodifikation:</dt>
                 <dd class="pl-5">{item.text_modification.map(tm => tm).join(', ')}</dd>

@@ -137,6 +137,7 @@ export interface MsItem {
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
+	language?: FormItem[];
 }
 
 interface FormItem {
