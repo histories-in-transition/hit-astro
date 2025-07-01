@@ -784,4 +784,108 @@ writeFileSync(join(folderPath, "works.json"), JSON.stringify(updatedWorks, null,
 	encoding: "utf-8",
 });
 
+const strataPlus = strataa.map((stratum) => {
+	// get enriched manuscripts from manuscripts.json
+	const manuscript = manuscriptsPlus
+		.filter((ms) => stratum.manuscript.some((m) => m.id === ms.id))
+		.map((ms) => {
+			return {
+				id: ms.id,
+				hit_id: ms.hit_id,
+				shelfmark: ms.shelfmark,
+				library: ms.library,
+			};
+		});
+	// get all hand_roles for this stratum
+	const stratumHandRoles = handsrole.filter((h_role) =>
+		stratum.hand_role.some((s_h_role) => s_h_role.id === h_role.id),
+	);
+	// Get all hands referenced by these hand_roles, enrich with handsdated
+	const enrichedHands = stratumHandRoles
+		.flatMap((h_role) =>
+			h_role.hand.map((handRef) => {
+				const hand = hands.find((h) => h.id === handRef.id);
+				if (!hand) return null;
+				const dhand = handsdated
+					.filter((hand_d) => hand_d.hand.some((h) => h.id === hand.id))
+					.flatMap((dhand) => enrichDates(dhand.dated, dates));
+				const placedHand = handsplaced
+					.filter((hplaced) => hplaced.hand.some((h) => h.id === hand.id))
+					.flatMap((p_hand) => enrichPlaces(p_hand.place, places));
+				return {
+					hit_id: hand.hit_id,
+					label: hand.label[0].value,
+					date: dhand,
+					place: placedHand,
+				};
+			}),
+		)
+		.filter(Boolean);
+
+	// Optionally, remove duplicates by hit_id
+	const uniqueEnrichedHands = Array.from(new Map(enrichedHands.map((h) => [h.hit_id, h])).values());
+
+	// Get all ms_items referenced by these hand_roles, enrich with msItemsPlus
+	const mssitems = msItemsPlus
+		.filter((mitem) =>
+			stratumHandRoles.some((h_role) => h_role.ms_item.some((item) => item.id === mitem.id)),
+		)
+		.map((item) => {
+			//complicated way to get author names and titles from title_work
+			const authorNames = item.title_work.flatMap((t) =>
+				t.author ? t.author.map((a) => a.name).filter(Boolean) : [],
+			);
+			const titles = item.title_work.map((t) => t.title).join("; ");
+
+			const w_aut = authorNames.length > 0 ? `${authorNames.join("; ")}: ${titles}` : titles;
+			return {
+				id: item.id,
+				hit_id: item.hit_id,
+				work: item.title_work.map((t) => {
+					return {
+						title: t.title,
+						hit_id: t.hit_id,
+					};
+				}),
+				author: item.title_work.flatMap((t) => t.author || []),
+				w_aut: w_aut,
+				locus: item.locus,
+				orig_date: item.orig_date,
+				orig_place: item.orig_place,
+				provenance: item.provenance,
+			};
+		});
+	//use data from msitem to get unique places and dates
+	const stratumPlaces = [
+		...new Map(
+			uniqueEnrichedHands.flatMap((hand) => hand.place).map((obj) => [`${obj?.id}`, obj]),
+		).values(),
+	];
+
+	//make a Map of unique dates from enriched hands
+	const stratumDates = [
+		...new Map(
+			uniqueEnrichedHands.flatMap((hand) => hand.date).map((obj) => [`${obj?.id}`, obj]),
+		).values(),
+	];
+	return {
+		id: stratum.id,
+		hit_id: stratum.hit_id,
+		number: stratum.number,
+		manuscript: manuscript,
+		label: stratum.label[0].value,
+		character: stratum.character.map((c) => c.value),
+		hands: uniqueEnrichedHands,
+		note: stratum.note ?? "",
+		msitems: mssitems,
+		date: stratumDates,
+		place: stratumPlaces,
+	};
+});
+const updatedStrata = addPrevNextToMsItems(strataPlus, "hit_id", "title");
+
+writeFileSync(join(folderPath, "strata.json"), JSON.stringify(updatedStrata, null, 2), {
+	encoding: "utf-8",
+});
+
 console.log("JSON files have been merged and cleaned successfully!");
