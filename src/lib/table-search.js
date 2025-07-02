@@ -107,8 +107,8 @@ document.getElementById("download-table-btn").addEventListener("click", function
 	// Create a temporary download link and trigger the download
 	const a = document.createElement("a");
 	// title of csv to match the id of the table
-	const tableElement = document.querySelector(".data-table");
-	const title = tableElement.getAttribute("id");
+	const tableElement = document.querySelector("table.data-table");
+	const title = tableElement ? tableElement.getAttribute("id") : "table";
 	a.href = url;
 	a.download = title + ".csv";
 	a.click();
