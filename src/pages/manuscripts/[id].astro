@@ -378,14 +378,14 @@ const geoData = processMSData(manuscript)
                   .map(filteredItem => (
                     
                       <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
+                        {filteredItem.locus}
                       </dt>
                       <dd class="pl-5">
                        {filteredItem.title_work.map(work => (
                         <span class="font-semibold">
                           {work.author?.length > 0 ? (
                             work.hit_id ? (
-                              <NavLink class ="underline underline-offset-2 hover:text-brand-800" href={`/works/${work.hit_id}`}>
+                              <NavLink class ="underline underline-offset-2 hover:text-brand-800" href={`/msitems/${filteredItem.hit_id}`}>
                                 {work.author.map(aut => aut.name).join(', ')}: {work.title}
                               </NavLink>
                             ) : (
@@ -395,7 +395,7 @@ const geoData = processMSData(manuscript)
                             )
                           ) : (
                             work.hit_id ? (
-                              <NavLink href={`/works/${work.hit_id}`}>
+                              <NavLink href={`/msitems/${filteredItem.hit_id}`}>
                                 {work.title}
                               </NavLink>
                             ) : (
@@ -407,6 +407,19 @@ const geoData = processMSData(manuscript)
 
 
                         {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
+                        
+                       {filteredItem.text_modification.length > 0 && <span>({filteredItem.text_modification.map(mod => mod).join(', ')})</span>}
+                       {filteredItem.interpolations.length > 0 && 
+                       <span>Interpolation: 
+                        {filteredItem.interpolations
+                          .map((inter, index) => (
+                          <>
+                            <NavLink href={`/works/${inter.hit_id}`}>{inter.title}</NavLink>
+                            {index < filteredItem.interpolations.length - 1 && ', '}
+                          </>
+                          ))
+                        }
+                        </span>}
                         {filteredItem.rubric && (
                           <span> 
                             {/* check for [text] shouldl be not-italic */}
@@ -513,6 +526,7 @@ const geoData = processMSData(manuscript)
 
 
                       {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
+                       {filteredItem.text_modification.length > 0 && <span>({filteredItem.text_modification.map(mod => mod).join(', ')})</span>}
                       {filteredItem.rubric && (
                         <span> 
                           {/* check for [text] shouldl be not-italic */}
