@@ -36,15 +36,11 @@ import TableHead from "@/components/table-head.astro";
 						headerFilter: "input",
 						mutator: jsonpathFlexibleLookup,
 						mutatorParams: {
-							path: [
-								"$[*].library[*].place[*].value",
-								"$[*].library[*].abbreviation",
-								"$[*].shelfmark",
-							],
+							path: "$[*].value",
 							separator: ", ",
 						},
 						minWidth: 150,
-						widthGrow: 2,
+						widthGrow: 1,
 						responsive: 0,
 					},
 					{

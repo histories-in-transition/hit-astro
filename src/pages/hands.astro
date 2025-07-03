@@ -142,7 +142,7 @@ import TableHead from "@/components/table-head.astro";
 					minWidth: 200,
 					mutator: jsonpathFlexibleLookup,
 					mutatorParams: {
-						path: "$[*].value",
+						path: "$[*].name",
 					},
 					headerFilter: "input",
 					formatter: "textarea",

@@ -131,7 +131,7 @@ const geoJsonData = processHandsData(item);
               <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
               <dd class="pl-5">
                 {item.scribe.map(scrib => <NavLink
-                  href={`/scribes/hit_scribes__${scrib.id}`}>{scrib.value}</NavLink>)
+                  href={`/scribes/hit_scribes__${scrib.id}`}>{scrib.name}</NavLink>)
           
                 }
               </dd>
