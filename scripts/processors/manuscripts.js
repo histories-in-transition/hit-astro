@@ -59,11 +59,17 @@ function transformManuscript(manuscript, deps) {
 		handsplaced,
 	} = deps;
 
-	// Get manuscript dating
-	const ms_dating = getManuscriptDating(manuscript, manuscripts_dated, dates, bibliography);
-
 	// Get cod units for this manuscript (already processed)
 	const cod_units = getCodUnitsForManuscript(manuscript, processedCodUnits);
+
+	// Get manuscript dating
+	const ms_dating = getManuscriptDating(
+		manuscript,
+		manuscripts_dated,
+		dates,
+		bibliography,
+		cod_units,
+	);
 
 	// Get strata for this manuscript (already processed)
 	const manuscriptStrata = getStrataForManuscript(manuscript, processedStrata);
@@ -131,15 +137,62 @@ function transformManuscript(manuscript, deps) {
 /**
  * Get manuscript dating information
  */
-function getManuscriptDating(manuscript, manuscripts_dated, dates, bibliography) {
-	return manuscripts_dated
+// joins data from two sets + deduplication with priority (recommended)
+// Keeps data from manuscripts_dated when there are duplicates
+// Only adds cod_units data if it's truly unique
+function getManuscriptDating(manuscript, manuscripts_dated, dates, bibliography, cod_units) {
+	// 1. from table manuscripts_dated (higher priority)
+	const datedArr = manuscripts_dated
 		.filter((mDated) => mDated.manuscript.some((m) => m.id === manuscript.id))
 		.map((mDated) => ({
 			date: enrichDates(mDated.date, dates),
 			authority: enrichBibl(mDated.authority, bibliography),
 			page: mDated.page,
 			preferred_date: mDated.preferred_date,
+			priority: 1, // Higher priority
+			source: "manuscripts_dated",
 		}));
+
+	// 2. from cod_units (lower priority)
+	const provArr = cod_units
+		.filter((c_unit) => c_unit.manuscript.some((m) => m.id === manuscript.id))
+		.flatMap((c_unit) =>
+			c_unit.prov_place
+				.filter((prov) => prov.type === "orig")
+				.map((prov) => ({
+					date: prov.from,
+					authority: prov.authority,
+					page: prov.page,
+					preferred_date: "",
+					priority: 2, // Lower priority
+					source: "cod_units",
+				})),
+		);
+
+	// Create a comparison key for deduplication
+	const createComparisonKey = (item) => {
+		const dateKey = item.date?.id || JSON.stringify(item.date);
+		const authorityKey = item.authority?.id || JSON.stringify(item.authority);
+		return `${dateKey}-${authorityKey}-${item.page || "no-page"}`;
+	};
+
+	// Merge all items
+	const combined = [...datedArr, ...provArr];
+
+	// Group by comparison key and keep the one with highest priority (lowest number)
+	const grouped = new Map();
+
+	combined.forEach((item) => {
+		const key = createComparisonKey(item);
+		const existing = grouped.get(key);
+
+		if (!existing || item.priority < existing.priority) {
+			grouped.set(key, item);
+		}
+	});
+
+	// Convert back to array and remove internal fields
+	return Array.from(grouped.values()).map(({ priority, source, ...item }) => item);
 }
 
 /**
