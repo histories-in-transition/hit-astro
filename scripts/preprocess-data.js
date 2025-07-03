@@ -890,6 +890,7 @@ const strataPlus = strataa.map((stratum) => {
 		msitems: mssitems,
 		date: stratumDates,
 		place: stratumPlaces,
+		hands: uniqueEnrichedHands,
 	};
 });
 const updatedStrata = addPrevNextToMsItems(strataPlus, "hit_id", "title");
