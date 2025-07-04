@@ -1,0 +1,84 @@
+ <msPart>
+                            <msIdentifier>
+                                <idno>Kodikologische Einheit <%= unit.number %></idno>
+                            </msIdentifier>
+                            <% if(unit.content.length > 0) { %>
+                            <msContents>
+                              <% unit.content.forEach(function(item, index) 
+                              { %>
+                                <%~ include('partials/ms_item', { item, index }) %>
+                              <% }) %>
+                          </msContents>
+                            <% } %>
+                            <physDesc>
+                                <objectDesc form="fascicle">
+                                <%
+                                  let mat = "other";
+                                  if (it.material == "Pergament") mat = "perg";
+                                  else if (it.material == "Papier") mat = "chart";
+                                  else if (it.material == "Mischung") mat = "mixed";
+                                %>
+                                <supportDesc material="<%= mat %>">                               
+                                        <% if (unit.material && unit.material_spec) { %>
+                                        <support>
+                                            <material><%= unit.material %>. <%= unit.material_spec %>
+                                            <% if (unit.basic_structure && unit.basic_structure.length > 0) { %>
+                                                <%= unit.basic_structure.join(', ') %>
+                                            <% } %>
+                                            </material>
+                                        </support>
+                                        <% } %>
+                                        <extent>                                           
+                                            <% if (unit.height && unit.width) { %>
+                                                <dimensions type="leaf" ununit="mm">
+                                                    <height><%= unit.height %></height>
+                                                    <width><%= unit.width %></width>
+                                                </dimensions>
+                                            <% } %>
+                                        </extent>
+                                        <collation>
+                                        <% if (unit.quire_number) { %>
+                                            <p>Lagen: <%= unit.quire_number %> (fol. <%= unit.locus %>)</p>
+                                        <% } %>
+                                         
+                                        </collation>
+                                    </supportDesc>
+                                    <layoutDesc>
+                                      <layout
+                                          <% if (unit.lines_number) { %>
+                                          writtenLines="<%= unit.lines_number %>"
+                                          <% } %>
+                                      >
+                                          <% if (unit.written_height && unit.written_width) { %>
+                                          <dimensions type="written" unit="mm">                                   
+                                              <height><%= unit.written_height %></height>                                   
+                                              <width><%= unit.written_width %></width>
+                                          </dimensions>
+                                          <p>Schriftspiegel: <%= unit.written_height %>×<%= unit.written_width %> mm.</p>
+                                          <% } %>
+                                          <% if ((unit.columns.length > 0) || unit.lines_number || unit.ruling) { %>
+                                              <p>
+                                                  <% if (unit.columns && unit.columns.length > 0) { %>
+                                                  Spalte: <%= unit.columns.join(', ') %>
+                                                  <% } %>
+                                                  <% if (unit.lines_number) { %>
+                                                  zu <%= unit.lines_number %> Zeilen.
+                                                  <% } else {%> . <% } %>
+                                                  <% if (unit.ruling) { %>
+                                                      <%= unit.ruling %>
+                                                          <% } %>
+                                              </p>
+                                              <% } %>
+                                      </layout>
+                                      </layoutDesc>
+                                </objectDesc>
+                             
+                                 <% if (unit.decoration) { %>
+                                  <decoDesc>
+                                      <decoNote><%= unit.decoration %>                                       
+                                      </decoNote>
+                                  </decoDesc>
+                                  <% } %> 
+                            </physDesc>
+
+                        </msPart>

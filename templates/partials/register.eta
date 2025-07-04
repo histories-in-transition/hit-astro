@@ -1,0 +1,132 @@
+
+             <% 
+             // recursive collectio function to get all references based on type of hit_id pass as prefix
+                function collectByHitId(obj, map, prefix) {
+                  if (obj && typeof obj === 'object') {
+                    if (obj.hit_id && obj.hit_id.startsWith(prefix)) {
+                      map.set(obj.hit_id, obj);
+                    }
+                    for (const key in obj) {
+                      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                        collectByHitId(obj[key], map, prefix);
+                      }
+                    }
+                  } else if (Array.isArray(obj)) {
+                    obj.forEach(item => collectByHitId(item, map, prefix));
+                  }
+                }
+
+                // Use to populate Maps:
+                const placeMap = new Map();
+                collectByHitId(it, placeMap, 'hit_place__');
+
+                const scribesMap = new Map();
+                collectByHitId(it, scribesMap, 'hit_scribe__');
+
+                const orgMap = new Map();
+                collectByHitId(it, orgMap, 'hit_org__');
+
+                const personMap = new Map();
+                collectByHitId(it, personMap, 'hit_people__')
+
+                const worksMap = new Map();
+                collectByHitId(it, worksMap, 'hit_works__')
+
+                const biblMap = new Map();
+                collectByHitId(it, biblMap, 'hit_bibl__')
+              %>  
+
+           <% if (scribesMap.size > 0) { %>
+            <listPerson type="scribes">
+              <% scribesMap.forEach((scribe, id) => { %>
+                <person xml:id="<%= id %>">
+                  <persName><%= scribe.name %>
+                    <% if (scribe.gnd_url) { %>
+                      <ptr type="gnd" target="<%= scribe.gnd_url %>"/>
+                    <% } %>
+                  </persName>
+                </person>
+              <% }) %>
+            </listPerson>
+          <% } %>
+           
+            <% if (personMap.size > 0) { %>
+            <listPerson type="authors">
+              <% personMap.forEach((a, id) => { %>
+                <person xml:id="<%= id %>">
+                  <persName><%= a.name %>
+                  <% if (a.gnd_url) { %>
+                    <ptr type="gnd" target="<%= a.gnd_url %>"/>
+                  <% } %>
+                  </persName>
+                </person>
+              <% }) %>
+            </listPerson>
+          <% } %>
+          
+          <% if (placeMap.size > 0) { %>
+            <listPlace>
+              <% placeMap.forEach((place, id) => { %>
+                <place xml:id="<%= id %>">
+                  <placeName><%= place.value %>
+                    <% if (place.geonames_url) { %>
+                      <ptr type="geonames" target="<%= place.geonames_url %>"/>
+                    <% } %>
+                  </placeName>
+                  <location>
+                    <geo><%= place.lat %> <%= place.long %></geo>
+                  </location>
+                </place>
+              <% }) %>
+            </listPlace>
+          <% } %>
+          
+          <% if (orgMap.size > 0) { %>
+            <listOrg>
+              <% orgMap.forEach((org, id) => { %>
+                <org xml:id="<%= id %>">
+                  <name><%= org.library_full %>
+                    <% if (org.wikidata) { %>
+                      <ptr type="wikidata" target="<%= org.wikidata %>"/>
+                    <% } %>
+                     <% if (org.gnd_url) { %>
+                      <ptr type="gnd" target="<%= org.gnd_url %>"/>
+                    <% } %>
+                  </name>
+                  <placeName ref="#<%= org.place[0].hit_id %>"><%= org.place[0].value %></placeName>
+                </org>
+              <% }) %>
+            </listOrg>
+          <% } %>
+          
+          <% if (worksMap.size > 0) { %>
+            <listBibl type="works">
+              <% worksMap.forEach((work, id) => { %>
+                <bibl xml:id="<%= id %>">
+                  <title><%= work.title %></title>
+                  <% if (work.author?.length > 0) { %>
+                    <% work.author.forEach(author => { %>
+                      <author ref="#<%= author.hit_id %>"><%= author.name %></author>
+                    <% }); %>
+                  <% } %>
+                  <% if (work.gnd_url) { %>
+                    <ptr type="gnd" target="<%= work.gnd_url %>"/>
+                  <% } %>
+                </bibl>
+              <% }); %>
+            </listBibl>
+          <% } %>
+
+           <% if (biblMap.size > 0) { %>
+            <listBibl type="bibliography">
+              <% biblMap.forEach((bibl, id) => { %>
+                <bibl xml:id="<%= bibl.hit_id %>">
+                  <author><%= bibl.author %></author>
+                  <title><%= bibl.title %></title>                  
+                  <% if (bibl.link) { %>
+                    <ptr type="zotero" target="<%= bibl.link %>"/>
+                  <% } %>
+                </bibl>
+              <% }); %>
+            </listBibl>
+          <% } %>

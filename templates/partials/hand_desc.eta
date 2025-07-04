@@ -1,0 +1,40 @@
+                <history>                   
+                     <% if (it.history) { %>  <summary><%= it.history %> </summary> <% } %>                   
+                        <origin>
+                        <% if (it.orig_place.length > 0) { %>
+                        <% it.orig_place.forEach((place) => { %>
+                        <origPlace ref="#<%= place.hit_id %>"><%= place.value %> </origPlace> 
+                        <% }) %>
+                        <% }  %> 
+                       <% if (it.orig_date && it.orig_date.length > 0) { %>
+                        <% it.orig_date.forEach((oDate) => { %>
+                            <% oDate.date.forEach((date) => { %>
+                            <origDate notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>" resp="<%= oDate.authority[0].hit_id %>"><%= date.value %></origDate>
+                            <% }) %>
+                            <% if (oDate.authority && oDate.authority.length > 0) { %>
+                            <% oDate.authority.forEach((auth) => { %>
+                                <bibl><% if (auth.link) { %>
+                                    <ref target="<%= auth.link %>"><%= auth.citation || auth.title || auth.author %></ref>
+                                <% } else { %>
+                                    <%= auth.citation || auth.title || auth.author %>
+                                <% } %>
+                                <% if (oDate.page) { %> S. <%= oDate.page %><% } %>
+                                </bibl>
+                            <% }) %>
+                            <% } %>
+                        <% }) %>
+                        <% } %>
+                       
+                        </origin>
+                        <provenance>
+                        <% if (it.provenance.length > 0) { %>
+                            <% it.provenance.forEach((prov) => { %>
+                            <placeName ref="#<%= prov.hit_id %>"><%= prov.value %></placeName> 
+                            <% }) %>
+                        <% } %>
+                            <p/>
+                        </provenance>                    
+                        <acquisition>
+                            <p/>
+                        </acquisition>
+                    </history>

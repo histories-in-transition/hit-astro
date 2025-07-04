@@ -1,0 +1,73 @@
+<msDesc xml:id="<%= it.hit_id %>" xml:lang="deu">
+    <msIdentifier>
+        <settlement><%= it.library[0].place[0].value %></settlement>
+        <repository><%= it.library[0].library_full %></repository>
+        <idno><%= it.shelfmark %></idno>
+    </msIdentifier>
+    <head>
+        <title><%= it.title %></title>
+        <note type="caption">
+            <%= it.material %>,
+            <% if (it.extent) 
+            { %>
+               <%= it.extent %> Bl.,
+            <% } 
+                %>  
+            <% if (it.height && it.width) {%> <%= it.height %>×<%= it.width %>. <% } %>
+            <% if (it.orig_place.length > 0) { %>
+        <%~ it.orig_place.map(place => `<origPlace>${place.value}</origPlace>`).join(', ') %>
+    <% } %>             
+             </note>
+    </head>
+    <msContents>
+        <textLang mainLang="lat"/>
+        
+    </msContents> 
+    
+   
+        <additional>  
+        <%- if (it.digi_url) { %>
+        <surrogates>
+            <listBibl>
+                <bibl type="digital-facsimile">
+                <ref target="<%= it.digi_url %>">
+                    Digitalisat
+                </ref>
+                </bibl>
+            </listBibl>
+        </surrogates>
+        <% } %>               
+        <listBibl>
+            <head>Literatur:</head>
+            <%- if (it.manuscripta_url) { %>
+                <bibl>
+                    <ref target="<%= it.manuscripta_url %>">
+                        Eintrag in Manuscripta.at
+                    </ref>
+                </bibl>
+            <% } %>
+                <%- if (it.handschriftenportal_url) { %>
+                <bibl>
+                    <ref target="<%= it.handschriftenportal_url %>">
+                        Eintrag im Handschriftenportal
+                    </ref>
+                </bibl>
+            <% } %>     
+            <%- if (it.catalog_url) { %>
+                <bibl>
+                    <ref target="<%= it.catalog_url %>">
+                        Bibliothekskatalog
+                    </ref>
+                </bibl>
+            <% } %>     
+            <%- if (it.bibliography.length > 0) {
+                it.bibliography.forEach((bibl) => { %>
+                <bibl xml:id="<%= bibl.hit_id %>">
+                        <%= bibl.citation || bibl.title || bibl.author %>
+                    <% if (bibl.page) { %> S. <%= bibl.page %><% } %>
+                </bibl>
+                <% }) %>
+                <% } %>                                                                 
+        </listBibl>
+    </additional>              
+    </msDesc>
