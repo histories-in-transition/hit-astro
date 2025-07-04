@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "../utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "../utils/utils.js";
 
 /**
  * Process strata data by cleaning and standardizing the structure

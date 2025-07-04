@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems } from "../utils.js";
+import { addPrevNextToMsItems } from "../utils/utils.js";
 
 /**
  * Process places data by cleaning and standardizing the structure

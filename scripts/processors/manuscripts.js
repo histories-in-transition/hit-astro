@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "../utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "../utils/utils.js";
 
 import { getCodUnitsForManuscript } from "./cod-units.js";
 import { getStrataForManuscript, createTBDStratum } from "./strata.js";

@@ -7,7 +7,7 @@ import {
 	enrichDates,
 	enrichBibl,
 	enrichWorks,
-} from "./utils.js";
+} from "./utils/utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

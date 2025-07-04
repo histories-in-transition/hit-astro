@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems, enrichPlaces } from "../utils.js";
+import { addPrevNextToMsItems, enrichPlaces } from "../utils/utils.js";
 
 /**
  * Process libraries data by cleaning and standardizing the structure

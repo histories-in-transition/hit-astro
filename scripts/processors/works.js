@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems, enrichBibl } from "../utils.js";
+import { addPrevNextToMsItems, enrichBibl } from "../utils/utils.js";
 
 /**
  * Process works data by cleaning and standardizing the structure

@@ -4,7 +4,7 @@ import {
 	enrichWorks,
 	enrichBibl,
 	enrichDates,
-} from "../utils.js";
+} from "../utils/utils.js";
 
 /**
  * Process manuscript items - Version 2: Dependencies object
