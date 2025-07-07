@@ -116,6 +116,7 @@ function getHandPlacement(hand, handsplaced, places, bibliography) {
 function getHandRoles(hand, handsrole, msItemsPlus) {
 	return handsrole
 		.filter((hrol) => hrol.hand.some((h) => h.id === hand.id))
+		.filter((hrol) => hrol.ms_item.length > 0) // Only include roles with manuscript items
 		.map((hand_r) => {
 			// Get related manuscript items
 			const msitem = getMsItemsForHandRole(hand_r, msItemsPlus);
