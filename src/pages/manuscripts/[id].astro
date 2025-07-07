@@ -589,7 +589,9 @@ const geoData = processMSData(manuscript)
             <dl class="grid grid-cols-[1fr_5fr] p-3">
                   {manuscript.strata.map(stratum => {
                       return <>
-                      <dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">Stratum {stratum.number}: </dt>
+                      <dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">
+                        <NavLink href=`/strata/${stratum.hit_id}`>Stratum {stratum.number}:</NavLink> 
+                        </dt>
                       <dd class="pl-5">
                         <span class="underlined">
                           {Array.isArray(stratum.character) && stratum.character.length > 0 
@@ -710,7 +712,7 @@ const geoData = processMSData(manuscript)
                   .map((role) => (
                     <tr class="odd:bg-brand-50 even:bg-brand-100">                      
                       <td class="p-2 border border-gray-300 text-center">
-                        {stratum.number}
+                        <NavLink href=`/strata/${stratum.hit_id}`>{stratum.number}</NavLink>
                       </td>
                       <td class="p-2 border border-gray-300">
                         {role.hand.flatMap(hand => hand.date. map(d => d.range)).join(' | ')}
