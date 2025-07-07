@@ -20,8 +20,8 @@
              </note>
     </head>
     <msContents>
-        <textLang mainLang="lat"/>
         <summary><%= it.content_summary %></summary>
+        <textLang mainLang="lat"/>
         <%  if (it.cod_units.length ==  1  && it.cod_units[0].content.length > 0) {%> 
              <% it.cod_units[0].content.forEach(function(item, index) 
                 { %>
@@ -29,8 +29,9 @@
                 <% }) %> <%
            } %>            
     </msContents>   
-   
-        <additional>  
+   <%~ include('./phys_desc', it) %>
+   <%~ include('./history', it) %>
+    <additional>  
         <%- if (it.digi_url) { %>
         <surrogates>
             <listBibl>
@@ -41,7 +42,8 @@
                 </bibl>
             </listBibl>
         </surrogates>
-        <% } %>               
+        <% } %>  
+        <% if (it.manuscripta_url || it.handschriftenportal_url || it.catalog_url || it.bibliography.length > 0) { %>           
         <listBibl>
             <head>Literatur:</head>
             <%- if (it.manuscripta_url) { %>
@@ -74,6 +76,7 @@
                 <% }) %>
                 <% } %>                                                                 
         </listBibl>
+        <% } %>
     </additional>  
     <% if (it.cod_units.length > 1) {%>
     <% it.cod_units.forEach(function(unit, index)

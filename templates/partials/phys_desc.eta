@@ -31,13 +31,16 @@
                                     <% if (it.quire_structure) { %>
                                         Lagenformel: <formula><%~ it.quire_structure.replace(/\*\*(.*?)\*\*/g, '<hi rend="sup">$1</hi>') %></formula>
                                     <% } %> 
+                                <% if (it.cod_units.length == 1 && it.cod_units[0].notes) { %>
+                                    <p><%= it.cod_units[0].notes %></p>
+                                    <% } %> 
                                  <% if (it.cod_units.length == 1 && it.cod_units[0].basic_structure.length > 0) { %>
                                  <p><%= it.cod_units[0].basic_structure.join(', ') %></p> <% } %>
-                                    <% if (it.catchwords) { %>
-                                    <catchwords><%= it.catchwords %></catchwords>
+                                    <% if (it.cod_units.length == 1 && it.cod_units[0].catchwords) { %>
+                                    <catchwords><%= it.cod_units[0].catchwords %></catchwords>
                                     <% } %>                                    
-                                <% if (it.signatures) { %>
-                                    <signatures><%= it.signatures %></signatures>
+                                <% if (it.cod_units.length == 1 && it.cod_units[0].signatures) { %>
+                                    <signatures><%= it.cod_units[0].signatures %></signatures>
                                     <% } %> 
                                  </collation>
                             </supportDesc>
@@ -70,7 +73,9 @@
                             <% } %>       
                             
                         </objectDesc> 
+                        <% if(it.hands.length > 0) { %>
                        <%~ include('./hand_desc', it) %>
+                        <% } %>
                          <% if (it.cod_units.length == 1) { %>
                         <decoDesc>
                             <decoNote><%= it.cod_units[0].decoration %>                                       

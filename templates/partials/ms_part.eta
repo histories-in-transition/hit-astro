@@ -1,6 +1,6 @@
 <msPart>
     <msIdentifier>
-        <idno>Kodikologische Einheit <%= it.unit.number %></idno>
+        <idno>Kodikologische Einheit <%= it.unit.number %> (<%= it.unit.locus %>)</idno>
     </msIdentifier>
     <% if(it.unit.content.length > 0) { %>
     <msContents>
@@ -37,18 +37,20 @@
                     <% } %>
                 </extent>
                 <collation>
-                <% if (it.unit.quire_number) { %>
-                    <p>Lagen: <%= it.unit.quire_number %> (fol. <%= it.unit.locus %>)</p>
+                <% if (it.unit.notes) { %>
+                    <p><%= it.unit.notes %></p>
+                <% } %>
+                <% if (it.unit.catchwords) { %>
+                    <p><%= it.unit.catchwords %></p>
+                <% } %>
+                <% if (it.unit.quiremarks) { %>
+                    <p><%= it.unit.quiremarks %></p>
                 <% } %>
                    
                 </collation>
             </supportDesc>
             <layoutDesc>
-                <layout
-                    <% if (it.unit.lines_number) { %>
-                    writtenLines="<%= it.unit.lines_number %>"
-                    <% } %>
-                >
+                <layout>
                     <% if (it.unit.written_height && it.unit.written_width) { %>
                     <dimensions type="written" unit="mm">                                   
                         <height><%= it.unit.written_height %></height>                                   
@@ -69,6 +71,9 @@
                                     <% } %>
                         </p>
                         <% } %>
+                         <% if (it.unit.lines_number) { %>
+                   <p><%= it.unit.lines_number %></p>
+                    <% } %>
                 </layout>
                 </layoutDesc>
         </objectDesc>
@@ -80,4 +85,55 @@
             </decoDesc>
             <% } %> 
     </physDesc>
+   
+    <% if (it.unit.prov_place.length > 0) { %>
+    <history>
+   <% it.unit.prov_place
+    .filter(prov => prov.type === 'orig')
+    .forEach(prov => { 
+        const place = prov.places?.[0];
+        const fromDate = prov.from?.[0]?.value;
+        const notBefore = prov.from?.[0]?.not_before;
+        const notAfter = prov.from?.[0]?.not_after;
+        const auth = prov.authority?.[0];
+    %>
+    <origin>
+        <% if (place) { %>
+        <origPlace ref="#<%= place.hit_id %>"><%= place.value %></origPlace>
+        <% } %>
+        <% if (fromDate) { %>
+        <origDate notBefore="<%= notBefore %>" notAfter="<%= notAfter %>"><%= fromDate %></origDate>
+        <% } %>
+        <% if (auth) { %>
+        <bibl>
+        <ref><%= auth.author %>. <%= auth.title %> <%= prov.page %></ref>
+        </bibl>
+        <% } %>
+    </origin>
+    <% }) %>
+
+
+           
+        <% it.unit.prov_place.forEach((prov) => { %>
+        <provenance>
+            <placeName ref="#<%= prov.places?.[0]?.hit_id %>"><%= prov.places?.[0]?.value %></placeName>
+            
+            <% if (prov.from?.[0]?.value) { %>
+            <date type="from"><%= prov.from[0].value %></date>
+            <% } %>
+            
+            <% if (prov.till?.[0]?.value) { %>
+            <date type="to"><%= prov.till[0].value %></date>
+            <% } %>
+            
+            <% if (prov.authority?.[0]) { 
+                const auth = prov.authority[0]; %>
+            <bibl>
+                <ref><%= auth.author %>. <%= auth.title %> <%= prov.page %></ref>
+            </bibl>
+            <% } %>
+        </provenance>
+        <% }) %>
+    </history>
+    <% } %>
 </msPart>

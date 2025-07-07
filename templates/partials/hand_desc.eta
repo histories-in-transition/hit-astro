@@ -1,40 +1,69 @@
-                <history>                   
-                     <% if (it.history) { %>  <summary><%= it.history %> </summary> <% } %>                   
-                        <origin>
-                        <% if (it.orig_place.length > 0) { %>
-                        <% it.orig_place.forEach((place) => { %>
-                        <origPlace ref="#<%= place.hit_id %>"><%= place.value %> </origPlace> 
-                        <% }) %>
-                        <% }  %> 
-                       <% if (it.orig_date && it.orig_date.length > 0) { %>
-                        <% it.orig_date.forEach((oDate) => { %>
-                            <% oDate.date.forEach((date) => { %>
-                            <origDate notBefore="<%= date.not_before %>" notAfter="<%= date.not_after %>" resp="<%= oDate.authority[0].hit_id %>"><%= date.value %></origDate>
-                            <% }) %>
-                            <% if (oDate.authority && oDate.authority.length > 0) { %>
-                            <% oDate.authority.forEach((auth) => { %>
-                                <bibl><% if (auth.link) { %>
-                                    <ref target="<%= auth.link %>"><%= auth.citation || auth.title || auth.author %></ref>
-                                <% } else { %>
-                                    <%= auth.citation || auth.title || auth.author %>
-                                <% } %>
-                                <% if (oDate.page) { %> S. <%= oDate.page %><% } %>
-                                </bibl>
-                            <% }) %>
-                            <% } %>
-                        <% }) %>
-                        <% } %>
-                       
-                        </origin>
-                        <provenance>
-                        <% if (it.provenance.length > 0) { %>
-                            <% it.provenance.forEach((prov) => { %>
-                            <placeName ref="#<%= prov.hit_id %>"><%= prov.value %></placeName> 
-                            <% }) %>
-                        <% } %>
-                            <p/>
-                        </provenance>                    
-                        <acquisition>
-                            <p/>
-                        </acquisition>
-                    </history>
+<handDesc>
+  <% it.hands.forEach(function(hand) { %>
+    <handNote xml:id="<%= hand.hit_id %>">
+      <name><%= hand.label %></name>
+      <% if (hand.scribe.length > 0) { %>  
+      <% hand.scribe.forEach(scribe => { %>      
+        <persName role="scribe" ref="<%= scribe.hit_id %>"><%= scribe.name %></persName>
+        <% }) %>
+      <% } %>
+      <% if(hand.nr_daniel) { %>
+        <ref type="daniel"><%= hand.nr_daniel %></ref>
+      <% } %>
+      <desc><%= hand.description %></desc>
+      <% if (hand.note) { %>
+        <note><%= hand.note %></note>
+      <% } %>
+      <% if (hand.similar_hands.length > 0) { %>
+        <%~ hand.similar_hands.map(sim_hand => `<ref type="similar_hand" target="#hit_hands__${sim_hand.id}>">
+          ${sim_hand.value}
+        </ref>`).join(' ') %>
+      <% } %>
+     <% if (hand.date.length > 0) { %>
+        <% hand.date.forEach(dating => { %>
+            <% if (dating.dated && dating.dated.length > 0) { %> 
+                <date notBefore="<%= dating.dated[0].not_before %>" notAfter="<%= dating.dated[0].not_after %>"><%= dating.dated[0].value %>
+                <% if (dating.authority && dating.authority.length > 0) { %>
+                <note>
+                    <bibl><%= dating.authority[0]?.citation %>, S. <%= dating.page || 'N/A' %></bibl>
+                </note> 
+                <% } %>
+                </date>
+        <% } %>
+        <% }) %>
+    <% } %>
+    <% if (hand.placed.length > 0) { %>
+        <% hand.placed.forEach(placement => { %>
+            <% if (placement.place && placement.place.length > 0) { %> 
+                <placeName ref="#<%= placement.place[0].hit_id %>"><%= placement.place[0].value %>
+                <% if (placement.authority && placement.authority.length > 0) { %>
+                <note>
+                    <bibl><%= placement.authority[0]?.citation %>, S. <%= placement.page || 'N/A' %></bibl>
+                </note> 
+                <% } %>
+                </placeName>
+        <% } %>
+        <% }) %>
+    <% } %>
+<% if(hand.hand_roles.length > 0) { %>
+      <listRelation>
+        <% hand.hand_roles.forEach(role => { 
+          const passive = role.content.map(item => `#${item.hit_id}`).join(' ');
+          const msItems = role.content.map(item => `<title ref="#${item.hit_id}">${item.title_work[0].title}</title>`).join(' ');
+        %>
+          <relation xml:id="<%= role.hit_id %>" active="#<%= hand.hit_id %>" passive="<%= passive %>" >
+            <desc>
+              <%~ msItems %>
+              <locus><%= role.scope %></locus>
+              <term type="scribe_role"><%= role.role.map(s_role => s_role.value).join(', ') %></term>
+              <term type="scribe_type"><%= role.scribe_type.map(s_type => s_type.value).join(', ') %></term>
+              <term type="function"><%= role.function.map(f => f.value).join(', ') %></term>
+              <term type="locus_layout"><%= role.locus_layout.join(', ') %></term>
+            </desc>
+          </relation>
+        <% }) %>
+      </listRelation>
+        <% } %>
+    </handNote>
+  <% }) %>
+</handDesc>

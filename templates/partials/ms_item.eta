@@ -32,6 +32,11 @@
   <% if (it.item.title_work.length > 0) { %>
     <title ref="#<%= it.item.title_work[0].hit_id %>"><%= it.item.title_work[0].title %></title>
   <% } %>
+  <% if (it.item.language.length > 0) { %>
+    <textLang mainLang="">
+      <%~ it.item.language.map((lang) => lang.value).join(', ') %>
+      </textLang>
+  <% } %>
   <% if (it.item.title_note) { %>
     <note type="title"><%= it.item.title_note %></note>
   <% } %>
@@ -74,4 +79,20 @@
   <% if (it.item.note) { %>
     <note><%= it.item.note %></note>
   <% } %>   
+  <% if (it.item.text_modification.length > 0) { %>
+    <note type="text_modification">
+      <%~ it.item.text_modification.map((mod) => mod).join(', ') %>
+    </note>
+  <% } %>
+  <% if (it.item.interpolations.length > 0) { %>
+  <note type="interpolations">
+    <%~ it.item.interpolations.map(inter => {
+      const authors = inter.author.map(a => a.name);
+      const label = authors.length === 0
+        ? inter.title
+        : `${authors.join(', ')}: ${inter.title}`;
+      return `<ref target="#${inter.hit_id}">${label}</ref>`;
+    }).join(' ') %>
+  </note>
+<% } %>
 </msItem>
