@@ -21,9 +21,14 @@
     </head>
     <msContents>
         <textLang mainLang="lat"/>
-        
-    </msContents> 
-    
+        <summary><%= it.content_summary %></summary>
+        <%  if (it.cod_units.length ==  1  && it.cod_units[0].content.length > 0) {%> 
+             <% it.cod_units[0].content.forEach(function(item, index) 
+                { %>
+                <%~ include('./ms_item', { item, index }) %>
+                <% }) %> <%
+           } %>            
+    </msContents>   
    
         <additional>  
         <%- if (it.digi_url) { %>
@@ -69,5 +74,10 @@
                 <% }) %>
                 <% } %>                                                                 
         </listBibl>
-    </additional>              
+    </additional>  
+    <% if (it.cod_units.length > 1) {%>
+    <% it.cod_units.forEach(function(unit, index)
+     { %>
+        <%~ include('./ms_part', { unit, index }) %>
+        <% }) %> <%}  %>          
     </msDesc>

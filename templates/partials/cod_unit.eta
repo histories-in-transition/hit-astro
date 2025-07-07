@@ -4,10 +4,10 @@
                             </msIdentifier>
                             <% if(unit.content.length > 0) { %>
                             <msContents>
-                              <% unit.content.forEach(function(item, index) 
-                              { %>
-                                <%~ include('partials/ms_item', { item, index }) %>
-                              <% }) %>
+                               <% unit.content.forEach(function(item, index) 
+                                { %>
+                                <%~ include('./ms_item', { item, index }) %>
+                                <% }) %>
                           </msContents>
                             <% } %>
                             <physDesc>

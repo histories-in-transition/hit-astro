@@ -1,12 +1,12 @@
 <msPart>
     <msIdentifier>
-        <idno>Kodikologische Einheit <%= unit.number %></idno>
+        <idno>Kodikologische Einheit <%= it.unit.number %></idno>
     </msIdentifier>
-    <% if(unit.content.length > 0) { %>
+    <% if(it.unit.content.length > 0) { %>
     <msContents>
-        <% unit.content.forEach(function(item, index) 
+        <% it.unit.content.forEach(function(item, index) 
         { %>
-        <%~ include('partials/ms_item', { item, index }) %>
+        <%~ include('./ms_item', { item, index }) %>
         <% }) %>
     </msContents>
     <% } %>
@@ -19,55 +19,53 @@
             else if (it.material == "Mischung") mat = "mixed";
         %>
         <supportDesc material="<%= mat %>">                               
-                <% if (unit.material && unit.material_spec) { %>
+                <% if (it.unit.material && it.unit.material_spec) { %>
                 <support>
-                    <material><%= unit.material %>. <%= unit.material_spec %>
-                    <% if (unit.basic_structure && unit.basic_structure.length > 0) { %>
-                        <%= unit.basic_structure.join(', ') %>
+                    <material><%= it.unit.material %>. <%= it.unit.material_spec %>
+                    <% if (it.unit.basic_structure && it.unit.basic_structure.length > 0) { %>
+                        <%= it.unit.basic_structure.join(', ') %>
                     <% } %>
                     </material>
                 </support>
                 <% } %>
                 <extent>                                           
-                    <% if (unit.height && unit.width) { %>
+                    <% if (it.unit.height && it.unit.width) { %>
                         <dimensions type="leaf" ununit="mm">
-                            <height><%= unit.height %></height>
-                            <width><%= unit.width %></width>
+                            <height><%= it.unit.height %></height>
+                            <width><%= it.unit.width %></width>
                         </dimensions>
                     <% } %>
                 </extent>
                 <collation>
-                <% if (unit.quire_number) { %>
-                    <p>Lagen: <%= unit.quire_number %> (fol. <%= unit.locus %>)</p>
+                <% if (it.unit.quire_number) { %>
+                    <p>Lagen: <%= it.unit.quire_number %> (fol. <%= it.unit.locus %>)</p>
                 <% } %>
-                    <% if (unit.codicological_reworking.length > 0) { %>
-                    <p><%= unit.codicological_reworking.join(', ') %></p>
-                <% } %>
+                   
                 </collation>
             </supportDesc>
             <layoutDesc>
                 <layout
-                    <% if (unit.lines_number) { %>
-                    writtenLines="<%= unit.lines_number %>"
+                    <% if (it.unit.lines_number) { %>
+                    writtenLines="<%= it.unit.lines_number %>"
                     <% } %>
                 >
-                    <% if (unit.written_height && unit.written_width) { %>
+                    <% if (it.unit.written_height && it.unit.written_width) { %>
                     <dimensions type="written" unit="mm">                                   
-                        <height><%= unit.written_height %></height>                                   
-                        <width><%= unit.written_width %></width>
+                        <height><%= it.unit.written_height %></height>                                   
+                        <width><%= it.unit.written_width %></width>
                     </dimensions>
-                    <p>Schriftspiegel: <%= unit.written_height %>×<%= unit.written_width %> mm.</p>
+                    <p>Schriftspiegel: <%= it.unit.written_height %>×<%= it.unit.written_width %> mm.</p>
                     <% } %>
-                    <% if ((unit.columns.length > 0) || unit.lines_number || unit.ruling) { %>
+                    <% if ((it.unit.columns.length > 0) || it.unit.lines_number || it.unit.ruling) { %>
                         <p>
-                            <% if (unit.columns && unit.columns.length > 0) { %>
-                            Spalte: <%= unit.columns.join(', ') %>
+                            <% if (it.unit.columns && it.unit.columns.length > 0) { %>
+                            Spalte: <%= it.unit.columns.join(', ') %>
                             <% } %>
-                            <% if (unit.lines_number) { %>
-                            zu <%= unit.lines_number %> Zeilen.
+                            <% if (it.unit.lines_number) { %>
+                            zu <%= it.unit.lines_number %> Zeilen.
                             <% } else {%> . <% } %>
-                            <% if (unit.ruling) { %>
-                                <%= unit.ruling %>
+                            <% if (it.unit.ruling) { %>
+                                <%= it.unit.ruling %>
                                     <% } %>
                         </p>
                         <% } %>
@@ -75,9 +73,9 @@
                 </layoutDesc>
         </objectDesc>
         
-            <% if (unit.decoration) { %>
+            <% if (it.unit.decoration) { %>
             <decoDesc>
-                <decoNote><%= unit.decoration %>                                       
+                <decoNote><%= it.unit.decoration %>                                       
                 </decoNote>
             </decoDesc>
             <% } %> 
