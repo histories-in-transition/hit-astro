@@ -41,6 +41,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.4
         version: 19.0.4(@types/react@19.0.12)
+      '@xmldom/xmldom':
+        specifier: github:xmldom/xmldom
+        version: https://codeload.github.com/xmldom/xmldom/tar.gz/98f92fc77a52debbbbf5719e76928ce249804e3d
       astro:
         specifier: ^5.5.2
         version: 5.5.2(@types/node@22.7.5)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.36.0)(tsx@4.19.2)(typescript@5.5.3)(yaml@2.7.0)
@@ -1143,6 +1146,11 @@ packages:
 
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
+
+  '@xmldom/xmldom@https://codeload.github.com/xmldom/xmldom/tar.gz/98f92fc77a52debbbbf5719e76928ce249804e3d':
+    resolution: {tarball: https://codeload.github.com/xmldom/xmldom/tar.gz/98f92fc77a52debbbbf5719e76928ce249804e3d}
+    version: 0.9.8
+    engines: {node: '>=14.6'}
 
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -3944,6 +3952,8 @@ snapshots:
       vscode-uri: 2.1.2
 
   '@vscode/l10n@0.0.18': {}
+
+  '@xmldom/xmldom@https://codeload.github.com/xmldom/xmldom/tar.gz/98f92fc77a52debbbbf5719e76928ce249804e3d': {}
 
   abbrev@1.1.1: {}
 
