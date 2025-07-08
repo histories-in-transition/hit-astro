@@ -25,7 +25,7 @@
                 <date notBefore="<%= dating.dated[0].not_before %>" notAfter="<%= dating.dated[0].not_after %>"><%= dating.dated[0].value %>
                 <% if (dating.authority && dating.authority.length > 0) { %>
                 <note>
-                    <bibl><%= dating.authority[0]?.citation %>, S. <%= dating.page || 'N/A' %></bibl>
+                    <bibl><ref target="#<%= dating.authority[0].hit_id %>"><%= dating.authority[0]?.citation %></ref>, S. <%= dating.page || 'N/A' %></bibl>
                 </note> 
                 <% } %>
                 </date>
@@ -38,7 +38,7 @@
                 <placeName ref="#<%= placement.place[0].hit_id %>"><%= placement.place[0].value %>
                 <% if (placement.authority && placement.authority.length > 0) { %>
                 <note>
-                    <bibl><%= placement.authority[0]?.citation %>, S. <%= placement.page || 'N/A' %></bibl>
+                    <bibl><ref target="#<%= placement.authority[0].hit_id %>"><%= placement.authority[0]?.citation %></ref>, S. <%= placement.page || 'N/A' %></bibl>
                 </note> 
                 <% } %>
                 </placeName>
@@ -49,11 +49,13 @@
       <listRelation>
         <% hand.hand_roles.forEach(role => { 
           const passive = role.content.map(item => `#${item.hit_id}`).join(' ');
-          const msItems = role.content.map(item => `<title ref="#${item.hit_id}">${item.title_work[0].title}</title>`).join(' ');
+          const msItems = role.content.map(item => `<item> <ref target="#${item.hit_id}">${item.title_work[0].title}</ref></item>`).join(' ');
         %>
           <relation xml:id="<%= role.hit_id %>" active="#<%= hand.hit_id %>" passive="<%= passive %>" >
             <desc>
+            <list type="msitems">
               <%~ msItems %>
+            </list>
               <locus><%= role.scope %></locus>
               <term type="scribe_role"><%= role.role.map(s_role => s_role.value).join(', ') %></term>
               <term type="scribe_type"><%= role.scribe_type.map(s_type => s_type.value).join(', ') %></term>

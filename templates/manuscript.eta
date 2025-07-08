@@ -36,13 +36,21 @@
             </pubPlace>
         </publicationStmt>
         <sourceDesc>
+        <%~ include('./partials/register', it) %>
         <%~ include('./partials/ms_desc', it) %>
       </sourceDesc>
     </fileDesc>
   </teiHeader>
   <text>
       <body>
-        <p></p>
+         <div>
+           <% if (it.strata.length > 0) { %>
+            <head>Strata</head>
+            <list>
+               <%~ include('./partials/stratum', it) %>
+            </list>
+            <% } %>
+         </div>
       </body>
   </text>
 </TEI>

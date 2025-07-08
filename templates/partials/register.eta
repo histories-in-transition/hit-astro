@@ -85,14 +85,14 @@
             <listOrg>
               <% orgMap.forEach((org, id) => { %>
                 <org xml:id="<%= id %>">
-                  <name><%= org.library_full %>
+                  <orgName><%= org.library_full %>
                     <% if (org.wikidata) { %>
                       <ptr type="wikidata" target="<%= org.wikidata %>"/>
                     <% } %>
                      <% if (org.gnd_url) { %>
                       <ptr type="gnd" target="<%= org.gnd_url %>"/>
                     <% } %>
-                  </name>
+                  </orgName>
                   <placeName ref="#<%= org.place[0].hit_id %>"><%= org.place[0].value %></placeName>
                 </org>
               <% }) %>
@@ -111,6 +111,15 @@
                   <% } %>
                   <% if (work.gnd_url) { %>
                     <ptr type="gnd" target="<%= work.gnd_url %>"/>
+                  <% } %>
+                   <% if (work.note) { %>
+                    <note><%= work.note %></note>
+                  <% } %>
+                   <% if (work.source_text && work.source_text.length > 0) { %>
+                    <note type="source_text"><%~ work.source_text.map(s_text => `<ref target="#${s_text.hit_id}">${s_text.title}</ref>`).join(', ') %> <%= work.note_source %></note>
+                  <% } %>
+                  <% if (work.mainGenre && work.mainGenre.length > 0 || work.subGenre && work.subGenre.length > 0) { %>
+                    <note type="genre"><%~ work.mainGenre.map(m_genre => m_genre).join(', ') %> ; <%= work.subGenre %></note>
                   <% } %>
                 </bibl>
               <% }); %>

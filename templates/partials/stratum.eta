@@ -1,0 +1,16 @@
+ <% it.strata.forEach(function(stratum) { %>
+    <item xml:id="<%= stratum.hit_id %>" n="<%= stratum.number %>">
+    <label><%= stratum.label %></label>
+    <note type="character"><%~ stratum.character.map(ch => ch).join(', ') %></note>
+    <desc><%= stratum.note %></desc>
+    <%~ stratum.date.map(d => `<origDate notBefore="${d.not_before}" notAfter="${d.not_after}">${d.value}</origDate>`).join(' ') %>
+    <%~ stratum.place.map(pl => `<origPlace ref="#${pl.hit_id}">${pl.value}</origPlace>`).join(' ') %>
+    <list type="hand_roles">
+    <% stratum.hand_roles.forEach((role) => { %>
+        <item>
+        <ref target="#<%= role.hit_id %>"></ref>
+        </item>
+    <% }) %>
+    </list>
+</item>
+    <% }) %>

@@ -36,5 +36,6 @@ function transformLibrary(library, places) {
 		library_full: library.library_full || "Unknown Library",
 		place: enrichPlaces(library.settlement, places),
 		wikidata: library.wikidata || "",
+		gnd_url: library.gnd_url || "",
 	};
 }

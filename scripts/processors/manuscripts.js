@@ -207,6 +207,8 @@ function getLibraryInfo(manuscript, libraries, places) {
 			abbreviation: manuscript.library[0].value,
 			library_full: manuscript.library_full[0].value,
 			place: enrichPlaces(library.settlement, places),
+			gnd_url: library.gnd_url || "",
+			wikidata: library.wikidata || "",
 		}));
 }
 
