@@ -3,11 +3,11 @@ name: Fetch data, generate index, build website and deploy to github pages
 on:
   schedule:
     - cron: "41 5 * * *"
-
   push:
     branches:
       - main
   workflow_dispatch:
+
 # can have several jobs which run parallel. each job can have several steps which are listed and follow one another
 # if there are several jobs watch out if one need another to be executed first e.g. build need: fetch
 jobs:
@@ -24,10 +24,24 @@ jobs:
       - name: Checkout the repo # clone the repo to the docker run in ubuntu
         uses: actions/checkout@v4 # there is already a code for this step, we refer to the path in the github ans state the version
 
+      - name: Cache schemas
+        uses: actions/cache@v3
+        with:
+          path: schemas/
+          key: tei-schemas-${{ hashFiles('schemas/*.xsd') }}
+          restore-keys: |
+            tei-schemas-
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+          xmllint --version
+
       - name: set up node.js # for our commands to be executed we need to set node in the ubuntu docker
         uses: actions/setup-node@v4
         with:
-          node-version: 22 # need to specify the verion
+          node-version: 22 # need to specify the version
 
       - name: set up pnpm
         uses: pnpm/action-setup@v4 # this one lives in the pnpm github repo
@@ -41,7 +55,14 @@ jobs:
         run: pnpm run get-data # using pnpm to run the js using shorthand as recorded in package.json
 
       - name: data processing # preprocess the raw baserow dumps to be used in the website
-        run: pnpm run process-data
+        run: |
+          echo "Processing data..."
+          pnpm run process-data
+
+      - name: Generate and validate TEI files
+        run: |
+          echo "Generating TEI files with validation..."
+          node scripts/generate-tei.js
 
       - name: generate typesense index
         env:
@@ -56,9 +77,6 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
-
-      - name: generate tei
-        run: pnpm run generate-tei
 
       - name: build website
         run: pnpm run build

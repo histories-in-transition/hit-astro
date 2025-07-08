@@ -1,4 +1,15 @@
-<msItem xml:id="<%= it.item.hit_id %>" n="<%= it.index + 1 %>">
+<% 
+// Initialize renderedItems if not passed or undefined
+const renderedItems = it.renderedItems || new Set();
+
+// Check if this item has already been rendered
+const isFirstOccurrence = !renderedItems.has(it.item.hit_id);
+if (isFirstOccurrence) {
+    renderedItems.add(it.item.hit_id);
+}
+%>
+
+<msItem  <% if (isFirstOccurrence) { %>xml:id="<%= it.item.hit_id %>"<% } else { %>sameAs="#<%= it.item.hit_id %>"<% } %> n="<%= it.index + 1 %>">
   <% if (it.item.locus) { 
     const loci = it.item.locus.split('|').map(l => l.trim());
     if (loci.length > 1) { %>

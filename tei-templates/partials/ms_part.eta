@@ -6,7 +6,7 @@
     <msContents>
         <% it.unit.content.forEach(function(item, index) 
         { %>
-        <%~ include('./ms_item', { item, index }) %>
+         <%~ include('./ms_item', { item, index, renderedItems: it.renderedItems }) %>
         <% }) %>
     </msContents>
     <% } %>

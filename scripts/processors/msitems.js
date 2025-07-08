@@ -17,23 +17,6 @@ export function processMsItems(msItems, deps) {
 		throw new Error("processMsItems expects an array of manuscript items");
 	}
 
-	// Destructure what we need from dependencies
-	const {
-		manuscripts,
-		places,
-		librariesPlus,
-		works,
-		people,
-		genres,
-		hands,
-		handsdated,
-		handsplaced,
-		handsrole,
-		cod_unitsprov,
-		bibliography,
-		dates,
-	} = deps;
-
 	// Transform each manuscript item
 	const msItemsPlus = msItems
 		.filter((item) => item.manuscript.length > 0 && (item.title_work.length > 0 || item.title_note))

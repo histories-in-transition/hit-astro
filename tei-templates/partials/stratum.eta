@@ -5,6 +5,7 @@
     <desc><%= stratum.note %></desc>
     <%~ stratum.date.map(d => `<origDate notBefore="${d.not_before}" notAfter="${d.not_after}">${d.value}</origDate>`).join(' ') %>
     <%~ stratum.place.map(pl => `<origPlace ref="#${pl.hit_id}">${pl.value}</origPlace>`).join(' ') %>
+    <% if (stratum.hand_roles && stratum.hand_roles.length > 0) { %>
     <list type="hand_roles">
     <% stratum.hand_roles.forEach((role) => { %>
         <item>
@@ -12,5 +13,6 @@
         </item>
     <% }) %>
     </list>
+    <% } %>
 </item>
     <% }) %>

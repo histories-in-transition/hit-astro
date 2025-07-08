@@ -77,10 +77,14 @@
                 <% } %>                                                                 
         </listBibl>
         <% } %>
-    </additional>  
+    </additional> 
     <% if (it.cod_units.length > 1) {%>
-    <% it.cod_units.forEach(function(unit, index)
-     { %>
-        <%~ include('./ms_part', { unit, index }) %>
-        <% }) %> <%}  %>          
+        <% 
+        // Initialize tracking for msItems that appear in multiple msParts
+        const renderedItems = new Set();
+        %>
+        <% it.cod_units.forEach(function(unit, index)
+        { %>
+            <%~ include('./ms_part', { unit, index, renderedItems: renderedItems }) %>
+    <% }) %> <%}  %>              
     </msDesc>
