@@ -49,7 +49,7 @@ const mssFolderPath = join(process.cwd(), "public", "tei", "manuscripts");
 mkdirSync(mssFolderPath, { recursive: true });
 
 // Eta views path
-const eta = new Eta({ views: join(process.cwd(), "templates") });
+const eta = new Eta({ views: join(process.cwd(), "tei-templates") });
 
 console.log(`Generating TEI for ${mss.length} manuscripts...\n`);
 
