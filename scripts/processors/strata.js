@@ -189,6 +189,8 @@ function getStratumManuscript(stratum, msItemsPlus) {
 				// Add library info if available from msItems
 				library: relatedMsItems[0]?.library || [],
 				author_entry: relatedMsItems[0]?.author_entry || [],
+				project: relatedMsItems[0]?.project || [],
+				language: relatedMsItems[0]?.language || [],
 			};
 		}) || []
 	);
@@ -241,6 +243,9 @@ function getStratumMsItems(h_roles, msItemsPlus) {
 					fullItem?.hands.filter((hand) =>
 						hand.jobs.some((job) => h_roles.some((h_role) => h_role.hit_id === job.hit_id)),
 					) || [],
+				text_modification: fullItem?.text_modification || [],
+				interpolations: fullItem?.interpolations || [],
+				form: fullItem?.form || [],
 			};
 		});
 }

@@ -1,0 +1,588 @@
+import instantsearch from "instantsearch.js";
+import TypesenseInstantsearchAdapter from "typesense-instantsearch-adapter";
+import {
+	searchBox,
+	hits,
+	stats,
+	pagination,
+	panel,
+	refinementList,
+	clearRefinements,
+	currentRefinements,
+	hierarchicalMenu,
+} from "instantsearch.js/es/widgets";
+
+import { simple } from "instantsearch.js/es/lib/stateMappings";
+import { withBasePath } from "./withBasePath";
+const project_collection_name = "hit__strata";
+const main_search_field = "work.title";
+const secondary_search_field = "manuscript";
+const third_search_field = "author.name";
+const search_api_key = "fAVyM549LHHgo0uapHq9NtEoW0U2gSeI"; // custom search only key
+
+const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
+	server: {
+		apiKey: search_api_key,
+		nodes: [
+			{
+				host: "typesense.acdh-dev.oeaw.ac.at",
+				port: "443",
+				protocol: "https",
+			},
+		],
+	},
+	additionalSearchParameters: {
+		query_by: `${main_search_field},${secondary_search_field}, ${third_search_field}`,
+	},
+});
+
+// create searchClient
+const searchClient = typesenseInstantsearchAdapter.searchClient;
+const search = instantsearch({
+	searchClient,
+	indexName: project_collection_name,
+	routing: {
+		stateMapping: simple(),
+	},
+});
+
+// Custom comparator function to sort century arrays for the refinement list 'Century of work'
+const centuryComparator = (a, b) => {
+	const extractCentury = (str) => {
+		const value = str?.name || str; // Handle both direct strings and refinement objects
+		const match = value.match(/(\d+)/);
+		return match ? parseInt(match[1], 10) : 0;
+	};
+
+	return extractCentury(a) - extractCentury(b);
+};
+
+const refinementListAuthor = wrapInPanel("Autor");
+
+const refinementListWork = wrapInPanel("Werk");
+
+const refinementListMS = wrapInPanel("Handschrift");
+
+const refinementListCharacter = wrapInPanel("Stratum Typ");
+
+const refinementListCentury = wrapInPanel("Jahrhundert");
+
+const refinementListOrigPlace = wrapInPanel("Entstehungsort");
+
+const refinementListHandsFunktion = wrapInPanel("Händefunktion");
+
+const refinementListHandsRole = wrapInPanel("Schreiberaktivitäten");
+
+const refinementListHandsContextRole = wrapInPanel("Schreiber Typ");
+
+const refinementListForm = wrapInPanel("Form");
+
+const refinementListLanguage = wrapInPanel("Sprache");
+
+const refinementListProject = wrapInPanel("Projekt");
+
+const refinementListModifications = wrapInPanel("Textvariationen");
+
+const refinementListInterpolations = wrapInPanel("Interpolations");
+
+// Initialize a custom Algolia widget to allow users to filter results by a range of years
+// filter input from and to to two different attributes in the schema (not possible with the default range input widget)
+// init() required function when building a custom widget
+// inside it 1. create the HTML structure
+// 2. add event listeners to the form
+// 3. use the helper to add the filter to the search, clear the old refinements
+// 4. add real-time validation to the inputs
+// 5. add getWidgetRenderState() to allow the currentRefinements widget to "see" this refinement
+const customDateRangeWidget = (containerId) => {
+	return {
+		init({ helper, state, createURL }) {
+			// Create the HTML structure for the date range widget with two inputs and apply button
+			const container = document.querySelector(containerId);
+			container.innerHTML = `
+		  <div class="ais-Panel md:mb-4 md:rounded-lg md:border border-brand-300 bg-white overflow-hidden md:shadow-xs">
+          <details class="group">
+            <summary class="pl-4 pr-2 py-2 md:bg-brand-50 flex justify-between items-center md:border-b border-gray-200">
+              <span class="text-brand-800 font-medium">Entstehungsdatum</span>
+              <button type="button" class=" w-auto h-auto bg-transparent flex items-center justify-start ">
+                <svg class="transform text-brand-800 rotate-90 group-open:rotate-270" style="width: 1em; height: 1em;" viewBox="0 0 500 500">
+                  <path d="M100 250l300-150v300z" fill="currentColor"></path>
+                </svg>
+              </button>
+            </summary>
+            <div class="ais-Panel-body px-4 py-2">
+              <div class="mt-2">
+                <form class="flex flex-col gap-2">
+                  <div class="flex gap-2 items-center">
+                    <input class="w-full text-sm py-1.5 px-2 border border-gray-300 rounded-sm" type="number" id="date-from-year" min="70" max="1600" placeholder="Von">
+                    <span class="text-gray-500">-</span>
+                    <input class="w-full text-sm py-1.5 px-2 border border-gray-300 rounded-sm" type="number" id="date-to-year" min="70" max="1600" placeholder="Bis">
+                  </div>
+                  <button type="submit" class="w-full py-1.5 text-sm bg-brand-600 text-white rounded-sm hover:bg-brand-700 transition">Suche</button>
+                </form>
+              </div>
+            </div>
+          </details>
+        </div>
+		`;
+
+			const form = container.querySelector("form");
+			const fromInput = container.querySelector("#date-from-year");
+			const toInput = container.querySelector("#date-to-year");
+
+			// add event listeners to the inputs
+			form.addEventListener("submit", (e) => {
+				e.preventDefault();
+
+				// Clear old refinements
+				helper.clearRefinements("terminus_post_quem");
+				helper.clearRefinements("terminus_ante_quem");
+
+				const from = parseInt(fromInput.value, 10);
+				const to = parseInt(toInput.value, 10);
+				// Validate: Ensure 'From year' < 'To year'
+				if (from >= to) {
+					toInput.setCustomValidity("The 'To year' must be greater than the 'From year'.");
+					// Don't submit if validation fails
+					return;
+				} else {
+					toInput.setCustomValidity(""); // Reset the error message if valid
+				}
+
+				// Proceed if both values are valid numbers;
+				// helper.addNummericRefinemnt - standard Algolia method to add a numeric filter
+				if (!isNaN(from)) {
+					helper.addNumericRefinement("terminus_post_quem", ">=", from);
+				}
+				if (!isNaN(to)) {
+					helper.addNumericRefinement("terminus_ante_quem", "<=", to);
+				}
+
+				// Perform the search after validation
+				helper.search();
+			});
+			// Add real-time validation reset to allow resubmission after correcting the input
+			fromInput.addEventListener("input", () => {
+				toInput.setCustomValidity(""); // Reset error if the user changes 'From year'
+				toInput.reportValidity(); // Show the validity message (if any)
+			});
+
+			toInput.addEventListener("input", () => {
+				const from = parseInt(fromInput.value, 10);
+				const to = parseInt(toInput.value, 10);
+
+				// Re-check the condition if the 'To year' is still valid after the change
+				if (from >= to) {
+					toInput.setCustomValidity("Das „Bis-Jahr“ muss größer sein als das „Von-Jahr“.");
+				} else {
+					toInput.setCustomValidity(""); // Reset the error if condition is met
+				}
+
+				toInput.reportValidity(); // Show the validity message (if any)
+			});
+		},
+
+		getWidgetRenderState({ helper }) {
+			// Required so currentRefinements widget can "see" this refinement
+			const refinements = [];
+
+			const from = helper.getNumericRefinements("terminus_post_quem");
+			if (from["≥"]) {
+				refinements.push({
+					attribute: "terminus_post_quem",
+					type: "numeric",
+					value: () => {
+						helper.removeNumericRefinement("terminus_post_quem", ">=");
+						helper.search();
+					},
+					label: `From ${from["≥"][0]}`,
+				});
+			}
+
+			const to = helper.getNumericRefinements("terminus_ante_quem");
+			if (to["≤"]) {
+				refinements.push({
+					attribute: "terminus_ante_quem",
+					type: "numeric",
+					value: () => {
+						helper.removeNumericRefinement("terminus_ante_quem", "<=");
+						helper.search();
+					},
+					label: `To ${to["≤"][0]}`,
+				});
+			}
+
+			return {
+				refinements,
+			};
+		},
+		getWidgetUiState(uiState, { searchParameters }) {
+			const from = searchParameters.getNumericRefinements("terminus_post_quem")?.[">="]?.[0];
+			const to = searchParameters.getNumericRefinements("terminus_ante_quem")?.["<="]?.[0];
+
+			if (from !== undefined || to !== undefined) {
+				return {
+					...uiState,
+					dateRange: {
+						from,
+						to,
+					},
+				};
+			}
+			return uiState;
+		},
+
+		getWidgetSearchParameters(searchParameters, { uiState }) {
+			const dateRange = uiState.dateRange || {};
+			let params = searchParameters
+				.clearRefinements("terminus_post_quem")
+				.clearRefinements("terminus_ante_quem");
+			if (dateRange.from !== undefined) {
+				params = params.addNumericRefinement("terminus_post_quem", ">=", Number(dateRange.from));
+			}
+			if (dateRange.to !== undefined) {
+				params = params.addNumericRefinement("terminus_ante_quem", "<=", Number(dateRange.to));
+			}
+			return params;
+		},
+	};
+};
+
+// Utility to show/hide the notification
+function showServerErrorNotification(message) {
+	const el = document.getElementById("server-error-notification");
+	if (el) {
+		el.textContent = message || "Serverfehler: Die Suche ist derzeit nicht verfügbar.";
+		el.classList = "block";
+	}
+}
+function hideServerErrorNotification() {
+	const el = document.getElementById("server-error-notification");
+	if (el) el.classList = "hidden";
+}
+
+// Patch the search client to catch errors
+const originalSearch = searchClient.search.bind(searchClient);
+searchClient.search = function (requests) {
+	return originalSearch(requests).catch((err) => {
+		showServerErrorNotification(
+			"Serverfehler: Die Suche ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.",
+		);
+		throw err; // rethrow so InstantSearch knows
+	});
+};
+
+// Optionally, hide notification on successful search
+search.on("render", () => {
+	hideServerErrorNotification();
+});
+
+// add widgets
+search.addWidgets([
+	searchBox({
+		container: "#searchbox",
+		autofocus: true,
+		placeholder: "Suche nach einem Titel oder einer Handschrift",
+	}),
+	customDateRangeWidget("#date-range-widget"),
+	hits({
+		container: "#hits",
+		templates: {
+			empty: "No results for <q>{{ query }}</q>",
+
+			item(hit, { html, components }) {
+				const href = withBasePath(`/strata/${hit.hit_id}`);
+
+				return html`
+					<article class="w-full p-2 md:px-4 border-brand-300 border rounded-md">
+						<a href="${href}"
+							><h2
+								class="text-lg underline underline-offset-2 font-semibold text-brand-800  break-words"
+							>
+								<span>(#${hit.id}) ${hit.label}</span>
+							</h2></a
+						>
+						<div class="text-gray-700">
+							<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
+								<dt class="font-semibold pr-2">Handschrift:</dt>
+								<dd class="pl-5">${hit.manuscript[0].value}</dd>
+								<dt class="font-semibold pr-2">Typ:</dt>
+								<dd class="pl-5">${hit.character.join(", ")}</dd>
+								<dt class="font-semibold pr-2">Datierung:</dt>
+								<dd class="pl-5">
+									${[...new Set(hit.orig_date?.map((d) => d.value) || [])].join(" | ")}
+								</dd>
+								<dt class="font-semibold pr-2">Entstehungsort:</dt>
+								<dd class="pl-5">
+									${[...new Set(hit.orig_place?.flatMap((pl) => pl.value) || [])].join(" | ")}
+								</dd>
+								<dt class="font-semibold pr-2">Werke:</dt>
+								<dd class="pl-5">
+									${[...new Set(hit.work?.flatMap((w) => w.title) || [])].join(" | ")}
+								</dd>
+								<dt class="font-semibold pr-2">Schreiberaktivitäten:</dt>
+								<dd class="pl-5">${[...new Set(hit.role || [])].join(" | ")}</dd>
+							</dl>
+						</div>
+					</article>
+				`;
+			},
+		},
+	}),
+
+	pagination({
+		container: "#pagination",
+	}),
+
+	stats({
+		container: "#stats-container",
+	}),
+
+	refinementListMS({
+		container: "#refinement-list-manuscripts",
+		attribute: "manuscript.value",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListWork({
+		container: "#refinement-list-work",
+		attribute: "work.title",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListCentury({
+		container: "#refinement-list-century",
+		attribute: "orig_date.century",
+		searchable: true,
+		sortBy: centuryComparator,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "e.g. 9th c.",
+	}),
+
+	refinementListOrigPlace({
+		container: "#refinement-list-orig-place",
+		attribute: "orig_place.value",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListHandsRole({
+		container: "#refinement-list-hands-function",
+		attribute: "role",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+	refinementListHandsContextRole({
+		container: "#refinement-list-scribe-type",
+		attribute: "scribe_type",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListHandsFunktion({
+		container: "#refinement-list-hands-role",
+		attribute: "function",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListAuthor({
+		container: "#refinement-list-authors",
+		attribute: "author.name",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListForm({
+		container: "#refinement-list-form",
+		attribute: "form.value",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListModifications({
+		container: "#refinement-list-modifications",
+		attribute: "text_modifications",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListInterpolations({
+		container: "#refinement-list-interpolations",
+		attribute: "interpolations.title",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListCharacter({
+		container: "#refinement-list-character",
+		attribute: "character",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListLanguage({
+		container: "#refinement-list-language",
+		attribute: "language.value",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	refinementListProject({
+		container: "#refinement-list-project",
+		attribute: "project",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
+	clearRefinements({
+		container: "#clear-refinements",
+	}),
+
+	currentRefinements({
+		container: "#current-refinements",
+		transformItems(items) {
+			return items.map((item) => ({
+				...item,
+				label:
+					item.attribute === "author.name"
+						? "Autor"
+						: item.attribute === "work.title"
+							? "Werk"
+							: item.attribute === "manuscript.value"
+								? "Handschrift"
+								: item.attribute === "orig_date.century"
+									? "Entstehungszeit"
+									: item.attribute === "orig_place.value"
+										? "Entstehungsort"
+										: item.attribute === "function"
+											? "Händefunktion"
+											: item.attribute === "role"
+												? "Schreiberaktivitäten"
+												: item.attribute === "scribe_type"
+													? "Schreiber Typ"
+													: item.attribute === "terminus_ante_quem"
+														? "Terminus ante quem"
+														: item.attribute === "terminus_post_quem"
+															? "Termininus post quem"
+															: item.attribute === "interpolations.title"
+																? "Interpolations"
+																: item.attribute === "text_modifications"
+																	? "Textvariationen"
+																	: item.attribute === "form.value"
+																		? "Form"
+																		: item.attribute === "character"
+																			? "Stratum Typ"
+																			: item.attribute === "project"
+																				? "Projekt"
+																				: item.attribute === "language.value"
+																					? "Sprache"
+																					: item.label,
+			}));
+		},
+	}),
+]);
+
+search.start();
+// function to wrap refinements filter in a panel
+function wrapInPanel(title) {
+	return panel({
+		collapsed: () => true, // Always collapsed by default
+		/* collapsed: ({ state }) => {
+			return state.query.length === 0;
+		}, // collapse if no query */
+		templates: {
+			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
+		},
+		cssClasses: {
+			header: "cursor-pointer relative z-10",
+			collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+			collapseIcon: "",
+			root: "border-b",
+		},
+	})(refinementList);
+}
+
+function wrapHierarcicalMenuInPanel(title) {
+	return panel({
+		collapsed: () => true, // Always collapsed by default
+		/* collapsed: ({ state }) => {
+			return state.query.length === 0;
+		}, // collapse if no query */
+		templates: {
+			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
+		},
+		cssClasses: {
+			header: "cursor-pointer relative z-10",
+			collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
+			collapseIcon: "",
+			root: "border-b",
+		},
+	})(hierarchicalMenu);
+}
+
+// Back to top functionality
+const backToTopButton = document.getElementById("back-to-top");
+if (backToTopButton) {
+	backToTopButton.addEventListener("click", function () {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	});
+
+	// Show/hide based on scroll position
+	window.addEventListener("scroll", function () {
+		if (window.scrollY > 300) {
+			backToTopButton.classList.remove("hidden");
+		} else {
+			backToTopButton.classList.add("hidden");
+		}
+	});
+}
+// Filter show/hide panel
+const showFilter = document.querySelector("#filter-button");
+const filters = document.querySelector("#refinements-section");
+if (showFilter) {
+	showFilter.addEventListener("click", function () {
+		filters?.classList.toggle("hidden");
+	});
+}

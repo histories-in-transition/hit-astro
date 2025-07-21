@@ -4,22 +4,17 @@ import { Icon } from "astro-icon/components";
 import NavLink from "../components/nav-link.astro";
 ---
 
-<PageLayout title="Search">
-	<div class="grid mx-auto md:w-3/4 sm:w-4/5 md:py-4">
+<PageLayout title="Search Strata">
+	<div class="grid mx-auto md:w-3/4 sm:w-4/5 md:py-4 gap-2">
 		<div
 			class="flex items-center justify-between md:justify-start md:gap-4 rounded-lg pr-4 py-2 justify-self-start"
 		>
 			<span class="text-2xl font-bold text-brand-800 mb-2 block">Erweiterte Suche nach:</span>
 			<div class="inline-flex bg-brand-700 rounded-full p-1 justify-self-start">
-				<h1 class="px-6 py-3 text-sm font-bold bg-brand-100 text-brand-700 rounded-full">
+				<NavLink href="/search" class="px-6 py-3 text-sm font-bold text-brand-100 rounded-full">
 					Manuskripteinträgen (MS-items)
-				</h1>
-				<NavLink
-					href="/search-strata"
-					class="px-6 py-3 text-sm font-bold text-brand-100 rounded-full"
-				>
-					Strata
 				</NavLink>
+				<h1 class="px-6 py-3 text-sm font-bold bg-brand-100 text-brand-700 rounded-full">Strata</h1>
 			</div>
 		</div>
 
@@ -45,17 +40,15 @@ import NavLink from "../components/nav-link.astro";
 						<aside>
 							<div id="refinement-list-work"></div>
 							<div id="refinement-list-authors"></div>
-							<div id="refinement-list-genre"></div>
 							<div id="refinement-list-manuscripts"></div>
+							<div id="refinement-list-character"></div>
 							<div id="refinement-list-orig-date"></div>
 							<div id="refinement-list-century"></div>
 							<div id="date-range-widget"></div>
 							<div id="refinement-list-orig-place"></div>
-							<div id="refinement-list-provenance"></div>
 							<div id="refinement-list-hands-role"></div>
 							<div id="refinement-list-hands-function"></div>
 							<div id="refinement-list-scribe-type"></div>
-							<div id="refinement-list-decoration"></div>
 							<div id="refinement-list-form"></div>
 							<div id="refinement-list-modifications"></div>
 							<div id="refinement-list-interpolations"></div>
@@ -109,5 +102,5 @@ import NavLink from "../components/nav-link.astro";
 		</svg>
 	</button>
 
-	<script src="@/lib/advanced-search.js"></script>
+	<script src="@/lib/advanced-strata-search.js"></script>
 </PageLayout>
