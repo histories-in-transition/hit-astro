@@ -231,9 +231,8 @@ function validateTEIFallback(xmlContent, filename) {
 
 // Main execution
 async function main() {
-	console.log("🏗️  Starting TEI generation with validation...");
+	console.log("🏗️  Starting TEI generation...");
 
-	// Environment info
 	const isCI = process.env.CI === "true";
 	const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
 
@@ -241,38 +240,6 @@ async function main() {
 		console.log("🔧 Running in CI environment");
 		if (isGitHubActions) {
 			console.log("🐙 GitHub Actions detected");
-		}
-	}
-
-	// Check xmllint availability
-	const hasXmllint = checkXmllintAvailable();
-
-	if (hasXmllint) {
-		console.log("✅ xmllint is available - full schema validation enabled");
-	} else {
-		console.log("⚠️  xmllint not available - using fallback validation");
-		if (!isCI) {
-			console.log("   Install xmllint for full validation:");
-			console.log("   Ubuntu/Debian: sudo apt-get install libxml2-utils");
-			console.log("   macOS: brew install libxml2");
-		}
-	}
-
-	// Schema setup
-	const schemaDir = join(process.cwd(), "schemas");
-	mkdirSync(schemaDir, { recursive: true });
-
-	const schemaBaseUrl = "https://diglib.hab.de/rules/schema/mss/v1.0";
-	const schemaPath = join(schemaDir, "cataloguing.xsd");
-
-	// Download schema if needed (only when using xmllint)
-	let hasValidSchema = false;
-
-	if (hasXmllint) {
-		hasValidSchema = await downloadSchemaWithDependencies(schemaBaseUrl, schemaDir);
-
-		if (!hasValidSchema) {
-			console.log("❌ Failed to obtain valid schema - falling back to basic validation");
 		}
 	}
 
@@ -289,12 +256,29 @@ async function main() {
 	// Eta views path
 	const eta = new Eta({ views: join(process.cwd(), "tei-templates") });
 
-	console.log(`🏭 Generating and validating TEI for ${mss.length} manuscripts...\n`);
+	console.log(`🏭 Generating TEI for ${mss.length} manuscripts...\n`);
 
 	let successCount = 0;
 	let wellFormednessErrors = 0;
 	let schemaErrors = 0;
 	const validationResults = [];
+
+	// check for schemata
+	let hasXmllint = false;
+	let hasValidSchema = false;
+	const schemaDir = join(process.cwd(), "schemas");
+	const schemaBaseUrl = "https://diglib.hab.de/rules/schema/mss/v1.0";
+	const schemaPath = join(schemaDir, "cataloguing.xsd");
+	if (!isCI) {
+		hasXmllint = checkXmllintAvailable();
+		mkdirSync(schemaDir, { recursive: true });
+		if (hasXmllint) {
+			hasValidSchema = await downloadSchemaWithDependencies(schemaBaseUrl, schemaDir);
+			if (!hasValidSchema) {
+				console.log("❌ Failed to obtain valid schema - skipping schema validation");
+			}
+		}
+	}
 
 	for (const [index, ms] of mss.entries()) {
 		const filename = ms.hit_id ? `${ms.hit_id}.xml` : `manuscript_${ms.id}.xml`;
@@ -303,43 +287,47 @@ async function main() {
 			// Render the template with manuscript data
 			const xml = eta.render("./manuscript.eta", ms);
 
-			// Step 1: Well-formedness validation
-			const wellFormedness = validateWellFormedness(xml, filename);
-
-			if (!wellFormedness.success) {
-				console.log(`❌ [${index + 1}/${mss.length}] ${filename} - Well-formedness failed:`);
-				wellFormedness.errors.forEach((error) => {
-					console.log(`   ${error}`);
-				});
-				wellFormednessErrors++;
-				validationResults.push({ ...wellFormedness, type: "well-formedness" });
-				continue;
-			}
-
-			// Write the well-formed XML file
+			// Write the XML file
 			const xmlFilePath = join(mssFolderPath, filename);
 			writeFileSync(xmlFilePath, xml);
+			// Valicadation only if not in CI, no validation for gitHub Actions
+			if (!isGitHubActions || !isCI) {
+				// Only validate locally not in CI
+				const hasXmllint = checkXmllintAvailable();
+				let schemaValidation, wellFormedness;
 
-			// Step 2: Schema validation
-			let schemaValidation;
+				// Step 1: Well-formedness validation
+				wellFormedness = validateWellFormedness(xml, filename);
 
-			if (hasXmllint && hasValidSchema) {
-				// Use xmllint for full schema validation
-				schemaValidation = validateAgainstSchema(xmlFilePath, schemaPath, filename);
+				if (!wellFormedness.success) {
+					console.log(`❌ [${index + 1}/${mss.length}] ${filename} - Well-formedness failed:`);
+					wellFormedness.errors.forEach((error) => {
+						console.log(`   ${error}`);
+					});
+					wellFormednessErrors++;
+					validationResults.push({ ...wellFormedness, type: "well-formedness" });
+					continue;
+				}
+
+				// Step 2: Schema validation (use result from above)
+				if (hasXmllint && hasValidSchema) {
+					schemaValidation = validateAgainstSchema(xmlFilePath, schemaPath, filename);
+				} else {
+					schemaValidation = validateTEIFallback(xml, filename);
+				}
+
+				if (!schemaValidation.success) {
+					console.log(`⚠️  [${index + 1}/${mss.length}] ${filename} - Schema validation failed:`);
+					schemaValidation.errors.forEach((error) => {
+						console.log(`   ${error}`);
+					});
+					schemaErrors++;
+					validationResults.push({ ...schemaValidation, type: "schema" });
+				} else {
+					console.log(`✅ [${index + 1}/${mss.length}] ${filename} - Generated and validated`);
+				}
 			} else {
-				// Use fallback validation
-				schemaValidation = validateTEIFallback(xml, filename);
-			}
-
-			if (!schemaValidation.success) {
-				console.log(`⚠️  [${index + 1}/${mss.length}] ${filename} - Schema validation failed:`);
-				schemaValidation.errors.forEach((error) => {
-					console.log(`   ${error}`);
-				});
-				schemaErrors++;
-				validationResults.push({ ...schemaValidation, type: "schema" });
-			} else {
-				console.log(`✅ [${index + 1}/${mss.length}] ${filename} - Generated and validated`);
+				console.log(`✅ [${index + 1}/${mss.length}] ${filename} - Generated`);
 			}
 
 			successCount++;
@@ -357,38 +345,30 @@ async function main() {
 
 	// Summary
 	console.log("\n═══════════════════════════════════════");
-	console.log("🏁 GENERATION & VALIDATION SUMMARY");
+	console.log("🏁 GENERATION SUMMARY");
 	console.log("═══════════════════════════════════════");
 	console.log(`📊 Total manuscripts: ${mss.length}`);
 	console.log(`✅ Successfully generated: ${successCount}`);
-	console.log(`❌ Well-formedness errors: ${wellFormednessErrors}`);
-	console.log(`⚠️  Schema validation errors: ${schemaErrors}`);
-	console.log(
-		`🔧 Validation method: ${hasXmllint && hasValidSchema ? "xmllint (full)" : "fallback (basic)"}`,
-	);
-
-	if (hasXmllint && !hasValidSchema) {
-		console.log("⚠️  xmllint available but schema download failed - using fallback validation");
-	}
-	if (validationResults.length > 0) {
-		console.log("\n📋 Files with issues:");
-		validationResults.forEach((result) => {
-			console.log(`   • ${result.filename} (${result.type})`);
-		});
+	if (isCI) {
+		console.log(`❌ Well-formedness errors: ${wellFormednessErrors}`);
+		console.log(`⚠️  Schema validation errors: ${schemaErrors}`);
+		if (validationResults.length > 0) {
+			console.log("\n📋 Files with issues:");
+			validationResults.forEach((result) => {
+				console.log(`   • ${result.filename} (${result.type})`);
+			});
+		}
 	}
 
 	// Exit codes for CI
-	if (wellFormednessErrors > 0) {
+	if (isCI && wellFormednessErrors > 0) {
 		console.log("\n💥 Critical errors found - failing build");
 		process.exit(1);
 	} else {
 		console.log("\n🎉 All TEI files generated successfully!");
-		if (schemaErrors > 0) {
+		if (isCI && schemaErrors > 0) {
 			console.log("⚠️  Some schema validation warnings - check output above");
-			// Don't fail the build for schema warnings in CI
-			if (isCI) {
-				console.log("🔧 Continuing build despite schema warnings in CI");
-			}
+			console.log("🔧 Continuing build despite schema warnings in CI");
 		}
 	}
 }
