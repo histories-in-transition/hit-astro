@@ -1,18 +1,56 @@
- <% it.strata.forEach(function(stratum) { %>
+<% it.strata.forEach(function(stratum) { %>
     <item xml:id="<%= stratum.hit_id %>" n="<%= stratum.number %>">
-    <label><%= stratum.label %></label>
-    <note type="character"><%~ stratum.character.map(ch => ch).join(', ') %></note>
-    <desc><%= stratum.note %></desc>
-    <%~ stratum.date.map(d => `<origDate notBefore="${d.not_before}" notAfter="${d.not_after}">${d.value}</origDate>`).join(' ') %>
-    <%~ stratum.place.map(pl => `<origPlace ref="#${pl.hit_id}">${pl.value}</origPlace>`).join(' ') %>
-    <% if (stratum.hand_roles && stratum.hand_roles.length > 0) { %>
-    <list type="hand_roles">
-    <% stratum.hand_roles.forEach((role) => { %>
-        <item>
-        <ref target="#<%= role.hit_id %>"></ref>
-        </item>
-    <% }) %>
-    </list>
-    <% } %>
-</item>
-    <% }) %>
+        <label><%= stratum.label %></label>
+        <note type="character"><%~ stratum.character.map(ch => ch).join(', ') %></note>
+        <desc><%= stratum.note %></desc>
+
+        <%~ stratum.date.map(d => 
+            `<origDate notBefore="${d.not_before}" notAfter="${d.not_after}">${d.value}</origDate>`
+        ).join(' ') %>
+
+        <%~ stratum.place.map(pl => 
+            `<origPlace ref="#${pl.hit_id}">${pl.value}</origPlace>`
+        ).join(' ') %>
+
+        <% if (stratum.hand_roles && stratum.hand_roles.length > 0) { %>
+            <list type="hand_roles">
+                <% stratum.hand_roles.forEach((role) => { %>
+                    <item>
+                        <ref target="#<%= role.hit_id %>"></ref>
+                    </item>
+                <% }) %>
+            </list>
+        <% } %>
+
+        <% if (stratum.stratum_filiations && stratum.stratum_filiations.length > 0) { %>
+            <list type="filiations">
+                <% stratum.stratum_filiations.forEach((filiation) => { %>
+                    <item>
+                        <% if (filiation.reason) { %>
+                            <desc><%= filiation.reason %></desc>
+                        <% } %>
+                        <% if (filiation.note) { %>
+                            <note><%= filiation.note %></note>
+                        <% } %>
+                        <list type="strata"> 
+                            <% filiation.filiated_strata.forEach(stratum => { %>
+                                <item>
+                                    <%= stratum.value %>
+                                    <% if (stratum.locus) { %>
+                                        <note>(fols. <%= stratum.locus %>)</note>
+                                    <% } %>
+                                    <% if (stratum.note) { %>
+                                        <note><%= stratum.note %></note>
+                                    <% } %>
+                                    <% if (stratum.catalog_url) { %>
+                                        <ptr target="<%= stratum.catalog_url %>"/>
+                                    <% } %>
+                                </item>
+                            <% }) %>
+                        </list>
+                    </item>
+                <% }) %>
+            </list>
+        <% } %>
+    </item>
+<% }) %>

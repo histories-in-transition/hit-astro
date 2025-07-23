@@ -49,6 +49,40 @@ const { data: stratum } = Astro.props;
 						<dd class="pl-5">{stratum.character}</dd>
 						<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
 						<dd class="pl-5">{stratum.note}</dd>
+						<!-- /* Display the filiations of the stratum, if available */ -->
+						{stratum.stratum_filiations && stratum.stratum_filiations.length > 0 ? (
+							<>
+								<dt class="font-semibold border-r border-gray-300 pr-2">Filiationen:</dt>
+								<dd class="pl-5">
+									<ul class="list-disc pl-5">
+										{stratum.stratum_filiations.map((filiation) => (
+											<li >
+												{filiation.filiated_strata.map((str, strIndex) => (
+													<span >
+														{str.internal ? (
+															<NavLink href={`/strata/${str.hit_id}`}>
+																{str.value}
+															</NavLink>
+														) : str.catalog_url ? (
+															<NavLink href={str.catalog_url}>
+																{str.value}
+															</NavLink>
+														) : (
+															str.value
+														)}
+														{str.locus && ` (fols. ${str.locus})`}
+														{str.note && ` - ${str.note}`}
+														{strIndex < filiation.filiated_strata.length - 1 && ", "}
+													</span>
+												))}
+												{filiation.reason && ` - ${filiation.reason}`}
+												{filiation.note && ` - ${filiation.note}`}
+											</li>
+										))}
+           						 </ul>
+								</dd>
+							</>
+						) : null}
 					</dl>
 				{
 					/* Table for displaying information about the msitems and hand_roles defining the stratum */
@@ -244,5 +278,4 @@ const { data: stratum } = Astro.props;
 	</Article>
 	
     <script src="@/lib/table-search.js"></script>
-    <script src="@/lib/download-pdf.js"></script>
 </PageLayout>

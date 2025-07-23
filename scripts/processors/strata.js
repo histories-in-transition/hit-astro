@@ -12,6 +12,7 @@ import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "../utils/utils.
  * @param {Array} deps.places - Places data
  * @param {Array} deps.dates - Dates data
  * @param {Array} deps.bibliography - Bibliography data
+ * @param {Array} deps.strata_filiations - Strata filiations data
  * @returns {Array} Processed strata with prev/next navigation
  */
 export function processStrata(strata, deps) {
@@ -19,8 +20,19 @@ export function processStrata(strata, deps) {
 		throw new Error("processStrata expects an array of strata");
 	}
 
-	const { handsrole, hands, handsdated, handsplaced, msItemsPlus, places, dates, bibliography } =
-		deps;
+	const {
+		bibliography,
+		dates,
+		filiated_strata,
+		handsrole,
+		hands,
+		handsdated,
+		handsplaced,
+		msItemsPlus,
+		places,
+		strata_filiations,
+		strataa,
+	} = deps;
 
 	const processedStrata = strata.map((stratum) =>
 		transformStratum(
@@ -33,6 +45,9 @@ export function processStrata(strata, deps) {
 			places,
 			dates,
 			bibliography,
+			strata_filiations,
+			strataa,
+			filiated_strata,
 		),
 	);
 
@@ -50,6 +65,7 @@ export function processStrata(strata, deps) {
  * @param {Array} places - Places data
  * @param {Array} dates - Dates data
  * @param {Array} bibliography - Bibliography data
+ * @param {Array} strata_filiations
  * @returns {Object} Transformed stratum
  */
 function transformStratum(
@@ -62,6 +78,9 @@ function transformStratum(
 	places,
 	dates,
 	bibliography,
+	strata_filiations,
+	strataa,
+	filiated_strata,
 ) {
 	// Get corresponding hand_roles data
 	const h_roles = handsrole
@@ -100,6 +119,13 @@ function transformStratum(
 	const stratumPlaces = getUniqueStratumPlaces(enrichedHands);
 	const stratumDates = getUniqueStratumDates(enrichedHands);
 
+	const stratum_filiations = getStratumFiliations(
+		stratum,
+		strata_filiations,
+		filiated_strata,
+		strataa,
+	);
+
 	return {
 		id: stratum.id,
 		hit_id: stratum.hit_id,
@@ -113,7 +139,52 @@ function transformStratum(
 		date: stratumDates,
 		place: stratumPlaces,
 		hands: enrichedHands,
+		stratum_filiations: stratum_filiations,
 	};
+}
+/**
+ * function to enrich stratum with stratum_filiations
+ *
+ * @param {*} stratum
+ * @param {*} strata_filiations
+ * @param {*} filiated_strata
+ * @param {*} strataa
+ * @returns
+ */
+function getStratumFiliations(stratum, strata_filiations, filiated_strata, strataa) {
+	return Object.values(strata_filiations || {})
+		.filter((filiation) => filiation.stratum.some((str) => str.id === stratum.id))
+		.map((filiation) => {
+			// External filiations
+			const ext = filiation.filiated_stratum.map((fs) => {
+				const externalStratum = Object.values(filiated_strata).find((s) => s.id === fs.id);
+				return {
+					hit_id: externalStratum.hit_id,
+					value: externalStratum.label[0].value,
+					note: externalStratum.note || "",
+					locus: externalStratum.locus || "",
+					internal: false,
+					catalog_url: externalStratum.catalog_url || "",
+				};
+			});
+			// Internal filiations
+			const inter = filiation.stratum
+				.filter((str) => str.id !== stratum.id)
+				.map((str) => {
+					const internalStratum = Object.values(strataa).find((s) => s.id === str.id);
+					return {
+						hit_id: internalStratum.hit_id,
+						value: internalStratum.label[0].value || "Unknown Stratum",
+						internal: true,
+					};
+				});
+			return {
+				hit_id: filiation.hit_id,
+				reason: filiation.reason.value || "",
+				filiated_strata: [...ext, ...inter],
+				note: filiation.note || "",
+			};
+		});
 }
 
 /**
@@ -210,14 +281,12 @@ function getStratumHands(h_roles, hands, handsdated, handsplaced, places, dates,
  * Get ms items for stratum
  */
 function getStratumMsItems(h_roles, msItemsPlus) {
-	return h_roles
+	const msitems = h_roles
 		.flatMap((h_role) => h_role.ms_item)
 		.filter(Boolean)
 		.map((item) => {
-			// Get full ms item data
+			// ... your existing enrichment logic ...
 			const fullItem = msItemsPlus.find((msi) => msi.id === item.id);
-
-			// Create enriched version for stratum
 			const authorNames =
 				fullItem?.title_work.flatMap((t) =>
 					t.author ? t.author.map((a) => a.name).filter(Boolean) : [],
@@ -248,6 +317,9 @@ function getStratumMsItems(h_roles, msItemsPlus) {
 				form: fullItem?.form || [],
 			};
 		});
+
+	// Deduplicate by id
+	return Array.from(new Map(msitems.map((item) => [item.id, item])).values());
 }
 
 /**

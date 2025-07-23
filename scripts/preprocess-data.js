@@ -109,6 +109,10 @@ async function processAllData() {
 			places: processedPlaces,
 			dates: rawData.dates,
 			bibliography: rawData.bibliography,
+			strata_filiations: rawData.strata_filiations,
+			strataa: rawData.strataa,
+			filiated_strata: rawData.filiated_strata,
+			works: rawData.works,
 		});
 		ProcessingLogger.logStep("strata", processedStrata.length);
 

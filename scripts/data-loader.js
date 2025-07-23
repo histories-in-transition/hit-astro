@@ -35,5 +35,7 @@ export function loadAllData() {
 		scribes: loadJSON("scribes.json"),
 		strataa: loadJSON("strata.json"),
 		works: loadJSON("works.json"),
+		strata_filiations: loadJSON("strata_filiations.json"),
+		filiated_strata: loadJSON("filiated_strata.json"),
 	};
 }
