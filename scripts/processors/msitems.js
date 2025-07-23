@@ -89,6 +89,7 @@ function transformMsItem(item, deps, originalMsItems) {
 		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
 		language: item.language.map(({ value }) => ({ value })),
 		locus: item.locus_grp,
+		facs_url: item.facs_url,
 		incipit: item.incipit,
 		explicit: item.explicit,
 		rubric: item.rubric,

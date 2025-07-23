@@ -58,7 +58,7 @@ import TableHead from "@/components/table-head.astro";
 						field: "msitems",
 						headerFilterPlaceholder: "e.g. Ostertafel",
 						minWidth: 150,
-						mutator: jsonpathFlexibleLookup,
+						mutator: jsonpathsDistinctLookup,
 						mutatorParams: { path: "$[*].w_aut", separator: "\n" },
 						headerFilter: "input",
 						formatter: "textarea",
