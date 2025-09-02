@@ -237,7 +237,7 @@ const geoJsonData = processWorksData(work);
 							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Schreibort</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Datierung</th>
 							<th colspan="2" class="text-center p-2 font-semibold border border-neutral-300">Annotationen</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Dekoration</th>
+							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Textmodifikation</th>
 						</tr>
 						<tr>
 							<th class="text-center p-2 font-semibold border border-neutral-300">Datierung</th>
@@ -293,7 +293,7 @@ const geoJsonData = processWorksData(work);
 										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
 									</td>
 									<td class="p-2 border border-neutral-300">
-										{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
+										{[...new Set(item.text_modification)].join(' | ')}
 									</td>
 								</tr>
 							))
