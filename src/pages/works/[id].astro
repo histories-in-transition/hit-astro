@@ -61,7 +61,7 @@ const geoJsonData = processWorksData(work);
 											name="lucide:external-link"
 										/>)
 									</NavLink>
-						}
+						}						
 						</dd>
 					{work.author.length > 0 &&
 						<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
@@ -144,7 +144,8 @@ const geoJsonData = processWorksData(work);
 				{work.ms_transmission?.map(tr => tr.orig_place).flat().length > 0 &&					
 					<MapLeaflet client:only="react" geoJsonData={geoJsonData}/>
 				}
-					
+					{/* mss transmission in details for small screens */}
+
 					<div class="space-y-4 md:hidden mt-3">
 					{work.ms_transmission.map((item) => (
 						<div class="border border-neutral-300 rounded-md overflow-hidden">
@@ -202,27 +203,44 @@ const geoJsonData = processWorksData(work);
 								<dd class="pl-5">
 								{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 								</dd>
-								
+								{item.annotation_date.length > 0 &&	
 								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
 								<dd class="pl-5">
 								{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
 								</dd>
-								
+								}
+								{item.annotation_typ.length > 0 &&
 								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Typ</dt>
 								<dd class="pl-5">
 								{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
 								</dd>
-								
+}
+								{item.version.length > 0 &&
+								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Version</dt>
+								<dd class="pl-5">
+								{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
+								</dd>	
+}
+							{item.text_modification.length > 0 &&
+									<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Textmodifikation</dt>
+									<dd class="pl-5">
+									{[...new Set(item.text_modification)].join(' | ')}
+									</dd>
+								}
+							{item.decoration.length > 0 &&
 								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Dekoration</dt>
 								<dd class="pl-5">
 								{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
 								</dd>
+							}
 							</dl>
 							</div>
 						</details>
 						</div>
 					))}
 					</div>
+
+					{/* // table for medium and larger screens */}
 					<div class="hidden md:block mt-3">
 						<div class="overflow-hidden rounded-md border border-neutral-400">
 				<table
@@ -237,7 +255,11 @@ const geoJsonData = processWorksData(work);
 							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Schreibort</th>
 							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Datierung</th>
 							<th colspan="2" class="text-center p-2 font-semibold border border-neutral-300">Annotationen</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Textmodifikation</th>
+							{work.ms_transmission.some((item) => item.version.length > 0) && (
+								<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Version</th>)}
+							{work.ms_transmission.some(item => item.text_modification.length > 0) &&
+							(<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Textmodifikation</th>)
+							}
 						</tr>
 						<tr>
 							<th class="text-center p-2 font-semibold border border-neutral-300">Datierung</th>
@@ -292,9 +314,14 @@ const geoJsonData = processWorksData(work);
 									<td class="p-2 border border-neutral-300">
 										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
 									</td>
+									{work.ms_transmission.some((item) => item.version.length > 0) &&
+									<td class="p-2 border border-neutral-300">
+										{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
+									</td>}
+									{work.ms_transmission.some(item => item.text_modification.length > 0) &&
 									<td class="p-2 border border-neutral-300">
 										{[...new Set(item.text_modification)].join(' | ')}
-									</td>
+									</td>}
 								</tr>
 							))
 						}

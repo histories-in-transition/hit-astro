@@ -138,6 +138,7 @@ export interface MsItem {
 	prev?: NavigationLink;
 	next?: NavigationLink;
 	language?: FormItem[];
+	version: FormItem[];
 }
 
 interface FormItem {

@@ -43,6 +43,9 @@ if (isFirstOccurrence) {
   <% if (it.item.title_work.length > 0) { %>
     <title ref="#<%= it.item.title_work[0].hit_id %>"><%= it.item.title_work[0].title %></title>
   <% } %>
+  <% if (it.item.version.length > 0) { %>
+    <note type="version"><%= it.item.version[0].value %></note>
+  <% } %>
   <% if (it.item.language.length > 0) { %>
     <textLang mainLang="">
       <%~ it.item.language.map((lang) => lang.value).join(', ') %>

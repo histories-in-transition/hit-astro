@@ -96,6 +96,7 @@ function transformMsItem(item, deps, originalMsItems) {
 		final_rubric: item.final_rubric,
 		title_work: relatedWorks.length > 0 ? relatedWorks : [{ title: item.title_note }],
 		title_note: relatedWorks.length > 0 ? item.title_note : "",
+		version: item.version.map(({ value }) => ({ value })),
 		siglum: item.siglum,
 		text_modification: item.text_modification.map((modification) => modification.value),
 		interpolations: interpolations.length > 0 ? interpolations : [],

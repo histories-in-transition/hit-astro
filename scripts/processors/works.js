@@ -1,3 +1,4 @@
+import { version } from "os";
 import { addPrevNextToMsItems, enrichBibl } from "../utils/utils.js";
 
 /**
@@ -132,6 +133,7 @@ function transformMsItemForTransmission(msi) {
 			),
 		],
 		text_modification: msi.text_modification,
+		version: msi.version,
 	};
 }
 
