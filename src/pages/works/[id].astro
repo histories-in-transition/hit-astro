@@ -9,7 +9,7 @@ import { workDetailTableConfig } from "@/lib/tabulator-table-configs.js";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
 
-import {processWorksData} from "@/lib/make-geojson.js";
+import {processWorkData} from "@/lib/make-geojson.js";
 
 export async function getStaticPaths() {
 	
@@ -28,7 +28,7 @@ const works = Object.values(worksjson);
 
 const { data: work } = Astro.props;
 // tranform the data from the to geojson using processWorksData script
-const geoJsonData = processWorksData(work);
+const geoJsonData = processWorkData(work);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = workDetailTableConfig.transformData(work.ms_transmission);
@@ -266,6 +266,8 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
         responsiveLayout: "collapse",
 	}}
 	downloadTitle = {work.title.replace(/\s+/g, '_').toLowerCase()},
+	updateMapOnFilter={true}
+          mapIdField="hitId"
 	rowClickConfig={rowClickConfig}
     />
 					{/* <div class="overflow-hidden rounded-md border border-neutral-400">

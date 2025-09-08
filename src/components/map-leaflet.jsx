@@ -54,8 +54,8 @@ export default function LeafletMap({
 		window.updateMapWithFilteredIds = (filteredIds) => {
 			if (!geoJsonData || !geoJsonData.features) return;
 
-			console.log(geoJsonData);
 			// Filter the geoJsonData to only include features with matching hit_ids
+			// Since table sends ms_transmission hit_ids, we need to check against those
 			const filteredGeoJson = {
 				type: "FeatureCollection",
 				features: geoJsonData.features.filter(
@@ -64,7 +64,6 @@ export default function LeafletMap({
 			};
 
 			updateMapMarkers(filteredGeoJson);
-			console.log(filteredGeoJson);
 		};
 
 		return () => {
@@ -102,9 +101,10 @@ export default function LeafletMap({
 					const url = withBasePath(properties.url || "");
 					const popupContent = `
                         <div class="map-popup">
-                            <h3><a href=${url} class="font-semibold text-base underline decoration-dotted underline-offset-2">${properties.title || ""}</a><br/>${properties.place || ""}</h3>
-                            <p>${properties.description || "No additional information"}</p>
-                            ${properties.period ? `<p class="text-sm italic">${properties.period}</p>` : ""}
+                            <h3><a href=${url} class="font-semibold text-base underline decoration-dotted underline-offset-2">${properties.title || ""} ${properties?.locus && `(fols. ${properties.locus})`}</a><br/></h3>
+                            <p>${properties.description || "No additional information"}
+							<br/>
+                            ${properties.place || ""} <br/> ${properties.period}</p> 
                         </div>
                     `;
 					marker.bindPopup(popupContent);

@@ -133,7 +133,7 @@ import { processWorksData } from "@/lib/make-geojson.js";
 						headerFilterPlaceholder: "e.g. Freising",
 						minWidth: 150,
 						mutator: jsonpathFlexibleLookup,
-						mutatorParams: { path: "$[*].value", separator: "\n" },
+						mutatorParams: { path: "$[*].places[*].value", separator: "\n" },
 						headerFilter: "input",
 						formatter: "textarea",
 						responsive: 2,
