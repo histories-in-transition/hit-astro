@@ -4,10 +4,12 @@ import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
 import worksjson from "@/content/data/works.json";
+import TabulatorTable from "@/components/tabulator-table.jsx";
+import { workDetailTableConfig } from "@/lib/tabulator-table-configs.js";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
 
-import {processWorksData} from "@/lib/make-geojson.js";
+import {processWorkData} from "@/lib/make-geojson.js";
 
 export async function getStaticPaths() {
 	
@@ -26,7 +28,18 @@ const works = Object.values(worksjson);
 
 const { data: work } = Astro.props;
 // tranform the data from the to geojson using processWorksData script
-const geoJsonData = processWorksData(work);
+const geoJsonData = processWorkData(work);
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = workDetailTableConfig.transformData(work.ms_transmission);
+const hasRole = work.ms_transmission.some(item => item.role !== undefined);
+const hasVersion = work.ms_transmission.some(item => item.version.length > 0);
+const hasTextModification = work.ms_transmission.some(item => item.text_modification.length > 0);
+const hasForm = work.ms_transmission.some(item => item.form.length > 0);
+const hasAnnotationType = work.ms_transmission.some(item => item.annotation_typ.length > 0);
+const columns = workDetailTableConfig.getColumns(hasRole, hasVersion, hasTextModification, hasForm, hasAnnotationType);
+const rowClickConfig = workDetailTableConfig.getRowClickConfig(); 
+
 ---
 
 <PageLayout title={work?.title}>
@@ -182,7 +195,7 @@ const geoJsonData = processWorksData(work);
 									{item.commented_msitem.length > 0 && (
 										<ul class="list-disc list-inside mt-1">
 										{item.commented_msitem.map((msitem, i) => (
-											<li key={i}>
+											<li>
 											<NavLink href={`/msitems/${msitem.hit_id}`}>
 												{msitem.title}
 											</NavLink>
@@ -241,8 +254,25 @@ const geoJsonData = processWorksData(work);
 					</div>
 
 					{/* // table for medium and larger screens */}
-					<div class="hidden md:block mt-3">
-						<div class="overflow-hidden rounded-md border border-neutral-400">
+				<div class="hidden md:block mt-3">
+
+					
+    
+    <TabulatorTable 
+     client:load 
+	  data={tableData}
+      columns={columns}
+      tableId="work-detail-table"
+      options={{
+        paginationSize: 25,
+        responsiveLayout: "collapse",
+	}}
+	downloadTitle = {work.title.replace(/\s+/g, '_').toLowerCase()},
+	updateMapOnFilter={true}
+          mapIdField="hitId"
+	rowClickConfig={rowClickConfig}
+    />
+					{/* <div class="overflow-hidden rounded-md border border-neutral-400">
 				<table
 					class="w-full shadow-xs lg:leading-7 text-sm lg:text-base data-table rounded-xl"
 				>
@@ -327,7 +357,7 @@ const geoJsonData = processWorksData(work);
 						}
 					</tbody>
 				</table>
-				</div>
+				</div> */}
 				</div>
 			</section>
 			)}

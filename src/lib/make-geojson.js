@@ -51,11 +51,12 @@ export function processWorksData(worksData) {
 								},
 								properties: {
 									title: workData.title || "N/A",
-									place: pl.value || "",
-									description: `Entstehungsort: ${tr.manuscript[0]?.value || "N/A"}`,
+									place: `Entstehungsort: ${pl.value || ""}`,
+									description: `HS: ${tr.manuscript[0]?.value || "N/A"}`,
 									period: tr.orig_date[0]?.date[0]?.value,
 									url: `/works/${workData.hit_id}`,
 									hit_id: workData.hit_id,
+									ms_hit_id: tr.hit_id,
 									type: "origin",
 								},
 							});
@@ -81,8 +82,8 @@ export function processWorksData(worksData) {
 								},
 								properties: {
 									title: workData.title || "N/A",
-									place: pl.value || "",
-									description: `Provenienz: ${tr.manuscript[0]?.value || "N/A"}`,
+									place: `Provenienz: ${pl.value || "N/A"}`,
+									description: `HS: ${tr.manuscript[0]?.value || "N/A"}`,
 									url: `/works/${workData.hit_id}`,
 									hit_id: workData.hit_id,
 									type: "provenance",
@@ -91,6 +92,94 @@ export function processWorksData(worksData) {
 						}
 					}
 				});
+		});
+
+		// Process each provenance entry
+	});
+
+	// Return the GeoJSON object with all collected features
+	return {
+		type: "FeatureCollection",
+		features: features,
+	};
+}
+// geoJson for single work detail page
+export function processWorkData(worksData) {
+	// Check if used on detail view page for single work (props object not array) or for works table page
+	// If the input is not an array, wrap it in an array
+	const works = Array.isArray(worksData) ? worksData : [worksData];
+
+	// Create array to store all features
+	const features = [];
+
+	works.forEach((workData) => {
+		workData.ms_transmission.forEach((tr) => {
+			// For each transmission, create a new Set of unique places
+			const uniquePlaces = new Set();
+			const uniqueProvenances = new Set();
+			// Process each origin place
+			tr.orig_place?.forEach((orig_pl) => {
+				orig_pl.place?.forEach((pl) => {
+					if (!uniquePlaces.has(pl.id)) {
+						uniquePlaces.add(pl.id);
+						// Check if coordinates are valid
+						const long = parseFloat(pl.long);
+						const lat = parseFloat(pl.lat);
+
+						if (!isNaN(long) && !isNaN(lat)) {
+							// Create new feature and push to features array
+							features.push({
+								type: "Feature",
+								geometry: {
+									type: "Point",
+									coordinates: [long, lat],
+								},
+								properties: {
+									title: `HS: ${tr.manuscript[0]?.value || "N/A"}`,
+									place: `Entstehungsort: ${pl.value || ""}`,
+									locus: tr.locus,
+									description:
+										tr.version.length > 0 &&
+										`Version: ${tr.version.map((v) => v.value).join(", ")}`,
+									period: tr.orig_date[0]?.date[0]?.value,
+									url: `/msitems/${tr.hit_id}`,
+									hit_id: tr.hit_id,
+									type: "origin",
+								},
+							});
+						}
+					}
+				});
+			});
+			/* tr.provenance.length > 0 &&
+				tr.provenance.forEach((pl) => {
+					if (!uniqueProvenances.has(pl.id)) {
+						uniqueProvenances.add(pl.id);
+						// Check if coordinates are valid
+						const long = parseFloat(pl.long);
+						const lat = parseFloat(pl.lat);
+
+						if (!isNaN(long) && !isNaN(lat)) {
+							// Create new feature and push to features array
+							features.push({
+								type: "Feature",
+								geometry: {
+									type: "Point",
+									coordinates: [long, lat],
+								},
+								properties: {
+									title: workData.title || "N/A",
+									place: `Provenienz: ${pl.value || "N/A"}`,
+									description: `HS: ${tr.manuscript[0]?.value || "N/A"}`,
+									url: `/works/${workData.hit_id}`,
+									hit_id: workData.hit_id,
+									ms_hit_id: tr.hit_id,
+									type: "provenance",
+								},
+							});
+						}
+					}
+				}); */
 		});
 
 		// Process each provenance entry

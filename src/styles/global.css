@@ -79,6 +79,14 @@
 	@apply bg-brand-100 text-brand-800;
 }
 
+/* .tabulator .tabulator-col-sorter-element {
+	@apply bg-brand-200;
+}
+ */
+.tabulator .tabulator-col-content {
+	@apply border-l border-brand-300;
+}
+
 /* background, font, text size of each header column */
 .tabulator .tabulator-col-content {
 	@apply bg-brand-100 text-brand-800 font-semibold text-base;
