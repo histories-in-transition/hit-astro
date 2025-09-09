@@ -89,6 +89,8 @@ const refinementListInterpolations = wrapInPanel("Interpolations");
 
 const hierarchicalMenuGenre = wrapHierarcicalMenuInPanel("Genre");
 
+const refinementListTransmission = wrapInPanel("Überlieferungsgemeinschaft");
+
 // Initialize a custom Algolia widget to allow users to filter results by a range of years
 // filter input from and to to two different attributes in the schema (not possible with the default range input widget)
 // init() required function when building a custom widget
@@ -533,6 +535,16 @@ search.addWidgets([
 		searchablePlaceholder: "",
 	}),
 
+	refinementListTransmission({
+		container: "#refinement-list-transmission",
+		attribute: "joined_transmission.title",
+		searchable: true,
+		showMore: true,
+		showMoreLimit: 50,
+		limit: 10,
+		searchablePlaceholder: "",
+	}),
+
 	hierarchicalMenuGenre({
 		container: "#refinement-list-genre",
 		attributes: ["main_genre", "sub_genre"],
@@ -581,11 +593,13 @@ search.addWidgets([
 																		? "Genre"
 																		: item.attribute === "interpolations.title"
 																			? "Interpolations"
-																			: item.attribute === "modifications"
-																				? "Textvariationen"
-																				: item.attribute === "language.value"
-																					? "Sprache"
-																					: item.label,
+																			: item.attribute === "joined_transmission.title"
+																				? "Überlieferungsgemeinschaft"
+																				: item.attribute === "modifications"
+																					? "Textvariationen"
+																					: item.attribute === "language.value"
+																						? "Sprache"
+																						: item.label,
 			}));
 		},
 	}),

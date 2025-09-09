@@ -52,6 +52,7 @@ async function generate() {
 			{ name: "interpolations", type: "object[]", facet: true, optional: true },
 			{ name: "language", type: "object[]", facet: true, optional: true },
 			{ name: "project", type: "string[]", facet: true, optional: true },
+			{ name: "joined_transmission", type: "object[]", facet: true, optional: true },
 		],
 		default_sorting_field: "sort_id",
 	};
@@ -112,6 +113,7 @@ async function generate() {
 			interpolations: value.interpolations || [],
 			language: value.language || [],
 			project: value.project || [],
+			joined_transmission: value.joined_transmission || [],
 		};
 		records.push(item);
 	});

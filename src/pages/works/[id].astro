@@ -116,6 +116,32 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 							{work.note_source ? <span>({work.note_source})</span> : ""}
 						</dd>
 						}
+						{work.joined_transmission.length > 0 &&
+						<dt class="font-semibold border-r border-gray-300 pr-2">Überlieferungsgemeinschaft:</dt>
+						<dd class="pl-5">
+							<ul class="list-disc list-inside" data-showmore-list>
+								{work.joined_transmission.slice(0, 2).map((tr) => (
+									<li>
+									<NavLink href={`/works/${tr.hit_id}`}>{tr.title}</NavLink>
+									</li>
+								))}
+								{work.joined_transmission.slice(2).map((tr) => (
+									<li class="hidden" data-showmore-item>
+									<NavLink href={`/works/${tr.hit_id}`}>{tr.title}</NavLink>
+									</li>
+								))}
+							</ul>
+							{work.joined_transmission.length > 2 && (
+								<button
+									class="text-brand-800 underline mt-2 cursor-pointer"
+									data-showmore-btn
+									aria-expanded="false"
+								>
+									Show more
+								</button>
+								)}
+						</dd>
+						}
 						{work.genre.length > 0 &&
 						<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
 						<dd class="pl-5">
@@ -364,4 +390,5 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 			)}
 		</div>
 	</Article>
+	
 </PageLayout>

@@ -1,4 +1,3 @@
-import { version } from "os";
 import { addPrevNextToMsItems, enrichBibl } from "../utils/utils.js";
 
 /**
@@ -22,7 +21,12 @@ export function processWorks(works, deps) {
 		transformWork(work, people, genres, msItemsPlus, bibliography, works),
 	);
 
-	return addPrevNextToMsItems(worksPlus, "hit_id", "title");
+	const worksWithTransmission = worksPlus.map((work) => ({
+		...work,
+		joined_transmission: getJoinedTransmission(work, worksPlus),
+	}));
+
+	return addPrevNextToMsItems(worksWithTransmission, "hit_id", "title");
 }
 
 /**
@@ -109,7 +113,7 @@ function getManuscriptTransmission(work, msItemsPlus) {
  * @returns {Object} Transformed manuscript item for transmission
  */
 function transformMsItemForTransmission(msi) {
-	// Get annotation data from hands that are not scribes
+	// Get annotation data from hands that are not 'schreiber' (i.e. not the main scribe but annotators etc.)
 	const annotationHands = msi.hands.filter(
 		(h) => !h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")),
 	);
@@ -176,6 +180,42 @@ function getRelatedSourceTexts(work, allWorks) {
 			author: source_w.author?.map((aut) => aut.value).join("; ") || "",
 			hit_id: source_w.hit_id,
 		}));
+}
+
+/** get joined transmission i.e. works that travelled in the same manuscript
+ * loop over each work ms_transmission, get all manuscripts, then for each manuscript get all works in it,
+ * return unique works excluding the original work
+ * @param {Object} work - Work object
+ * @param {Array} allWorks - All works data
+ * @returns {Array} Related works that travelled together
+ */
+export function getJoinedTransmission(work, allWorks) {
+	if (!work.ms_transmission || !Array.isArray(work.ms_transmission)) {
+		return [];
+	}
+
+	const relatedWorks = new Map();
+
+	work.ms_transmission.forEach((transmission) => {
+		transmission.manuscript.forEach((ms) => {
+			allWorks.forEach((w) => {
+				// Check if this work is in the same manuscript
+				const isInSameMs = w.ms_transmission?.some((t) =>
+					t.manuscript?.some((m) => m.value === ms.value),
+				);
+				// Exclude the original work
+				if (isInSameMs && w.id !== work.id) {
+					relatedWorks.set(w.id, {
+						id: w.id,
+						hit_id: w.hit_id,
+						title: w.title,
+					});
+				}
+			});
+		});
+	});
+
+	return Array.from(relatedWorks.values());
 }
 
 // Optional: Utility functions for other processors that might need work data
