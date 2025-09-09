@@ -31,6 +31,7 @@ export const workDetailTableConfig = {
 		hasTextModification = false,
 		hasForm = false,
 		hasAnnotationType = false,
+		hasAnnotationDate = false,
 	) => {
 		const baseColumns = [
 			{
@@ -72,12 +73,16 @@ export const workDetailTableConfig = {
 				widthGrow: 1,
 				minWidth: 150,
 			},
-			{
-				title: "Annotationen - Datierung",
-				field: "annotationDate",
-				responsive: 3,
-				minWidth: 150,
-			},
+			...(hasAnnotationDate
+				? [
+						{
+							title: "Annotationen - Datierung",
+							field: "annotationDate",
+							responsive: 3,
+							minWidth: 150,
+						},
+					]
+				: []),
 			...(hasAnnotationType
 				? [
 						{

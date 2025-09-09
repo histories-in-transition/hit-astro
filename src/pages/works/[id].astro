@@ -37,7 +37,8 @@ const hasVersion = work.ms_transmission.some(item => item.version.length > 0);
 const hasTextModification = work.ms_transmission.some(item => item.text_modification.length > 0);
 const hasForm = work.ms_transmission.some(item => item.form.length > 0);
 const hasAnnotationType = work.ms_transmission.some(item => item.annotation_typ.length > 0);
-const columns = workDetailTableConfig.getColumns(hasRole, hasVersion, hasTextModification, hasForm, hasAnnotationType);
+const hasAnnotationDate = work.ms_transmission.some(item => item.annotation_date.length > 0);
+const columns = workDetailTableConfig.getColumns(hasRole, hasVersion, hasTextModification, hasForm, hasAnnotationType, hasAnnotationDate);
 const rowClickConfig = workDetailTableConfig.getRowClickConfig(); 
 
 ---
