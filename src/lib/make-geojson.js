@@ -151,7 +151,7 @@ export function processWorkData(worksData) {
 					}
 				});
 			});
-			tr.provenance.length > 0 &&
+			/* tr.provenance.length > 0 &&
 				tr.provenance.forEach((pl) => {
 					if (!uniqueProvenances.has(pl.id)) {
 						uniqueProvenances.add(pl.id);
@@ -179,7 +179,7 @@ export function processWorkData(worksData) {
 							});
 						}
 					}
-				});
+				}); */
 		});
 
 		// Process each provenance entry

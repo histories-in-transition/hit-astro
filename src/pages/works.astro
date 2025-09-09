@@ -210,10 +210,10 @@ import { processWorksData } from "@/lib/make-geojson.js";
 				}
 				// Extract raw data from each RowComponent
 				const filteredData = data.map((row) => row.getData());
-
+				console.log("Filtered Data:", filteredData);
 				// Extract hit_ids from filtered data
 				const filteredHitIds = filteredData.map((row) => row.hit_id);
-
+				console.log("Filtered Hit IDs:", filteredHitIds);
 				// Update the map with the filtered hit_ids
 				if (window.updateMapWithFilteredIds) {
 					window.updateMapWithFilteredIds(filteredHitIds);

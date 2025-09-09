@@ -17,53 +17,100 @@ export const workDetailTableConfig = {
 			annotationDate: [
 				...new Set(item.annotation_date.flatMap((anDat) => anDat.date.map((d) => d.value))),
 			].join(" | "),
-			annotationType: [...new Set(item.annotation_typ.map((type) => type.value))].join(" | "),
+			annotationType: [...new Set(item.annotation_typ)].join(" | "),
 			version: [...new Set(item.version.map((ver) => ver.value))].join(" | "),
 			textModification: [...new Set(item.text_modification)].join(" | "),
 			decoration: [...new Set(item.decoration.map((deco) => deco.value))].join(" | "),
+			form: [...new Set(item.form.map((f) => f.value))].join(" | "),
 		}));
 	},
 
-	getColumns: (hasRole = false, hasVersion = false, hasTextModification = false) => {
+	getColumns: (
+		hasRole = false,
+		hasVersion = false,
+		hasTextModification = false,
+		hasForm = false,
+		hasAnnotationType = false,
+	) => {
 		const baseColumns = [
 			{
 				title: "Handschrift",
 				field: "manuscript",
+				responsive: 0,
+
+				widthGrow: 3,
+				minWidth: 150,
 			},
 			{
 				title: "Locus",
 				field: "locus",
+				responsive: 0,
+				widthGrow: 1,
+				minWidth: 80,
 			},
 			...(hasRole
 				? [
 						{
 							title: "Role",
 							field: "role",
+							responsive: 3,
+							minWidth: 150,
 						},
 					]
 				: []),
 			{
 				title: "Schreibort",
 				field: "origPlace",
+				responsive: 1,
+				widthGrow: 2,
+				minWidth: 150,
 			},
 			{
 				title: "Datierung",
 				field: "origDate",
+				responsive: 2,
+				widthGrow: 1,
+				minWidth: 150,
 			},
 			{
 				title: "Annotationen - Datierung",
 				field: "annotationDate",
+				responsive: 3,
+				minWidth: 150,
 			},
-			{
-				title: "Annotationen - Typ",
-				field: "annotationType",
-			},
+			...(hasAnnotationType
+				? [
+						{
+							title: "Annotationen - Typ",
+							field: "annotationType",
+							responsive: 2,
+							widthGrow: 2,
+							minWidth: 150,
+							formatter: "textarea",
+						},
+					]
+				: []),
+
+			...(hasForm
+				? [
+						{
+							title: "Form",
+							field: "form",
+							responsive: 3,
+							widthGrow: 2,
+							minWidth: 150,
+						},
+					]
+				: []),
 			...(hasVersion
 				? [
 						{
 							title: "Version",
 							field: "version",
-							headerFilter: "input",
+							responsive: 3,
+							widthGrow: 2,
+							minWidth: 150,
+							formatter: "textarea",
 						},
 					]
 				: []),
@@ -72,7 +119,10 @@ export const workDetailTableConfig = {
 						{
 							title: "Textmodifikation",
 							field: "textModification",
-							headerFilter: "input",
+							responsive: 3,
+							widthGrow: 2,
+							minWidth: 120,
+							formatter: "textarea",
 						},
 					]
 				: []),

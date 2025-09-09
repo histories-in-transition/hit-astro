@@ -132,6 +132,7 @@ function transformMsItemForTransmission(msi) {
 				annotationHands.flatMap((hand) => hand.jobs.flatMap((j) => j.role.map((r) => r.value))),
 			),
 		],
+		form: msi.form,
 		text_modification: msi.text_modification,
 		version: msi.version,
 	};
