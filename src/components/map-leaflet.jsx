@@ -101,9 +101,8 @@ export default function LeafletMap({
 					const url = withBasePath(properties.url || "");
 					const popupContent = `
                         <div class="map-popup">
-                            <h3><a href=${url} class="font-semibold text-base underline decoration-dotted underline-offset-2">${properties.title || ""} ${properties?.locus && `(fols. ${properties.locus})`}</a><br/></h3>
-                            <p>${properties.description || "No additional information"}
-							<br/>
+                            <h3><a href=${url} class="font-semibold text-base underline decoration-dotted underline-offset-2">${properties.title || ""} ${properties?.locus ? `(fols. ${properties.locus})` : ""}</a><br/></h3>
+                            <p>${properties.description ? `${properties?.description} <br/>` : ""}							
                             ${properties.place || ""} <br/> ${properties.period}</p> 
                         </div>
                     `;
