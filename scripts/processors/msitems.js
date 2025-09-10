@@ -77,6 +77,8 @@ function transformMsItem(item, deps, originalMsItems) {
 	// Get provenance
 	const provenance = getProvenance(item, cod_unitsprov, places, dates, bibliography);
 
+	// get joined transmission
+
 	// Return the enriched msitem
 	return {
 		id: item.id,
@@ -84,6 +86,7 @@ function transformMsItem(item, deps, originalMsItems) {
 		view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
 		label: item.label[0]?.value,
 		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
+		joined_transmission: getJoinedTransmission(item, originalMsItems),
 		library: library,
 		library_place: library_place,
 		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
@@ -261,6 +264,35 @@ function getCommentedMsItems(item, msItems) {
 			hit_id: relatedMsItem?.hit_id,
 		};
 	});
+}
+function getJoinedTransmission(item, msItems) {
+	const itemManuscriptId =
+		Array.isArray(item.manuscript) && item.manuscript.length > 0
+			? item.manuscript[0].id
+			: undefined;
+
+	if (!itemManuscriptId) return [];
+
+	return msItems
+		.filter((msItem) => {
+			const msItemManuscriptId =
+				Array.isArray(msItem.manuscript) && msItem.manuscript.length > 0
+					? msItem.manuscript[0].id
+					: undefined;
+			return msItemManuscriptId === itemManuscriptId;
+		})
+		.filter((msItem) => msItem.id !== item.id) // Exclude the current item
+		.map((msItem) => ({
+			id:
+				Array.isArray(msItem.title_work) && msItem.title_work.length > 0
+					? msItem.title_work[0].id
+					: msItem.id,
+			title:
+				Array.isArray(msItem.title_work) && msItem.title_work.length > 0
+					? msItem.title_work[0].value
+					: msItem.title_note || "",
+			hit_id: msItem.hit_id,
+		}));
 }
 
 function getOrigDate(relatedHand, provenance) {

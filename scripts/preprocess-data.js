@@ -45,7 +45,7 @@ async function processAllData() {
 		const processedLibraries = processLibraries(rawData.libraries, processedPlaces);
 		ProcessingLogger.logStep("libraries", processedLibraries.length);
 
-		// 2. Process msItems (depends on places, libraries, etc.)
+		// 2. Process msItems (depends on places, libraries, and raw data.)
 		ProcessingLogger.info("Processing manuscript items...");
 		const processedMsItems = processMsItems(rawData.msitems, {
 			manuscripts: rawData.manuscripts,
@@ -116,7 +116,7 @@ async function processAllData() {
 		});
 		ProcessingLogger.logStep("strata", processedStrata.length);
 
-		// 8. Process works (depends on msItems)
+		// 8. Process works (depends on processed msItems)
 		ProcessingLogger.info("Processing works...");
 		const processedWorks = processWorks(rawData.works, {
 			people: rawData.people,
