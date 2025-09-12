@@ -7,6 +7,7 @@ import {processMSData} from "@/lib/make-geojson.js";
 import MapLeaf from "@/components/map-leaflet.jsx";
 import type { Manuscript } from "@/types/index.ts";
 import manuscripts from "@/content/data/manuscripts.json";
+import { makeSuperScript } from "@/lib/utils.js";
 
 export async function getStaticPaths() {
 
@@ -130,7 +131,7 @@ const geoData = processMSData(manuscript)
                 <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
                 <dd class="pl-5">
                   {manuscript.quire_structure && (
-                     <span set:html={manuscript?.quire_structure}></span>
+                     <span set:html={makeSuperScript(manuscript?.quire_structure)}></span>
                   )}
                 </dd>
               
