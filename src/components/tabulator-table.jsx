@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 import { withBasePath } from "@/lib/withBasePath.js";
+import { dateAccessor, dateFormatter, dateRangeFilter } from "@/lib/tabulator-utils.js";
 
 export default function TabulatorTable({
 	data,
@@ -12,10 +13,24 @@ export default function TabulatorTable({
 	downloadTitle = "data", //  for filename prefix
 	rowClickConfig = null,
 	updateMapOnFilter = false,
-	mapIdField = "hitId",
+	mapIdField = "hit_id",
 }) {
 	const tableRef = useRef(null);
 	const tabulatorRef = useRef(null);
+
+	// Process columns to add functions on the client side
+	// needed for date filtering function, getting lost otherwise
+	const processedColumns = columns.map((column) => {
+		if (column.field === "origDate") {
+			return {
+				...column,
+				accessor: dateAccessor,
+				formatter: dateFormatter,
+				headerFilterFunc: dateRangeFilter,
+			};
+		}
+		return column;
+	});
 
 	const defaultOptions = {
 		layout: "fitColumns",
@@ -36,7 +51,7 @@ export default function TabulatorTable({
 	};
 
 	useEffect(() => {
-		if (!data || data.length === 0 || !columns || columns.length === 0) {
+		if (!data || data.length === 0 || !processedColumns || processedColumns.length === 0) {
 			console.warn("Missing data or columns for Tabulator");
 			return;
 		}
@@ -44,14 +59,14 @@ export default function TabulatorTable({
 		// Initialize Tabulator
 		tabulatorRef.current = new Tabulator(tableRef.current, {
 			data: data,
-			columns: columns,
+			columns: processedColumns,
 			...defaultOptions,
 		});
 
 		// Wait for table to be built before adding event listeners
 		tabulatorRef.current.on("tableBuilt", function () {
 			console.log("Table built successfully");
-
+			console.log("data:", data);
 			// Add row click listener if configuration is provided
 			if (rowClickConfig) {
 				tabulatorRef.current.on("rowClick", function (e, row) {
@@ -74,14 +89,13 @@ export default function TabulatorTable({
 
 			// Add map update functionality if enabled
 			if (updateMapOnFilter) {
-				// Update map when data is filtered - THIS IS THE ONLY FILTERING LOGIC WE NEED
+				// Update map when data is filtered
 				tabulatorRef.current.on("dataFiltered", function (filters, data) {
 					// Extract raw data from each RowComponent (using getData() method)
 					const filteredData = data.map((row) => row.getData());
 
 					// Extract hit_ids from filtered data using the mapIdField
 					const filteredIds = filteredData.map((row) => row[mapIdField]).filter((id) => id);
-
 					// Update the map with the filtered hit_ids
 					if (window.updateMapWithFilteredIds) {
 						window.updateMapWithFilteredIds(filteredIds);
@@ -112,22 +126,24 @@ export default function TabulatorTable({
 			if (counter1 && counter2) {
 				const updateCounters = () => {
 					try {
-						const allData = tabulatorRef.current.getData();
-						const visibleRows = tabulatorRef.current
-							.getRows()
-							.filter((row) => row.getElement().style.display !== "none");
+						// total rows before filtering
+						const totalCount = tabulatorRef.current.getDataCount("all");
 
-						counter1.textContent = visibleRows.length;
-						counter2.textContent = allData.length;
+						// rows matching current filters
+						const filteredCount = tabulatorRef.current.getDataCount("active");
+
+						counter1.textContent = filteredCount;
+						counter2.textContent = totalCount;
 					} catch (error) {
 						console.error("Error updating counters:", error);
 					}
 				};
 
 				updateCounters();
-				tabulatorRef.current.on("dataFiltered", updateCounters);
-				tabulatorRef.current.on("headerFilterChanged", function () {
-					setTimeout(updateCounters, 50);
+
+				tabulatorRef.current.on("dataFiltered", function (filters, rows) {
+					counter1.textContent = rows.length; // filtered count
+					counter2.textContent = tabulatorRef.current.getDataCount("all"); // total count
 				});
 			}
 		});
@@ -162,9 +178,12 @@ export default function TabulatorTable({
 
 	return (
 		<div className="text-sm md:text-base w-full">
-			{/* Download buttons */}
-			{showDownloadButtons && (
-				<div className="flex gap-2 mb-4 justify-end">
+			<div className="flex my-4 md:justify-between items-start md:items-center mb-2">
+				<div className="text-brand-800 text-xl">
+					Es werden <span id="counter1"></span> von <span id="counter2"></span> Einträgen angezeigt
+				</div>
+				{/* Download buttons */}
+				<div className="flex gap-2 justify-end">
 					<button
 						onClick={handleDownloadCSV}
 						className="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm"
@@ -184,7 +203,7 @@ export default function TabulatorTable({
 						Download HTML
 					</button>
 				</div>
-			)}
+			</div>
 
 			<div ref={tableRef} id={tableId} style={{ minHeight: "100px", width: "100%" }} />
 		</div>

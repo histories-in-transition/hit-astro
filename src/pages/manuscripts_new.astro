@@ -1,0 +1,36 @@
+---
+import PageLayout from "../layouts/page-layout.astro";
+import TableHead from "../components/table-head.astro";
+import TabulatorTable from "@/components/tabulator-table.jsx";
+import { manuscriptsTableConfig } from "@/lib/tabulator-table-configs.js";
+import manuscripts from "@/content/data/manuscripts.json";
+
+import MapLeaflet from "@/components/map-leaflet.jsx";
+import { processMSData } from "@/lib/make-geojson.js";
+const geoJsonData = processMSData(manuscripts);
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = manuscriptsTableConfig.transformData(manuscripts);
+const columns = manuscriptsTableConfig.getColumns();
+const rowClickConfig = manuscriptsTableConfig.getRowClickConfig;
+---
+
+<PageLayout title="manuscripts">
+	<TableHead title="Handschriften">
+		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
+		<TabulatorTable
+			client:only="react"
+			data={tableData}
+			columns={columns}
+			tableId="work-detail-table"
+			options={{
+				paginationSize: 25,
+				responsiveLayout: "collapse",
+			}}
+			downloadTitle="hit_handschriften"
+			rowClickConfig={rowClickConfig}
+			updateMapOnFilter={true}
+			mapIdField="hit_id"
+		/>
+	</TableHead>
+</PageLayout>

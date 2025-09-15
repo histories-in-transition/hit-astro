@@ -9,8 +9,17 @@ export function dateAccessor(value) {
 //  function for tabulator formatter - Formatting the displayed values
 export function dateFormatter(cell) {
 	const value = cell.getValue();
-	if (!value || !Array.isArray(value)) return "not array";
-	return value.map((dateObj) => dateObj.value || "").join(" | ");
+	if (!value || !Array.isArray(value)) {
+		console.log("Returning 'not array'");
+		return "not array";
+	}
+
+	const result = value
+		.map((dateObj) => {
+			return dateObj.value || "";
+		})
+		.join(" | ");
+	return result;
 }
 
 // Function to get the value of a specific path or several paths from a JSON object
