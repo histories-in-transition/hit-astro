@@ -18,9 +18,11 @@ import TableHead from "../components/table-head.astro";
 		} from "../lib/tabulator-utils.js";
 		import { withBasePath } from "../lib/withBasePath";
 		const tabledata = data.map((ms) => {
+			const dates = ms.orig_date.flatMap((d) => d.date);
+			const uniqueDates = Array.from(new Map(dates.map((d) => [d.id, d])).values());
 			return {
 				...ms,
-				origDate: [...new Set(ms.orig_date.flatMap((d) => d.date))],
+				origDate: uniqueDates,
 			};
 		});
 		var table = new Tabulator("#tabulator-table", {
@@ -77,7 +79,7 @@ import TableHead from "../components/table-head.astro";
 				{
 					title: "Entstehungsdatum",
 					field: "origDate",
-					headerFilterPlaceholder: "e.g. nach 810",
+					headerFilterPlaceholder: "e.g. nach 810 | vor 1000",
 					minWidth: 200,
 					// Ensures filtering and sorting work correctly
 					accessor: dateAccessor,
