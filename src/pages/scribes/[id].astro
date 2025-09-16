@@ -205,7 +205,7 @@ const geoJson = processScribesData(scribe);
                                                                 </td>
                                                                 <td class="p-2 border border-neutral-200">{msItem.title_work?.map(work => (
                                                                     <NavLink href={`/works/${work.hit_id}`}>
-                                                                        {work.author ? `${work.author.map(a => a.name).join(', ')}: ${work.title}` : work.title                                                            
+                                                                        {work.author.length > 0 ? `${work.author.map(a => a.name).join(', ')}: ${work.title}` : work.title                                                            
                                                                     }
                                                                     </NavLink>  ))}
                                                                     </td>

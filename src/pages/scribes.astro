@@ -1,9 +1,18 @@
 ---
-import PageLayout from "@/layouts/page-layout.astro";
-import TableHead from "@/components/table-head.astro";
-import MapLeaf from "@/components/map-leaflet.jsx";
-import data from "@/content/data/scribes.json";
+import PageLayout from "../layouts/page-layout.astro";
+import TableHead from "../components/table-head.astro";
+import TabulatorTable from "@/components/tabulator-table.jsx";
+import { scribesTableConfig } from "@/lib/tabulator-table-configs.js";
+import scribes from "@/content/data/scribes.json";
+
+import MapLeaflet from "@/components/map-leaflet.jsx";
 import { processScribesData } from "@/lib/make-geojson.js";
+const geoJsonData = processScribesData(scribes);
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = scribesTableConfig.transformData(scribes);
+const columns = scribesTableConfig.getColumns();
+const rowClickConfig = scribesTableConfig.getRowClickConfig;
 ---
 
 <PageLayout title="Schreiber">
@@ -11,154 +20,20 @@ import { processScribesData } from "@/lib/make-geojson.js";
 		title="Schreiber"
 		definition="Liste aller Schreiber (einzeln oder als Gruppe erfasst), deren Hände in mehr als einer Handschrift nachgewiesen werden konnten."
 	>
-		<MapLeaf client:only="react" geoJsonData={processScribesData(data)} />
-	</TableHead>
-	<script>
-		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-
-		import data from "@/content/data/scribes.json";
-		import {
-			jsonpathFlexibleLookup,
-			dateRangeFilter,
-			jsonpathsDistinctMapLookup,
-			jsonpathsDistinctLookup,
-			dateAccessor,
-			dateFormatter,
-		} from "@/lib/tabulator-utils.js";
-		import { withBasePath } from "@/lib/withBasePath";
-
-		// Wait for the page to load before initializing
-		document.addEventListener("DOMContentLoaded", () => {
-			var tabledata = [...Object.values(data)];
-
-			var table = new Tabulator("#tabulator-table", {
-				headerFilterLiveFilterDelay: 600,
-				height: 900,
-				data: tabledata,
-				layout: "fitColumns",
+		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
+		<TabulatorTable
+			client:only="react"
+			data={tableData}
+			columns={columns}
+			tableId="scribes-table"
+			options={{
+				paginationSize: 25,
 				responsiveLayout: "collapse",
-				columns: [
-					{
-						title: "Benennung",
-						field: "name",
-						headerFilterPlaceholder: "e.g. Baldo",
-						minWidth: 150,
-						headerFilter: "input",
-						formatter: "textarea",
-						widthGrow: 1,
-					},
-					{
-						title: "Hand",
-						field: "hands",
-						headerFilterPlaceholder: "e.g. Clm. 6380",
-						minWidth: 150,
-						mutator: jsonpathFlexibleLookup,
-						mutatorParams: {
-							path: "$[*].label",
-							separator: "\n",
-						},
-						headerFilter: "input",
-						formatter: "textarea",
-						widthGrow: 1,
-					},
-					{
-						title: "Datierung",
-						field: "date",
-						headerFilterPlaceholder: "e.g. nach 810",
-						mutator: jsonpathsDistinctMapLookup,
-						mutatorParams: {
-							path: "$[*].dated[*]",
-							separator: ", ",
-						},
-						// Ensures filtering and sorting work correctly
-						accessor: dateAccessor,
-						// Formatting the displayed values
-						formatter: dateFormatter,
-
-						headerFilter: "input",
-						headerFilterFunc: dateRangeFilter,
-						headerFilterFuncParams: {
-							paths: ["$[*].dated[*].range"],
-						},
-						responsive: 2,
-					},
-					{
-						title: "Ort",
-						field: "places",
-						headerFilterPlaceholder: "e.g. Freising",
-						minWidth: 150,
-						mutator: jsonpathsDistinctLookup,
-						mutatorParams: { path: "$[*].place[*].value", separator: ", " },
-						headerFilter: "input",
-						responsive: 2,
-					},
-					{
-						title: "Gruppe",
-						field: "group",
-						sorter: "boolean",
-						formatter: "tickCross",
-						width: 120,
-						headerFilter: "tickCross",
-						headerFilterParams: { tristate: true },
-						headerFilterEmptyCheck: function (value) {
-							return value === null;
-						},
-					},
-				],
-			});
-
-			//trigger download of data.csv file
-			document.getElementById("download-csv")!.addEventListener("click", function () {
-				table.download("csv", "data.csv");
-			});
-
-			//trigger download of data.json file
-			document.getElementById("download-json")!.addEventListener("click", function () {
-				table.download("json", "data.json");
-			});
-
-			//trigger download of data.html file
-			document.getElementById("download-html")!.addEventListener("click", function () {
-				table.download("html", "data.html", { style: true });
-			});
-
-			// event listeners set:
-			// href to the work detail view page
-			table.on("rowClick", function (e, row) {
-				var data = row.getData();
-				var url = withBasePath(`/scribes/${data["hit_id"]}`);
-				window.open(url, "_self");
-			});
-			table.on("dataLoaded", function (data) {
-				var el = document.getElementById("counter1");
-				if (el) {
-					el.innerHTML = `${data.length}`;
-				}
-				var el = document.getElementById("counter2");
-				if (el) {
-					el.innerHTML = `${data.length}`;
-				}
-			});
-
-			table.on("dataFiltered", function (filters, data) {
-				var el = document.getElementById("counter1");
-				if (el) {
-					el.innerHTML = `${data.length}`;
-				}
-				// Extract raw data from each RowComponent
-				const filteredData = data.map((row) => row.getData());
-
-				// Extract hit_ids from filtered data
-				const filteredHitIds = filteredData.map((row) => row.hit_id);
-
-				// Update the map with the filtered hit_ids
-				if (window.updateMapWithFilteredIds) {
-					window.updateMapWithFilteredIds(filteredHitIds);
-				} else {
-					console.warn("Map update function not available");
-				}
-			});
-		});
-	</script>
+			}}
+			downloadTitle="hit_handschriften"
+			rowClickConfig={rowClickConfig}
+			updateMapOnFilter={true}
+			mapIdField="hit_id"
+		/>
+	</TableHead>
 </PageLayout>

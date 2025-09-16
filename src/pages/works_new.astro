@@ -6,8 +6,8 @@ import { worksTableConfig } from "@/lib/tabulator-table-configs.js";
 import works from "@/content/data/works.json";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
-import { processMSData } from "@/lib/make-geojson.js";
-const geoJsonData = processMSData(works);
+import { processWorksData } from "@/lib/make-geojson.js";
+const geoJsonData = processWorksData(works);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = worksTableConfig.transformData(works);

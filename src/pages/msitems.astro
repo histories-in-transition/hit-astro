@@ -1,217 +1,34 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
+import TabulatorTable from "@/components/tabulator-table.jsx";
+import { msItemsTableConfig } from "@/lib/tabulator-table-configs.js";
+import msItems from "@/content/data/ms_items.json";
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = msItemsTableConfig.transformData(msItems);
+const columns = msItemsTableConfig.getColumns();
+const rowClickConfig = msItemsTableConfig.getRowClickConfig;
 ---
 
-<PageLayout title="MS-Elemente">
+<PageLayout title="msitems">
 	<TableHead
 		title="MS Elemente"
 		definition="Manuskriptelement bezeichnet ein einzelnes Werk oder Element innerhalb des Inhalts einer Handschrift."
-	/>
-	<script>
-		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		import data from "@/content/data/ms_items.json";
-		import hands_Json from "@/content/data/hands.json";
-
-		// Preprocessing data from json
-		//  replacing the hands_dated property with a new, processed version
-		const handsJson = Object.values(hands_Json).map((hand) => ({
-			...hand,
-			hands_dated: hand.date.map((date) => ({
-				...date,
-				dated: date.dated.map((i) => ({
-					...i,
-					yearRange: {
-						start: i.not_before ? new Date(i.not_before).getFullYear() : null,
-						end: i.not_after ? new Date(i.not_after).getFullYear() : null,
-					},
-				})),
-			})),
-		}));
-
-		// Combine the two datasets
-		const tabledata = Object.values(data).map((msItem) => {
-			// FlatMap only once over the correct level
-			const editings = msItem.hands.flatMap((h) =>
-				h.jobs?.some((j) => !j.role.includes("Schreiber"))
-					? h.dating // Only include if the condition is met
-					: [],
-			);
-
-			return {
-				...msItem,
-				editings: editings,
-			};
-		});
-
-		import {
-			jsonpathFlexibleLookup,
-			dateRangeFilter,
-			jsonpathsDistinctLookup,
-			jsonpathsDistinctMapLookup,
-			dateAccessor,
-			dateFormatter,
-		} from "../lib/tabulator-utils.js";
-		import { withBasePath } from "../lib/withBasePath";
-
-		var table = new Tabulator("#tabulator-table", {
-			headerFilterLiveFilterDelay: 600,
-			height: 900,
-			data: tabledata,
-			layout: "fitColumns",
-			responsiveLayout: "collapse",
-			rowHeader: {
-				formatter: "responsiveCollapse",
-				width: 30,
-				minWidth: 30,
-				hozAlign: "center",
-				resizable: false,
-				headerSort: false,
-			},
-			columns: [
-				{
-					title: "Handschrift",
-					field: "manuscript",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*].value",
-						separator: "; ",
-					},
-					headerFilter: "input",
-					responsive: 0,
-				},
-				{
-					title: "Locus",
-					field: "locus",
-					minWidth: 80,
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Werk",
-					field: "title_work",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: ["$[*].author[*].name", "$[*].title"],
-						separator: ": ",
-					},
-					headerFilter: "input",
-					responsive: 1,
-				},
-				{
-					title: "Dekoration",
-					field: "decoration",
-					minWidth: 100,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: { path: "$[*].value" },
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Schreiberort",
-					field: "orig_place",
-					minWidth: 200,
-					mutator: jsonpathsDistinctLookup,
-					mutatorParams: { path: "$[*].place[*].value" },
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Datum der Niederschrift",
-					field: "orig_date",
-					headerFilterPlaceholder: "e.g. nach 810",
-					mutator: jsonpathsDistinctMapLookup,
-					mutatorParams: {
-						path: "$[*].date[*]",
-						separator: ", ",
-					},
-					// Ensures filtering and sorting work correctly
-					accessor: dateAccessor,
-					// Formatting the displayed values
-					formatter: dateFormatter,
-
-					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-					headerFilterFuncParams: {
-						paths: ["$[*].dated[*].range"],
-					},
-					responsive: 2,
-				},
-
-				{
-					title: "Datum der Bearbeitung",
-					field: "editings",
-					minWidth: 200,
-					headerFilterPlaceholder: "e.g. nach 810",
-					mutator: jsonpathsDistinctMapLookup,
-					mutatorParams: {
-						path: "$[*].date[*]",
-						separator: ", ",
-					},
-					// Ensures filtering and sorting work correctly
-					accessor: function (value) {
-						if (!value || !Array.isArray(value)) return "";
-						return value.map((dateObj) => dateObj.range || "").join(", ");
-					},
-
-					// Formatting the displayed values
-					formatter: function (cell) {
-						const value = cell.getValue();
-						if (!value || !Array.isArray(value)) return "not array";
-						return value.map((dateObj) => dateObj.value || "").join(" | ");
-					},
-
-					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-					headerFilterFuncParams: {
-						paths: ["$[*].dated[*].range"],
-					},
-					responsive: 2,
-				},
-			],
-		});
-
-		//trigger download of data.csv file
-		document.getElementById("download-csv")!.addEventListener("click", function () {
-			table.download("csv", "data.csv");
-		});
-
-		//trigger download of data.json file
-		document.getElementById("download-json")!.addEventListener("click", function () {
-			table.download("json", "data.json");
-		});
-
-		//trigger download of data.html file
-		document.getElementById("download-html")!.addEventListener("click", function () {
-			table.download("html", "data.html", { style: true });
-		});
-
-		// event listeners set:
-		// href to the ms detail view page
-		table.on("rowClick", function (e, row) {
-			var data = row.getData();
-			var url = withBasePath(`/msitems/${data["hit_id"]}`);
-			window.open(url, "_self");
-		});
-		table.on("dataLoaded", function (data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-			var el = document.getElementById("counter2");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
-
-		table.on("dataFiltered", function (filters, data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
-	</script>
+	>
+		<TabulatorTable
+			client:only="react"
+			data={tableData}
+			columns={columns}
+			tableId="msItems-table"
+			options={{
+				paginationSize: 25,
+				responsiveLayout: "collapse",
+			}}
+			downloadTitle="hit_handschriften"
+			rowClickConfig={rowClickConfig}
+			updateMapOnFilter={true}
+			mapIdField="hit_id"
+		/>
+	</TableHead>
 </PageLayout>

@@ -1,6 +1,6 @@
 import { JSONPath } from "jsonpath-plus";
 
-// function for tabulator accessor  Ensures filtering and sorting work correctly
+// function for tabulator accessor  Ensures filtering and sorting dates correctly
 export function dateAccessor(value) {
 	if (!value || !Array.isArray(value)) return "";
 	return value.map((dateObj) => dateObj.range || "").join(", ");

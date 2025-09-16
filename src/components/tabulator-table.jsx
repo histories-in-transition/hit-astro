@@ -21,7 +21,7 @@ export default function TabulatorTable({
 	// Process columns to add functions on the client side
 	// needed for date filtering function, getting lost otherwise
 	const processedColumns = columns.map((column) => {
-		if (column.field === "origDate") {
+		if (column.field === "origDate" || column.field === "editDate") {
 			return {
 				...column,
 				accessor: dateAccessor,
