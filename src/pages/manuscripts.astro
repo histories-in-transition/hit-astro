@@ -1,147 +1,36 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
+import TabulatorTable from "@/components/tabulator-table.jsx";
+import { manuscriptsTableConfig } from "@/lib/tabulator-table-configs.js";
+import manuscripts from "@/content/data/manuscripts.json";
+
+import MapLeaflet from "@/components/map-leaflet.jsx";
+import { processMSData } from "@/lib/make-geojson.js";
+const geoJsonData = processMSData(manuscripts);
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = manuscriptsTableConfig.transformData(manuscripts);
+const columns = manuscriptsTableConfig.getColumns();
+const rowClickConfig = manuscriptsTableConfig.getRowClickConfig;
 ---
 
 <PageLayout title="manuscripts">
-	<TableHead title="Handschriften" />
-
-	<script>
-		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		import data from "@/content/data/manuscripts.json";
-		import {
-			jsonpathFlexibleLookup,
-			dateRangeFilter,
-			dateAccessor,
-			dateFormatter,
-		} from "../lib/tabulator-utils.js";
-		import { withBasePath } from "../lib/withBasePath";
-		const tabledata = data.map((ms) => {
-			const dates = ms.orig_date.flatMap((d) => d.date);
-			const uniqueDates = Array.from(new Map(dates.map((d) => [d.id, d])).values());
-			return {
-				...ms,
-				origDate: uniqueDates,
-			};
-		});
-		var table = new Tabulator("#tabulator-table", {
-			headerFilterLiveFilterDelay: 600,
-			height: 900,
-			data: tabledata,
-			layout: "fitColumns",
-			responsiveLayout: "collapse",
-			initialSort: [
-				{ column: "library_full", dir: "asc" },
-				{ column: "view_label", dir: "asc" },
-			],
-			rowHeader: {
-				formatter: "responsiveCollapse",
-				width: 30,
-				minWidth: 30,
-				hozAlign: "center",
-				resizable: false,
-				headerSort: false,
-			},
-			columns: [
-				{
-					title: "Bibliothek",
-					headerFilterPlaceholder: "e.g. Staatsbibliothek",
-					field: "library",
-					sorter: "string",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: ["$[*].place[*].value", "$[*].library_full"],
-					},
-					headerFilter: "input",
-					responsive: 2,
-				},
-				{
-					title: "Signatur",
-					headerFilterPlaceholder: "e.g. Cod. 2090",
-					minWidth: 200,
-					sorter: "string",
-					field: "shelfmark",
-					formatter: "textarea",
-					headerFilter: "input",
-				},
-				{
-					title: "Entstehungsort",
-					field: "orig_place",
-					headerFilterPlaceholder: "e.g. Freising",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: { path: "$[*].value" },
-					headerFilter: "input",
-					formatter: "textarea",
-				},
-				{
-					title: "Entstehungsdatum",
-					field: "origDate",
-					headerFilterPlaceholder: "e.g. nach 810 | vor 1000",
-					minWidth: 200,
-					// Ensures filtering and sorting work correctly
-					accessor: dateAccessor,
-					// Formatting the displayed values
-					formatter: dateFormatter,
-					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-				},
-				{
-					title: "Case study",
-					headerFilterPlaceholder: "e.g. Freising",
-					field: "case_study",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*]",
-					},
-					headerFilter: "list",
-					headerFilterParams: { valuesLookup: true, clearable: true },
-					responsive: 2,
-				},
-			],
-		});
-
-		//trigger download of data.csv file
-		document.getElementById("download-csv")!.addEventListener("click", function () {
-			table.download("csv", "data.csv");
-		});
-
-		//trigger download of data.json file
-		document.getElementById("download-json")!.addEventListener("click", function () {
-			table.download("json", "data.json");
-		});
-
-		//trigger download of data.html file
-		document.getElementById("download-html")!.addEventListener("click", function () {
-			table.download("html", "data.html", { style: true });
-		});
-
-		// event listeners set:
-		// href to the ms detail view page
-		table.on("rowClick", function (e, row) {
-			var data = row.getData();
-			var url = withBasePath(`/manuscripts/${data["hit_id"]}`);
-			window.open(url, "_self");
-		});
-		table.on("dataLoaded", function (data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-			var el = document.getElementById("counter2");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
-
-		table.on("dataFiltered", function (filters, data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
-	</script>
+	<TableHead title="Handschriften">
+		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
+		<TabulatorTable
+			client:only="react"
+			data={tableData}
+			columns={columns}
+			tableId="work-detail-table"
+			options={{
+				paginationSize: 25,
+				responsiveLayout: "collapse",
+			}}
+			downloadTitle="hit_handschriften"
+			rowClickConfig={rowClickConfig}
+			updateMapOnFilter={true}
+			mapIdField="hit_id"
+		/>
+	</TableHead>
 </PageLayout>

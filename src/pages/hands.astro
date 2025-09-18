@@ -1,206 +1,32 @@
 ---
 import PageLayout from "@/layouts/page-layout.astro";
 import TableHead from "@/components/table-head.astro";
+import TabulatorTable from "@/components/tabulator-table.jsx";
+import { handsTableConfig } from "@/lib/tabulator-table-configs.js";
+import hands from "@/content/data/hands.json";
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = handsTableConfig.transformData(hands);
+const columns = handsTableConfig.getColumns();
+const rowClickConfig = handsTableConfig.getRowClickConfig;
 ---
 
 <PageLayout title="Hands">
 	<TableHead
 		title="Hände"
 		definition="Das schriftliche Ergebnis der Arbeit eines einzelnen Schreibers (identifiziert oder nicht) innerhalb einer Handschrift."
-	/>
-
-	<script>
-		import { TabulatorFull as Tabulator } from "tabulator-tables";
-		import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
-		import data from "@/content/data/hands.json";
-		import {
-			jsonpathFlexibleLookup,
-			jsonpathsDistinctMapLookup,
-			distinctStringMutator,
-			dateRangeFilter,
-			dateAccessor,
-			dateFormatter,
-		} from "../lib/tabulator-utils.js";
-		import { withBasePath } from "../lib/withBasePath";
-
-		var tabledata = [...Object.values(data)];
-
-		var table = new Tabulator("#tabulator-table", {
-			headerFilterLiveFilterDelay: 600,
-			height: 900,
-			data: tabledata,
-			layout: "fitColumns",
-			responsiveLayout: "collapse",
-			rowHeader: {
-				formatter: "responsiveCollapse",
-				width: 30,
-				minWidth: 30,
-				hozAlign: "center",
-				resizable: false,
-				headerSort: false,
-			},
-			columns: [
-				{
-					title: "Handschrift",
-					headerFilterPlaceholder: "e.g. Clm. 6326",
-					resizable: true,
-					field: "manuscript",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*].value",
-						separator: "; ",
-					},
-					headerFilter: "input",
-					responsive: 1,
-				},
-				{
-					title: "#",
-					headerFilterPlaceholder: "e.g. H. 2",
-					field: "view_label",
-					width: 100,
-					mutator: (view_label) => {
-						const parts = view_label.split("_");
-						return parts[parts.length - 1];
-					},
-					headerFilter: "input",
-					formatter: "textarea",
-					responsive: 1,
-				},
-				{
-					title: "Text",
-					headerFilterPlaceholder: "e.g. De temporum ratione",
-					field: "texts",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*]",
-					},
-					headerFilter: "input",
-					formatter: "textarea",
-				},
-				/* 	// column for Rolle outdated?
-				{
-					title: "Rolle",
-					headerFilterPlaceholder: "e.g. Korrektor",
-					field: "roles",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*]",
-					},
-					headerFilter: "list",
-					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
-					formatter: "textarea",
-				}, */
-				{
-					title: "Rolle | Typ | Funktion",
-					headerFilterPlaceholder: "e.g. Erweiterung",
-					headerTooltip: "Was meinen wir mit Rolle, Typ und Funktion ...",
-					field: "hand_roles",
-					minWidth: 200,
-					mutator: distinctStringMutator,
-					mutatorParams: {
-						path: "$[*].all_in_one",
-					},
-					headerFilter: "input",
-					headerFilterParams: { valuesLookup: true, clearable: true, sortValuesList: "asc" },
-					formatter: "textarea",
-				},
-				{
-					title: "Datiert",
-					field: "date",
-					minWidth: 100,
-					headerFilterPlaceholder: "e.g. nach 810",
-					mutator: jsonpathsDistinctMapLookup,
-					mutatorParams: {
-						path: "$[*].dated[*]",
-						separator: ", ",
-					},
-					accessor: dateAccessor,
-					formatter: dateFormatter,
-					headerFilter: "input",
-					headerFilterFunc: dateRangeFilter,
-				},
-				{
-					title: "Lokalisiert",
-					headerFilterPlaceholder: "e.g. Freising",
-					field: "placed",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*].place[*].value",
-						separator: "; ",
-					},
-					headerFilter: "input",
-				},
-				,
-				{
-					title: "Schreiber",
-					headerFilterPlaceholder: "e.g. Baldo",
-					field: "scribe",
-					minWidth: 200,
-					mutator: jsonpathFlexibleLookup,
-					mutatorParams: {
-						path: "$[*].name",
-					},
-					headerFilter: "input",
-					formatter: "textarea",
-				},
-
-				{
-					title: "Gruppe",
-					field: "gruppe",
-					sorter: "boolean",
-					formatter: "tickCross",
-					width: 110,
-					headerFilter: "tickCross",
-					headerFilterParams: { tristate: true },
-					headerFilterEmptyCheck: function (value) {
-						return value === null;
-					},
-				},
-			],
-		});
-
-		//trigger download of data.csv file
-		document.getElementById("download-csv")!.addEventListener("click", function () {
-			table.download("csv", "data.csv");
-		});
-
-		//trigger download of data.json file
-		document.getElementById("download-json")!.addEventListener("click", function () {
-			table.download("json", "data.json");
-		});
-
-		//trigger download of data.html file
-		document.getElementById("download-html")!.addEventListener("click", function () {
-			table.download("html", "data.html", { style: true });
-		});
-
-		// event listeners set:
-		// href to the ms detail view page
-		table.on("rowClick", function (e, row) {
-			var data = row.getData();
-			var url = withBasePath(`/hands/${data["hit_id"]}`);
-			window.open(url, "_self");
-		});
-		table.on("dataLoaded", function (data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-			var el = document.getElementById("counter2");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
-
-		table.on("dataFiltered", function (filters, data) {
-			var el = document.getElementById("counter1");
-			if (el) {
-				el.innerHTML = `${data.length}`;
-			}
-		});
-	</script>
+	>
+		<TabulatorTable
+			client:only="react"
+			data={tableData}
+			columns={columns}
+			tableId="hands-table"
+			options={{
+				paginationSize: 25,
+				responsiveLayout: "collapse",
+			}}
+			downloadTitle="hit_hands"
+			rowClickConfig={rowClickConfig}
+		/>
+	</TableHead>
 </PageLayout>

@@ -39,14 +39,9 @@ const { title, definition } = Astro.props;
 				)
 			}
 		</h1>
-		<DownloadButtons />
 	</div>
+	
 	<slot/>
-	<div class="text-brand-800 text-xl">
-		Es werden
-		<span id="counter1"></span> von
-		<span id="counter2"></span> Einträgen angezeigt
-	</div>
 	<div class="text-sm md:text-base">
 		<div id="tabulator-table"></div>
 	</div>

@@ -122,7 +122,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 							<ul class="list-disc list-inside" data-showmore-list>
 								{work.joined_transmission.slice(0, 2).map((tr) => (
 									<li>
-									<NavLink href={`/works/${tr.hit_id}`}>{tr.title}</NavLink>
+									<NavLink href={`/works/${tr.hit_id}`}>{tr.author.length > 0 ? `${tr.author[0].name}: ${tr.title}` : tr.title}</NavLink>
 									</li>
 								))}
 								{work.joined_transmission.slice(2).map((tr) => (
@@ -296,7 +296,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 	}}
 	downloadTitle = {work.title.replace(/\s+/g, '_').toLowerCase()},
 	updateMapOnFilter={true}
-          mapIdField="hitId"
+          mapIdField="hit_id"
 	rowClickConfig={rowClickConfig}
     />
 					{/* <div class="overflow-hidden rounded-md border border-neutral-400">

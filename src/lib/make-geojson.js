@@ -254,6 +254,8 @@ export function processMSData(input) {
 							description: `Aktueller Standort`,
 							type: "provenance",
 							url: `/places/${pl.hit_id}`,
+							hit_id: mssData.hit_id, // to match the table filtering
+							place_hit_id: pl.hit_id,
 						},
 					})),
 				) || []),
@@ -269,14 +271,16 @@ export function processMSData(input) {
 									coordinates: [parseFloat(pl.long), parseFloat(pl.lat)],
 								},
 								properties: {
-									title: pl.value,
+									title: mssData.cod_units.length > 1 ? unit.value : mssData.shelfmark,
 
-									url: `/places/${pl.hit_id}`,
-									description: `${mssData.cod_units.length > 1 ? unit.value : ""} 
+									url: `/manuscripts/${mssData.hit_id}`,
+									description: `${pl.value} 
                                              ${prov.type === "orig" ? "~> Entstehungsort" : "~> Provenienz"}`,
 									period: formatPeriod(prov), // Calls a helper function for cleaner logic
 									provenanceType: prov.type || "N/A", // Handles undefined types
 									type: `${prov.type === "orig" ? "origin" : "provenance"}`,
+									hit_id: mssData.hit_id, // to match the table filtering
+									place_hit_id: pl.hit_id,
 								},
 							})),
 					),

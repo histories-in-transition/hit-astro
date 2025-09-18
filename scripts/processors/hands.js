@@ -45,6 +45,16 @@ function transformHand(hand, deps) {
 	// Get hand roles information
 	const h_roles = getHandRoles(hand, handsrole, msItemsPlus);
 
+	// Get all texts (author: work title) which wrote this hand
+
+	const texts = [
+		...new Map(
+			h_roles.flatMap((role) =>
+				role.content.flatMap((cont) => cont.title_work.map((work) => [work.hit_id, work])),
+			),
+		).values(),
+	];
+
 	return {
 		id: hand.id,
 		hit_id: hand.hit_id,
@@ -61,7 +71,7 @@ function transformHand(hand, deps) {
 		date: h_dated,
 		hand_roles: h_roles,
 		placed: h_placed,
-		texts: [...new Set(hand.texts.map((text) => text.value))],
+		texts: texts,
 		author_entry: hand.author_entry.map((a) => a.value),
 	};
 }

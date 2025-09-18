@@ -209,6 +209,7 @@ export function getJoinedTransmission(work, allWorks) {
 						id: w.id,
 						hit_id: w.hit_id,
 						title: w.title,
+						author: w.author,
 					});
 				}
 			});

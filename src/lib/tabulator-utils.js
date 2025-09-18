@@ -1,6 +1,6 @@
 import { JSONPath } from "jsonpath-plus";
 
-// function for tabulator accessor  Ensures filtering and sorting work correctly
+// function for tabulator accessor  Ensures filtering and sorting dates correctly
 export function dateAccessor(value) {
 	if (!value || !Array.isArray(value)) return "";
 	return value.map((dateObj) => dateObj.range || "").join(", ");
@@ -9,8 +9,17 @@ export function dateAccessor(value) {
 //  function for tabulator formatter - Formatting the displayed values
 export function dateFormatter(cell) {
 	const value = cell.getValue();
-	if (!value || !Array.isArray(value)) return "not array";
-	return value.map((dateObj) => dateObj.value || "").join(" | ");
+	if (!value || !Array.isArray(value)) {
+		console.log("Returning 'not array'");
+		return "not array";
+	}
+
+	const result = value
+		.map((dateObj) => {
+			return dateObj.value || "";
+		})
+		.join(" | ");
+	return result;
 }
 
 // Function to get the value of a specific path or several paths from a JSON object
