@@ -44,7 +44,7 @@ export default function TabulatorTable({
 			resizable: false,
 			headerSort: false,
 		},
-		pagination: false,
+		pagination: true,
 		movableColumns: true,
 		resizableRows: true,
 		...options,
@@ -66,7 +66,6 @@ export default function TabulatorTable({
 		// Wait for table to be built before adding event listeners
 		tabulatorRef.current.on("tableBuilt", function () {
 			console.log("Table built successfully");
-			console.log("data:", data);
 			// Add row click listener if configuration is provided
 			if (rowClickConfig) {
 				tabulatorRef.current.on("rowClick", function (e, row) {
