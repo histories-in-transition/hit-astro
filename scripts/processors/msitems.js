@@ -77,8 +77,6 @@ function transformMsItem(item, deps, originalMsItems) {
 	// Get provenance
 	const provenance = getProvenance(item, cod_unitsprov, places, dates, bibliography);
 
-	// get joined transmission
-
 	// Return the enriched msitem
 	return {
 		id: item.id,
@@ -86,7 +84,7 @@ function transformMsItem(item, deps, originalMsItems) {
 		view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
 		label: item.label[0]?.value,
 		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
-		joined_transmission: getJoinedTransmission(item, originalMsItems),
+		joined_transmission: getJoinedTransmission(item, originalMsItems, works, people, genres),
 		library: library,
 		library_place: library_place,
 		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
@@ -265,7 +263,7 @@ function getCommentedMsItems(item, msItems) {
 		};
 	});
 }
-function getJoinedTransmission(item, msItems) {
+function getJoinedTransmission(item, msItems, works, genres, people) {
 	const itemManuscriptId =
 		Array.isArray(item.manuscript) && item.manuscript.length > 0
 			? item.manuscript[0].id
@@ -273,26 +271,40 @@ function getJoinedTransmission(item, msItems) {
 
 	if (!itemManuscriptId) return [];
 
-	return msItems
-		.filter((msItem) => {
-			const msItemManuscriptId =
-				Array.isArray(msItem.manuscript) && msItem.manuscript.length > 0
-					? msItem.manuscript[0].id
-					: undefined;
-			return msItemManuscriptId === itemManuscriptId;
-		})
-		.filter((msItem) => msItem.id !== item.id) // Exclude the current item
-		.map((msItem) => ({
-			id:
-				Array.isArray(msItem.title_work) && msItem.title_work.length > 0
-					? msItem.title_work[0].id
-					: msItem.id,
-			title:
-				Array.isArray(msItem.title_work) && msItem.title_work.length > 0
-					? msItem.title_work[0].value
-					: msItem.title_note || "",
-			hit_id: msItem.hit_id,
-		}));
+	return (
+		msItems
+			// get all msitems from the same manuscript as the current msitem
+			.filter((msItem) => {
+				const msItemManuscriptId =
+					Array.isArray(msItem.manuscript) && msItem.manuscript.length > 0
+						? msItem.manuscript[0].id
+						: undefined;
+				return msItemManuscriptId === itemManuscriptId;
+			})
+			.filter((msItem) => msItem.id !== item.id) // Exclude the current item
+			.map((msItem) => {
+				let id = msItem.id;
+				let title = "";
+				// check if there is a title_work else use title_note
+				if (msItem.title_work.length > 0) {
+					//use enrich function to get author
+					const enrichedwork = enrichWorks(msItem.title_work, works, genres, people);
+					id = enrichedwork[0].id;
+					title =
+						enrichedwork[0].author?.length > 0
+							? `${enrichedwork[0].author[0].name}: ${enrichedwork[0].title}`
+							: enrichedwork[0].title;
+				} else {
+					// No title_work, use title_note
+					title = msItem.title_note || "";
+				}
+				return {
+					id,
+					title,
+					hit_id: msItem.hit_id,
+				};
+			})
+	);
 }
 
 function getOrigDate(relatedHand, provenance) {

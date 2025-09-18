@@ -178,7 +178,7 @@ export default function TabulatorTable({
 
 	return (
 		<div className="text-sm md:text-base w-full">
-			<div className="flex my-4 md:justify-between items-start md:items-center mb-2">
+			<div className="grid gap-2 md:flex my-4 md:justify-between items-start md:items-center mb-2">
 				<div className="text-brand-800 text-xl">
 					Es werden <span id="counter1"></span> von <span id="counter2"></span> Einträgen angezeigt
 				</div>

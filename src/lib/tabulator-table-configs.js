@@ -600,22 +600,99 @@ export const scribesTableConfig = {
 };
 
 export const handsTableConfig = {
-	tranformData: (hands) => {
+	transformData: (hands) => {
 		return hands.map((hand) => {
 			return {
 				id: hand.id,
 				hit_id: hand.hit_id,
+				manuscript: hand.manuscript.map((ms) => ms.value),
+				view_label: hand.label.split("_")[1],
+				texts: hand.texts
+					.map((text) =>
+						text.author.length > 0 ? `${text.author[0].name}: ${text.title}` : text.title,
+					)
+					.join("\n"),
+				hand_roles: [...new Set(hand.hand_roles.map((h_role) => h_role.all_in_one))].join("\n"),
+				origDate: hand.date.flatMap((dating) => dating.dated),
+				places: hand.placed
+					.flatMap((placement) => placement.place.map((pl) => pl.value))
+					.join(" | "),
+				scribe: hand.scribe.length > 0 ? hand.scribe.map((scr) => scr.name) : "unbekannt",
+				group: hand.scribe[0]?.group,
 			};
 		});
 	},
 
 	getColumns() {
-		const columns = [{}];
+		const columns = [
+			{
+				title: "Handschrift",
+				headerFilterPlaceholder: "e.g. Clm. 6326",
+				resizable: true,
+				field: "manuscript",
+				minWidth: 200,
+				responsive: 1,
+			},
+			{
+				title: "#",
+				headerFilterPlaceholder: "e.g. H. 2",
+				field: "view_label",
+				width: 100,
+				formatter: "textarea",
+				responsive: 1,
+			},
+			{
+				title: "Text",
+				headerFilterPlaceholder: "e.g. De temporum ratione",
+				field: "texts",
+				minWidth: 200,
+				formatter: "textarea",
+			},
+			{
+				title: "Rolle | Typ | Funktion",
+				headerFilterPlaceholder: "e.g. Erweiterung",
+				headerTooltip: "Was meinen wir mit Rolle, Typ und Funktion ...",
+				field: "hand_roles",
+				formatter: "textarea",
+			},
+			{
+				title: "Datiert",
+				field: "origDate",
+				minWidth: 100,
+				headerFilterPlaceholder: "e.g. nach 810",
+			},
+			{
+				title: "Lokalisiert",
+				headerFilterPlaceholder: "e.g. Freising",
+				field: "places",
+				minWidth: 200,
+			},
+			{
+				title: "Schreiber",
+				headerFilterPlaceholder: "e.g. Baldo",
+				field: "scribe",
+				minWidth: 200,
+				formatter: "textarea",
+			},
+			{
+				title: "Gruppe",
+				field: "group",
+				sorter: "boolean",
+				formatter: "tickCross",
+				width: 110,
+				headerFilter: "tickCross",
+				headerFilterParams: { tristate: true },
+				headerFilterEmptyCheck: function (value) {
+					return value === null;
+				},
+			},
+		];
+
 		return addHeaderFilters(columns);
 	},
 	// Row click configuration for strata table
 	getRowClickConfig: {
-		urlPattern: "/msitems/{id}",
+		urlPattern: "/hands/{id}",
 		idField: "hit_id",
 		target: "_self",
 	},
