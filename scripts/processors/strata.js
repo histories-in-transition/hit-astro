@@ -34,22 +34,24 @@ export function processStrata(strata, deps) {
 		strataa,
 	} = deps;
 
-	const processedStrata = strata.map((stratum) =>
-		transformStratum(
-			stratum,
-			handsrole,
-			hands,
-			handsdated,
-			handsplaced,
-			msItemsPlus,
-			places,
-			dates,
-			bibliography,
-			strata_filiations,
-			strataa,
-			filiated_strata,
-		),
-	);
+	const processedStrata = strata
+		.filter((strata) => strata.manuscript.length > 0)
+		.map((stratum) =>
+			transformStratum(
+				stratum,
+				handsrole,
+				hands,
+				handsdated,
+				handsplaced,
+				msItemsPlus,
+				places,
+				dates,
+				bibliography,
+				strata_filiations,
+				strataa,
+				filiated_strata,
+			),
+		);
 
 	return addPrevNextToMsItems(processedStrata, "hit_id", "label");
 }
@@ -261,7 +263,6 @@ function getStratumManuscript(stratum, msItemsPlus) {
 				library: relatedMsItems[0]?.library || [],
 				author_entry: relatedMsItems[0]?.author_entry || [],
 				project: relatedMsItems[0]?.project || [],
-				language: relatedMsItems[0]?.language || [],
 			};
 		}) || []
 	);
@@ -315,6 +316,7 @@ function getStratumMsItems(h_roles, msItemsPlus) {
 				text_modification: fullItem?.text_modification || [],
 				interpolations: fullItem?.interpolations || [],
 				form: fullItem?.form || [],
+				language: fullItem.language || [],
 			};
 		});
 

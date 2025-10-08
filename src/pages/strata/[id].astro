@@ -39,7 +39,7 @@ const { data: stratum } = Astro.props;
 					<dl class="grid grid-cols-[1fr_6fr]">
 						<dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
 						<dd class="pl-5">
-							<NavLink href=`/manuscripts/hit_manuscripts__${stratum.manuscript[0]?.id}`>
+							<NavLink href=`/manuscripts/hit_manuscript__${stratum.manuscript[0]?.id}`>
 								{stratum.manuscript[0]?.library[0].value}, {stratum.manuscript[0]?.value}
 							</NavLink>
 						</dd>

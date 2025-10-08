@@ -100,7 +100,7 @@ async function generate() {
 			form: value.msitems.flatMap((item) => item.form || []),
 			text_modifications: value.msitems.flatMap((item) => item.text_modification || []),
 			interpolations: value.msitems.flatMap((item) => item.interpolations || []),
-			language: value.manuscript[0].language || [],
+			language: value.msitems.flatMap((item) => item.language) || [],
 			project: value.manuscript[0].project || [],
 		};
 		records.push(item);
