@@ -51,7 +51,7 @@ scripts/
 1. **Package Manager**: This project uses `pnpm`. If you haven't installed it:
    ```bash
    npm install -g pnpm
-```
+    ```
 
 2. **Clone the repo**
 
