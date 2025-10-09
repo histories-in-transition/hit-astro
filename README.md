@@ -24,7 +24,7 @@ then processed in the current repository, making visualizations and advanced fil
 possible.  
 For the preprocessing we use the following scripts:
 
-````
+```
 scripts/
 ├── preprocess-data.js (main entry point)
 ├── data-loader.js (load data from raw json)
@@ -41,7 +41,7 @@ scripts/
 └── utils/
     ├── utils.js (small enrichment functions)
     └──  logger.js
-    ```
+```
 
 
 ## Getting Started
