@@ -1,0 +1,18 @@
+---
+import Layout from "@/layouts/page-layout.astro";
+import NavLink from "@/components/nav-link.astro";
+---
+
+<Layout title="404">
+	<div class="mx-auto grid gap-4 content-center justify-center text-center py-20 px-5 h-full">
+		<h1 class="font-extrabold text-3xl md:text-5xl text-brand-800">
+			<span class="md:text-9xl">404</span>
+			<br /> Page Not Found
+		</h1>
+		<p>This page does not exist, or at least not anymore!</p>
+		<p>
+			Try going back to the <NavLink href="/index.html">Start page</NavLink> or use the navigation menu
+			to find what you are looking for.
+		</p>
+	</div>
+</Layout>

@@ -31,7 +31,7 @@ const { title = "Histories in transition" } = Astro.props;
 	<body class="min-h-screen grid grid-rows-[auto_1fr_auto] bg-brand-50 text-brand-950">
 		<PageHeader />
 		<main>
-			{title !== "Home" && <BreadCrumbs />}
+			{!["Home", "404"].includes(title) && <BreadCrumbs />}
 			<slot />
 		</main>
 		<PageFooter />
