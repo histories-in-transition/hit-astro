@@ -43,15 +43,15 @@ scripts/
     └──  logger.js
 ```
 
-
 ## Getting Started
 
 ### Prerequisites
 
 1. **Package Manager**: This project uses `pnpm`. If you haven't installed it:
+
    ```bash
    npm install -g pnpm
-    ```
+   ```
 
 2. **Clone the repo**
 
@@ -81,10 +81,11 @@ scripts/
   single items (manuscripts, works etc).
 - **`src/lib/`**: Contains scripts for the advanced search, and the
   [Tabulator library](https://tabulator.info/) used to display JSON data in tables.
-- `src/lib/advanced search` and `src/pages/search.astro` (search interface): Implements the search
-  page with (Algolia) instant search (using
+- **`src/lib/advanced search` and `src/pages/search.astro`** (search interface): Implements the
+  search page with (Algolia) instant search (using
   [Typsesence instance search adapter](https://typesense.org/docs/guide/search-ui-components.html#using-instantsearch-js)).
-- **`scripts/`**: Scripts for fetching data.
+- **`scripts/`**: Scripts for fetching data, processing data, generating typsense index, generating
+  tei-xml, and latex -> pdf files.
 
 ## License
 

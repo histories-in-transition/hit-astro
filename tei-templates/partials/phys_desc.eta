@@ -8,7 +8,7 @@
                             %>
                             <supportDesc material="<%= mat %>">
                                 <support>
-                                        <material><%= it.material %>. <%= it.material_spec %></material>
+                                        <material><%= it.material %><% if (it.material_spec) {%>. <%= it.material_spec %> <%}%></material>
                                 </support>
                                 <extent>
                                  <% if (it.extent) { %>

@@ -19,7 +19,7 @@
             else if (it.material == "Mischung") mat = "mixed";
         %>
         <supportDesc material="<%= mat %>">                               
-                <% if (it.unit.material && it.unit.material_spec) { %>
+                <% if (it.unit.material || it.unit.material_spec) { %>
                 <support>
                     <material><%= it.unit.material %>. <%= it.unit.material_spec %>
                     <% if (it.unit.basic_structure && it.unit.basic_structure.length > 0) { %>
@@ -29,11 +29,11 @@
                 </support>
                 <% } %>
                 <extent>                                           
-                    <% if (it.unit.height && it.unit.width) { %>
-                        <dimensions type="leaf" ununit="mm">
-                            <height><%= it.unit.height %></height>
-                            <width><%= it.unit.width %></width>
-                        </dimensions>
+                    <% if (it.unit.heigth && it.unit.width) { %>
+                    <dimensions type="leaf" unit="mm">                                   
+                        <height><%= it.unit.heigth %></height>                                   
+                        <width><%= it.unit.width %></width>
+                    </dimensions>
                     <% } %>
                 </extent>
                 <collation>
@@ -41,10 +41,10 @@
                     <p><%= it.unit.notes %></p>
                 <% } %>
                 <% if (it.unit.catchwords) { %>
-                    <p><%= it.unit.catchwords %></p>
+                    <catchwords><%= it.unit.catchwords %></catchwords>
                 <% } %>
                 <% if (it.unit.quiremarks) { %>
-                    <p><%= it.unit.quiremarks %></p>
+                     <signatures><%= it.unit.quiremarks %></signatures>
                 <% } %>
                    
                 </collation>
@@ -71,9 +71,7 @@
                                     <% } %>
                         </p>
                         <% } %>
-                         <% if (it.unit.lines_number) { %>
-                   <p><%= it.unit.lines_number %></p>
-                    <% } %>
+                        
                 </layout>
                 </layoutDesc>
         </objectDesc>
