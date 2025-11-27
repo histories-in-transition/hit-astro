@@ -14,36 +14,34 @@ import React from "react";
  * This is the most detailed component - loops through content items.
  */
 export default function MsContent({ items }) {
-	if (!items || items.length === 0) {
-		return null;
-	}
+	if (!items || items.length === 0) return null;
 
-	return (
-		<>
-			{items.map((item, index) => {
-				const {
-					locus = item.locus ? item.locus : "",
-					title = item.title ? item.title : item.title_note,
-					language = item.language ? item.language : "",
-					incipit = item.incipit ? item.incipit : "",
-					explicit = item.explicit ? item.explicit : "",
-					notes = item.notes ? item.notes : "",
-				} = item;
+	// Build full TeX output
+	const tex = items
+		.map((item) => {
+			// Safe extraction with defaults
+			const locus = item.locus ?? "";
+			const aut_title =
+				item.title_work[0]?.title && item.title_work[0]?.author?.length > 0
+					? `${item.title_work[0]?.author?.map((aut) => aut.name).join(", ")}: ${item.title_work[0]?.title}`
+					: `${item.title_work[0]?.title || item.title_note || "N/A"}`;
+			const language = `(${item.language[0].value})` ?? "";
+			const incipit = item.incipit ?? "";
+			const explicit = item.explicit ?? "";
+			const notes = item.notes ?? "";
 
-				return (
-					<div key={index}>
-						{`\\leavevmode \\marginnote{${locus}} \\textsc{${title}} ${language && language}`}
+			// Build each optional part
+			const incipitTex = incipit ? ` Inc. \\textit{${incipit}}` : "";
+			const explicitTex = explicit ? ` Expl. \\textit{${explicit}}` : "";
+			const notesTex = notes ? ` Bemerkung: ${notes}` : "";
 
-						{incipit && <>{` Inc. \\textit{${incipit}}`}</>}
+			// Final TeX block for this entry
+			return `
+\\textbf{${locus}} \\textsc{${aut_title}} ${language}
+${incipitTex}${explicitTex}${notesTex}
+`;
+		})
+		.join("\n");
 
-						{explicit && <>{` Expl. \\textit{${explicit}}`}</>}
-
-						{notes && <>{` Bemerkung: ${notes}`}</>}
-
-						{` \\\\[0.3\\baselineskip]\n`}
-					</div>
-				);
-			})}
-		</>
-	);
+	return tex;
 }

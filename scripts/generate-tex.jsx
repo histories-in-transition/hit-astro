@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import ManuscriptTemplate from "./components/tex/ManuscriptTemplate.jsx";
+import TexHeader from "./components/tex/TexHeader.jsx";
 
 // Get project root
 const projectRoot = new URL("..", import.meta.url).pathname;
@@ -33,7 +33,7 @@ async function generateAllTex() {
 		for (const manuscript of manuscripts) {
 			try {
 				// Create a React component and convert to string
-				const component = <ManuscriptTemplate manuscript={manuscript} />;
+				const component = <TexHeader manuscript={manuscript} />;
 				const texContent = ReactDOMServer.renderToStaticMarkup(component);
 
 				// Generate filename using hit_id
