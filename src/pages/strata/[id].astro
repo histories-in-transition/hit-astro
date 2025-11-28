@@ -44,7 +44,9 @@ const { data: stratum } = Astro.props;
 							</NavLink>
 						</dd>
 						<dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
-						<dd class="pl-5">{stratum.date.map(d => d.value).join(' | ')}</dd>
+						<dd class="pl-5">{stratum.date.length > 0 ? stratum.date.map(d => d.value).join(' | '): 'N/A'}</dd>
+						<dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
+						<dd class="pl-5">{stratum.place.length > 0 ? stratum.place.map(pl => pl.value).join(' | ') : "N/A"}</dd>
 						<dt class="font-semibold border-r border-gray-300 pr-2">Charakter:</dt>
 						<dd class="pl-5">{stratum.character}</dd>
 						<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>

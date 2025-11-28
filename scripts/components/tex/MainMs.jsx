@@ -9,6 +9,7 @@ import {
 } from "./MsSections.jsx";
 import Codunits from "./CodUnit.jsx";
 import MsContents from "./MsContents.jsx";
+import Strata from "./Strata.jsx";
 
 /**
  * This is the main Manuscript wrapper. It:
@@ -19,7 +20,6 @@ export default function MainMS({ manuscript }) {
 	if (!manuscript) return null;
 
 	let tex = "";
-
 	tex += Heading(manuscript);
 	tex += texMaterial(manuscript);
 	tex += texLayout(manuscript);
@@ -34,6 +34,7 @@ export default function MainMS({ manuscript }) {
 	} else if (manuscript.cod_units?.length > 1) {
 		tex += Codunits({ units: manuscript.cod_units });
 	}
+	tex += Strata(manuscript.strata);
 
 	return tex;
 }

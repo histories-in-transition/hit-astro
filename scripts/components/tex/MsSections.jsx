@@ -17,19 +17,20 @@ export function Heading(ms) {
 		", ",
 	);
 	const origDate = extractPreferredDate(ms.orig_date);
+	const title = ms.title ?? "Titel TBD";
 
 	return `
-\\begin{adjustwidth}{-20pt}{}
-\\textbf{Sammelbuch}
+\\textbf{\\Large ${title}}
 
 \\smallskip
 ${material}, ${extent} Bl. ${size} mm.${origPlace ? ` ${origPlace}` : ""}${origDate ? `, ${origDate}` : ""}
 
 ${ms.content_summary || ""}
-\\end{adjustwidth}
 
+\\medskip
 `;
 }
+
 export function texMaterial(ms) {
 	const material = safeJoin(ms.material);
 	const material_spec = ms.cod_units.length === 1 && ms.cod_units[0].material_spec;
@@ -80,19 +81,16 @@ export function texHistory(ms) {
 		ms.orig_place?.map((p) => p.value),
 		", ",
 	);
+	const provenance =
+		ms.provenance.length > 0 && ms.provenance.map((p) => p.library_full).join(", ");
 
 	let tex = "";
 
 	if (allDates || places) {
-		tex += mn("G", `Entstehung: ${allDates} ${places}`);
-	}
-
-	if (ms.provenance?.length > 0) {
-		tex +=
-			"\nProvenienz: " +
-			ms.provenance.map((p) => p.library_full).join(", ") +
-			(ms.idno_former ? `, ${ms.idno_former}` : "") +
-			"\n\n";
+		tex += mn(
+			"G",
+			`Entstehung: ${allDates} ${places}. ${provenance ? `Provenienz: ${provenance}` : ""}`,
+		);
 	}
 
 	return tex;

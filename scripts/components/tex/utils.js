@@ -2,7 +2,9 @@
 // if so write the marginal note (label) with its value
 // used in Manuscript.jsx for sections G: B: etc and in MsContents
 export const mn = (label, value) =>
-	value && value.toString().trim() ? `\\textbf{${label}:} ${value}\n\n` : "";
+	value && value.toString().trim()
+		? `\\begin{adjustwidth}{+20pt}{}\\noindent\\makebox[0pt][r]{${label}:\\quad}${value}\\end{adjustwidth}\n\n`
+		: "";
 
 export const safeJoin = (arr, sep = ", ") =>
 	Array.isArray(arr) && arr.length > 0 ? arr.join(sep) : "";

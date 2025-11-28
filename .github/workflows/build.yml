@@ -63,6 +63,22 @@ jobs:
         run: |
           echo "Generating TEI files with validation..."
           node scripts/generate-tei.js
+      - name: Install TeX Live for XeLaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-xetex \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-humanities \
+            texlive-lang-german \
+            texlive-lang-greek \
+            fonts-freefont-ttf \
+            fonts-dejavu
+
+      - name: Build PDFs of manuscripts.json
+        run: ./scripts/shellscripts/makepdfs.sh
 
       - name: generate typesense index
         env:

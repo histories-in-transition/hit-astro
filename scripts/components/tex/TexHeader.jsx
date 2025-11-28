@@ -30,10 +30,7 @@ export default function TexHeader({ manuscript }) {
 \\geometry{a4paper}
 \\setlength{\\parskip}{0.5em}
 \\setlength{\\parindent}{0pt}
-
-% Margin notes
-\\usepackage{marginnote}
-\\reversemarginpar
+\\usepackage[strict]{changepage} % for adjustwidth
 
 % Page headers/footers
 \\usepackage[markcase=noupper]{scrlayer-scrpage}

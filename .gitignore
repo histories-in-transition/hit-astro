@@ -30,5 +30,5 @@ src/content
 *.xml
 
 *.tex
-*.pdf
-*.out
+/public/pdf/
+/public/tei/

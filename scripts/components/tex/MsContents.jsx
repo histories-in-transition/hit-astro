@@ -18,8 +18,9 @@ export default function MsContent({ items }) {
 
 	// Build full TeX output
 	const tex = items
-		.map((item) => {
+		.map((item, index) => {
 			// Safe extraction with defaults
+			const n = index + 1;
 			const locus = item.locus ?? "";
 			const aut_title =
 				item.title_work[0]?.title && item.title_work[0]?.author?.length > 0
@@ -36,8 +37,7 @@ export default function MsContent({ items }) {
 			const notesTex = notes ? ` Bemerkung: ${notes}` : "";
 
 			// Final TeX block for this entry
-			return `
-\\textbf{${locus}} \\textsc{${aut_title}} ${language}
+			return `(${locus}) \\textsc{${aut_title}} ${language}
 ${incipitTex}${explicitTex}${notesTex}
 `;
 		})
