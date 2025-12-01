@@ -344,6 +344,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -354,6 +359,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -365,6 +375,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "e.g. 9th c.",
 	}),
 
@@ -375,6 +390,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -385,6 +405,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 	refinementListHandsContextRole({
@@ -394,6 +419,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -404,6 +434,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -414,6 +449,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -424,6 +464,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -434,6 +479,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -444,6 +494,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -463,6 +518,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 
@@ -473,6 +533,11 @@ search.addWidgets([
 		showMore: true,
 		showMoreLimit: 50,
 		limit: 10,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		searchablePlaceholder: "",
 	}),
 

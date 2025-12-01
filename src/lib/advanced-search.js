@@ -391,6 +391,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "weniger" : "mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -401,6 +406,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -412,6 +422,11 @@ search.addWidgets([
 		sortBy: centuryComparator,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "e.g. 9th c.",
 	}),
@@ -422,6 +437,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -432,6 +452,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -442,6 +467,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -451,6 +481,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -461,6 +496,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -471,6 +511,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -481,6 +526,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -491,6 +541,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -501,6 +556,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -511,6 +571,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -521,6 +586,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -531,6 +601,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -541,6 +616,11 @@ search.addWidgets([
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "",
 	}),
@@ -551,6 +631,11 @@ search.addWidgets([
 		separator: " > ",
 		showMore: true,
 		showMoreLimit: 50,
+		templates: {
+			showMoreText({ isShowingMore }) {
+				return isShowingMore ? "Weniger" : "Mehr";
+			},
+		},
 		limit: 10,
 		searchablePlaceholder: "e.g. Historiographie",
 	}),
