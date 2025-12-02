@@ -1,16 +1,10 @@
-import React from "react";
-import MsContents from "./MsContents.jsx";
+import MsContents from "./ms-contents.js";
 import { mn } from "./utils.js";
 /**
- * function to render the info on Beschreibstoff, Lagen, Extent etc
- * must check if there is only one object in cod_unit array
- * if so render all the indormation as belonging to the whole MS
- * if several cod. units, make .
+ * function to render the cod_unit array
  */
 
-export default function Codunits({ units }) {
-	if (!Array.isArray(units) || units.length === 0) return null;
-
+export default function Codunits(units) {
 	const tex = units
 		.map((unit) => {
 			// Safe values
@@ -82,7 +76,7 @@ export default function Codunits({ units }) {
 						.join("; ")
 				: "";
 
-			const contentsTex = MsContents({ items: unit.content ?? [] });
+			const contentsTex = MsContents(unit.content ?? []);
 
 			return `
 \\section{Kodikologische Einheit ${unit.number || ""}}

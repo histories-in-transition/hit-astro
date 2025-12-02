@@ -65,6 +65,28 @@ export function texLayout(ms) {
 	return tex;
 }
 
+//function to render the hands information
+// gets hand_roles array from strata
+// if strata is TBD write in main ms
+// otherwise to specific strata
+export function texScript(roles) {
+	if (!Array.isArray(roles) || roles.length === 0) return "";
+
+	// Flatten all hands from all roles into one array of strings
+	const allHands = roles.flatMap((role) => {
+		if (!role.hand || role.hand.length === 0) return [];
+		return role.hand.map((h) => {
+			const label = h.label.split("_")[1];
+			const dating = h.date?.map((d) => d.value).join(", ") || "";
+			const place = h.place?.map((p) => p.value).join(", ") || "";
+			return `${label}${dating ? ` ${dating}` : ""}${place ? `, ${place})` : ""}`;
+		});
+	});
+
+	// Join everything into a single string, one "H"
+	return allHands.length > 0 ? mn("H", allHands.join(". ")) : "";
+}
+
 export function texBinding(ms) {
 	const desc = ms.binding ?? "";
 	const date = ms.binding_date?.[0]?.value;

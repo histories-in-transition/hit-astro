@@ -9,7 +9,7 @@
 		"get-data": "node ./scripts/data-fetch.js",
 		"process-data": "node ./scripts/preprocess-data.js",
 		"generate-tei": "node ./scripts/generate-tei.js",
-		"generate-tex": "tsx ./scripts/generate-tex.jsx",
+		"generate-tex": "node ./scripts/generate-tex.js",
 		"generate-index": "node ./scripts/generate-search-index.js && node ./scripts/generate-strata-index.js",
 		"build": "astro build",
 		"start": "astro preview",

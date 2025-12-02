@@ -31,3 +31,10 @@ export const extractAllOriginDates = (dates) => {
 		.filter(Boolean)
 		.join("; ");
 };
+
+export function texEscape(str = "") {
+	return str
+		.replace(/([{}$%_#])/g, "\\$1") // escape special chars
+		.replace(/~/g, "\\textasciitilde{}")
+		.replace(/\^/g, "\\textasciicircum{}");
+}
