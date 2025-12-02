@@ -1,0 +1,143 @@
+
+    \documentclass{article}
+        \usepackage[ngerman]{babel}
+        \usepackage[utf8x]{inputenc}
+        \setlength\parindent{0pt}
+        \usepackage{hyperref} %for href
+        \usepackage{geometry}
+        \geometry{
+        a4paper,
+        textwidth=150mm, %check below or in the xslt also the width of table rows
+        left=40mm,
+        top=40mm,
+        }
+        \usepackage{marginnote} % use to add the letters (B, A, L etc.) for the subsections within a description that stand on the left of texts. 
+        
+        \usepackage[strict]{changepage} %package to change the page when required e.g. width of text
+        
+        \setlength{\parskip}{0,5em} %controls the space between paragraphs or sections
+        
+        \usepackage[markcase=noupper]{scrlayer-scrpage} %for header
+        \ohead{}% clear the outer head
+        \cfoot*{\pagemark}% the pagenumber in the center of the foot, also on plain pages
+        
+        \reversemarginpar %The report and article document type is single sided, so one needs to add reversemarginpar to get the notes appear on the "wrong" i.e. left side of text.
+        \setcounter{secnumdepth}{-1} %removes the automatically generated numbering, -1 stands for the level of chapter, 0 for section etc. Unnumbered sections don't get in the ToC. If needed one has to put a * as in: \section*{Cod. 799}
+         
+         \title{Beschreibung von Wien, ÖNB, Cod. 387}    
+         \author{Beschrieben durch : Leon Pürstinger}
+           \date{2025}
+         
+        \begin{document}  
+        \maketitle
+      
+        
+        \begin{adjustwidth}{-20pt}{} %creates environment for the shelf mark and title with smaller left margin.
+           Pergament, 165 Bl., 324×256 mm
+            \subsection{}
+            \newline           
+        \end{adjustwidth}
+        % Section dividers with marginnotes
+        \leavevmode \marginnote{B:}Pergament , 165 Bl., 324×256 mm,
+                
+                        Foliierung: Neuzeitliche Foliierung, auch auf
+                                    Versoseiten.,
+                
+                \textbf{Lagen:} (II-1)\textsuperscript{3} + 5
+                                            IV\textsuperscript{42} + 3 IV\textsuperscript{66} +
+                                            (V-1)\textsuperscript{74} + 5 V\textsuperscript{I114} + III\textsuperscript{120} + 2 IV\textsuperscript{136} + (VI-2)\textsuperscript{146} +
+                                            V\textsuperscript{156} + (VI-3)\textsuperscript{165}
+                \\[0.5\baselineskip]
+        
+           
+           \leavevmode \marginnote{S:} % Layout description
+           % Layout info would go here from layoutDesc
+           
+           \leavevmode \marginnote{A:} % Decoration
+           % Decoration info from decoDesc
+           
+           \leavevmode \marginnote{E:}Datierung 1433. Starker Holzdeckel umfasst von einem weißen, gebräunten
+                                    Ledereinband mit doppelten Blindlinien in Rautenform
+                \\[0.5\baselineskip]
+        
+           
+           \leavevmode \marginnote{G:}Die Handschrift wurde wohl zusammen mit der Zwillingshandschrift
+                            Clm 210 zwischen 810 und 821 (nach Arno Borst 830) in Salzburg
+                            angefertigt. Während Clm 210 wahrscheinlich noch im 9. Jahrhundert nach
+                            Regensburg gebracht wurde, verblieb der Codex 387 bis zum Jahr 1806 in
+                            der Salzburger Dombibliothek und kam anschließend in den Besitz der
+                            damaligen Hofbibliothek. 
+                        \textbf{Entstehung:}
+                        
+                                Datierung:  809-818 
+                                Ort: Salzburg 
+                        \textbf{Provenienz:} Domkapitelbibliothek Salzburg
+                \\[0.5\baselineskip]
+        
+           
+           \leavevmode \marginnote{Lit.:} % Bibliography
+           
+                \textbf{Literatur:} \\
+                Bischoff, \textit{Die südostdeutschen Schreibschulen und Bibliotheken in der
+                            Karolingerzeit, I}. \\
+                Hermann, \textit{}. \\
+                Unterkircher, \textit{}. \\
+                Borst, \textit{}. \\
+                
+                \\[0.5\baselineskip]
+        
+           
+           % Contents
+           \begin{adjustwidth}{-20pt}{}
+           \section{Inhaltsverzeichnis}
+           \\[0.5\baselineskip]
+           \end{adjustwidth}
+           
+           
+                        \textbf{Zusammenfassung:} \\
+                        Einordnung der Handschrift nach den grundlegenden Studien von Arno
+                            Borst, die eine aktuellere Klassifikation als die gängigen
+                            Bibliothekskataloge bieten. Die Handschrift enthält, wie ihre
+                            Schwesternhandschrift Clm 210, den Liber calculationis (Sigle k12 nach
+                            Borst). Der Liber besteht aus drei Segmenten, von denen zwei im
+                            Inhaltsverzeichnis mit insgesamt 111 Kapitelnummern versehen wurden. Der
+                            erste Abschnitt enthält in 99 Kapiteln u.a. einen liturgischen
+                            Sonnenjahreskalender (E2) und diverse komputistische Tabellen sowie
+                            Anleitungen (darunter verschiedene Auszüge aus Bedas Texten, vgl. k6).
+                            Der zweite Block behandelt mit 11 Kapiteln astronomische Inhalte. Das
+                            dritte Segement besteht aus Bedas "De natura rerurm" (vgl. k5)
+                            und einem umfangreichen Mondzykluskalender (E5). In vorliegender
+                            Datenbank wird der Liber calculationis als Gesamtwerk, die drei Segmente
+                            und ausgewählte inhaltliche Bestandteile angeführt.\\[0.5\baselineskip]
+                \leavevmode \marginnote{1r-3r} \textsc{Inhaltsverzeichnis} (Latein) Üb. \textit{In nomine Domini potentis. Hic capitularium libri incipit
+                                calculationis.} Inc. \textit{I Adbreviatio chronicae} Expl. \textit{De mensuris in liquidis} \\[0.3\baselineskip]
+        \leavevmode \marginnote{3r} \textsc{Bienensegen} (Latein) Inc. \textit{Apis modicula mater matricula} Expl. \textit{Iohannes vos custodiant} \\[0.3\baselineskip]
+        \leavevmode \marginnote{3r} \textsc{Althochdeutscher Eintrag} (Althochdeutsch) Inc. \textit{nuscelihiu} Bemerkung: Althochdeutsches Wort im Stile eines Titels über einem
+                                lateinischen Bienensegen ohne erkennbaren Textbezug. \\[0.3\baselineskip]
+        \leavevmode \marginnote{1r, 3r} \textsc{Komputistische Anweisungen} (Latein) Bemerkung: Nachträge aus dem 10. Jh. \\[0.3\baselineskip]
+        \leavevmode \marginnote{3v} \textsc{Ave maris stella} (Latein) Inc. \textit{Ave maris stella Dei mater alma} Expl. \textit{Vitam praesta puram} \\[0.3\baselineskip]
+        \leavevmode \marginnote{4r-7r} \textsc{Abbreviatio chronicae a mundo condito usque
+                                ad Carolum Magnum} (Latein) Üb. \textit{I Ad breviatio chronicae} Inc. \textit{Adam cum esset} Expl. \textit{incarnationis Domini IIII DCCLXXXIII} \\[0.3\baselineskip]
+        \leavevmode \marginnote{7r, 9v, 10r, 10v, 11r, 15r, 15v} \textsc{Historiographische und komputistische
+                                Zusätze} (Latein) Bemerkung: 164v auf Baldo überprüfen. \\[0.3\baselineskip]
+        \leavevmode \marginnote{8v-15v} \textsc{Martyrologium excarpsatum cum
+                                alphabetis} (Latein) Üb. \textit{V Martyrologium excarpsatum cum alphabetis} Bemerkung: Es handelt sich um einen Sonnenjahreskalender, der mit einem
+                                Salzburger Kurzmartyrolog kombiniert wurde. \\[0.3\baselineskip]
+        \leavevmode \marginnote{17r-58r} \textsc{Notitiae chronologicae (Ostertafel)} (Latein) Üb. \textit{VII Argumentum ad inveniendam qua XIIII luna paschalis annis
+                                singulis feria occurrit cum adscriptis regularibus sive
+                                concurrentibus} \\[0.3\baselineskip]
+        \leavevmode \marginnote{30v-57v} \textsc{Annales Salisburgenses} (Latein) Inc. \textit{Iustinus minor regnavit} Bemerkung: 
+                                graphisch divers zu...
+                                Am Rande einer Ostertafel eingefügte annalistische Notizen.
+                             \\[0.3\baselineskip]
+        \leavevmode \marginnote{1r-165v} \textsc{Liber calculationis} (Latein) \\[0.3\baselineskip]
+        \leavevmode \marginnote{115r-130v} \textsc{Astronomische Schriften} (Latein) Üb. \textit{Excerptum de astrologia} Bemerkung: 11 Kapitel \\[0.3\baselineskip]
+        \leavevmode \marginnote{130v-146r} \textsc{Beda, Heiliger: De natura rerum} (Latein) Üb. \textit{Versus Bedae presbyteri} Inc. \textit{Incipit Liber} Expl. \textit{a meridiae usque ad occidentem extenditur.} \\[0.3\baselineskip]
+        \leavevmode \marginnote{147v-165r} \textsc{Mondkalender} (Latein) Üb. \textit{Cyclus hic est lunaris qualiter luna in circulo decennovali
+                                singulis anni vel mensibus sive diebus currit} \\[0.3\baselineskip]
+        \leavevmode \marginnote{4r-114v} \textsc{Komputistische Schriften} (Latein) Bemerkung: 99 Kapitel, die sich mit diversen Anleitungen, Tabellen und
+                                Rechenbeispielen dem Komputus widmen. \\[0.3\baselineskip]
+        
+           
+           \end{document}
+   

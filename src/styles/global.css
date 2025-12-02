@@ -267,13 +267,13 @@
 /* Show more button */
 .ais-RefinementList-showMore,
 .ais-HierarchicalMenu-showMore {
-	@apply mt-2 text-sm text-brand-600 hover:text-brand-800 focus:outline-hidden;
+	@apply mt-2 text-sm bg-brand-600 text-brand-100 focus:outline-hidden px-2 py-0.5 border border-brand-600 rounded-md hover:bg-brand-800 transition;
 }
 
 /* Disabled show more button */
 .ais-RefinementList-showMore--disabled,
 .ais-HierarchicalMenu-showMore--disabled {
-	@apply text-gray-400 cursor-not-allowed hover:text-gray-400;
+	@apply hidden;
 }
 
 /* Search box in refinement */
