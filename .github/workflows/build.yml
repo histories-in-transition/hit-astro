@@ -78,7 +78,7 @@ jobs:
             fonts-dejavu
 
       - name: Build PDFs of manuscripts.json
-        run: ./scripts/shellscripts/makepdfs.sh
+        run: ./scripts/shellscripts/makepdf.sh
 
       - name: generate typesense index
         env:
