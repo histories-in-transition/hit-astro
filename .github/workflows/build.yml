@@ -63,6 +63,12 @@ jobs:
         run: |
           echo "Generating TEI files with validation..."
           node scripts/generate-tei.js
+
+      - name: Generate TEX files
+        run: |
+          echo "Generating TEX files 
+          node scripts/generate-tex.js
+
       - name: Install TeX Live for XeLaTeX
         run: |
           sudo apt-get update
