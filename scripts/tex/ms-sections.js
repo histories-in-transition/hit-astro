@@ -65,26 +65,56 @@ export function texLayout(ms) {
 	return tex;
 }
 
-//function to render the hands information
-// gets hand_roles array from strata
-// if strata is TBD write in main ms
-// otherwise to specific strata
-export function texScript(roles) {
-	if (!Array.isArray(roles) || roles.length === 0) return "";
-
-	// Flatten all hands from all roles into one array of strings
-	const allHands = roles.flatMap((role) => {
-		if (!role.hand || role.hand.length === 0) return [];
-		return role.hand.map((h) => {
-			const label = h.label.split("_")[1];
-			const dating = h.date?.map((d) => d.value).join(", ") || "";
-			const place = h.place?.map((p) => p.value).join(", ") || "";
-			return `${label}${dating ? ` ${dating}` : ""}${place ? `, ${place})` : ""}`;
-		});
-	});
-
-	// Join everything into a single string, one "H"
-	return allHands.length > 0 ? mn("H", allHands.join(". ")) : "";
+export function texScripts(ms) {
+	if (ms.hands.length === 0) return "";
+	const tex = ms.hands
+		.map((h) => {
+			const label = h.label ? h.label.split("_")[1] : "N/A";
+			const nr_daniel = h.nr_daniel ? ` (Nr. Daniel: ${h.nr_daniel})` : "";
+			const note = h.note ? `: ${h.note}` : "";
+			const description = h.description ? ` Beschreibung: ${h.description}` : "";
+			const similarHands =
+				h.similar_hands?.length > 0
+					? ` Ähnliche Hände: ${h.similar_hands.map((sh) => sh.value.replace("_", " ")).join(", ")}.`
+					: "";
+			const scribe =
+				h.scribe.length > 0 ? ` Schreiber: ${h.scribe.map((s) => s.name).join(", ")}.` : "";
+			const date =
+				h.date?.length > 0
+					? ` Datierung: ${h.date.map((dating) => {
+							const date = dating.dated.map((dat) => dat.value).join(", ");
+							const authority =
+								dating.authority.length > 0 && dating.authority[0]?.author
+									? ` nach ${dating.authority[0]?.author}`
+									: "";
+							const page = dating.page ? `, S. ${dating.page}` : "";
+							const citation =
+								dating.authority.length > 0 && dating.authority[0]?.citation
+									? ` (${dating.authority[0]?.citation}${page})`
+									: "";
+							return `${date}${authority}${citation}`;
+						})}.`
+					: "";
+			const place =
+				h.placed?.length > 0
+					? ` Lokalisierung: ${h.placed.map((pl) => {
+							const place = pl.place.map((p) => p.value).join(", ");
+							const authority =
+								pl.authority.length > 0 && pl.authority[0]?.author
+									? ` nach ${pl.authority[0]?.author}`
+									: "";
+							const page = pl.page ? `, S. ${pl.page}` : "";
+							const citation =
+								pl.authority.length > 0 && pl.authority[0]?.citation
+									? ` (${pl.authority[0]?.citation}${page})`
+									: "";
+							return `${place}${authority}${citation}`;
+						})}.`
+					: "";
+			return `\\textbf{${label}}${scribe}${date}${place}${description}${nr_daniel}${note}${similarHands}`;
+		})
+		.join("\\\\ ");
+	return mn("H", tex);
 }
 
 export function texBinding(ms) {

@@ -2,10 +2,10 @@ import {
 	Heading,
 	texMaterial,
 	texLayout,
-	texScript,
 	texBinding,
 	texHistory,
 	texBibliography,
+	texScripts,
 } from "./ms-sections.js";
 import MsContents from "./ms-contents.js";
 import Codunits from "./cod-unit.js";
@@ -17,8 +17,7 @@ export default function MainMS(manuscript) {
 	tex += Heading(manuscript);
 	tex += texMaterial(manuscript);
 	tex += texLayout(manuscript);
-	tex += texScript(manuscript.strata.find((str) => str.number === "TBD")?.hand_roles || []);
-
+	tex += texScripts(manuscript);
 	tex += texBinding(manuscript);
 	tex += texHistory(manuscript);
 	tex += texBibliography(manuscript);

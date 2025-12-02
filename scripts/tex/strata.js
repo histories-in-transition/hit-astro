@@ -19,6 +19,7 @@ export default function Strata(strata) {
 			})
 			.join("; ");
 
+		// Data for hand roles table
 		const handroles = (stratum.hand_roles ?? [])
 			.map((hr) => {
 				const msitem = hr.ms_item
