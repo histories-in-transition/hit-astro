@@ -61,8 +61,8 @@ const geoData = processMSData(manuscript)
              <div class="flex gap-2">               
                 <NavLink href=`/tei/manuscripts/${manuscript.hit_id}.xml` class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
                 id="download-tei">TEI</NavLink>             
-                <button class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-                id="download-pdf">PDF</button>
+                <NavLink href=`/pdf/manuscripts/${manuscript.hit_id}.pdf` class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+                id="download-pdf">PDF</NavLink>
              </div>
           </div>
          
@@ -787,5 +787,4 @@ const geoData = processMSData(manuscript)
  
     </Article>
     <script src="@/lib/table-search.js"></script>
-    <script src="@/lib/download-pdf.js"></script>
 </PageLayout>
