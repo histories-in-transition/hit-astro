@@ -66,7 +66,7 @@ jobs:
 
       - name: Generate TEX files
         run: |
-          echo "Generating TEX files 
+          echo "Generating TEX files" 
           node scripts/generate-tex.js
 
       - name: Install TeX Live for XeLaTeX
