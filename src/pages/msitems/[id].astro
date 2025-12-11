@@ -42,16 +42,16 @@ const { data: item } = Astro.props;
             <h2 id="msitemInfo" class="text-xl font-semibold text-brand-800">Allgemeine Info über das MS Element
           
             </h2>
-            <dl class="grid grid-cols-[1fr_6fr] p-5">
-              <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+            <dl class="md:grid grid-cols-[1fr_6fr] p-5">
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Handschrift:</dt>
               <dd class="pl-5">
                 <NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`} >
                   {item.library_place.map(p => p.value) + ', ' + item.manuscript[0]?.value}
                 </NavLink>
               </dd>
-              <dt class="font-semibold border-r border-gray-300 pr-2">Locus:</dt>
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Locus:</dt>
               <dd class="pl-5">{item.locus}</dd>
-              <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Titel:</dt>
                 <dd class="pl-5">
                   {item.title_work?.map((title) => (
                    title.hit_id
@@ -62,7 +62,7 @@ const { data: item } = Astro.props;
                   )}
                 </dd>
                {item.title_work?.some((title: any) => title.author?.length > 0) &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Author:</dt>
                   <dd class="pl-5">{item.title_work?.map((title:any) => title.author.map((aut: any) =>
                     aut.gnd_url !== '' ?
                     <NavLink href={aut.gnd_url} target="_blank"
@@ -77,14 +77,14 @@ const { data: item } = Astro.props;
                     <span>{aut.name}</span>
                     ))}</dd>
                 }
-                <dt class="font-semibold border-r border-gray-300 pr-2">Sprache:</dt>
+                <dt class="font-semibold md:border-r border-gray-300 pr-2">Sprache:</dt>
                 <dd class="pl-5">{item.language.map(lang => lang.value).join(', ')}</dd>
                 {item.text_modification.length > 0 &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Textmodifikation:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Textmodifikation:</dt>
                   <dd class="pl-5">{item.text_modification.map(tm => tm).join(', ')}</dd>
                 }
                 {item.interpolations.length > 0 &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Interpolation:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Interpolation:</dt>
                   <dd class="pl-5"><ul>{item.interpolations.flatMap(i =>
                     <li>
                      <NavLink href={`/works/${i.hit_id}`}>
@@ -95,11 +95,11 @@ const { data: item } = Astro.props;
                   </dd>
                 }
                 {item.title_note &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Bemerkung:</dt>
+                <dt class="font-semibold md:border-r border-gray-300 pr-2">Bemerkung:</dt>
                 <dd class="pl-5">{item?.title_note}</dd>
                 }
                 {item?.rubric &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Rubrik:</dt>
+                <dt class="font-semibold md:border-r border-gray-300 pr-2">Rubrik:</dt>
                  <dd class="pl-5">
                     {/* check for [text in square brackets] should be not-italic */}
                     ›{item.rubric.split(/(\[ *.*?\])/).map((part) =>
@@ -109,7 +109,7 @@ const { data: item } = Astro.props;
                     )}‹
                   </dd>}
                 {item.incipit &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Incipit:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Incipit:</dt>
                   <dd class="pl-5 italic">
                       {item.incipit.split(/(\[ *.*?\])/).map((part) =>
                         part.startsWith('[') && part.endsWith(']')
@@ -119,7 +119,7 @@ const { data: item } = Astro.props;
                       {item.incipit.trim().endsWith('…') ? '' : '…'}
                     </dd>}
                 {item.explicit &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Explicit:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Explicit:</dt>
                   <dd class="pl-5 italic">
                     {item.explicit.split(/(\[.*?\])/).map((part) =>
                       part.startsWith('[') && part.endsWith(']')
@@ -129,7 +129,7 @@ const { data: item } = Astro.props;
                     {item.explicit.trim().startsWith('…') ? '' : '…'}
                   </dd>}
                 {item?.final_rubric &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Final Rubrik:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Final Rubrik:</dt>
                    <dd class="pl-5">
                       {/* check for [text] shouldl be not-italic */}
                       ›{item.final_rubric.split(/(\[ *.*?\])/).map((part) =>
@@ -139,18 +139,18 @@ const { data: item } = Astro.props;
                       )}‹
                     </dd>}
                 { item.decoration.length > 0 &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Dekoration:</dt>
                   <dd class="pl-5">{item?.decoration.map(d => d.value).join(', ')}</dd>
                 }
                 { item.form.length > 0 &&
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Form:</dt>
+                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Form:</dt>
                   <dd class="pl-5">{item?.form.map(f => f.value).join(', ')}
                   {item.form_note &&
                     <span class="italic"> ({item.form_note})</span>
                   }
                   </dd>
                 }
-              <dt class="font-semibold border-r border-gray-300 pr-2">Schreiberhände:</dt>
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Schreiberhände:</dt>
                 <dd class="pl-5">
                   {item.hands.map(hand => hand.jobs.length > 0) &&
                   item.hands
@@ -188,7 +188,7 @@ const { data: item } = Astro.props;
                   })}
                 </dd>
                 {item.commentedMsItem.length > 0 &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
+                <dt class="font-semibold md:border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
                 <dd class="pl-5">
                   {item.commentedMsItem
                   .map(i =>

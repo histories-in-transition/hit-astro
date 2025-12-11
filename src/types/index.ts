@@ -139,6 +139,7 @@ export interface MsItem {
 	next?: NavigationLink;
 	language?: FormItem[];
 	version: FormItem[];
+	facs_url: string;
 }
 
 interface FormItem {

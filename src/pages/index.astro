@@ -52,7 +52,7 @@ import clm6299 from "@/icons/clm6299.jpg";
 		</div>
 	</div>
 
-	<div class="md:w-1/2 grid md:grid-cols-2 gap-3 mx-auto md:p-10 p-2">
+	<div class="md:w-3/4 xl:w-1/2 grid md:grid-cols-2 gap-3 mx-auto md:p-10 p-2">
 		<div class="md:col-span-2">
 			<IndexCard
 				title="Advanced search on text records | MS-items"
@@ -60,13 +60,9 @@ import clm6299 from "@/icons/clm6299.jpg";
 				url={"/search"}
 				icon="lucide:notebook-pen"
 				image={clm6388}
-			>
-				<p class="text-brand-100 hidden md:block">
-					* According to the TEI definition, a manuscript item describes an individual work or item
-					within the intellectual content of a manuscript. *
-				</p>
-			</IndexCard>
+			/>
 		</div>
+
 		<IndexCard
 			title="manuscripts"
 			summary="Browse categorized descriptions of entire manuscripts in a structured, filterable table."
@@ -94,12 +90,7 @@ import clm6299 from "@/icons/clm6299.jpg";
 			url={"/search"}
 			icon="lucide:notebook-pen"
 			image={clm6388}
-		>
-			<p class="text-brand-100 hidden md:block">
-				* According to the TEI definition, a manuscript item describes an individual work or item
-				within the intellectual content of a manuscript. *
-			</p>
-		</IndexCard>
+		/>
 		<IndexCard
 			title="scribal hands"
 			summary="Discover scribal hands found in a particular manuscript through an interactive table."
@@ -114,5 +105,14 @@ import clm6299 from "@/icons/clm6299.jpg";
 			icon="lucide:pen-tool"
 			image={clm6308}
 		/>
+		<div class="md:col-span-2">
+			<IndexCard
+				title="Advanced search on strata"
+				summary="Explore textual strata with advanced search and filtering options."
+				url={"/search"}
+				icon="lucide:book-text"
+				image={clm6299}
+			/>
+		</div>
 	</div>
 </PageLayout>

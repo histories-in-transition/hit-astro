@@ -94,6 +94,7 @@ const base = import.meta.env.BASE_URL;
 				</li>
 			</ul>
 			<form id="searchForm" class="hidden md:flex items-center gap-x-2">
+				<label for="searchInput" class="sr-only">Volltextsuche</label>
 				<input
 					type="text"
 					id="searchInput"
@@ -110,7 +111,7 @@ const base = import.meta.env.BASE_URL;
 			</form>
 		</nav>
 	</div>
-	<ul id="nav-links" class="hidden rounded-xs grid grid-cols-1 p-5 bg-brand-800">
+	<ul id="nav-links" class="hidden rounded-xs grid grid-cols-1 p-5 gap-2 text-lg bg-brand-800">
 		<li>
 			<NavLink
 				class="py-1 px-3 hover:underline underline-offset-4 text-brand-50"

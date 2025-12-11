@@ -36,25 +36,25 @@ const { data: stratum } = Astro.props;
 				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">
 					Allgemeine Info zum Stratum:
 				</h2>
-					<dl class="grid grid-cols-[1fr_6fr]">
-						<dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+					<dl class="md:grid grid-cols-[1fr_6fr]">
+						<dt class="font-semibold md:border-r border-gray-300 pr-2">Handschrift:</dt>
 						<dd class="pl-5">
 							<NavLink href=`/manuscripts/hit_manuscript__${stratum.manuscript[0]?.id}`>
 								{stratum.manuscript[0]?.library[0].value}, {stratum.manuscript[0]?.value}
 							</NavLink>
 						</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
+						<dt class="font-semibold md:border-r border-gray-300 pr-2">Datierung:</dt>
 						<dd class="pl-5">{stratum.date.length > 0 ? stratum.date.map(d => d.value).join(' | '): 'N/A'}</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
+						<dt class="font-semibold md:border-r border-gray-300 pr-2">Ort:</dt>
 						<dd class="pl-5">{stratum.place.length > 0 ? stratum.place.map(pl => pl.value).join(' | ') : "N/A"}</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">Charakter:</dt>
-						<dd class="pl-5">{stratum.character}</dd>
-						<dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+						<dt class="font-semibold md:border-r border-gray-300 pr-2">Charakter:</dt>
+						<dd class="pl-5">{stratum.character.join('; ')}</dd>
+						<dt class="font-semibold md:border-r border-gray-300 pr-2">Beschreibung:</dt>
 						<dd class="pl-5">{stratum.note}</dd>
 						<!-- /* Display the filiations of the stratum, if available */ -->
 						{stratum.stratum_filiations && stratum.stratum_filiations.length > 0 ? (
 							<>
-								<dt class="font-semibold border-r border-gray-300 pr-2">Filiationen:</dt>
+								<dt class="font-semibold md:border-r border-gray-300 pr-2">Filiationen:</dt>
 								<dd class="pl-5">
 									<ul class="list-disc pl-5">
 										{stratum.stratum_filiations.map((filiation) => (

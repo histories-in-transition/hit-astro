@@ -106,20 +106,14 @@
 	@apply bg-brand-100;
 }
 
-@media (width >= theme(--breakpoint-xl)) {
-	.tabulator .tabulator-row:nth-child(even) {
-		@apply bg-brand-50;
-	}
-	.tabulator .tabulator-cell {
-		@apply border-l;
-	}
+.tabulator .tabulator-row:nth-child(even) {
+	@apply bg-brand-50;
 }
+.tabulator .tabulator-cell {
+	@apply border-l;
+}
+
 /* Apply styles only for small screens (Mobile: <640px) */
-@media (width < theme(--breakpoint-xl)) {
-	.tabulator .tabulator-cell {
-		@apply font-semibold text-brand-800 bg-brand-100;
-	}
-}
 
 /* ###################################################### */
 /* ################ Algolia / TYPESENSE ################# */

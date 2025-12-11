@@ -35,15 +35,8 @@ export default function TabulatorTable({
 	const defaultOptions = {
 		layout: "fitColumns",
 		headerFilterLiveFilterDelay: 600,
-		responsiveLayout: "collapse",
-		rowHeader: {
-			formatter: "responsiveCollapse",
-			width: 30,
-			minWidth: 30,
-			hozAlign: "center",
-			resizable: false,
-			headerSort: false,
-		},
+		responsiveLayout: "hide",
+		paginationSize: 25,
 		pagination: true,
 		movableColumns: true,
 		resizableRows: true,

@@ -34,10 +34,7 @@ const geoJsonData = processHandsData(item);
     >   
      
 
-			<div class="flex gap-2 justify-end">
-				<Button>TEI-XML</Button>
-				<Button>PDF</Button>
-			</div>
+			
       <div
 			class="border-2 rounded-sm border-brandBrown bg-brand-100
 			text-sm md:leading-7 md:text-base"
@@ -45,8 +42,8 @@ const geoJsonData = processHandsData(item);
       <section aria-labelledby="handInfo" class="m-5 overflow-x-auto">
         <h2 id="handInfo" class="text-xl font-semibold text-brand-800">Eingaben über die Hand:</h2>
         <div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start">
-          <dl class="grid grid-cols-[1fr_5fr] p-5">
-            <dt class="font-semibold border-r border-gray-300 pr-2">Handschrift:</dt>
+          <dl class="md:grid grid-cols-[1fr_5fr] p-5">
+            <dt class="font-semibold md:border-r border-gray-300 pr-2">Handschrift:</dt>
             <dd class="pl-5">
               <NavLink
                 href=`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`>
@@ -56,13 +53,13 @@ const geoJsonData = processHandsData(item);
             {item.description ?
               (
                 <>
-                <dt class="font-semibold border-r border-gray-300 pr-2">Beschreibung:</dt>
+                <dt class="font-semibold md:border-r border-gray-300 pr-2">Beschreibung:</dt>
                 <dd class="pl-5">{item?.description}</dd>
                 </>
               )
             : null }
           {item.similar_hands.length > 0 &&
-              <dt class="font-semibold border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
               <dd class="pl-5">
                   {item.similar_hands.map((hand, index) => (
                       <span>
@@ -78,7 +75,7 @@ const geoJsonData = processHandsData(item);
               </dd>
           }
             {item.date.length > 0 ?
-            <dt class="font-semibold border-r border-gray-300 pr-2">Datiert:</dt>
+            <dt class="font-semibold md:border-r border-gray-300 pr-2">Datiert:</dt>
                 <dd class="pl-5">
                     {item.date.map((dating, index) => {
                         return (
@@ -100,7 +97,7 @@ const geoJsonData = processHandsData(item);
           
             {item.placed.length > 0
             ?
-            <dt class="font-semibold border-r border-gray-300 pr-2">Lokalisiert:</dt>
+            <dt class="font-semibold md:border-r border-gray-300 pr-2">Lokalisiert:</dt>
             <dd class="pl-5">
                 {item.placed.map((placement, index) =>
                     placement.place.length > 0
@@ -120,15 +117,15 @@ const geoJsonData = processHandsData(item);
               </dd>
             : ''}
             {item.nr_daniel &&
-                <dt class="font-semibold border-r border-gray-300 pr-2">Nummer Daniel:</dt>
+                <dt class="font-semibold md:border-r border-gray-300 pr-2">Nummer Daniel:</dt>
                 <dd class="pl-5">{item.nr_daniel}</dd>
             }
-            <dt class="font-semibold border-r border-gray-300 pr-2">Rolle:</dt>
+            <dt class="font-semibold md:border-r border-gray-300 pr-2">Rolle:</dt>
             <dd class="pl-5">
               {item.roles.join(', ')}  </dd>
               {item.scribe.length > 0
               ?
-              <dt class="font-semibold border-r border-gray-300 pr-2">Schreiber:</dt>
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Schreiber:</dt>
               <dd class="pl-5">
                 {item.scribe.map(scrib => <NavLink
                   href={`/scribes/hit_scribes__${scrib.id}`}>{scrib.name}</NavLink>)

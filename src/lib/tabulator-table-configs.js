@@ -467,31 +467,31 @@ export const msItemsTableConfig = {
 				title: "Locus",
 				field: "locus",
 				minWidth: 80,
-				responsive: 2,
+				responsive: 0,
 			},
 			{
 				title: "Werk",
 				field: "work",
 				minWidth: 200,
-				responsive: 1,
+				responsive: 0,
 			},
 			{
 				title: "Dekoration",
 				field: "decoration",
 				minWidth: 100,
-				responsive: 2,
+				responsive: 99,
 			},
 			{
 				title: "Schreiberort",
 				field: "origPlace",
 				minWidth: 200,
-				responsive: 2,
+				responsive: 99,
 			},
 			{
 				title: "Datum der Niederschrift",
 				field: "origDate",
 				headerFilterPlaceholder: "e.g. nach 810",
-				responsive: 2,
+				responsive: 99,
 			},
 
 			{
@@ -499,7 +499,7 @@ export const msItemsTableConfig = {
 				field: "editDate",
 				minWidth: 200,
 				headerFilterPlaceholder: "e.g. nach 810",
-				responsive: 2,
+				responsive: 99,
 			},
 		];
 		return addHeaderFilters(columns);
