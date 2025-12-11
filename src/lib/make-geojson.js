@@ -18,7 +18,7 @@ export function processHandsData(handsData) {
 	};
 }
 
-// geoJson data for works.json
+// geoJson data for table works
 export function processWorksData(worksData) {
 	// Check if used on detail view page for single work (props object not array) or for works table page
 	// If the input is not an array, wrap it in an array
@@ -192,7 +192,7 @@ export function processWorkData(worksData) {
 	};
 }
 
-// geoJson data for scribes.json
+// geoJson data for scribes table
 export function processScribesData(input) {
 	const scribesData = Array.isArray(input) ? input : [input];
 
