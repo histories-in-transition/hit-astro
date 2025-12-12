@@ -3,6 +3,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import NavLink from "@/components/nav-link.astro";
 import Article from "@/components/article.astro";
 import stratajson from "@/content/data/strata.json";
+import type { Stratum } from "@/types";
 
 export async function getStaticPaths() {
 	const strata = Object.values(stratajson);
@@ -11,7 +12,7 @@ export async function getStaticPaths() {
 
 		return {
 			params: { id: stratumId },
-			props: { data: stratum },
+			props: { data: stratum as Stratum },
 		};
 	});
 

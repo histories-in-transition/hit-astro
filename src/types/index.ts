@@ -86,6 +86,8 @@ interface OrigDate {
 	authority?: Authority[];
 	page?: string;
 	preferred_date?: boolean;
+	id?: number;
+	hit_id?: string;
 }
 
 interface DateInfo {
@@ -110,10 +112,10 @@ export interface MsItem {
 	hit_id: string;
 	label: string;
 	view_label?: string;
-	manuscript?: ManuscriptRef[];
-	library?: ManuscriptRef[];
+	manuscript?: ShortRef[];
+	library?: ShortRef[];
 	library_place?: Place[];
-	cod_unit?: ManuscriptRef[];
+	cod_unit?: ShortRef[];
 	locus: string;
 	incipit?: string;
 	explicit?: string;
@@ -131,8 +133,8 @@ export interface MsItem {
 	form?: FormItem[];
 	form_note?: string;
 	note?: string;
-	orig_date?: OrigDateItem[];
-	orig_place?: OrigPlaceItem[];
+	orig_date?: OrigDate[];
+	orig_place?: OrigPlace[];
 	provenance?: ProvenanceItem[];
 	author_entry?: string[];
 	prev?: NavigationLink;
@@ -146,17 +148,9 @@ interface FormItem {
 	value: string;
 }
 
-interface OrigDateItem {
+interface OrigPlace {
 	id?: number;
 	hit_id?: string;
-	authority?: Authority[];
-	page?: string;
-	date?: DateInfo[];
-}
-
-interface OrigPlaceItem {
-	id: number;
-	hit_id: string;
 	place: Place[];
 	authority?: Authority[];
 	page?: string;
@@ -171,6 +165,7 @@ interface ProvenanceItem {
 	type?: string;
 	uncertain_from?: boolean;
 	uncertain_till?: boolean;
+	page?: string;
 }
 
 interface CommentedMsItem {
@@ -181,7 +176,7 @@ interface CommentedMsItem {
 }
 
 interface TitleWork {
-	id: number;
+	id?: number;
 	hit_id: string;
 	title: string;
 	author?: Author[];
@@ -201,21 +196,29 @@ interface Author {
 	gnd_url?: string;
 }
 
-interface Hand {
+export interface Hand {
 	hit_id: string;
+	id?: number;
 	label: string;
-	description: string;
+	view_label?: string;
+	description?: string;
 	similar_hands?: SimilarHand[];
 	nr_daniel?: string;
 	note?: string;
 	scribe?: Scribe[];
-	group: boolean;
-	date?: HandDate[];
-	dating?: OrigDateItem[];
-	place?: OrigPlaceItem[];
+	group?: boolean;
+	date?: HandDate[] | DateInfo[];
+	dating?: OrigDate[];
+	place?: OrigPlace[] | Place[];
 	hand_roles?: HandRole[];
-	placed?: HandPlacement[];
+	placed?: OrigPlace[];
 	jobs?: HandRole[];
+	texts?: TitleWork[];
+	roles?: Value[] | string[];
+	manuscript?: ShortRef[];
+	author_entry?: string[];
+	prev?: NavigationLink;
+	next?: NavigationLink;
 }
 
 interface SimilarHand {
@@ -223,40 +226,21 @@ interface SimilarHand {
 	value: string;
 }
 
-interface Scribe {
+export interface Scribe {
 	id: number;
 	hit_id?: string;
-	value?: string;
 	name?: string;
 	description?: string;
 	group?: boolean;
-	hands?: ScribeHand[];
+	hands?: Hand[];
 	date?: HandDate[];
-	places?: HandPlacement[];
+	places?: OrigPlace[];
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
 }
 
-interface ScribeHand {
-	id: number;
-	hit_id: string;
-	label: string;
-	view_label?: string;
-	description: string;
-	similar_hands?: SimilarHand[];
-	nr_daniel?: string;
-	manuscript?: ManuscriptRef[];
-	note?: string;
-	roles?: string[];
-	group: boolean;
-	date?: HandDate[];
-	hand_roles?: HandRole[];
-	placed?: HandPlacement[];
-	texts?: string[];
-}
-
-interface ManuscriptRef {
+interface ShortRef {
 	id: number;
 	value: string;
 }
@@ -275,13 +259,13 @@ interface HandRole {
 	id?: number;
 	content?: HandRoleContent[];
 	scope?: string;
-	locus?: string;
-	role?: RoleValue[];
-	function?: RoleValue[];
-	role_context?: RoleValue[];
-	scribe_type?: RoleValue[];
-	locus_layout?: string[];
+	role?: Value[];
+	function?: Value[];
+	role_context?: Value[];
+	scribe_type?: Value[];
+	locus_layout?: string[] | Value[];
 	all_in_one?: string;
+	locus?: string;
 }
 
 interface HandRoleContent {
@@ -290,15 +274,8 @@ interface HandRoleContent {
 	locus: string;
 }
 
-interface RoleValue {
+interface Value {
 	value: string;
-}
-
-interface HandPlacement {
-	hit_id: string;
-	authority?: Authority[];
-	page?: string;
-	place?: Place[];
 }
 
 interface CodUnit {
@@ -326,7 +303,7 @@ interface CodUnit {
 	content?: MsItem[];
 }
 
-interface Stratum {
+export interface Stratum {
 	id: number | string;
 	number: string;
 	hit_id?: string;
@@ -334,11 +311,62 @@ interface Stratum {
 	character?: string[];
 	hand_roles?: StratumHandRole[];
 	note?: string;
+	manuscript: StratumMs[];
+	msitems: MSIforStratum[];
+	date: DateInfo[];
+	place: Place[];
+	hands: Hand[];
+	stratum_filiations: StratumFiliation[];
+	prev?: NavigationLink;
+	next?: NavigationLink;
+}
+
+interface StratumFiliation {
+	id?: string | number;
+	hit_id: string;
+	reason: string;
+	filiated_strata: {
+		hit_id: string;
+		value: string;
+		note: string;
+		locus: string;
+		internal: boolean;
+		catalog_url: string;
+	}[];
+	note: string;
+}
+
+interface MSIforStratum {
+	id: string | number;
+	hit_id: string;
+	work: {
+		title: string;
+		hit_id: string;
+	}[];
+	author: Author[];
+	w_aut: string;
+	locus: string;
+	orig_date: OrigDate[];
+	orig_place: OrigPlace[];
+	provenance: ProvenanceItem[];
+	hands: Hand[];
+	text_modification: string[];
+	interpolations: TitleWork[];
+	form: Value[];
+	language: Value[];
+}
+
+interface StratumMs {
+	id: number;
+	value: string;
+	library: ShortRef[];
+	author_entry: string[];
+	project: string[];
 }
 
 interface StratumHandRole {
 	hit_id: string;
-	hand?: StratumHand[];
+	hand?: Hand[];
 	ms_item?: StratumMsItem[];
 	role?: string[];
 	locus?: string;
@@ -347,16 +375,39 @@ interface StratumHandRole {
 	locus_layout?: string[];
 }
 
-interface StratumHand {
-	hit_id: string;
-	label: string;
-	date?: DateInfo[];
-}
-
 interface StratumMsItem {
 	id: number;
 	hit_id: string;
 	title?: string[];
 	author?: string[];
 	locus: string;
+}
+
+export interface Work {
+	id: number;
+	hit_id: string;
+	title: string;
+	gnd_url: string;
+	note: string;
+	author: Author[];
+	bibliography: any[];
+	source_text: SourceText[];
+	note_source: string;
+	genre: Genre[];
+	ms_transmission;
+	joined_transmission;
+	prev?: NavigationLink;
+	next?: NavigationLink;
+}
+
+interface SourceText {
+	title: string;
+	author: string;
+	hit_id: string;
+}
+
+interface Genre {
+	value: string;
+	main_genre: string;
+	sub_genre: string;
 }

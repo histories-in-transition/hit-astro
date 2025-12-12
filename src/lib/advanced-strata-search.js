@@ -295,9 +295,7 @@ search.addWidgets([
 				return html`
 					<article class="w-full p-2 md:px-4 border-brand-300 border rounded-md">
 						<a href="${href}"
-							><h2
-								class="text-lg underline underline-offset-2 font-semibold text-brand-800  break-words"
-							>
+							><h2 class="text-lg underline underline-offset-2 font-semibold text-brand-800">
 								<span>(#${hit.id}) ${hit.label}</span>
 							</h2></a
 						>
@@ -548,42 +546,27 @@ search.addWidgets([
 	currentRefinements({
 		container: "#current-refinements",
 		transformItems(items) {
+			const labelMap = new Map([
+				["author.name", "Autor"],
+				["work.title", "Werk"],
+				["manuscript.value", "Handschrift"],
+				["orig_date.century", "Entstehungszeit"],
+				["orig_place.value", "Entstehungsort"],
+				["function", "Händefunktion"],
+				["role", "Schreiberaktivitäten"],
+				["scribe_type", "Schreiber Typ"],
+				["terminus_ante_quem", "Terminus ante quem"],
+				["terminus_post_quem", "Termininus post quem"],
+				["interpolations.title", "Interpolations"],
+				["text_modifications", "Textvariationen"],
+				["form.value", "Form"],
+				["character", "Stratum Typ"],
+				["project", "Projekt"],
+				["language.value", "Sprache"],
+			]);
 			return items.map((item) => ({
 				...item,
-				label:
-					item.attribute === "author.name"
-						? "Autor"
-						: item.attribute === "work.title"
-							? "Werk"
-							: item.attribute === "manuscript.value"
-								? "Handschrift"
-								: item.attribute === "orig_date.century"
-									? "Entstehungszeit"
-									: item.attribute === "orig_place.value"
-										? "Entstehungsort"
-										: item.attribute === "function"
-											? "Händefunktion"
-											: item.attribute === "role"
-												? "Schreiberaktivitäten"
-												: item.attribute === "scribe_type"
-													? "Schreiber Typ"
-													: item.attribute === "terminus_ante_quem"
-														? "Terminus ante quem"
-														: item.attribute === "terminus_post_quem"
-															? "Termininus post quem"
-															: item.attribute === "interpolations.title"
-																? "Interpolations"
-																: item.attribute === "text_modifications"
-																	? "Textvariationen"
-																	: item.attribute === "form.value"
-																		? "Form"
-																		: item.attribute === "character"
-																			? "Stratum Typ"
-																			: item.attribute === "project"
-																				? "Projekt"
-																				: item.attribute === "language.value"
-																					? "Sprache"
-																					: item.label,
+				label: labelMap.get(item.attribute) || item.label,
 			}));
 		},
 	}),
@@ -628,22 +611,6 @@ function wrapHierarcicalMenuInPanel(title) {
 	})(hierarchicalMenu);
 }
 
-// Back to top functionality
-const backToTopButton = document.getElementById("back-to-top");
-if (backToTopButton) {
-	backToTopButton.addEventListener("click", function () {
-		window.scrollTo({ top: 0, behavior: "smooth" });
-	});
-
-	// Show/hide based on scroll position
-	window.addEventListener("scroll", function () {
-		if (window.scrollY > 300) {
-			backToTopButton.classList.remove("hidden");
-		} else {
-			backToTopButton.classList.add("hidden");
-		}
-	});
-}
 // Filter show/hide panel
 const showFilter = document.querySelector("#filter-button");
 const filters = document.querySelector("#refinements-section");

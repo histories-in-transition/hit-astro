@@ -3,6 +3,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import scribesJson from "@/content/data/scribes.json";
+import type { Scribe } from "@/types";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
 import {processScribesData} from "@/lib/make-geojson.js";
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
 	const paths = scribes.map((scribe) => {		
 		return {
 			params: { id: scribe.hit_id },
-			props: { data: scribe},
+			props: { data: scribe as Scribe},
 		};
 	});
 	return paths;

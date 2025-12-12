@@ -23,10 +23,10 @@ const rowClickConfig = msItemsTableConfig.getRowClickConfig;
 			tableId="msItems-table"
 			options={{
 				paginationSize: 25,
-				responsiveLayout: "collapse",
+				responsiveLayout: "collapse", // need to show three columns, only the first two fit with 'hide'
 				responsiveLayoutCollapseStartOpen: false,
 			}}
-			downloadTitle="hit_handschriften"
+			downloadTitle="hit_msitems"
 			rowClickConfig={rowClickConfig}
 			updateMapOnFilter={true}
 			mapIdField="hit_id"

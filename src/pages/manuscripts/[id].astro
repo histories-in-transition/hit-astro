@@ -86,16 +86,28 @@ const geoData = processMSData(manuscript)
                
                     <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
                     <dd class="pl-5">{manuscript?.shelfmark}</dd>
-                    {manuscript.idno_former &&
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
-                    <dd class="pl-5">{manuscript?.idno_former}</dd>}
-                    {manuscript.charakter.length > 0 &&
-                      <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
-                      <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
+                    {manuscript.idno_former && (
+                      <>
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
+                    <dd class="pl-5">{manuscript?.idno_former}</dd>
+                      </>
+                    )
                     }
-                    {manuscript.case_study.length > 0 &&
-                      <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
-                      <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>}
+                    {manuscript.charakter.length > 0 && (
+                      <>
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
+                      <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
+                      </>
+                    )
+                      
+                    }
+                    {manuscript.case_study.length > 0 && (
+                      <>
+                        <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
+                      <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>
+                      </>
+                    )
+                      }
                
                    
                   </dl>
@@ -143,10 +155,12 @@ const geoData = processMSData(manuscript)
                   {manuscript?.binding}</dd>
               
                   {manuscript?.acc_mat && (
+                    <>
                      <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
                       <dd class="pl-5">
                     {manuscript?.acc_mat}
                   </dd>
+                    </>
                   )}
               </dl>
             </details>

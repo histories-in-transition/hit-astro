@@ -1,14 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-	document.querySelectorAll("[data-showmore-btn]").forEach((toggleBtn) => {
+	const buttons = document.querySelectorAll<HTMLElement>("[data-showmore-btn]");
+	buttons.forEach((toggleBtn) => {
 		toggleBtn.addEventListener("click", () => {
 			// Find the closest ul with data-showmore-list before or after the button
-			let list = toggleBtn.previousElementSibling;
+			let list = toggleBtn.previousElementSibling as HTMLElement | null;
 			while (list && !list.matches("[data-showmore-list]")) {
-				list = list.previousElementSibling;
+				list = list.previousElementSibling as HTMLElement | null;
 			}
 			if (!list) return;
 
-			const extraItems = list.querySelectorAll("[data-showmore-item]");
+			const extraItems = list.querySelectorAll<HTMLElement>("[data-showmore-item]");
 			if (extraItems.length === 0) return;
 
 			const isHidden = extraItems[0].classList.contains("hidden");

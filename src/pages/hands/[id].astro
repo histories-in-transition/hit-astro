@@ -4,6 +4,7 @@ import Button from "@/components/button.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import hands from "@/content/data/hands.json";
+import type {Hand} from "@/types"
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
 import {processHandsData} from "@/lib/make-geojson.js";
@@ -12,7 +13,7 @@ import {processHandsData} from "@/lib/make-geojson.js";
 export async function getStaticPaths() {
 	const paths = Object.values(hands).map((item) => ({
 		params: { id: item.hit_id.toString() },
-		props: { data: item },
+		props: { data: item as Hand},
 	}));
 
 	return paths;
@@ -58,7 +59,8 @@ const geoJsonData = processHandsData(item);
                 </>
               )
             : null }
-          {item.similar_hands.length > 0 &&
+          {item.similar_hands.length > 0 && (
+            <>
               <dt class="font-semibold md:border-r border-gray-300 pr-2">Ähnliche Hände:</dt>
               <dd class="pl-5">
                   {item.similar_hands.map((hand, index) => (
@@ -73,9 +75,13 @@ const geoJsonData = processHandsData(item);
                       ))
                   }
               </dd>
+            </>
+          )
+              
           }
-            {item.date.length > 0 ?
-            <dt class="font-semibold md:border-r border-gray-300 pr-2">Datiert:</dt>
+            {item.date.length > 0 ? (
+              <>
+                 <dt class="font-semibold md:border-r border-gray-300 pr-2">Datiert:</dt>
                 <dd class="pl-5">
                     {item.date.map((dating, index) => {
                         return (
@@ -93,11 +99,16 @@ const geoJsonData = processHandsData(item);
                         );
                     })}
                 </dd>
+              </>
+            )
+           
             : ''}
           
             {item.placed.length > 0
             ?
-            <dt class="font-semibold md:border-r border-gray-300 pr-2">Lokalisiert:</dt>
+            (
+              <>
+              <dt class="font-semibold md:border-r border-gray-300 pr-2">Lokalisiert:</dt>
             <dd class="pl-5">
                 {item.placed.map((placement, index) =>
                     placement.place.length > 0
@@ -115,6 +126,8 @@ const geoJsonData = processHandsData(item);
                     : 'N/A')
                     }
               </dd>
+              </>
+            )
             : ''}
             {item.nr_daniel &&
                 <dt class="font-semibold md:border-r border-gray-300 pr-2">Nummer Daniel:</dt>

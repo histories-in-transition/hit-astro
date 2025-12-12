@@ -302,17 +302,17 @@ search.addWidgets([
 					<article class="w-full p-2 md:px-4 border-brand-300 border rounded-md">
 						<a href="${href}"
 							><h2
-								class="text-lg underline underline-offset-2 font-semibold text-brand-800  break-words"
+								class="text-lg underline underline-offset-2 font-semibold text-brand-800 wrap-break-word"
 							>
 								<span>(#${hit.id}) </span>
 								${hit.work[0]?.author?.length
 									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
 									: ""}
-								<span class="italic break-words">${hit.work[0]?.title || "Untitled"}</span>
+								<span class="italic wrap-break-word">${hit.work[0]?.title || "Untitled"}</span>
 							</h2></a
 						>
 						<div class="text-gray-700">
-							<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
+							<dl class="md:grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
 								${hit.title_note !== ""
 									? html`
 											<dt class="font-semibold pr-2">Bemerkung:</dt>
@@ -647,44 +647,30 @@ search.addWidgets([
 	currentRefinements({
 		container: "#current-refinements",
 		transformItems(items) {
+			const labelMap = new Map([
+				["work.author.name", "Author"],
+				["work.title", "Werk"],
+				["manuscript.value", "Handschrift"],
+				["orig_date.date.value", "Entstehungszeit"],
+				["orig_date.date.century", "Entstehungszeit"],
+				["orig_place.place.value", "Entstehungsort"],
+				["provenance.value", "Provenienz"],
+				["hands.jobs.function.value", "Händefunktion"],
+				["hands.jobs.role.value", "Schreiberaktivitäten"],
+				["hands.jobs.role_context.value", "Schreiber Typ"],
+				["decoration.value", "Decoration"],
+				["terminus_ante_quem", "Terminus ante quem"],
+				["terminus_post_quem", "Termininus post quem"],
+				["main_genre", "Genre"],
+				["interpolations.title", "Interpolations"],
+				["joined_transmission.title", "Überlieferungsgemeinschaft"],
+				["modifications", "Textvariationen"],
+				["language.value", "Sprache"],
+			]);
+
 			return items.map((item) => ({
 				...item,
-				label:
-					item.attribute === "work.author.name"
-						? "Author"
-						: item.attribute === "work.title"
-							? "Werk"
-							: item.attribute === "manuscript.value"
-								? "Handschrift"
-								: item.attribute === "orig_date.date.value"
-									? "Entstehungszeit"
-									: item.attribute === "orig_place.place.value"
-										? "Entstehungsort"
-										: item.attribute === "provenance.value"
-											? "Provenienz"
-											: item.attribute === "hands.jobs.function.value"
-												? "Händefunktion"
-												: item.attribute === "hands.jobs.role.value"
-													? "Schreiberaktivitäten"
-													: item.attribute === "hands.jobs.role_context.value"
-														? "Schreiber Typ"
-														: item.attribute === "decoration.value"
-															? "Decoration"
-															: item.attribute === "terminus_ante_quem"
-																? "Terminus ante quem"
-																: item.attribute === "terminus_post_quem"
-																	? "Termininus post quem"
-																	: item.attribute === "main_genre"
-																		? "Genre"
-																		: item.attribute === "interpolations.title"
-																			? "Interpolations"
-																			: item.attribute === "joined_transmission.title"
-																				? "Überlieferungsgemeinschaft"
-																				: item.attribute === "modifications"
-																					? "Textvariationen"
-																					: item.attribute === "language.value"
-																						? "Sprache"
-																						: item.label,
+				label: labelMap.get(item.attribute) || item.label,
 			}));
 		},
 	}),
@@ -695,9 +681,7 @@ search.start();
 function wrapInPanel(title) {
 	return panel({
 		collapsed: () => true, // Always collapsed by default
-		/* collapsed: ({ state }) => {
-			return state.query.length === 0;
-		}, // collapse if no query */
+
 		templates: {
 			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
 		},
@@ -728,23 +712,6 @@ function wrapHierarcicalMenuInPanel(title) {
 	})(hierarchicalMenu);
 }
 
-// Back to top functionality
-const backToTopButton = document.getElementById("back-to-top");
-if (backToTopButton) {
-	backToTopButton.addEventListener("click", function () {
-		window.scrollTo({ top: 0, behavior: "smooth" });
-	});
-
-	// Show/hide based on scroll position
-	window.addEventListener("scroll", function () {
-		if (window.scrollY > 300) {
-			backToTopButton.classList.remove("hidden");
-		} else {
-			backToTopButton.classList.add("hidden");
-		}
-	});
-}
-// Filter show/hide panel
 const showFilter = document.querySelector("#filter-button");
 const filters = document.querySelector("#refinements-section");
 if (showFilter) {

@@ -70,18 +70,16 @@ import NavLink from "../components/nav-link.astro";
 				</div>
 				<div>
 					<!-- Current Refinements -->
-					<div class="grid md:grid-cols-[4fr_1fr] justify-between md:mr-5 px-3">
+					<div class="grid md:grid-cols-[4fr_1fr] justify-between md:mr-5 px-3 gap-2">
 						<div id="current-refinements" class="text-sm text-gray-600"></div>
-						<div id="clear-refinements" class="justify-self-end"></div>
+						<div id="clear-refinements" class="justify-self-start md:justify-self-end"></div>
 					</div>
-					<section class="md:space-y-3 md:my-5">
-						<!-- Stats and pagination -->
-						<div class="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center md:gap-8 px-2">
-							<div id="stats-container" class="text-base italic text-brand-600"></div>
-							<div id="pagination" class="flex md:justify-center"></div>
-						</div>
-						<!-- Results Section -->
+					<section class="space-y-3 my-3 md:my-5">
+						<!-- Stats  -->
+						<div id="stats-container" class="text-base italic text-brand-600 text-center"></div>
+						<!-- Results Section and pagination -->
 						<div id="hits" class="px-3"></div>
+						<div id="pagination" class="flex justify-center"></div>
 					</section>
 				</div>
 			</div>
@@ -95,24 +93,6 @@ import NavLink from "../components/nav-link.astro";
 	>
 		Serverfehler: Die Suche ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.
 	</div>
-
-	<!-- Back to Top Button for Mobile -->
-	<button
-		id="back-to-top"
-		class="fixed bottom-20 right-4 md:hidden bg-brand-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg opacity-80"
-		aria-label="Back to top"
-	>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			class="h-6 w-6"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"
-			></path>
-		</svg>
-	</button>
 
 	<script src="@/lib/advanced-strata-search.js"></script>
 </PageLayout>

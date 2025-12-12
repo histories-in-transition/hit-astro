@@ -4,7 +4,10 @@ import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
 import worksjson from "@/content/data/works.json";
+import type {Work} from "@/types";
+
 import TabulatorTable from "@/components/tabulator-table.jsx";
+
 import { workDetailTableConfig } from "@/lib/tabulator-table-configs.js";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
@@ -19,7 +22,7 @@ const works = Object.values(worksjson);
 
 		return {
 			params: { id: workId },
-			props: { data: work }, 
+			props: { data: work as Work}, 
 		};
 	});
 
@@ -63,7 +66,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">Allgemeine Info zum Werk:</h2>
 				<div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start ">
 					<dl class="md:grid grid-cols-[1fr_6fr]">
-						<dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
+						<dt class="font-semibold md:border-r border-gray-300 pr-2">Titel:</dt>
 						<dd class="pl-5">
 							{work?.title}
 							{String(work?.gnd_url).trim() &&
@@ -77,101 +80,116 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 									</NavLink>
 						}						
 						</dd>
-					{work.author.length > 0 &&
-						<dt class="font-semibold border-r border-gray-300 pr-2">Author:</dt>
-						<dd class="pl-5">
-							 {work.author.map((item) => 
-							 <ul>
-								<li>{item.name} {String(item?.gnd_url).trim() &&						
-									<NavLink href={item.gnd_url}>
-										(GND: {item.gnd_url.split("gnd/")[1]}
-										<Icon
-											class="inline-flex align-baseline"
-											aria-hidden="true"
-											name="lucide:external-link"
-										/>)
-									</NavLink>
-								}</li>
-							</ul>)}
-							
-						</dd>
-					}
-					{work.bibliography.length > 0 &&
-						<dt class="font-semibold border-r border-gray-300 pr-2">Bibliographie:</dt>
-						<dd class="pl-5">
-							 {work.bibliography.map((item) => item)}
-						</dd>
-						}
-						{work.source_text.length > 0 &&						
-						<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
-						<dd class="pl-5">
-							{work.source_text.map((text) => (
-											<NavLink href={`/works/${text.hit_id}`} 
-											>
-												{text.title}
-											</NavLink>
-										))
-									
-							}
-							{work.note_source ? <span>({work.note_source})</span> : ""}
-						</dd>
-						}
-						{work.joined_transmission.length > 0 &&
-						<dt class="font-semibold border-r border-gray-300 pr-2">Überlieferungsgemeinschaft:</dt>
-						<dd class="pl-5">
-							<ul class="list-disc list-inside" data-showmore-list>
-								{work.joined_transmission.slice(0, 2).map((tr) => (
-									<li>
-									<NavLink href={`/works/${tr.hit_id}`}>{tr.author.length > 0 ? `${tr.author[0].name}: ${tr.title}` : tr.title}</NavLink>
-									</li>
-								))}
-								{work.joined_transmission.slice(2).map((tr) => (
-									<li class="hidden" data-showmore-item>
-									<NavLink href={`/works/${tr.hit_id}`}>{tr.title}</NavLink>
-									</li>
-								))}
-							</ul>
-							{work.joined_transmission.length > 2 && (
-								<button
-									class="text-brand-800 underline mt-2 cursor-pointer"
-									data-showmore-btn
-									aria-expanded="false"
-								>
-									Show more
-								</button>
-								)}
-						</dd>
-						}
-						{work.genre.length > 0 &&
-						<dt class="font-semibold border-r border-gray-300 pr-2">Genre:</dt>
-						<dd class="pl-5">
-							{work.genre.map((item, index) => {
-											return (
-												<>
-													{item.main_genre.length > 0 &&
-														item.value}
-													{index < work.genre.length - 1 && " | "}
-												</>
-											);
-										})
-							}
-						</dd>
-						}
-						{work.source_text.length > 0 &&
-							<dt class="font-semibold border-r border-gray-300 pr-2">Quelle:</dt>
+					{work.author.length > 0 && (
+						<>
+							<dt class="font-semibold md:border-r border-gray-300 pr-2">Author:</dt>
 							<dd class="pl-5">
-								{work.source_text.map((item, index) => {
+								{work.author.map((item) => 
+								<ul>
+									<li>{item.name} {item.gnd_url && (						
+										<NavLink href={item.gnd_url}>
+											(GND: {item.gnd_url.split("gnd/")[1]}
+											<Icon
+												class="inline-flex align-baseline"
+												aria-hidden="true"
+												name="lucide:external-link"
+											/>)
+										</NavLink>)
+									}</li>
+								</ul>)}
+								
+							</dd>
+						</>)
+					}
+					{work.bibliography.length > 0 && (
+						<>
+							<dt class="font-semibold md:border-r border-gray-300 pr-2">Bibliographie:</dt>
+							<dd class="pl-5">
+								{work.bibliography.map((item) => item)}
+							</dd>
+						</>)
+						}
+						{work.source_text.length > 0 &&		(				
+						<>
+							<dt class="font-semibold md:border-r border-gray-300 pr-2">Quelle:</dt>
+							<dd class="pl-5">
+								{work.source_text.map((text) => (
+												<NavLink href={`/works/${text.hit_id}`} 
+												>
+													{text.title}
+												</NavLink>
+											))
+								}
+								{work.note_source ? <span>({work.note_source})</span> : ""}
+							</dd>
+						</>)
+						}
+						{work.joined_transmission.length > 0 && (
+						<>
+							<dt class="font-semibold md:border-r border-gray-300 pr-2">Überlieferungsgemeinschaft:</dt>
+							<dd class="pl-5">
+								<ul class="list-disc list-inside" data-showmore-list>
+									{work.joined_transmission.slice(0, 2).map((tr) => (
+										<li>
+										<NavLink href={`/works/${tr.hit_id}`}>{tr.author.length > 0 ? `${tr.author[0].name}: ${tr.title}` : tr.title}</NavLink>
+										</li>
+									))}
+									{work.joined_transmission.slice(2).map((tr) => (
+										<li class="hidden" data-showmore-item>
+										<NavLink href={`/works/${tr.hit_id}`}>{tr.title}</NavLink>
+										</li>
+									))}
+								</ul>
+								{work.joined_transmission.length > 2 && (
+									<button
+										class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm mt-1"
+										data-showmore-btn
+										aria-expanded="false"
+									>
+										Show more
+									</button>
+									)}
+							</dd>
+						</>)
+						}
+						{work.genre.length > 0 && (
+							<>
+							<dt class="font-semibold md:border-r border-gray-300 pr-2">Genre:</dt>
+							<dd class="pl-5">
+								{work.genre.map((item, index) => {
 												return (
 													<>
-														{item.author.length > 0 &&
-															`${item.author}: `}
-														{item.title}
+														{item.main_genre.length > 0 &&
+															item.value}
 														{index < work.genre.length - 1 && " | "}
 													</>
 												);
 											})
-										}
+								}
 							</dd>
+						</>
+						)
+						
+						}
+						{work.source_text.length > 0 && (
+							<>
+								<dt class="font-semibold md:border-r border-gray-300 pr-2">Quelle:</dt>
+								<dd class="pl-5">
+									{work.source_text.map((item, index) => {
+													return (
+														<>
+															{item.author.length > 0 &&
+																`${item.author}: `}
+															{item.title}
+															{index < work.genre.length - 1 && " | "}
+														</>
+													);
+												})
+											}
+								</dd>
+							</>
+						)
+							
 									}
 					</dl>
 					
@@ -200,13 +218,13 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 							</summary>
 							<div class="bg-white p-4 space-y-3 text-sm lg:text-base text-brand-900">
 								<dl class="grid grid-cols-[1fr_6fr]">
-									<dt class="font-semibold border-r border-neutral-300 pr-2 justify-self-end">Handschrift</dt>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2 justify-self-end">Handschrift</dt>
 									<dd class="pl-5">
 										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
 								{item.manuscript[0].value}
 							</NavLink>
 								</dd>
-								<dt class="font-semibold border-r border-neutral-300 pr-2 justify-self-end">Locus</dt>
+								<dt class="font-semibold md:border-r border-neutral-300 pr-2 justify-self-end">Locus</dt>
 								<dd class="pl-5">
 								<NavLink href={`/msitems/${item.hit_id}`}>
 									{item.locus}
@@ -215,7 +233,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 								
 								{item?.role !== undefined && (
 								<>
-									<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Role</dt>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Role</dt>
 									<dd class="pl-5">
 									{item.role}
 									{item.function.length > 0 && ` (${item.function})`}
@@ -234,44 +252,58 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 								</>
 								)}
 								
-								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Schreibort</dt>
+								<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Schreibort</dt>
 								<dd class="pl-5">
 								{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}
 								</dd>
 								
-								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Datierung</dt>
+								<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Datierung</dt>
 								<dd class="pl-5">
 								{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 								</dd>
-								{item.annotation_date.length > 0 &&	
-								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
-								<dd class="pl-5">
-								{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
-								</dd>
-								}
-								{item.annotation_typ.length > 0 &&
-								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Typ</dt>
-								<dd class="pl-5">
-								{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
-								</dd>
-}
-								{item.version.length > 0 &&
-								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Version</dt>
-								<dd class="pl-5">
-								{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
-								</dd>	
-}
-							{item.text_modification.length > 0 &&
-									<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Textmodifikation</dt>
+								{item.annotation_date.length > 0 &&	(
+								<>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
 									<dd class="pl-5">
-									{[...new Set(item.text_modification)].join(' | ')}
+										{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
 									</dd>
+								</>)
 								}
-							{item.decoration.length > 0 &&
-								<dt class="font-semibold border-r border-neutral-300 pr-2  justify-self-end">Dekoration</dt>
-								<dd class="pl-5">
-								{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
-								</dd>
+								{item.annotation_typ.length > 0 && (
+									<>
+										<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Typ</dt>
+										<dd class="pl-5">
+										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
+										</dd>
+									</>)
+								}
+								{item.version.length > 0 && (
+									<>
+										<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Version</dt>
+										<dd class="pl-5">
+										{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
+										</dd>
+									</>
+								)}
+							{item.text_modification.length > 0 && (
+								<>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Textmodifikation</dt>
+									<dd class="pl-5">
+										{[...new Set(item.text_modification)].join(' | ')}
+									</dd>
+								</>
+							)
+									
+								}
+							{item.decoration.length > 0 && (
+								<>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Dekoration</dt>
+									<dd class="pl-5">
+										{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
+									</dd>
+								</>
+							)
+								
 							}
 							</dl>
 							</div>
@@ -299,92 +331,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
           mapIdField="hit_id"
 	rowClickConfig={rowClickConfig}
     />
-					{/* <div class="overflow-hidden rounded-md border border-neutral-400">
-				<table
-					class="w-full shadow-xs lg:leading-7 text-sm lg:text-base data-table rounded-xl"
-				>
-					<thead class="bg-brand-200">
-						<tr>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Handschrift</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Locus</th>
-							{work.ms_transmission.some((item) => item.role !== undefined) && (
-								<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Role</th>)}
-							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Schreibort</th>
-							<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Datierung</th>
-							<th colspan="2" class="text-center p-2 font-semibold border border-neutral-300">Annotationen</th>
-							{work.ms_transmission.some((item) => item.version.length > 0) && (
-								<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Version</th>)}
-							{work.ms_transmission.some(item => item.text_modification.length > 0) &&
-							(<th rowspan="2" class="text-start p-2 font-semibold border border-neutral-300">Textmodifikation</th>)
-							}
-						</tr>
-						<tr>
-							<th class="text-center p-2 font-semibold border border-neutral-300">Datierung</th>
-							<th class="text-center p-2 font-semibold border border-neutral-300">Typ</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						{
-							work.ms_transmission.map((item) => (
-								<tr class="odd:bg-brand-50 even:bg-brand-100">
-									<td class="p-2 border border-neutral-300">
-										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
-											{item.manuscript[0].value}
-										</NavLink>
-									</td>
-									<td class="p-2 border border-neutral-300">
-										<NavLink  href={`/msitems/${item.hit_id}`}>
-											{item.locus}
-										</NavLink>
-									</td>
-									{item?.role !== undefined && (
-										<td class="p-2 border border-neutral-300">
-										{item.role}
-										{item.function.length > 0 &&
-											<>
-												({item.function})
-											</>
-										}
-										{item.commented_msitem.length > 0 && (
-											<ul class="list-disc list-inside">
-												{item.commented_msitem
-												.map((msitem) => (
-													<li>
-														<NavLink href={`/msitems/${msitem.hit_id}`}>
-															{msitem.title}
-														</NavLink>
-													</li>
-												))}
-											</ul>
-)}
-
-									</td>
-									)}
-									<td class="p-2 border border-neutral-300">{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}</td>
-									<td class="p-2 border border-neutral-300">
-										{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
-									</td>
-									<td class="p-2 border border-neutral-300">
-										{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
-									</td>
-									<td class="p-2 border border-neutral-300">
-										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
-									</td>
-									{work.ms_transmission.some((item) => item.version.length > 0) &&
-									<td class="p-2 border border-neutral-300">
-										{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
-									</td>}
-									{work.ms_transmission.some(item => item.text_modification.length > 0) &&
-									<td class="p-2 border border-neutral-300">
-										{[...new Set(item.text_modification)].join(' | ')}
-									</td>}
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-				</div> */}
+				
 				</div>
 			</section>
 			)}
