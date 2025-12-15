@@ -1,5 +1,6 @@
 import instantsearch from "instantsearch.js";
 import TypesenseInstantsearchAdapter from "typesense-instantsearch-adapter";
+import attachTypesenseServerErrorHandling from "./typsense-instant-utils.js";
 import {
 	searchBox,
 	hits,
@@ -45,6 +46,11 @@ const search = instantsearch({
 		stateMapping: simple(),
 	},
 });
+
+attachTypesenseServerErrorHandling(
+	searchClient,
+	"Serverfehler: Die Suche ist derzeit nicht verfügbar.",
+);
 
 // Custom comparator function to sort century arrays for the refinement list 'Century of work'
 const centuryComparator = (a, b) => {

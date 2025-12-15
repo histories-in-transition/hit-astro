@@ -1,6 +1,5 @@
 ---
 import PageLayout from "@/layouts/page-layout.astro";
-import Button from "@/components/button.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import hands from "@/content/data/hands.json";
@@ -83,7 +82,7 @@ const geoJsonData = processHandsData(item);
               <>
                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Datiert:</dt>
                 <dd class="pl-5">
-                    {item.date.map((dating, index) => {
+                    {item.date.map((dating, index : number) => {
                         return (
                             <>
                               {dating.dated.map(date => date.value)}

@@ -6,7 +6,7 @@ export const workDetailTableConfig = {
 			manuscriptId: item.manuscript[0]?.id || "",
 			locus: item.locus || "",
 			hit_id: item.hit_id || "",
-			role: item.role || "",
+			commented_msitem: item.commented_msitem.map((msi) => msi.title).join(", "),
 			function: item.function || "",
 			origPlace: [...new Set(item.orig_place.flatMap((p) => p.place.map((pl) => pl.value)))].join(
 				", ",
@@ -28,21 +28,20 @@ export const workDetailTableConfig = {
 	},
 
 	getColumns: (
-		hasRole = false,
 		hasVersion = false,
 		hasTextModification = false,
 		hasForm = false,
 		hasAnnotationType = false,
 		hasAnnotationDate = false,
+		hasCommentedItem = false,
 	) => {
 		const baseColumns = [
 			{
 				title: "Handschrift",
 				field: "manuscript",
 				responsive: 0,
-
-				widthGrow: 3,
-				minWidth: 150,
+				widthGrow: 2,
+				minWidth: 100,
 			},
 			{
 				title: "Locus",
@@ -51,20 +50,11 @@ export const workDetailTableConfig = {
 				widthGrow: 1,
 				minWidth: 80,
 			},
-			...(hasRole
-				? [
-						{
-							title: "Role",
-							field: "role",
-							responsive: 3,
-							minWidth: 150,
-						},
-					]
-				: []),
+
 			{
 				title: "Schreibort",
 				field: "origPlace",
-				responsive: 1,
+				responsive: 2,
 				widthGrow: 2,
 				minWidth: 150,
 			},
@@ -76,6 +66,17 @@ export const workDetailTableConfig = {
 				widthGrow: 1,
 				minWidth: 150,
 			},
+			...(hasCommentedItem
+				? [
+						{
+							title: "Kommentierend",
+							field: "commented_msitem",
+							responsive: 2,
+							widthGrow: 2,
+							minWidth: 150,
+						},
+					]
+				: []),
 			...(hasAnnotationDate
 				? [
 						{

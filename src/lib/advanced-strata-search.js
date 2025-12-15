@@ -1,5 +1,6 @@
 import instantsearch from "instantsearch.js";
 import TypesenseInstantsearchAdapter from "typesense-instantsearch-adapter";
+import attachTypesenseServerErrorHandling from "./typsense-instant-utils.js";
 import {
 	searchBox,
 	hits,
@@ -9,7 +10,6 @@ import {
 	refinementList,
 	clearRefinements,
 	currentRefinements,
-	hierarchicalMenu,
 } from "instantsearch.js/es/widgets";
 
 import { simple } from "instantsearch.js/es/lib/stateMappings";
@@ -45,6 +45,10 @@ const search = instantsearch({
 		stateMapping: simple(),
 	},
 });
+attachTypesenseServerErrorHandling(
+	searchClient,
+	"Serverfehler: Die Suche ist derzeit nicht verfügbar.",
+);
 
 // Custom comparator function to sort century arrays for the refinement list 'Century of work'
 const centuryComparator = (a, b) => {
@@ -591,24 +595,6 @@ function wrapInPanel(title) {
 			root: "border-b",
 		},
 	})(refinementList);
-}
-
-function wrapHierarcicalMenuInPanel(title) {
-	return panel({
-		collapsed: () => true, // Always collapsed by default
-		/* collapsed: ({ state }) => {
-			return state.query.length === 0;
-		}, // collapse if no query */
-		templates: {
-			header: () => `<span class="normal-case text-base font-normal">${title}</span>`,
-		},
-		cssClasses: {
-			header: "cursor-pointer relative z-10",
-			collapseButton: "absolute inset-0 z-20 flex flex-row-reverse",
-			collapseIcon: "",
-			root: "border-b",
-		},
-	})(hierarchicalMenu);
 }
 
 // Filter show/hide panel

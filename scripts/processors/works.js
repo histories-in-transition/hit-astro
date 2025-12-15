@@ -121,9 +121,8 @@ function transformMsItemForTransmission(msi) {
 	return {
 		hit_id: msi.hit_id,
 		manuscript: msi.manuscript,
-		role: msi.role,
 		function: msi.function,
-		commented_msitem: msi.commentedMsItem,
+		commented_msitem: msi.commented_msitem,
 		locus: msi.locus,
 		orig_date: msi.orig_date,
 		orig_place: msi.orig_place,

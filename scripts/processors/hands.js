@@ -141,7 +141,7 @@ function getHandRoles(hand, handsrole, msItemsPlus) {
 				role: hand_r.role.map((r) => ({ value: r.value })),
 				function: hand_r.function.map((f) => ({ value: f.value })),
 				scribe_type: hand_r.scribe_type.map((sc) => ({ value: sc.value })),
-				locus_layout: hand_r.locus_layout.map((l) => l.value),
+				locus_layout: hand_r.locus_layout.map((l) => ({ value: l.value })),
 				all_in_one: hand_qualities,
 			};
 		});

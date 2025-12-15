@@ -187,10 +187,10 @@ const { data: item } = Astro.props;
           
                   })}
                 </dd>
-                {item.commentedMsItem.length > 0 &&
+                {item.commented_msitem.length > 0 &&
                 <dt class="font-semibold md:border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
                 <dd class="pl-5">
-                  {item.commentedMsItem
+                  {item.commented_msitem
                   .map(i =>
                     <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}
                 </dd>
@@ -238,11 +238,11 @@ const { data: item } = Astro.props;
                                     ? filteredHand.scribe.map(scr => scr.value).join(', ')
                                   : 'N/A'}
                                   </td>
-                                <td class="p-2 border border-gray-300">{filteredHand.dating.flatMap(d => d.date.map(date => date.value))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.dating.flatMap(d => d.date.map(date => date.value).join(' | '))}</td>
                                 <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j?.locus).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus_layout.map(ll => ll.value))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role_context.map(rc => rc.value))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.map(f => f.value))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus_layout.map(ll => ll.value).join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role_context.map(rc => rc.value).join(', '))}</td>
+                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.map(f => f.value).join(', '))}</td>
                             </tr>
                           ))
                         }         

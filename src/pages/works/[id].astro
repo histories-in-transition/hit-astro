@@ -31,17 +31,17 @@ const works = Object.values(worksjson);
 
 const { data: work } = Astro.props;
 // tranform the data from the to geojson using processWorksData script
-const geoJsonData = processWorkData(work);
+const geoJsonData = processWorkData(work as Work);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = workDetailTableConfig.transformData(work.ms_transmission);
-const hasRole = work.ms_transmission.some(item => item.role !== undefined);
 const hasVersion = work.ms_transmission.some(item => item.version.length > 0);
 const hasTextModification = work.ms_transmission.some(item => item.text_modification.length > 0);
 const hasForm = work.ms_transmission.some(item => item.form.length > 0);
+const hasCommentedItem = work.ms_transmission.some(item => item.commented_msitem.length > 0);
 const hasAnnotationType = work.ms_transmission.some(item => item.annotation_typ.length > 0);
 const hasAnnotationDate = work.ms_transmission.some(item => item.annotation_date.length > 0);
-const columns = workDetailTableConfig.getColumns(hasRole, hasVersion, hasTextModification, hasForm, hasAnnotationType, hasAnnotationDate);
+const columns = workDetailTableConfig.getColumns(hasVersion, hasTextModification, hasForm, hasAnnotationType, hasAnnotationDate, hasCommentedItem);
 const rowClickConfig = workDetailTableConfig.getRowClickConfig(); 
 
 ---
@@ -64,7 +64,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 		>
 			<section class="m-5 overflow-x-auto" aria-labelledby="workInfo">
 				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">Allgemeine Info zum Werk:</h2>
-				<div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start ">
+				
 					<dl class="md:grid grid-cols-[1fr_6fr]">
 						<dt class="font-semibold md:border-r border-gray-300 pr-2">Titel:</dt>
 						<dd class="pl-5">
@@ -193,7 +193,6 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 									}
 					</dl>
 					
-				</div>
 			</section>
 
 			{work.ms_transmission.length > 0 && (
@@ -204,7 +203,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 				}
 					{/* mss transmission in details for small screens */}
 
-					<div class="space-y-4 md:hidden mt-3">
+					<div class="space-y-4 lg:hidden mt-3">
 					{work.ms_transmission.map((item) => (
 						<div class="border border-neutral-300 rounded-md overflow-hidden">
 						<details class="group">
@@ -217,29 +216,27 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 										/>
 							</summary>
 							<div class="bg-white p-4 space-y-3 text-sm lg:text-base text-brand-900">
-								<dl class="grid grid-cols-[1fr_6fr]">
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2 justify-self-end">Handschrift</dt>
+								<dl class="md:grid grid-cols-[1fr_6fr]">
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2">Handschrift</dt>
 									<dd class="pl-5">
 										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
 								{item.manuscript[0].value}
 							</NavLink>
 								</dd>
-								<dt class="font-semibold md:border-r border-neutral-300 pr-2 justify-self-end">Locus</dt>
+								<dt class="font-semibold md:border-r border-neutral-300 pr-2">Locus</dt>
 								<dd class="pl-5">
 								<NavLink href={`/msitems/${item.hit_id}`}>
 									{item.locus}
 								</NavLink>
 								</dd>
 								
-								{item?.role !== undefined && (
+								{item?.commented_msitem.length > 0 && (
 								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Role</dt>
-									<dd class="pl-5">
-									{item.role}
-									{item.function.length > 0 && ` (${item.function})`}
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Zusammengehörig</dt>
+									<dd class="pl-5">									
 									{item.commented_msitem.length > 0 && (
 										<ul class="list-disc list-inside mt-1">
-										{item.commented_msitem.map((msitem, i) => (
+										{item.commented_msitem.map((msitem) => (
 											<li>
 											<NavLink href={`/msitems/${msitem.hit_id}`}>
 												{msitem.title}
@@ -252,18 +249,18 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 								</>
 								)}
 								
-								<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Schreibort</dt>
+								<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Schreibort</dt>
 								<dd class="pl-5">
 								{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}
 								</dd>
 								
-								<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Datierung</dt>
+								<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Datierung</dt>
 								<dd class="pl-5">
 								{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
 								</dd>
 								{item.annotation_date.length > 0 &&	(
 								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Datierung</dt>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Annotationen - Datierung</dt>
 									<dd class="pl-5">
 										{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
 									</dd>
@@ -271,15 +268,15 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 								}
 								{item.annotation_typ.length > 0 && (
 									<>
-										<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Annotationen - Typ</dt>
+										<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Annotationen - Typ</dt>
 										<dd class="pl-5">
-										{[...new Set(item.annotation_typ.map(type => type.value))].join(' | ')}
+										{[...new Set(item.annotation_typ.map(type => type))].join(' | ')}
 										</dd>
 									</>)
 								}
 								{item.version.length > 0 && (
 									<>
-										<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Version</dt>
+										<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Version</dt>
 										<dd class="pl-5">
 										{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
 										</dd>
@@ -287,7 +284,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 								)}
 							{item.text_modification.length > 0 && (
 								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Textmodifikation</dt>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Textmodifikation</dt>
 									<dd class="pl-5">
 										{[...new Set(item.text_modification)].join(' | ')}
 									</dd>
@@ -297,7 +294,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 								}
 							{item.decoration.length > 0 && (
 								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2  justify-self-end">Dekoration</dt>
+									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Dekoration</dt>
 									<dd class="pl-5">
 										{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
 									</dd>
@@ -313,7 +310,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 					</div>
 
 					{/* // table for medium and larger screens */}
-				<div class="hidden md:block mt-3">
+				<div class="hidden lg:block mt-3">
 
 					
     

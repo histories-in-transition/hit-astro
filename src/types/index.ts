@@ -108,9 +108,9 @@ interface Authority {
 }
 
 export interface MsItem {
-	id: number;
+	id?: number;
 	hit_id: string;
-	label: string;
+	label?: string;
 	view_label?: string;
 	manuscript?: ShortRef[];
 	library?: ShortRef[];
@@ -121,14 +121,14 @@ export interface MsItem {
 	explicit?: string;
 	rubric?: string;
 	final_rubric?: string;
-	title_work: TitleWork[];
+	title_work?: TitleWork[];
 	title_note?: string;
 	siglum?: string;
 	text_modification?: string[];
 	interpolations?: TitleWork[];
 	bibl?: Bibliography[];
-	commentedMsItem?: CommentedMsItem[];
-	hands?: any;
+	commented_msitem?: CommentedMsItem[];
+	hands?: MsItemHand[];
 	decoration?: FormItem[];
 	form?: FormItem[];
 	form_note?: string;
@@ -141,7 +141,9 @@ export interface MsItem {
 	next?: NavigationLink;
 	language?: FormItem[];
 	version: FormItem[];
-	facs_url: string;
+	facs_url?: string;
+	annotation_typ?: string[];
+	annotation_date?: OrigDate[];
 }
 
 interface FormItem {
@@ -221,6 +223,31 @@ export interface Hand {
 	next?: NavigationLink;
 }
 
+interface MsItemHand {
+	hit_id: string;
+	id?: number;
+	label: string;
+	view_label?: string;
+	description?: string;
+	similar_hands?: SimilarHand[];
+	nr_daniel?: string;
+	note?: string;
+	scribe?: ShortRef[];
+	group?: boolean;
+	date?: HandDate[] | DateInfo[];
+	dating?: OrigDate[];
+	place?: OrigPlace[] | Place[];
+	hand_roles?: HandRole[];
+	placed?: OrigPlace[];
+	jobs?: HandRole[];
+	texts?: TitleWork[];
+	roles?: Value[] | string[];
+	manuscript?: ShortRef[];
+	author_entry?: string[];
+	prev?: NavigationLink;
+	next?: NavigationLink;
+}
+
 interface SimilarHand {
 	id: number;
 	value: string;
@@ -263,7 +290,7 @@ interface HandRole {
 	function?: Value[];
 	role_context?: Value[];
 	scribe_type?: Value[];
-	locus_layout?: string[] | Value[];
+	locus_layout?: Value[];
 	all_in_one?: string;
 	locus?: string;
 }
@@ -394,8 +421,8 @@ export interface Work {
 	source_text: SourceText[];
 	note_source: string;
 	genre: Genre[];
-	ms_transmission;
-	joined_transmission;
+	ms_transmission: MsItem[];
+	joined_transmission: TitleWork[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
 }

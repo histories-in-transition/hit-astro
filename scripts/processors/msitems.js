@@ -102,7 +102,7 @@ function transformMsItem(item, deps, originalMsItems) {
 		text_modification: item.text_modification.map((modification) => modification.value),
 		interpolations: interpolations.length > 0 ? interpolations : [],
 		bibl: item.bibl,
-		commentedMsItem: getCommentedMsItems(item, originalMsItems), // Use original array
+		commented_msitem: getCommentedMsItems(item, originalMsItems), // Use original array
 		hands: relatedHand,
 		decoration: item.decoration.map(({ value }) => ({ value })),
 		form: item.form.map(({ value }) => ({ value })),
