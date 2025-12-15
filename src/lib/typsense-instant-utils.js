@@ -46,33 +46,32 @@ function hideServerErrorNotification() {
 /**
  * Attach error handling to a Typesense InstantSearch client
  */
-export default function attachTypesenseServerErrorHandling(searchClient, message) {
-	// 🔒 DO NOTHING on import — only when called
-
+export default function attachTypesenseServerErrorHandling(searchClient, message, delay = 15000) {
 	const originalSearch = searchClient.search.bind(searchClient);
+	let timeoutId = null;
 
 	searchClient.search = async function (requests) {
 		try {
 			const result = await originalSearch(requests);
 
-			// Success → hide error
-			hideServerErrorNotification();
+			// success → cancel pending error
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+				timeoutId = null;
+			}
 
+			hideServerErrorNotification();
 			return result;
 		} catch (err) {
-			if (isTypesenseServerError(err)) {
-				showServerErrorNotification(message);
+			if (!timeoutId) {
+				timeoutId = setTimeout(() => {
+					showServerErrorNotification(
+						message || "Serverfehler: Die Suche ist derzeit nicht verfügbar.",
+					);
+				}, delay);
 			}
+
 			throw err;
 		}
 	};
-
-	// Attach online/offline listeners ONLY when function is called
-	window.addEventListener("offline", () => {
-		showServerErrorNotification("Keine Internetverbindung. Bitte überprüfen Sie Ihre Verbindung.");
-	});
-
-	window.addEventListener("online", () => {
-		hideServerErrorNotification();
-	});
 }

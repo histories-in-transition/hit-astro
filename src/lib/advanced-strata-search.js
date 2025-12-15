@@ -99,7 +99,7 @@ const refinementListInterpolations = wrapInPanel("Interpolations");
 // 5. add getWidgetRenderState() to allow the currentRefinements widget to "see" this refinement
 const customDateRangeWidget = (containerId) => {
 	return {
-		init({ helper, state, createURL }) {
+		init({ helper }) {
 			// Create the HTML structure for the date range widget with two inputs and apply button
 			const container = document.querySelector(containerId);
 			container.innerHTML = `
@@ -251,35 +251,6 @@ const customDateRangeWidget = (containerId) => {
 	};
 };
 
-// Utility to show/hide the notification
-function showServerErrorNotification(message) {
-	const el = document.getElementById("server-error-notification");
-	if (el) {
-		el.textContent = message || "Serverfehler: Die Suche ist derzeit nicht verfügbar.";
-		el.classList = "block";
-	}
-}
-function hideServerErrorNotification() {
-	const el = document.getElementById("server-error-notification");
-	if (el) el.classList = "hidden";
-}
-
-// Patch the search client to catch errors
-const originalSearch = searchClient.search.bind(searchClient);
-searchClient.search = function (requests) {
-	return originalSearch(requests).catch((err) => {
-		showServerErrorNotification(
-			"Serverfehler: Die Suche ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.",
-		);
-		throw err; // rethrow so InstantSearch knows
-	});
-};
-
-// Optionally, hide notification on successful search
-search.on("render", () => {
-	hideServerErrorNotification();
-});
-
 // add widgets
 search.addWidgets([
 	searchBox({
@@ -291,7 +262,9 @@ search.addWidgets([
 	hits({
 		container: "#hits",
 		templates: {
-			empty: "No results for <q>{{ query }}</q>",
+			empty(_, { html }) {
+				return html`<p class="p-4 text-gray-600">Keine Treffer.</p>`;
+			},
 
 			item(hit, { html, components }) {
 				const href = withBasePath(`/strata/${hit.hit_id}`);
@@ -585,8 +558,13 @@ function wrapInPanel(title) {
 			return state.query.length === 0;
 		}, // collapse if no query */
 		templates: {
-			header: () =>
-				`<span class="normal-case text-base font-normal" aria-label="refinement by ${title}">${title}</span>`,
+			header(_, { html }) {
+				return html` <span
+					class="normal-case text-base font-normal"
+					aria-label="refinement by ${title}"
+					>${title}</span
+				>`;
+			},
 		},
 		cssClasses: {
 			header: "cursor-pointer relative z-10",
