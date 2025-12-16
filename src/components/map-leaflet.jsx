@@ -13,21 +13,21 @@ const pinRed = new URL("@/icons/map-pin-red.png", import.meta.url).toString();
 const pin = new URL("@/icons/map-pin.png", import.meta.url).toString();
 
 const originIcon = L.icon({
-	iconUrl: pinRed, // Use the same pin image
-	iconSize: [25, 25], // Adjust size as needed
+	iconUrl: pinRed,
+	iconSize: [25, 25],
 	iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location
 	popupAnchor: [0, -41], // Point from which the popup should open relative to the iconAnchor
 });
 
 const provenanceIcon = L.icon({
-	iconUrl: pinGreen, // Use the same pin image
-	iconSize: [25, 25], // Adjust size as needed
+	iconUrl: pinGreen,
+	iconSize: [25, 25],
 	iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location
 	popupAnchor: [0, -41], // Point from which the popup should open relative to the iconAnchor
 });
 const customIcon = L.icon({
 	iconUrl: pin,
-	iconSize: [25, 25], // size of the icon, adjust as needed
+	iconSize: [25, 25],
 	iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
 	popupAnchor: [0, -41], // point from which the popup should open relative to the iconAnchor
 });
@@ -103,7 +103,7 @@ export default function LeafletMap({
                         <div class="map-popup">
                             <h3><a href=${url} class="font-semibold text-base underline decoration-dotted underline-offset-2">${properties.title || ""} ${properties?.locus ? `(fols. ${properties.locus})` : ""}</a><br/></h3>
                             <p>${properties.description ? `${properties?.description} <br/>` : ""}							
-                            ${properties.place || ""} <br/> ${properties.period}</p> 
+                            ${properties.place || ""} <br/> ${properties.period || ""}</p> 
                         </div>
                     `;
 					marker.bindPopup(popupContent);

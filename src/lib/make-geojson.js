@@ -289,10 +289,94 @@ export function processMSData(input) {
 			.filter((f) => f.geometry.coordinates.every((coord) => !isNaN(coord))), // Filter out invalid coordinates
 	};
 }
+
+// geoJson data for table works using msitems data
+export function processMsItemsData(msItemsData) {
+	// Check if used on detail view page (props object not array) or for table page
+	// If the input is not an array, wrap it in an array
+	const msItems = Array.isArray(msItemsData) ? msItemsData : [msItemsData];
+
+	// Create array to store all features
+	const features = [];
+
+	msItems.forEach((msItemData) => {
+		const uniquePlaces = new Set();
+		const uniqueProvenances = new Set();
+		msItemData.orig_place?.forEach((placement) => {
+			// Process each origin place
+			placement?.place.forEach((pl) => {
+				if (!uniquePlaces.has(pl.id)) {
+					uniquePlaces.add(pl.id);
+					// Check if coordinates are valid
+					const long = parseFloat(pl.long);
+					const lat = parseFloat(pl.lat);
+
+					if (!isNaN(long) && !isNaN(lat)) {
+						// Create new feature and push to features array
+						features.push({
+							type: "Feature",
+							geometry: {
+								type: "Point",
+								coordinates: [long, lat],
+							},
+							properties: {
+								title: msItemData.title_work[0]?.title || "N/A",
+								place: `Entstehungsort: ${pl.value || ""}`,
+								period: msItemData.orig_date[0]?.date[0]?.value,
+								description: `HS: ${msItemData.view_label || "N/A"}`,
+								url: `/works/${msItemData.title_work[0]?.hit_id}`,
+								hit_id: msItemData.hit_id,
+								type: "origin",
+							},
+						});
+					}
+				}
+			});
+		});
+		msItemData.provenance.length > 0 &&
+			msItemData.provenance.forEach((placement) => {
+				placement.places.forEach((pl) => {
+					if (!uniqueProvenances.has(pl.id)) {
+						uniqueProvenances.add(pl.id);
+						// Check if coordinates are valid
+						const long = parseFloat(pl.long);
+						const lat = parseFloat(pl.lat);
+
+						if (!isNaN(long) && !isNaN(lat)) {
+							// Create new feature and push to features array
+							features.push({
+								type: "Feature",
+								geometry: {
+									type: "Point",
+									coordinates: [long, lat],
+								},
+								properties: {
+									title: msItemData.title_work[0]?.title || "N/A",
+									place: `Entstehungsort: ${pl.value || ""}`,
+									period: formatPeriod(placement),
+									description: `HS: ${msItemData.view_label || "N/A"}`,
+									url: `/works/${msItemData.title_work[0]?.hit_id}`,
+									hit_id: msItemData.hit_id,
+									type: "provenance",
+								},
+							});
+						}
+					}
+				});
+			});
+
+		// Return the GeoJSON object with all collected features
+	});
+	return {
+		type: "FeatureCollection",
+		features: features,
+	};
+}
+
 // helpers function
 function formatPeriod(prov) {
-	const fromDate = prov.from?.[0]?.value || "N/A";
-	const tillDate = prov.till?.[0]?.value || "N/A";
+	const fromDate = prov.from?.[0]?.value || "";
+	const tillDate = prov.till?.[0]?.value || "";
 
 	const fromUncertain = prov.uncertain_from ? " (?)" : "";
 	const tillUncertain = prov.uncertain_till ? " (?)" : "";
@@ -301,5 +385,5 @@ function formatPeriod(prov) {
 		return "Zeitraum unbekannt";
 	}
 
-	return `Von: ${fromDate}${fromUncertain} bis ${tillDate}${tillUncertain}`;
+	return `${fromDate ? `Von ${fromDate}` : ""} ${fromUncertain} ${tillDate ? `bis ${tillDate}` : ""} ${tillUncertain}`;
 }

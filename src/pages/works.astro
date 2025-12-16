@@ -4,10 +4,11 @@ import TableHead from "../components/table-head.astro";
 import TabulatorTable from "@/components/tabulator-table.jsx";
 import { worksTableConfig } from "@/lib/tabulator-table-configs.js";
 import works from "@/content/data/works.json";
+import msitems from "@/content/data/ms_items.json";
 
 import MapLeaflet from "@/components/map-leaflet.jsx";
-import { processWorksData } from "@/lib/make-geojson.js";
-const geoJsonData = processWorksData(works);
+import { processMsItemsData } from "@/lib/make-geojson.js";
+const geoJsonData = processMsItemsData(msitems);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = worksTableConfig.transformData(works);
@@ -26,6 +27,8 @@ const rowClickConfig = worksTableConfig.getRowClickConfig;
 			options={{
 				paginationSize: 25,
 				responsiveLayout: "hide",
+				dataTree: true,
+				dataTreeStartExpanded: true,
 			}}
 			downloadTitle="hit_handschriften"
 			rowClickConfig={rowClickConfig}

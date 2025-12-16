@@ -222,6 +222,31 @@ export const manuscriptsTableConfig = {
 export const worksTableConfig = {
 	transformData: (works) => {
 		return works.map((work) => {
+			const transmission = work.ms_transmission.map((tr) => {
+				const orgPlace = [
+					...new Set(tr.orig_place.flatMap((p) => p.place.map((place) => place.value))),
+				].join(" | ");
+				// deduplicate date objects by ID
+				const allDates = tr.orig_date.flatMap((d) => d.date);
+
+				const origDate = [...new Map(allDates.map((date) => [date.id, date])).values()];
+				const provenance = [
+					...new Set(
+						tr.provenance.flatMap((placement) => placement.places.map((place) => place.value)),
+					),
+				].join(", ");
+				return {
+					hit_id: tr.hit_id,
+					title: work.title,
+					work_hit_id: work.hit_id,
+					author: [...new Set(work.author.map((a) => a.name))].join(", "),
+					genre: "",
+					shelfmark: tr.manuscript[0].value,
+					origPlace: orgPlace,
+					provenance: provenance,
+					origDate: origDate,
+				};
+			});
 			const orgDate = [
 				...new Map(
 					work.ms_transmission
@@ -245,16 +270,16 @@ export const worksTableConfig = {
 			].join(", ");
 			return {
 				id: work.id || "",
-				hit_id: work.hit_id || "",
+				work_hit_id: work.hit_id || "",
+				hit_id: "",
 				title: work.title || "",
 				author: [...new Set(work.author.map((a) => a.name))].join(", "),
 				genre: [...new Set(work.genre.map((g) => g.value))].join(", "),
-				ms_transmission: [...new Set(work.ms_transmission.map((m) => m.manuscript[0]?.value))].join(
-					", ",
-				),
+				shelfmark: [...new Set(work.ms_transmission.map((m) => m.manuscript[0]?.value))].join(", "),
 				origPlace: orgPlace,
 				provenance: provenance,
 				origDate: orgDate,
+				_children: transmission,
 			};
 		});
 	},
@@ -287,7 +312,7 @@ export const worksTableConfig = {
 			},
 			{
 				title: "Überlieferung",
-				field: "ms_transmission",
+				field: "shelfmark",
 				headerFilterPlaceholder: "e.g. Clm. 6380",
 				minWidth: 150,
 				headerFilter: "input",
@@ -326,7 +351,7 @@ export const worksTableConfig = {
 	// Row click configuration for work-mss-transmission table
 	getRowClickConfig: {
 		urlPattern: "/works/{id}",
-		idField: "hit_id",
+		idField: "work_hit_id",
 		target: "_self",
 	},
 };

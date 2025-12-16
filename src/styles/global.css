@@ -17,6 +17,8 @@
 	--color-brand-950: #2f1100;
 
 	--color-neutral-300: #d3cbbf;
+
+	--color-accent-sage-900: #085508;
 }
 
 /*
@@ -88,6 +90,11 @@ header {
 	@apply bg-brand-200;
 }
  */
+
+.tabulator .tabulator-row .tabulator-cell .tabulator-data-tree-control {
+	@apply w-5 h-5;
+}
+
 .tabulator .tabulator-col-content {
 	@apply border-l border-brand-300;
 }

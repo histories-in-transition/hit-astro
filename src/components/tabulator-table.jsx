@@ -63,7 +63,6 @@ export default function TabulatorTable({
 			if (rowClickConfig) {
 				tabulatorRef.current.on("rowClick", function (e, row) {
 					const rowData = row.getData();
-
 					let url;
 					if (typeof rowClickConfig.getUrl === "function") {
 						url = rowClickConfig.getUrl(rowData);
@@ -80,36 +79,44 @@ export default function TabulatorTable({
 			}
 
 			// Add map update functionality if enabled
-			if (updateMapOnFilter) {
-				// Update map when data is filtered
-				tabulatorRef.current.on("dataFiltered", function (filters, data) {
-					// Extract raw data from each RowComponent (using getData() method)
-					const filteredData = data.map((row) => row.getData());
+			let mapUpdateTimeout = null;
 
-					// Extract hit_ids from filtered data using the mapIdField
-					const filteredIds = filteredData.map((row) => row[mapIdField]).filter((id) => id);
-					// Update the map with the filtered hit_ids
-					if (window.updateMapWithFilteredIds) {
-						window.updateMapWithFilteredIds(filteredIds);
-					} else {
-						console.warn("Map update function not available");
+			if (updateMapOnFilter) {
+				tabulatorRef.current.on("dataFiltered", function (filters, data) {
+					// Clear previous scheduled update
+					if (mapUpdateTimeout) {
+						clearTimeout(mapUpdateTimeout);
 					}
+
+					mapUpdateTimeout = setTimeout(() => {
+						const filteredData = tabulatorRef.current.getData("active");
+
+						const filteredIds = [
+							...new Set(filteredData.flatMap((row) => extractMapIds(row, mapIdField))),
+						];
+
+						console.log("Final filtered IDs:", filteredIds);
+
+						window.updateMapWithFilteredIds?.(filteredIds);
+					}, 50);
 				});
 
-				// Initial map update with all data - use getData() only
+				// Initial load
 				setTimeout(() => {
-					console.log("Initial map update");
 					try {
 						const initialData = tabulatorRef.current.getData();
-						const initialIds = initialData.map((row) => row[mapIdField]).filter((id) => id);
-						if (window.updateMapWithFilteredIds) {
-							window.updateMapWithFilteredIds(initialIds);
-						}
+						const initialIds = [
+							...new Set(initialData.flatMap((row) => extractMapIds(row, mapIdField))),
+						];
+
+						window.updateMapWithFilteredIds?.(initialIds);
 					} catch (error) {
 						console.error("Error with initial map update:", error);
 					}
 				}, 100);
 			}
+
+			let counter = 0;
 
 			// Update counters
 			const counter1 = document.getElementById("counter1");
@@ -117,26 +124,14 @@ export default function TabulatorTable({
 
 			if (counter1 && counter2) {
 				const updateCounters = () => {
-					try {
-						// total rows before filtering
-						const totalCount = tabulatorRef.current.getDataCount("all");
+					const totalCount = tabulatorRef.current.getDataCount("all");
+					const filteredCount = tabulatorRef.current.getDataCount("active");
 
-						// rows matching current filters
-						const filteredCount = tabulatorRef.current.getDataCount("active");
-
-						counter1.textContent = filteredCount;
-						counter2.textContent = totalCount;
-					} catch (error) {
-						console.error("Error updating counters:", error);
-					}
+					counter1.textContent = filteredCount;
+					counter2.textContent = totalCount;
 				};
 
-				updateCounters();
-
-				tabulatorRef.current.on("dataFiltered", function (filters, rows) {
-					counter1.textContent = rows.length; // filtered count
-					counter2.textContent = tabulatorRef.current.getDataCount("all"); // total count
-				});
+				tabulatorRef.current.on("dataFiltered", updateCounters);
 			}
 		});
 
@@ -200,4 +195,20 @@ export default function TabulatorTable({
 			<div ref={tableRef} id={tableId} style={{ minHeight: "100px", width: "100%" }} />
 		</div>
 	);
+}
+// helper function to get id from tabulator with nested rows (like in works)
+function extractMapIds(rowData, mapIdField) {
+	const ids = [];
+
+	if (rowData[mapIdField]) {
+		ids.push(rowData[mapIdField]);
+	}
+
+	if (Array.isArray(rowData._children)) {
+		rowData._children.forEach((child) => {
+			ids.push(...extractMapIds(child, mapIdField));
+		});
+	}
+
+	return ids;
 }
