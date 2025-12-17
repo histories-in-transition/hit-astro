@@ -48,6 +48,7 @@ export default function TabulatorTable({
 			console.warn("Missing data or columns for Tabulator");
 			return;
 		}
+		console.log("Sample data item:", data[1]);
 
 		// Initialize Tabulator
 		tabulatorRef.current = new Tabulator(tableRef.current, {
@@ -96,6 +97,10 @@ export default function TabulatorTable({
 						];
 
 						console.log("Final filtered IDs:", filteredIds);
+						console.log(
+							"Sample filtered data:",
+							filteredData.map((array) => array),
+						);
 
 						window.updateMapWithFilteredIds?.(filteredIds);
 					}, 50);

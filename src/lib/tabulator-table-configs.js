@@ -236,9 +236,9 @@ export const worksTableConfig = {
 					),
 				].join(", ");
 				return {
-					hit_id: tr.hit_id,
+					hit_id: tr.hit_id, // id for LeafLet
 					title: work.title,
-					work_hit_id: work.hit_id,
+					work_hit_id: work.hit_id, // for row click link
 					author: [...new Set(work.author.map((a) => a.name))].join(", "),
 					genre: "",
 					shelfmark: tr.manuscript[0].value,
@@ -459,11 +459,15 @@ export const msItemsTableConfig = {
 						) || [],
 				).values(),
 			];
+			const provenance = [
+				...new Set(
+					item.provenance.flatMap((placement) => placement.places.map((place) => place.value)),
+				),
+			].join(", ");
 			return {
 				id: item.id || "",
 				hit_id: item.hit_id || "",
-				manuscript: item.manuscript[0].value,
-				locus: item.locus || "",
+				manuscript: `${item.manuscript[0].value}, fols. ${item.locus}`,
 				work:
 					item.title_work[0].author?.length > 0
 						? `${item.title_work[0].author[0].name}: ${item.title_work[0].title}`
@@ -476,6 +480,7 @@ export const msItemsTableConfig = {
 				].join(" | "),
 				origDate: origDate,
 				editDate: editDate,
+				provenance: provenance,
 				// Add other fields as needed
 			};
 		});
@@ -484,32 +489,26 @@ export const msItemsTableConfig = {
 	getColumns() {
 		const columns = [
 			{
-				title: "Handschrift",
-				field: "manuscript",
-				minWidth: 200,
-				responsive: 0,
-			},
-			{
-				title: "Locus",
-				field: "locus",
-				minWidth: 80,
-				responsive: 0,
-			},
-			{
 				title: "Werk",
 				field: "work",
 				minWidth: 200,
 				responsive: 0,
 			},
 			{
-				title: "Dekoration",
-				field: "decoration",
-				minWidth: 100,
-				responsive: 99,
+				title: "Handschrift",
+				field: "manuscript",
+				minWidth: 200,
+				responsive: 0,
 			},
 			{
 				title: "Schreiberort",
 				field: "origPlace",
+				minWidth: 200,
+				responsive: 99,
+			},
+			{
+				title: "Provenienz",
+				field: "provenance",
 				minWidth: 200,
 				responsive: 99,
 			},
@@ -525,6 +524,12 @@ export const msItemsTableConfig = {
 				field: "editDate",
 				minWidth: 200,
 				headerFilterPlaceholder: "e.g. nach 810",
+				responsive: 99,
+			},
+			{
+				title: "Dekoration",
+				field: "decoration",
+				minWidth: 100,
 				responsive: 99,
 			},
 		];

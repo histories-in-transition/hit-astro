@@ -5,6 +5,10 @@ import TabulatorTable from "@/components/tabulator-table.jsx";
 import { msItemsTableConfig } from "@/lib/tabulator-table-configs.js";
 import msItems from "@/content/data/ms_items.json";
 
+import MapLeaflet from "@/components/map-leaflet.jsx";
+import { processMsItemsData } from "@/lib/make-geojson.js";
+const geoJsonData = processMsItemsData(msItems);
+
 // Transform data and prepare columns for Tabulator Table
 const tableData = msItemsTableConfig.transformData(msItems);
 const columns = msItemsTableConfig.getColumns();
@@ -16,6 +20,7 @@ const rowClickConfig = msItemsTableConfig.getRowClickConfig;
 		title="MS Elemente"
 		definition="Manuskriptelement bezeichnet ein einzelnes Werk oder Element innerhalb des Inhalts einer Handschrift."
 	>
+		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
 		<TabulatorTable
 			client:only="react"
 			data={tableData}
