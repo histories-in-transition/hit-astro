@@ -1,20 +1,29 @@
+import { texEscape } from "./utils.js";
+
 export default function Strata(strata) {
 	if (!strata || strata.length === 0) return "";
 
 	const tex = strata.flatMap((stratum) => {
-		const number = stratum.number ?? "N/A";
-		const label = stratum.label ?? "N/A";
-		const character = stratum.character?.length ? stratum.character.join(", ") : "";
-		const notes = stratum.note ? stratum.note : "";
-		const date = stratum.date?.length ? stratum.date.map((d) => d.value).join(", ") : "";
-		const place = stratum.place?.length ? stratum.place.map((p) => p.value).join(", ") : "";
+		const number = texEscape(stratum.number ?? "N/A");
+		const label = texEscape(stratum.label ?? "N/A");
+
+		const character = stratum.character?.length ? texEscape(stratum.character.join(", ")) : "";
+
+		const notes = stratum.note ? texEscape(stratum.note) : "";
+
+		const date = stratum.date?.length ? texEscape(stratum.date.map((d) => d.value).join(", ")) : "";
+
+		const place = stratum.place?.length
+			? texEscape(stratum.place.map((p) => p.value).join(", "))
+			: "";
 
 		const filiations = (stratum.stratum_filiations ?? [])
 			.map((f) => {
-				const val = f.filiated_strata[0].value;
-				const locus = f.filiated_strata[0].locus ? ` (${f.filiated_strata[0].locus})` : "";
-				const note = f.note ? `: ${f.note}` : "";
-				const reason = f.reason ? ` (${f.reason})` : "";
+				const fs = f.filiated_strata[0] ?? {};
+				const val = texEscape(fs.value ?? "");
+				const locus = fs.locus ? ` (${texEscape(fs.locus)})` : "";
+				const reason = f.reason ? ` (${texEscape(f.reason)})` : "";
+				const note = f.note ? `: ${texEscape(f.note)}` : "";
 				return `${val}${locus}${reason}${note}`;
 			})
 			.join("; ");
@@ -25,17 +34,23 @@ export default function Strata(strata) {
 				const msitem = hr.ms_item
 					?.map((mi) => {
 						const author =
-							mi.author?.length > 0 ? `${mi.author.join(", ")}: ${mi.title}` : mi.title;
-						const locus = mi.locus ? ` (${mi.locus})` : "";
+							mi.author?.length > 0
+								? `${texEscape(mi.author.join(", "))}: ${texEscape(mi.title)}`
+								: texEscape(mi.title);
+						const locus = mi.locus ? ` (${texEscape(mi.locus)})` : "";
 						return `${author}${locus}`;
 					})
 					.join(" \\\\ ");
-				const hand = hr.hand.length > 0 ? hr.hand.map((h) => h.label.split("_")[1]).join(", ") : "";
-				const role = (hr.role ?? []).join(", ");
-				const scribe = (hr.scribe_type ?? []).join(", ");
-				const func = (hr.function ?? []).join(", ");
-				const locus = hr.locus ? hr.locus : "";
-				const layout = (hr.layout ?? []).join(", ");
+
+				const hand = hr.hand?.length
+					? texEscape(hr.hand.map((h) => h.label.split("_")[1]).join(", "))
+					: "";
+
+				const role = texEscape((hr.role ?? []).join(", "));
+				const scribe = texEscape((hr.scribe_type ?? []).join(", "));
+				const func = texEscape((hr.function ?? []).join(", "));
+				const locus = hr.locus ? texEscape(hr.locus) : "";
+				const layout = texEscape((hr.layout ?? []).join(", "));
 
 				return `${msitem} & ${hand ?? ""} & ${role} & ${scribe} & ${func} & ${locus} & ${layout} \\\\`;
 			})

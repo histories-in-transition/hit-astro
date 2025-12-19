@@ -32,9 +32,18 @@ export const extractAllOriginDates = (dates) => {
 		.join("; ");
 };
 
-export function texEscape(str = "") {
-	return str
-		.replace(/([{}$%_#])/g, "\\$1") // escape special chars
-		.replace(/~/g, "\\textasciitilde{}")
-		.replace(/\^/g, "\\textasciicircum{}");
+export function texEscape(str) {
+	if (str == null) return "";
+
+	return String(str)
+		.replace(/\\/g, "\\textbackslash{}")
+		.replace(/&/g, "\\&")
+		.replace(/%/g, "\\%")
+		.replace(/\$/g, "\\$")
+		.replace(/#/g, "\\#")
+		.replace(/_/g, "\\_")
+		.replace(/{/g, "\\{")
+		.replace(/}/g, "\\}")
+		.replace(/\^/g, "\\textasciicircum{}")
+		.replace(/~/g, "\\textasciitilde{}");
 }

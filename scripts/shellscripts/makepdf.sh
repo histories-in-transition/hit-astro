@@ -28,7 +28,8 @@ for texfile in "$TEX_DIR"/*.tex; do
     log_file="$PDF_DIR/$(basename "${texfile%.tex}").log"
     toc_file="$PDF_DIR/$(basename "${texfile%.tex}").toc"
     out_file="$PDF_DIR/$(basename "${texfile%.tex}").out"
-    rm -f "$aux_file" "$log_file" "$toc_file"
+    rm -f "$aux_file" "$log_file" "$toc_file" "$out_file"
 done
+
 
 echo "All PDFs generated in $PDF_DIR."
