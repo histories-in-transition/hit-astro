@@ -15,9 +15,9 @@ about page as well as the project site in the
 ## Datamodel
 
 This project uses the data model defined in
-[dbdiagram.io](https://dbdiagram.io/d/HiT-6731b349e9daa85acafee5fa) to organize and store
-manuscripts, codicological units, manuscript items, works, authors, genres, and related metadata. To
-suit the researchers' aim the data is entered in a relational database
+[dbdiagram.io](https://dbdiagram.io/d/HiT-6731b349e9daa85acafee5fa) (last updated Dez. 2025) to
+organize and store manuscripts, codicological units, manuscript items, works, authors, genres, and
+related metadata. To suit the researchers' aim the data is entered in a relational database
 [baserow](https://baserow.io/). This data is dumped on a regular basis in a
 [sister repository](https://github.com/histories-in-transition/hit-baserow-dump). The JSON files are
 then processed in the current repository, making visualizations and advanced filtered search
@@ -43,6 +43,13 @@ scripts/
     └──  logger.js
 ```
 
+The same json data is also converted to tex files (using the scripts/generate-tex.js) and converted
+to pdf using a shellscript (scripts/shellscripts/makepdf.sh)
+
+For archiving and interoperability the json files are also converted to tei-xml files
+(scripts/generate-tei.js using currently a eta templates - to be substitute by plane js-ts scripts
+analog to the generate-tex).
+
 ## Getting Started
 
 ### Prerequisites
@@ -65,6 +72,7 @@ scripts/
    ```bash
    pnpm install
    ```
+
    2. Configure the application: Currently the application uses a base path: 'hit-astro' set in
       `astro.config.mjs`
    3. To run the project locally:
