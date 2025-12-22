@@ -1,14 +1,12 @@
 import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { join } from "path";
 
 // function to load JSON files from the raw content directory
 
+const RAW_DATA_DIR = join(process.cwd(), "src", "content", "raw");
+
 function loadJSON(filename) {
-	const filePath = join(__dirname, "../src/content/raw", filename);
+	const filePath = join(RAW_DATA_DIR, filename);
 	return Object.values(JSON.parse(readFileSync(filePath, "utf8")));
 }
 

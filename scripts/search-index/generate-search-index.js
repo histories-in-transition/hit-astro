@@ -1,6 +1,6 @@
 import { log } from "@acdh-oeaw/lib";
 import { readFileSync } from "fs";
-import { createTypesenseAdminClient } from "../scripts/create-typesense-admin-client.js";
+import { createTypesenseAdminClient } from "./create-typesense-admin-client.js";
 const collectionName = "hit__msitems";
 
 async function generate() {

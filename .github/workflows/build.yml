@@ -62,12 +62,12 @@ jobs:
       - name: Generate and validate TEI files
         run: |
           echo "Generating TEI files with validation..."
-          node scripts/generate-tei.js
+          node scripts/export/tei/generate-tei.js
 
       - name: Generate TEX files
         run: |
           echo "Generating TEX files" 
-          node scripts/generate-tex.js
+          node scripts/export/tex/generate-tex.js
 
       - name: Install TeX Live for XeLaTeX
         run: |
@@ -84,7 +84,7 @@ jobs:
             fonts-dejavu
 
       - name: Build PDFs of manuscripts.json
-        run: ./scripts/shellscripts/makepdf.sh
+        run: ./scripts/export/makepdf.sh
 
       - name: generate typesense index
         env:

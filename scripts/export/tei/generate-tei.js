@@ -5,9 +5,6 @@ import { DOMParser } from "@xmldom/xmldom";
 import { XMLValidator } from "fast-xml-parser";
 import { execSync } from "child_process";
 
-// Get project root (one level up from current file)
-const projectRoot = new URL("..", import.meta.url).pathname;
-
 /**
  * Downloads schema with all dependencies (only if not present)
  * @param {string} baseUrl - Base URL for schema
@@ -246,7 +243,7 @@ async function main() {
 	// Read the source JSON file
 	console.log("📖 Reading manuscripts data...");
 	const mss = JSON.parse(
-		readFileSync(join(projectRoot, "src", "content", "data", "manuscripts.json"), "utf-8"),
+		readFileSync(join(process.cwd(), "src", "content", "data", "manuscripts.json"), "utf-8"),
 	);
 
 	// Set the output folder

@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import TexHeader from "./tex/tex-header.js";
+import TexHeader from "./tex-header.js";
 
 async function writeTexFile(filename, content) {
 	const outputDir = join(process.cwd(), "public", "tex", "manuscripts");

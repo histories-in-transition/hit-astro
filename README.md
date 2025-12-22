@@ -24,31 +24,14 @@ then processed in the current repository, making visualizations and advanced fil
 possible.  
 For the preprocessing we use the following scripts:
 
-```
-scripts/
-├── preprocess-data.js (main entry point)
-├── data-loader.js (load data from raw json)
-├── processors/
-│   ├── places.js
-│   ├── libraries.js
-│   ├── msitems.js
-│   ├── hands.js
-│   ├── scribes.js
-│   ├── cod-units.js
-│   ├── strata.js
-│   ├── works.js
-│   └── manuscripts.js
-└── utils/
-    ├── utils.js (small enrichment functions)
-    └──  logger.js
-```
+## Data Processing Scripts
 
-The same json data is also converted to tex files (using the scripts/generate-tex.js) and converted
-to pdf using a shellscript (scripts/shellscripts/makepdf.sh)
+All data preprocessing and export scripts are located in the `scripts/` folder:
 
-For archiving and interoperability the json files are also converted to tei-xml files
-(scripts/generate-tei.js using currently a eta templates - to be substitute by plane js-ts scripts
-analog to the generate-tex).
+- **preprocess/** – Load and normalize raw JSON manuscripts.
+- **export/** – Generate LaTeX, PDF, and TEI XML exports.
+- **search-index/** – Build and update the two search indices (Typesense).
+- data-fetch - fetches json row data from a sister repo.
 
 ## Getting Started
 
@@ -69,6 +52,7 @@ analog to the generate-tex).
 
 3. **Installation**
    1. Install dependencies:
+
    ```bash
    pnpm install
    ```
@@ -76,24 +60,23 @@ analog to the generate-tex).
    2. Configure the application: Currently the application uses a base path: 'hit-astro' set in
       `astro.config.mjs`
    3. To run the project locally:
+
    ```bash
    pnpm run dev
    ```
 
 ## Project Structure
 
-- **`src/content/`**: Contains collections and JSON data files (fetched using the scripts in the
-  scripts folder).
+- **`src/content/`**: Contains collections of the row and processed JSON data files.
 - **`src/components/`**: Contains _astro_ components such as header, footer etc.
 - **`src/pages/`**: Contains the web pages to tables (of manuscripts, works etc.) or detail view of
   single items (manuscripts, works etc).
 - **`src/lib/`**: Contains scripts for the advanced search, and the
-  [Tabulator library](https://tabulator.info/) used to display JSON data in tables.
+  [Tabulator library](https://tabulator.info/) used to display JSON data in tables and other minor
+  scripts.
 - **`src/lib/advanced search` and `src/pages/search.astro`** (search interface): Implements the
   search page with (Algolia) instant search (using
   [Typsesence instance search adapter](https://typesense.org/docs/guide/search-ui-components.html#using-instantsearch-js)).
-- **`scripts/`**: Scripts for fetching data, processing data, generating typsense index, generating
-  tei-xml, and latex -> pdf files.
 
 ## License
 
