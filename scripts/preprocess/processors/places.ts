@@ -1,11 +1,20 @@
-import { addPrevNextToMsItems } from "../utils/utils.js";
+import { addPrevNextToMsItems } from "./utils.js";
 
 /**
  * Process places data by cleaning and standardizing the structure
- * @param {Array} places - Raw places data
- * @returns {Array} Processed places with prev/next navigation
  */
-export function processPlaces(places) {
+
+type RawPlace = {
+	id?: number;
+	hit_id?: string;
+	name?: string;
+	geonames_url?: string;
+	wikidata_url?: string;
+	lat?: number | string;
+	long?: number | string;
+};
+
+export function processPlaces(places: RawPlace[]) {
 	if (!Array.isArray(places)) {
 		throw new Error("processPlaces expects an array of places");
 	}
@@ -23,10 +32,8 @@ export function processPlaces(places) {
 
 /**
  * Transform a single place object
- * @param {Object} place - Raw place data
- * @returns {Object} Transformed place
  */
-function transformPlace(place) {
+function transformPlace(place: RawPlace) {
 	return {
 		id: place.id,
 		hit_id: place.hit_id,

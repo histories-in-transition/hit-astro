@@ -1,6 +1,6 @@
 import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import { loadAllData } from "./data-loader.js";
+import { loadAllData } from "./data-loader.ts";
 import { processPlaces } from "./processors/places.js";
 import { processLibraries } from "./processors/libraries.js";
 import { processMsItems } from "./processors/msitems.js";
@@ -10,7 +10,6 @@ import { processCodUnits } from "./processors/cod-units.js";
 import { processStrata } from "./processors/strata.js";
 import { processWorks } from "./processors/works.js";
 import { processManuscripts } from "./processors/manuscripts.js";
-import { ProcessingLogger } from "./utils/logger.js";
 
 // Set up output folder
 const outputFolder = join(process.cwd(), "src", "content", "data");
@@ -19,34 +18,44 @@ mkdirSync(outputFolder, { recursive: true });
 /**
  * Simple function to save JSON data to file
  */
-function saveJSON(filename, data) {
+function saveJSON(filename: string, data: unknown): void {
 	const filePath = join(outputFolder, filename);
 	writeFileSync(filePath, JSON.stringify(data, null, 2), { encoding: "utf-8" });
-	ProcessingLogger.info(`💾 Saved ${filename}`);
+	console.log(`💾 Saved ${filename}`);
 }
 
 /**
  * Main processing pipeline
  */
-async function processAllData() {
+async function processAllData(): Promise<{
+	places: unknown[];
+	libraries: unknown[];
+	msItems: unknown[];
+	hands: unknown[];
+	scribes: unknown[];
+	codUnits: unknown[];
+	strata: unknown[];
+	works: unknown[];
+	manuscripts: unknown[];
+}> {
 	try {
-		ProcessingLogger.info("Starting data preprocessing...");
+		console.log("Starting data preprocessing...");
 
 		// Load all raw data
 		const rawData = loadAllData();
-		ProcessingLogger.info(`Loaded ${Object.keys(rawData).length} data files`);
+		console.log(`Loaded ${Object.keys(rawData).length} data files`);
 
 		// 1. Process independent data first
-		ProcessingLogger.info("Processing independent data...");
+		console.log("Processing independent data...");
 
 		const processedPlaces = processPlaces(rawData.places);
-		ProcessingLogger.logStep("places", processedPlaces.length);
+		console.log(`Processed ${processedPlaces.length} places`);
 
 		const processedLibraries = processLibraries(rawData.libraries, processedPlaces);
-		ProcessingLogger.logStep("libraries", processedLibraries.length);
+		console.log(`Processed ${processedLibraries.length} libraries`);
 
 		// 2. Process msItems (depends on places, libraries, and raw data.)
-		ProcessingLogger.info("Processing manuscript items...");
+		console.log("Processing manuscript items...");
 		const processedMsItems = processMsItems(rawData.msitems, {
 			manuscripts: rawData.manuscripts,
 			places: processedPlaces,
@@ -62,10 +71,10 @@ async function processAllData() {
 			bibliography: rawData.bibliography,
 			dates: rawData.dates,
 		});
-		ProcessingLogger.logStep("manuscript items", processedMsItems.length);
+		console.log(`Processed ${processedMsItems.length} manuscript items`);
 
 		// 3. Process hands (first pass - without scribe data)
-		ProcessingLogger.info("Processing hands (first pass)...");
+		console.log("Processing hands (first pass)...");
 		const handsFirstPass = processHands(rawData.hands, {
 			handsdated: rawData.handsdated,
 			handsplaced: rawData.handsplaced,
@@ -75,20 +84,19 @@ async function processAllData() {
 			bibliography: rawData.bibliography,
 			dates: rawData.dates,
 		});
-		ProcessingLogger.logStep("hands (first pass)", handsFirstPass.length);
-
+		console.log(`Processed ${handsFirstPass.length} hands (first pass)`);
 		// 4. Process scribes (depends on hands first pass)
-		ProcessingLogger.info("Processing scribes...");
+		console.log("Processing scribes...");
 		const processedScribes = processScribes(rawData.scribes, handsFirstPass);
-		ProcessingLogger.logStep("scribes", processedScribes.length);
+		console.log(`Processed ${processedScribes.length} scribes`);
 
 		// 5. Process hands again (second pass - with scribe data)
-		ProcessingLogger.info("Processing hands (second pass with scribes)...");
+		console.log("Processing hands (second pass with scribes)...");
 		const handsWithScribes = enrichHandsWithScribes(handsFirstPass, processedScribes);
-		ProcessingLogger.logStep("hands (with scribes)", handsWithScribes.length);
+		console.log(`Processed ${handsWithScribes.length} hands (second pass)`);
 
 		// 6. Process cod units (reusable!)
-		ProcessingLogger.info("Processing cod units...");
+		console.log("Processing cod units...");
 		const processedCodUnits = processCodUnits(rawData.cod_units, {
 			cod_unitsprov: rawData.cod_unitsprov,
 			msItemsPlus: processedMsItems,
@@ -96,11 +104,23 @@ async function processAllData() {
 			dates: rawData.dates,
 			bibliography: rawData.bibliography,
 		});
-		ProcessingLogger.logStep("cod units", processedCodUnits.length);
+		console.log(`Processed ${processedCodUnits.length} cod units`);
 
 		// 7. Process strata (reusable!)
-		ProcessingLogger.info("Processing strata...");
-		const processedStrata = processStrata(rawData.strataa, {
+		console.log("Processing strata...");
+
+		type RawStratum = {
+			id: string | number;
+			hit_id: string;
+			number?: string;
+			label?: { value: string }[];
+			character?: { value: string }[];
+			note?: string;
+			locus?: string;
+			manuscript: { id: string | number; hit_id: string; value?: string }[];
+			hand_role: { id: string | number }[];
+		};
+		const processedStrata = processStrata(Object.values(rawData.strataa) as RawStratum[], {
 			handsrole: rawData.handsrole,
 			hands: rawData.hands,
 			handsdated: rawData.handsdated,
@@ -114,20 +134,20 @@ async function processAllData() {
 			filiated_strata: rawData.filiated_strata,
 			works: rawData.works,
 		});
-		ProcessingLogger.logStep("strata", processedStrata.length);
+		console.log(`Processed ${processedStrata.length} strata`);
 
 		// 8. Process works (depends on processed msItems)
-		ProcessingLogger.info("Processing works...");
+		console.log("Processing works...");
 		const processedWorks = processWorks(rawData.works, {
 			people: rawData.people,
 			genres: rawData.genres,
 			msItemsPlus: processedMsItems,
 			bibliography: rawData.bibliography,
 		});
-		ProcessingLogger.logStep("works", processedWorks.length);
+		console.log(`Processed ${processedWorks.length} works`);
 
 		// 9. Process manuscripts (depends on almost everything)
-		ProcessingLogger.info("Processing manuscripts...");
+		console.log("Processing manuscripts...");
 		const processedManuscripts = processManuscripts(rawData.manuscripts, {
 			manuscripts_dated: rawData.manuscripts_dated,
 			processedCodUnits: processedCodUnits,
@@ -145,9 +165,9 @@ async function processAllData() {
 			handsdated: rawData.handsdated,
 			handsplaced: rawData.handsplaced,
 		});
-		ProcessingLogger.logStep("manuscripts", processedManuscripts.length);
+		console.log(`Processed ${processedManuscripts.length} manuscripts`);
 
-		ProcessingLogger.success("All data processed successfully!");
+		console.log("All data processed successfully!");
 
 		return {
 			places: processedPlaces,
@@ -160,8 +180,8 @@ async function processAllData() {
 			works: processedWorks,
 			manuscripts: processedManuscripts,
 		};
-	} catch (error) {
-		ProcessingLogger.error("Processing failed:", error);
+	} catch (error: unknown) {
+		console.error("Processing failed:", error);
 		throw error;
 	}
 }
@@ -169,8 +189,18 @@ async function processAllData() {
 /**
  * Save all processed data to files
  */
-async function saveAllProcessedData(processedData) {
-	ProcessingLogger.info("Saving processed data...");
+async function saveAllProcessedData(processedData: {
+	places: unknown[];
+	libraries: unknown[];
+	msItems: unknown[];
+	hands: unknown[];
+	scribes: unknown[];
+	codUnits: unknown[];
+	strata: unknown[];
+	works: unknown[];
+	manuscripts: unknown[];
+}): Promise<void> {
+	console.log("Saving processed data...");
 
 	// Save each file - simple and straightforward
 	saveJSON("places.json", processedData.places);
@@ -183,7 +213,7 @@ async function saveAllProcessedData(processedData) {
 	saveJSON("works.json", processedData.works);
 	saveJSON("manuscripts.json", processedData.manuscripts);
 
-	ProcessingLogger.success("All files saved successfully!");
+	console.log("All files saved successfully!");
 }
 
 /**
@@ -197,9 +227,9 @@ async function main() {
 		// Save all processed data
 		await saveAllProcessedData(processedData);
 
-		ProcessingLogger.success("Data preprocessing completed successfully!");
-	} catch (error) {
-		ProcessingLogger.error("Main process failed:", error);
+		console.log("Data preprocessing completed successfully!");
+	} catch (error: unknown) {
+		console.error("Main process failed:", error);
 		process.exit(1);
 	}
 }

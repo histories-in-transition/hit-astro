@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "../utils/utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.js";
 
 /**
  * Process hands data by cleaning and standardizing the structure

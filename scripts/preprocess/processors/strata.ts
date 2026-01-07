@@ -1,4 +1,4 @@
-import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "../utils/utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "./utils.js";
 
 /**
  * Process strata data by cleaning and standardizing the structure
@@ -15,7 +15,35 @@ import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "../utils/utils.
  * @param {Array} deps.strata_filiations - Strata filiations data
  * @returns {Array} Processed strata with prev/next navigation
  */
-export function processStrata(strata, deps) {
+
+type RawStratum = {
+	id: string | number;
+	hit_id: string;
+	number?: string;
+	label?: { value: string }[];
+	character?: { value: string }[];
+	note?: string;
+	locus?: string;
+	manuscript: { id: string | number; hit_id: string; value?: string }[];
+	hand_role: { id: string | number }[];
+};
+
+type StrataDeps = {
+	handsrole: unknown[];
+	hands: unknown[];
+	handsdated: unknown[];
+	handsplaced: unknown[];
+	msItemsPlus: unknown[];
+	places: unknown[];
+	dates: unknown[];
+	bibliography: unknown[];
+	strata_filiations: unknown;
+	strataa: unknown;
+	filiated_strata: unknown;
+	works: unknown[];
+};
+
+export function processStrata(strata: RawStratum[], deps: StrataDeps): unknown[] {
 	if (!Array.isArray(strata)) {
 		throw new Error("processStrata expects an array of strata");
 	}
@@ -56,20 +84,6 @@ export function processStrata(strata, deps) {
 	return addPrevNextToMsItems(processedStrata, "hit_id", "label");
 }
 
-/**
- * Transform a single stratum
- * @param {Object} stratum - Raw stratum data
- * @param {Array} handsrole - Hand roles data
- * @param {Array} hands - Raw hands data
- * @param {Array} handsdated - Hand dating data
- * @param {Array} handsplaced - Hand placement data
- * @param {Array} msItemsPlus - Processed manuscript items
- * @param {Array} places - Places data
- * @param {Array} dates - Dates data
- * @param {Array} bibliography - Bibliography data
- * @param {Array} strata_filiations
- * @returns {Object} Transformed stratum
- */
 function transformStratum(
 	stratum,
 	handsrole,
@@ -144,16 +158,31 @@ function transformStratum(
 		stratum_filiations: stratum_filiations,
 	};
 }
-/**
- * function to enrich stratum with stratum_filiations
- *
- * @param {*} stratum
- * @param {*} strata_filiations
- * @param {*} filiated_strata
- * @param {*} strataa
- * @returns
- */
-function getStratumFiliations(stratum, strata_filiations, filiated_strata, strataa) {
+
+type IdRef = { id: string | number };
+
+type RawFiliation = {
+	hit_id: string;
+	stratum: IdRef[];
+	filiated_stratum: IdRef[];
+	reason?: { value?: string };
+	note?: string;
+};
+
+type RawStratumLite = {
+	id: string | number;
+	hit_id: string;
+	label?: { value: string }[];
+	note?: string;
+	locus?: string;
+	catalog_url?: string;
+};
+function getStratumFiliations(
+	stratum: { id: string | number },
+	strata_filiations: Record<string, RawFiliation>,
+	filiated_strata: Record<string, RawStratumLite>,
+	strataa: Record<string, RawStratumLite>,
+) {
 	return Object.values(strata_filiations || {})
 		.filter((filiation) => filiation.stratum.some((str) => str.id === stratum.id))
 		.map((filiation) => {

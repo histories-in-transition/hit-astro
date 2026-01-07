@@ -5,13 +5,13 @@ import { request } from "@acdh-oeaw/lib";
 // fetch baserow dumps from github and store them in the raw folder
 // this script is meant to be run only once by build to fetch the initial data
 // subsequent preprocessing of the data is done with the preprocess-data.js script
-const baseUrl =
+const baseUrl: string =
 	"https://raw.githubusercontent.com/histories-in-transition/hit-baserow-dump/refs/heads/main/json_dumps/";
 
-const folderPath = join(process.cwd(), "src", "content", "raw");
+const folderPath: string = join(process.cwd(), "src", "content", "raw");
 mkdirSync(folderPath, { recursive: true });
 
-const fileNames = [
+const fileNames: string[] = [
 	"hands.json",
 	"hands_dated.json",
 	"hands_placed.json",
@@ -34,17 +34,17 @@ const fileNames = [
 	"people.json",
 ];
 
-async function fetchData(fileName) {
+async function fetchData(fileName: string): Promise<void> {
 	try {
-		const data = await request(new URL(fileName, baseUrl), { responseType: "json" });
+		const data: unknown = await request(new URL(fileName, baseUrl), { responseType: "json" });
 		writeFileSync(join(folderPath, fileName), JSON.stringify(data, null, 2), "utf-8");
 		console.log(`✅ Saved: ${fileName}`);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error(`❌ Error fetching ${fileName}:`, error);
 	}
 }
 
-async function fetchAllData() {
+async function fetchAllData(): Promise<void> {
 	await Promise.all(fileNames.map(fetchData));
 	console.log(`All files have been fetched and stored`);
 }

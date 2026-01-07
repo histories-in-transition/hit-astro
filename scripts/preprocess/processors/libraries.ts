@@ -1,12 +1,25 @@
-import { addPrevNextToMsItems, enrichPlaces } from "../utils/utils.js";
+import { addPrevNextToMsItems, enrichPlaces } from "./utils.js";
 
 /**
  * Process libraries data by cleaning and standardizing the structure
- * @param {Array} libraries - Raw libraries data
- * @param {Array} places - Places data for enrichment
- * @returns {Array} Processed libraries with prev/next navigation
  */
-export function processLibraries(libraries, places) {
+
+type RawLibrary = {
+	id?: number;
+	hit_id?: string;
+	label?: string;
+	library_full?: string;
+	settlement?: string;
+	wikidata?: string;
+	gnd_url?: string;
+};
+
+type RawPlace = {
+	id?: number;
+	hit_id?: string;
+};
+
+export function processLibraries(libraries: RawLibrary[], places: RawPlace[]) {
 	if (!Array.isArray(libraries)) {
 		throw new Error("processLibraries expects an array of libraries");
 	}
@@ -28,7 +41,7 @@ export function processLibraries(libraries, places) {
  * @param {Array} places - Places data for enrichment
  * @returns {Object} Transformed library
  */
-function transformLibrary(library, places) {
+function transformLibrary(library: RawLibrary, places: RawPlace[]) {
 	return {
 		id: library.id,
 		hit_id: library.hit_id,

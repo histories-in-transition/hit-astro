@@ -5,9 +5,11 @@ import { join } from "path";
 
 const RAW_DATA_DIR = join(process.cwd(), "src", "content", "raw");
 
-function loadJSON(filename) {
+function loadJSON(filename: string): unknown[] {
 	const filePath = join(RAW_DATA_DIR, filename);
-	return Object.values(JSON.parse(readFileSync(filePath, "utf8")));
+	const raw = readFileSync(filePath, "utf8");
+
+	return Object.values(JSON.parse(raw));
 }
 
 // Export all the data loading functions
