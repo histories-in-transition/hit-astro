@@ -6,11 +6,11 @@ import Article from "@/components/article.astro";
 import worksjson from "@/content/data/works.json";
 import type {Work} from "@/types";
 
-import TabulatorTable from "@/components/tabulator-table.jsx";
+import TabulatorTable from "@/components/tabulator-table.svelte";
 
 import { workDetailTableConfig } from "@/lib/tabulator-table-configs.js";
 
-import MapLeaflet from "@/components/map-leaflet.jsx";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 
 import {processWorkData} from "@/lib/make-geojson.js";
 
@@ -199,7 +199,7 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 			<section class="m-5 overflow-x-auto space-y-5" aria-labelledby="transmission">
 				<h2 id="transmission" class="text-xl font-semibold text-brand-800">Überlieferung:</h2>
 				{work.ms_transmission?.map(tr => tr.orig_place).flat().length > 0 &&					
-					<MapLeaflet client:only="react" geoJsonData={geoJsonData}/>
+					<MapLeaflet client:only="svelte" geoJsonData={geoJsonData}/>
 				}
 					{/* mss transmission in details for small screens */}
 

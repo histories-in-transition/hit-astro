@@ -5,7 +5,7 @@ import NavLink from "@/components/nav-link.astro";
 import hands from "@/content/data/hands.json";
 import type {Hand} from "@/types"
 
-import MapLeaflet from "@/components/map-leaflet.jsx";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 import {processHandsData} from "@/lib/make-geojson.js";
 
 
@@ -147,7 +147,7 @@ const geoJsonData = processHandsData(item);
             : ''}                                    
                   </dl>
                   {item.placed.length > 0 &&
-      <MapLeaflet client:only="react" geoJsonData={geoJsonData}></MapLibre>}
+      <MapLeaflet client:only="svelte" geoJsonData={geoJsonData}></MapLeaflet>}
          
         </div>
         
@@ -208,7 +208,7 @@ const geoJsonData = processHandsData(item);
                     <td class="p-2 border border-neutral-200">{role.scribe_type?.map(type => type.value).join(', ')}</td>
                     <td class="p-2 border border-neutral-200">{role.function?.map(func => func.value).join(', ')}</td>
                     <td class="p-2 border border-gray-300">{role.scope}</td>
-                    <td class="p-2 border border-gray-300">{role.locus_layout?.join(', ')}</td>
+                    <td class="p-2 border border-gray-300">{role.locus_layout?.map(layout => layout.value).join(', ')}</td>
                   </tr>
                 ))
             )}

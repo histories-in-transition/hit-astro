@@ -4,7 +4,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import {processMSData} from "@/lib/make-geojson.js";
-import MapLeaf from "@/components/map-leaflet.jsx";
+import MapLeaf from "@/components/map-leaflet.svelte";
 import type { Manuscript } from "@/types/index.ts";
 import manuscripts from "@/content/data/manuscripts.json";
 import { makeSuperScript } from "@/lib/utils.js";
@@ -112,7 +112,7 @@ const geoData = processMSData(manuscript)
                    
                   </dl>
                   <div class="print:hidden">
-                    <MapLeaf client:only="react" geoJsonData={geoData}/>
+                    <MapLeaf client:only="svelte" geoJsonData={geoData}/>
                   </div>
              </div>
               {manuscript.content_summary &&

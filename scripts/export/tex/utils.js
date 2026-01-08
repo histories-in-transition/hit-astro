@@ -1,6 +1,6 @@
 // use marginal note for Section abbreviation, check if there is something to write (value)
 // if so write the marginal note (label) with its value
-// used in Manuscript.jsx for sections G: B: etc and in MsContents
+// used in Manuscript for sections G: B: etc and in MsContents
 export const mn = (label, value) =>
 	value && value.toString().trim()
 		? `\\begin{adjustwidth}{+20pt}{}\\noindent\\makebox[0pt][r]{${label}:\\quad}${value}\\end{adjustwidth}\n\n`

@@ -1,7 +1,7 @@
 ---
 import PageLayout from "@/layouts/page-layout.astro";
 import TableHead from "@/components/table-head.astro";
-import TabulatorTable from "@/components/tabulator-table.jsx";
+import TabulatorTable from "@/components/tabulator-table.svelte";
 import { handsTableConfig } from "@/lib/tabulator-table-configs.js";
 import hands from "@/content/data/hands.json";
 
@@ -17,7 +17,7 @@ const rowClickConfig = handsTableConfig.getRowClickConfig;
 		definition="Das schriftliche Ergebnis der Arbeit eines einzelnen Schreibers (identifiziert oder nicht) innerhalb einer Handschrift."
 	>
 		<TabulatorTable
-			client:only="react"
+			client:only="svelte"
 			data={tableData}
 			columns={columns}
 			tableId="hands-table"

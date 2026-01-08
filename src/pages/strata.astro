@@ -1,7 +1,7 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
-import TabulatorTable from "@/components/tabulator-table.jsx";
+import TabulatorTable from "@/components/tabulator-table.svelte";
 import { strataTableConfig } from "@/lib/tabulator-table-configs.js";
 import strata from "@/content/data/strata.json";
 
@@ -14,7 +14,7 @@ const rowClickConfig = strataTableConfig.getRowClickConfig;
 <PageLayout title="strata">
 	<TableHead title="Strata" definition="TBD">
 		<TabulatorTable
-			client:only="react"
+			client:only="svelte"
 			data={tableData}
 			columns={columns}
 			tableId="strata-table"

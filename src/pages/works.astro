@@ -1,12 +1,12 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
-import TabulatorTable from "@/components/tabulator-table.jsx";
+import TabulatorTable from "@/components/tabulator-table.svelte";
 import { worksTableConfig } from "@/lib/tabulator-table-configs.js";
 import works from "@/content/data/works.json";
 import msitems from "@/content/data/ms_items.json";
 
-import MapLeaflet from "@/components/map-leaflet.jsx";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 import { processMsItemsData } from "@/lib/make-geojson.js";
 const geoJsonData = processMsItemsData(msitems);
 
@@ -18,9 +18,9 @@ const rowClickConfig = worksTableConfig.getRowClickConfig;
 
 <PageLayout title="works">
 	<TableHead title="Werke">
-		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
+		<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 		<TabulatorTable
-			client:only="react"
+			client:only="svelte"
 			data={tableData}
 			columns={columns}
 			tableId="work-detail-table"

@@ -1,11 +1,11 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
-import TabulatorTable from "@/components/tabulator-table.jsx";
+import TabulatorTable from "@/components/tabulator-table.svelte";
 import { msItemsTableConfig } from "@/lib/tabulator-table-configs.js";
 import msItems from "@/content/data/ms_items.json";
 
-import MapLeaflet from "@/components/map-leaflet.jsx";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 import { processMsItemsData } from "@/lib/make-geojson.js";
 const geoJsonData = processMsItemsData(msItems);
 
@@ -20,9 +20,9 @@ const rowClickConfig = msItemsTableConfig.getRowClickConfig;
 		title="MS Elemente"
 		definition="Manuskriptelement bezeichnet ein einzelnes Werk oder Element innerhalb des Inhalts einer Handschrift."
 	>
-		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
+		<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 		<TabulatorTable
-			client:only="react"
+			client:only="svelte"
 			data={tableData}
 			columns={columns}
 			tableId="msItems-table"

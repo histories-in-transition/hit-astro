@@ -5,7 +5,7 @@ import NavLink from "@/components/nav-link.astro";
 import scribesJson from "@/content/data/scribes.json";
 import type { Scribe } from "@/types";
 
-import MapLeaflet from "@/components/map-leaflet.jsx";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 import {processScribesData} from "@/lib/make-geojson.js";
 
 export async function getStaticPaths() {
@@ -85,7 +85,7 @@ const geoJson = processScribesData(scribe);
                     </dd>
 				</dl>
                 {scribe.places.length > 0 && 
-                <MapLeaflet client:only="react"
+                <MapLeaflet client:only="svelte"
                 geoJsonData={geoJson}></MapLeaflet>}
                 </div>
             </section>
