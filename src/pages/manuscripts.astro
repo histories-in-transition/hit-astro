@@ -1,11 +1,11 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import TableHead from "../components/table-head.astro";
-import TabulatorTable from "@/components/tabulator-table.jsx";
+import TabulatorTable from "@/components/tabulator-table.svelte";
 import { manuscriptsTableConfig } from "@/lib/tabulator-table-configs.js";
 import manuscripts from "@/content/data/manuscripts.json";
 
-import MapLeaflet from "@/components/map-leaflet.jsx";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 import { processMSData } from "@/lib/make-geojson.js";
 const geoJsonData = processMSData(manuscripts);
 
@@ -17,9 +17,9 @@ const rowClickConfig = manuscriptsTableConfig.getRowClickConfig;
 
 <PageLayout title="manuscripts">
 	<TableHead title="Handschriften">
-		<MapLeaflet client:only="react" geoJsonData={geoJsonData} />
+		<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 		<TabulatorTable
-			client:only="react"
+			client:only="svelte"
 			data={tableData}
 			columns={columns}
 			tableId="work-detail-table"
