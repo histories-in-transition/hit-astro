@@ -192,7 +192,7 @@ export const manuscriptsTableConfig = {
 			{
 				title: "Datierung",
 				field: "origDate",
-				headerFilterPlaceholder: "e.g. nach 810",
+				headerFilterPlaceholder: "e.g. vor 781, nach 810",
 				responsive: 3,
 				widthGrow: 2,
 				minWidth: 150,

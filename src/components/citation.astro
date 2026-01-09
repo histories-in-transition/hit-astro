@@ -1,0 +1,13 @@
+<div class="border-t border-neutral-300 py-5 space-y-2 text-brand-900 p-4 md:px-0">
+	<p class="text-brand-700 font-semibold">Zitierhinweis:</p>
+	<p>
+		<slot />
+		<span class="italic">Histories in Transition</span> (2025). URL: <span id="pathname-placeholder"
+		></span>.
+	</p>
+</div>
+<script>
+	import { insertCurrentURL } from "@/lib/getCurrentURL";
+
+	insertCurrentURL();
+</script>

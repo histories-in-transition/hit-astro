@@ -13,7 +13,8 @@
 		"generate-index": "node ./scripts/search-index/generate-search-index.js && node ./scripts/search-index/generate-strata-index.js",
 		"build": "astro build",
 		"start": "astro preview",
-		"astro": "astro"
+		"astro": "astro",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@acdh-oeaw/lib": "^0.1.12",
@@ -35,7 +36,6 @@
 		"html2canvas": "^1.4.1",
 		"instantsearch.css": "^8.9.0",
 		"instantsearch.js": "^4.85.2",
-		"jsonpath-plus": "^10.3.0",
 		"jspdf": "^2.5.2",
 		"leaflet": "^1.9.4",
 		"leaflet.markercluster": "^1.5.3",
@@ -47,7 +47,6 @@
 		"tabulator-tables": "^6.3.1",
 		"tailwindcss": "^4.1.17",
 		"tsx": "^4.21.0",
-		"typescript": "^5.9.3",
 		"typesense": "^2.1.0",
 		"typesense-instantsearch-adapter": "^2.9.0"
 	},
@@ -56,6 +55,7 @@
 		"@types/node": "^22.19.2",
 		"@types/tabulator-tables": "^6.3.0",
 		"prettier": "^3.7.4",
-		"prettier-plugin-astro": "^0.14.1"
+		"prettier-plugin-astro": "^0.14.1",
+		"typescript": "^5.9.3"
 	}
 }

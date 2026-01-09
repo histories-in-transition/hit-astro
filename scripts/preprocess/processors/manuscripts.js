@@ -1,3 +1,4 @@
+//ts-check
 import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.js";
 
 import { getCodUnitsForManuscript } from "./cod-units.js";

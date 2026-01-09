@@ -1,4 +1,4 @@
-export function makeSuperScript(text) {
+export function makeSuperScript(text: string): string {
 	if (!text) return text;
 	// Regex to find text between *asterisks*
 	const regex = /\*\*(.*?)\*\*/g;

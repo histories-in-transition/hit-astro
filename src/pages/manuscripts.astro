@@ -4,10 +4,11 @@ import TableHead from "../components/table-head.astro";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { manuscriptsTableConfig } from "@/lib/tabulator-table-configs.js";
 import manuscripts from "@/content/data/manuscripts.json";
+import type { Manuscript } from "@/types/index.ts";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
-import { processMSData } from "@/lib/make-geojson.js";
-const geoJsonData = processMSData(manuscripts);
+import { processMSData } from "@/lib/make-geojson.ts";
+const geoJsonData = processMSData(manuscripts as Manuscript[]);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = manuscriptsTableConfig.transformData(manuscripts);

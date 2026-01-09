@@ -4,10 +4,11 @@ import TableHead from "../components/table-head.astro";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { msItemsTableConfig } from "@/lib/tabulator-table-configs.js";
 import msItems from "@/content/data/ms_items.json";
+import type { MsItem } from "@/types/index.ts";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
-import { processMsItemsData } from "@/lib/make-geojson.js";
-const geoJsonData = processMsItemsData(msItems);
+import { processMsItemsData } from "@/lib/make-geojson.ts";
+const geoJsonData = processMsItemsData(msItems as MsItem[]);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = msItemsTableConfig.transformData(msItems);

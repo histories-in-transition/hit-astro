@@ -6,7 +6,7 @@ import scribesJson from "@/content/data/scribes.json";
 import type { Scribe } from "@/types";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
-import {processScribesData} from "@/lib/make-geojson.js";
+import {processScribesData} from "@/lib/make-geojson.ts";
 
 export async function getStaticPaths() {
 	const scribes = Object.values(scribesJson);

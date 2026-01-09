@@ -1,4 +1,4 @@
-import { withBasePath } from "./withBasePath";
+import { withBasePath } from "./withBasePath.ts";
 
 const searchForm = document.querySelector<HTMLFormElement>("#searchForm");
 const searchInput = document.querySelector<HTMLInputElement>("#searchInput");

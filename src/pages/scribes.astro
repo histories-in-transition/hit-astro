@@ -6,7 +6,7 @@ import { scribesTableConfig } from "@/lib/tabulator-table-configs.js";
 import scribes from "@/content/data/scribes.json";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
-import { processScribesData } from "@/lib/make-geojson.js";
+import { processScribesData } from "@/lib/make-geojson.ts";
 const geoJsonData = processScribesData(scribes);
 
 // Transform data and prepare columns for Tabulator Table

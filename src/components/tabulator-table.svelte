@@ -3,7 +3,7 @@
 	import { TabulatorFull as Tabulator } from "tabulator-tables";
 	import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 
-	import { withBasePath } from "@/lib/withBasePath.js";
+	import { withBasePath } from "@/lib/withBasePath";
 	import { dateAccessor, dateFormatter, dateRangeFilter } from "@/lib/tabulator-utils.js";
 
 	export let data = [];

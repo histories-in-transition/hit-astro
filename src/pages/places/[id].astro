@@ -5,9 +5,6 @@ import NavLink from "@/components/nav-link.astro";
 import placesJson from "@/content/data/places.json";
 import mss from "@/content/data/manuscripts.json";
 
-//import MapLeaflet from "@/components/map-leaflet.svelte";
-//import {processScribesData} from "@/lib/make-geojson.js";
-
 export async function getStaticPaths() {
 	const places = Object.values(placesJson);
 
@@ -21,7 +18,6 @@ export async function getStaticPaths() {
 }
 
 const { data: place } = Astro.props;
-// const geoJson = processScribesData(scribe);
 ---
 
 <PageLayout title={place.name}>
