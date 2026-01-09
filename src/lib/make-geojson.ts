@@ -201,7 +201,7 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 					title: mssData.shelfmark,
 					description: `${pl.value} ~> Entstehungsort`,
 					type: "origin",
-					url: `/places/${pl.hit_id}`,
+					url: `/manuscripts/${mssData.hit_id}`,
 					hit_id: mssData.hit_id,
 					place_hit_id: pl.hit_id,
 				});
@@ -216,7 +216,7 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 						title: mssData.shelfmark,
 						description: `${pl.value} ~> Provenienz`,
 						type: "provenance",
-						url: `/places/${pl.hit_id}`,
+						url: `/manuscripts/${mssData.hit_id}`,
 						hit_id: mssData.hit_id,
 						place_hit_id: pl.hit_id,
 					});
