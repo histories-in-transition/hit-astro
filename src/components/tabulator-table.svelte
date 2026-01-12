@@ -157,16 +157,19 @@
 		{#if showDownloadButtons}
 			<div class="flex gap-2 justify-end">
 				<button on:click={() => download("csv", "csv")}
+					aria-label="Als CSV herunterladen"
 					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
-					<span class="sr-only">Herunterladen als </span>CSV
+					CSV
 				</button>
 				<button on:click={() => download("json", "json")}
+					aria-label="Als JSON herunterladen"
 					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
-					<span class="sr-only">Herunterladen als</span> JSON
+					JSON
 				</button>
 				<button on:click={() => download("html", "html", { style: true })}
+					aria-label="Als HTML herunterladen"
 					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
-					<span class="sr-only">Herunterladen als</span> HTML
+					HTML
 				</button>
 			</div>
 		{/if}
