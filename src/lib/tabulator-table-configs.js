@@ -271,7 +271,7 @@ export const worksTableConfig = {
 			return {
 				id: work.id || "",
 				work_hit_id: work.hit_id || "",
-				hit_id: "",
+				hit_id: "", // leave empty for work level, leaflet use the id of msitems
 				title: work.title || "",
 				author: [...new Set(work.author.map((a) => a.name))].join(", "),
 				genre: [...new Set(work.genre.map((g) => g.value))].join(", "),
@@ -279,7 +279,7 @@ export const worksTableConfig = {
 				origPlace: orgPlace,
 				provenance: provenance,
 				origDate: orgDate,
-				_children: transmission,
+				_children: transmission, // children for the msTransmission msitems in dataTree
 			};
 		});
 	},
@@ -341,8 +341,6 @@ export const worksTableConfig = {
 				field: "origDate",
 				headerFilterPlaceholder: "e.g. 850, nach 850",
 				minWidth: 150,
-				// Ensures filtering and sorting work correctly
-
 				responsive: 2,
 			},
 		];

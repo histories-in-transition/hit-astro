@@ -154,7 +154,7 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 				const feature = createPointFeature(pl, {
 					title: mssData.shelfmark,
 					description: `Aktueller Standort: ${pl.value}, ${library.library_full ?? "N/A"}`,
-					type: "provenance",
+					type: "currentLocation",
 					url: `/places/${pl.hit_id}`,
 					hit_id: mssData.hit_id,
 					place_hit_id: pl.hit_id,

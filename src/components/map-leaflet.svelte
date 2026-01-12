@@ -12,18 +12,18 @@
 	export let className = "w-full h-64 md:h-96 border rounded z-10";
 	export let initialView = [50, 10];
 	export let initialZoom = 3;
-	export let markerColor = "#B42222"; // kept for API compatibility
 
 	let mapEl;
 	let map;
 	let originLayer;
 	let provenanceLayer;
+	let currentLocationLayer;
 
 	// Icons
 	const pinGreen = new URL("@/icons/map-pin-green.png", import.meta.url).toString();
 	const pinRed = new URL("@/icons/map-pin-red.png", import.meta.url).toString();
 	const pin = new URL("@/icons/map-pin.png", import.meta.url).toString();
-
+	const pinBlue = new URL("@/icons/map-pin-blue.png", import.meta.url).toString();
 	const originIcon = L.icon({
 		iconUrl: pinRed,
 		iconSize: [25, 25],
@@ -33,6 +33,13 @@
 
 	const provenanceIcon = L.icon({
 		iconUrl: pinGreen,
+		iconSize: [25, 25],
+		iconAnchor: [12, 41],
+		popupAnchor: [0, -41],
+	});
+
+	const currentPlaceIcon = L.icon({
+		iconUrl: pinBlue,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
@@ -48,10 +55,11 @@
 	L.Marker.prototype.options.icon = customIcon;
 
 	function updateMapMarkers(dataToShow) {
-		if (!map || !originLayer || !provenanceLayer) return;
+		if (!map || !originLayer || !provenanceLayer || !currentLocationLayer) return;
 
 		originLayer.clearLayers();
 		provenanceLayer.clearLayers();
+		currentLocationLayer.clearLayers();
 
 		dataToShow?.features?.forEach((feature) => {
 			const { geometry, properties } = feature;
@@ -65,7 +73,9 @@
 
 				const marker = L.marker(
 					[geometry.coordinates[1], geometry.coordinates[0]],
-					{ icon: type === "origin" ? originIcon : provenanceIcon }
+					{ icon: type === "origin" ? originIcon 
+					: type === "provenance" ? provenanceIcon 
+					:	currentPlaceIcon }
 				);
 
 				if (properties) {
@@ -90,8 +100,10 @@
 
 				if (type === "origin") {
 					originLayer.addLayer(marker);
-				} else {
+				} else if (type === "provenance") {
 					provenanceLayer.addLayer(marker);
+				} else if (type === "currentLocation") {
+					currentLocationLayer.addLayer(marker);
 				}
 			}
 		});
@@ -112,6 +124,9 @@
 			}
 		}
 	}
+
+	let cleanupResize;
+	let resizeHandle;
 
 	onMount(() => {
 		map = L.map(mapEl).setView(initialView, initialZoom);
@@ -152,14 +167,42 @@
 			},
 		});
 
+		currentLocationLayer = L.markerClusterGroup({
+			spiderfyOnMaxZoom: true,
+			showCoverageOnHover: false,
+			zoomToBoundsOnClick: true,
+			maxClusterRadius: 50,
+			iconCreateFunction: (cluster) => {
+				const count = cluster.getChildCount();
+				return L.divIcon({
+					html: `<div class="bg-cyan-700 opacity-60 text-white rounded-full w-8 h-8 flex items-center justify-center">${count}</div>`,
+					className: "custom-cluster-icon-currentLocation",
+					iconSize: [30, 30],
+				});
+			},
+		});
+
 		map.addLayer(originLayer);
 		map.addLayer(provenanceLayer);
+		map.addLayer(currentLocationLayer);
 
 		// Layer control
 		const hasOrigin = geoJsonData?.features?.some(f => f.properties?.type === "origin");
 		const hasProv = geoJsonData?.features?.some(f => f.properties?.type === "provenance");
+		const hasCurrent = geoJsonData?.features?.some(f => f.properties?.type === "currentLocation");
 
-		if (hasOrigin && hasProv) {
+		if (hasOrigin && hasProv && hasCurrent) {
+			L.control.layers(
+				{},
+				{
+					Entstehungsort: originLayer,
+					Provenienz: provenanceLayer,
+					"Aktueller Standort": currentLocationLayer,
+				},
+				{ collapsed: false }
+			).addTo(map);
+		}
+		else if (hasOrigin && hasProv) {
 			L.control.layers(
 				{},
 				{
@@ -167,7 +210,7 @@
 					Provenienz: provenanceLayer,
 				},
 				{ collapsed: false }
-			).addTo(map);
+			).addTo(map);	
 		}
 
 		updateMapMarkers(geoJsonData);
@@ -182,13 +225,64 @@
 			};
 			updateMapMarkers(filtered);
 		};
-	});
+		function enableVerticalResize(mapEl, map, handle) {
+			let startY;
+			let startHeight;
+
+			const onMouseMove = (e) => {
+				const newHeight = startHeight + (e.clientY - startY);
+				mapEl.style.height = `${Math.max(newHeight, 200)}px`;
+				map.invalidateSize();
+			};
+
+			const onMouseUp = () => {
+				document.removeEventListener("mousemove", onMouseMove);
+				document.removeEventListener("mouseup", onMouseUp);
+			};
+
+			const onMouseDown = (e) => {
+				startY = e.clientY;
+				startHeight = mapEl.offsetHeight;
+
+				document.addEventListener("mousemove", onMouseMove);
+				document.addEventListener("mouseup", onMouseUp);
+			};
+
+			handle.addEventListener("mousedown", onMouseDown);
+
+			return () => {
+				handle.removeEventListener("mousedown", onMouseDown);
+				document.removeEventListener("mousemove", onMouseMove);
+				document.removeEventListener("mouseup", onMouseUp);
+			};
+}
+cleanupResize = enableVerticalResize(mapEl, map, resizeHandle);
+});
 
 	onDestroy(() => {
-		delete window.updateMapWithFilteredIds;
-		map?.remove();
-		map = null;
-	});
+	cleanupResize?.();
+	map?.remove();
+});
+	
+
 </script>
 
 <div bind:this={mapEl} class={className} id="leaflet-map" ></div>
+ <!-- Drag handle -->
+  <div
+  bind:this={resizeHandle}
+  class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-brand-600 hover:bg-brand-700 active:bg-brand-500 text-brand-50 select-none"
+title="Kartenhöhe ändern"
+  aria-label="Kartenhöhe ändern"
+  ><svg xmlns="http://www.w3.org/2000/svg" 
+  width="24" height="24" 
+  viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+  class="lucide lucide-separator-horizontal-icon lucide-separator-horizontal">
+  <path d="m16 16-4 4-4-4"/>
+  <path d="M3 12h18"/>
+  <path d="m8 8 4-4 4 4"/>
+</svg>
+</div>
+
+

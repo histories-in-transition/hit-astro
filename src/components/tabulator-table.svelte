@@ -108,17 +108,32 @@
 			}
 
 			// Map updates
+
 			if (updateMapOnFilter) {
 				let timeout;
+				let lastFilterSignature = null;
 
-				tabulator.on("dataFiltered", () => {
-					clearTimeout(timeout);
-					timeout = setTimeout(() => {
-						const rows = tabulator.getData("active");
-						const ids = [...new Set(rows.flatMap(r => extractMapIds(r, mapIdField)))];
-						window.updateMapWithFilteredIds?.(ids);
-					}, 50);
-				});
+
+				tabulator.on("dataFiltered", (filters) => {
+				// tabulator fires update also on expanding dataTree children rows
+				// need to check if the filters really changes the state, update map only then
+				const signature = JSON.stringify(filters || []);
+
+				// Ignore dataTree expand/collapse
+				if (signature === lastFilterSignature) {
+					return;
+				}
+
+				lastFilterSignature = signature;
+
+				clearTimeout(timeout);
+				timeout = setTimeout(() => {
+					const rows = tabulator.getData("active");
+					const ids = [...new Set(rows.flatMap(r => extractMapIds(r, mapIdField)))];
+					window.updateMapWithFilteredIds?.(ids);
+				}, 50);
+			});
+
 			}
 		});
 	});
@@ -143,15 +158,15 @@
 			<div class="flex gap-2 justify-end">
 				<button on:click={() => download("csv", "csv")}
 					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
-					Download CSV
+					<span class="sr-only">Herunterladen als </span>CSV
 				</button>
 				<button on:click={() => download("json", "json")}
 					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
-					Download JSON
+					<span class="sr-only">Herunterladen als</span> JSON
 				</button>
 				<button on:click={() => download("html", "html", { style: true })}
 					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
-					Download HTML
+					<span class="sr-only">Herunterladen als</span> HTML
 				</button>
 			</div>
 		{/if}
