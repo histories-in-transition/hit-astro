@@ -1,0 +1,18 @@
+---
+const { manuscript } = Astro.props;
+---
+
+<section
+	aria-labelledby="bibl"
+	class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5"
+>
+	<details open>
+		<summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="bibl">
+			Bibliographie
+		</summary>
+
+		<ul>
+			{manuscript.bibliography.map((bibl) => <li>{bibl}</li>)}
+		</ul>
+	</details>
+</section>

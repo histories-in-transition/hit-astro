@@ -1,963 +1,106 @@
 ---
-import {Icon} from "astro-icon/components";
 import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
-import NavLink from "@/components/nav-link.astro";
-import {processMSData} from "@/lib/make-geojson.ts";
-import MapLeaf from "@/components/map-leaflet.svelte";
 import type { Manuscript } from "@/types/index.ts";
 import manuscripts from "@/content/data/manuscripts.json";
-import { makeSuperScript } from "@/lib/utils.js";
+import MsHeader from "@/components/manuscript/MsHeader.astro";
+import MsOverview from "@/components/manuscript/MsOverview.astro";
+import MsHands from "@/components/manuscript/MsHands.astro";
+import MsCodUnits from "@/components/manuscript/MsCodUnits.astro";
+import MsHistory from "@/components/manuscript/MsHistory.astro";
+import MsBibliography from "@/components/manuscript/MsBibliography.astro";
+import MsContent from "@/components/manuscript/MsContent.astro";
+import MsStrata from "@/components/manuscript/MsStrata.astro";
+import { makeSuperScript } from "@/lib/utils.ts";
 
 export async function getStaticPaths() {
+	const paths = manuscripts.map((manuscript) => {
+		const manuscriptId = manuscript.hit_id;
 
-  const paths = manuscripts.map((manuscript) => {
-    const manuscriptId = manuscript.hit_id;     
+		return {
+			params: { id: manuscriptId },
+			props: { data: manuscript as Manuscript },
+		};
+	});
 
-    return {
-      params: { id: manuscriptId },
-      props: { data: manuscript as Manuscript },
-    };
-  });
-
-  return paths;
+	return paths;
 }
 
 const { data: manuscript } = Astro.props;
-const geoData = processMSData(manuscript)
-
 ---
 
-<PageLayout title={manuscript?.shelfmark}> 
-    <Article
-            prevLink={`/manuscripts/${manuscript.prev.id}`}
-            nextLink={`/manuscripts/${manuscript.next.id}`}
-            mainTitle={manuscript?.library[0]?.place[0]?.value + ', ' + manuscript.library[0].abbreviation + ', ' + manuscript.shelfmark}
-            authorEntry={manuscript?.author_entry.map(a => a).join(', ')}
-          >          
-          <div class="grid justify-center gap-2 md:flex md:justify-between">
-            <div class="flex gap-2 md:justify-start">
-              {manuscript.handschriftenportal_url &&
-              <NavLink href={manuscript.handschriftenportal_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600  text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-            >HSP</NavLink>}
-            {manuscript.manuscripta_url &&
-              <NavLink href={manuscript.manuscripta_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-            >manuscripta</NavLink>}
-            {manuscript.digi_url &&
-              <NavLink href={manuscript.digi_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-            >Digitalisat</NavLink>}
-            {manuscript.catalog_url &&
-              <NavLink href={manuscript.catalog_url} class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-            >Katalog</NavLink>}
-            </div>
-            {manuscript.status.some(status => status.includes('Bearbeitung')) && (
-           
-              <div class="flex items-center gap-x-1.5 justify-center text-brand-800 font-semibold text-xs md:text-base p-2 md:p-0">
-                  <Icon aria-hidden="true" name="lucide:construction" />
-                  <span> {manuscript.status.join(' | ')} </span>
-                  <Icon aria-hidden="true" name="lucide:construction" />
-                </div>
-             )}
-             <div class="flex gap-2 justify-center md:justify-end">               
-                <NavLink href=`/tei/manuscripts/${manuscript.hit_id}.xml` class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-                id="download-tei">TEI</NavLink>             
-                <NavLink href=`/pdf/manuscripts/${manuscript.hit_id}.pdf` class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-                id="download-pdf">PDF</NavLink>
-             </div>
-          </div>
-         
-          <section aria-labelledby="msInfo" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msInfo" >
-                Überblick               
-              </summary>
-             <div class="lg:grid lg:grid-cols-[2fr_5fr] items-start lg:gap-4 p-3">
-               
-                  <dl class="grid grid-cols-[2fr_5fr] p-3">
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Titel:</dt>
-                    <dd class="pl-5">{manuscript.title || 'TBD'}</dd>
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Ort:</dt>
-                    <dd class="pl-5">{manuscript?.library[0]?.place[0]?.value}</dd>
-               
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Bibliothek:</dt>
-                    <dd class="pl-5">
-                      {manuscript.library[0].library_full}
-                    </dd>
-               
-                    <dt class="font-semibold border-r border-gray-300 pr-2">Signatur:</dt>
-                    <dd class="pl-5">{manuscript?.shelfmark}</dd>
-                    {manuscript.idno_former && (
-                      <>
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Olim:</dt>
-                    <dd class="pl-5">{manuscript?.idno_former}</dd>
-                      </>
-                    )
-                    }
-                    {manuscript.charakter.length > 0 && (
-                      <>
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Typ der HS:</dt>
-                      <dd class="pl-5">{manuscript.charakter.join(', ')}</dd>
-                      </>
-                    )
-                      
-                    }
-                    {manuscript.case_study.length > 0 && (
-                      <>
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Case study:</dt>
-                      <dd class="pl-5">{manuscript.case_study.join(', ')}</dd>
-                      </>
-                    )
-                      }
-               
-                   
-                  </dl>
-                  <div class="print:hidden">
-                    <MapLeaf client:only="svelte" geoJsonData={geoData}/>
-                  </div>
-             </div>
-              {manuscript.content_summary &&
-                      <dl class=" grid grid-cols-[1fr_5fr] p-3">
-                        <dt class="font-semibold border-r border-gray-300 pr-2">Zusammenfassung:</dt>
-                        <dd class="pl-5">{manuscript.content_summary}</dd>
-                      </dl>}
-            </details>
-          </section>
-          <section aria-labelledby="msMaterial" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msMaterial" >
-                Materialität               
-              </summary>
-         
-              <dl class=" grid grid-cols-[1fr_5fr] p-3">
-                <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
-                <dd class="pl-5">
-                    {manuscript?.material}
-                </dd>
-              
-                <dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
-                <dd class="pl-5">{manuscript?.extent} Bll.</dd>
-                <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-                <dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd>
-                <dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-                <dd class="pl-5">{manuscript?.foliation ?? 'N/A'}</dd>               
-                <dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
-                <dd class="pl-5">
-                  {manuscript.quire_structure && (
-                     <span set:html={makeSuperScript(manuscript?.quire_structure)}></span>
-                  )}
-                </dd>
-              
-                <dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
-                <dd class="pl-5">
-                  {manuscript?.binding_date.map(date => (
-                    <span>{date?.value}</span>
-                  ))}
-                  {manuscript?.binding}</dd>
-              
-                  {manuscript?.acc_mat && (
-                    <>
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
-                      <dd class="pl-5">
-                    {manuscript?.acc_mat}
-                  </dd>
-                    </>
-                  )}
-              </dl>
-            </details>
-          </section> 
-      {manuscript?.hands?.length > 0 
-          ?
-          <section aria-labelledby="msHands" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msHands" >
-                Paläographie               
-              </summary>
-              <p>
-                {manuscript.hands.sort((a, b) => {
-                  const numA = Number(a.label.split('_H. ')[1]);
-                  const numB = Number(b.label.split('_H. ')[1]);
-                  return numA - numB;
-                })
-                .map((hand) => (
-                  <dl class="grid grid-cols-[1fr_5fr] p-3">
-                    <dt class="font-semibold border-r border-gray-300 pr-2">
-                     <NavLink href={`/hands/${hand.hit_id}`}>{hand.label.split('_')[1]}</NavLink></dt>
-                    <dd class="pl-5"></dd>
-                    {(hand.description || hand.nr_daniel) && (
-                     <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Beschreibung:
-                      </dt>
-                      <dd class="pl-5"> 
-                          {hand.description ? hand.description : ''}{hand.nr_daniel ? ` (Daniel Nr. ${hand.nr_daniel})` : ''}
-                      </dd>
-                    )}
-                   
-                      {hand.similar_hands.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Ähnliche Hände:</dt> 
-                        <dd class="pl-5">{hand.similar_hands.map(sh => (
-                          <NavLink href={`/hands/hit_hands__${sh.id}`}>{sh.value}</NavLink>
-                        ))}</dd>
-                        )}
-                      {hand.date.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Datierung:</dt> 
-                        <dd class="pl-5">
-                        {hand.date.map((d) => {
-                          const authority = d.authority[0]?.author ? ` nach ${d.authority[0].author}` : '';
-                          const citation = d.authority[0]?.citation
-                            ? ` (${d.authority[0].citation}${d.page ? `, S. ${d.page}` : ''})`
-                            : '';
-                          const link = d.authority[0]?.link;
-                          const date = d.dated.length > 0
-                            ? d.dated.map(date => date.value).join(', ')
-                            : 'N/A';
+<PageLayout title={manuscript?.shelfmark}>
+	<Article
+		prevLink={`/manuscripts/${manuscript.prev.id}`}
+		nextLink={`/manuscripts/${manuscript.next.id}`}
+		mainTitle={manuscript?.library[0]?.place[0]?.value +
+			", " +
+			manuscript.library[0].abbreviation +
+			", " +
+			manuscript.shelfmark}
+		authorEntry={manuscript?.author_entry.map((a) => a).join(", ")}
+	>
+		<MsHeader manuscript={manuscript} />
+		<MsOverview manuscript={manuscript} />
+		<!-- added msMaterial without components because of the makeSuperScript which returns html - cant be added in astro as props -->
+		<section
+			aria-labelledby="msMaterial"
+			class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5"
+		>
+			<details open>
+				<summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msMaterial">
+					Materialität
+				</summary>
 
-                          return (
-                            <span>
-                              {date}
-                              {authority}
-                              {link ? (
-                                <NavLink href={link}>{citation}</NavLink>
-                              ) : (
-                                citation
-                              )}
-                            </span>
-                          );
-                        })}
-                      </dd>)}
-                      {hand.placed.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Herkunftsorte:</dt>
-                        <dd class="pl-5">
-                        {hand.placed.map((placement) => {
-                          const authority = placement.authority[0]?.author ? ` nach ${placement.authority[0].author}` : '';
-                          const citation = placement.authority[0]?.citation
-                            ? ` (${placement.authority[0].citation}${placement.page ? `, S.${placement.page}` : ''})`
-                            : '';
-                          const link = placement.authority[0]?.link;
-                          const place = placement.place.length > 0
-                            ? placement.place.map(pl => pl.value).join(', ')
-                            : 'N/A';
+				<dl class="grid grid-cols-[1fr_5fr] p-3">
+					<dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
+					<dd class="pl-5">
+						{manuscript?.material}
+					</dd>
 
-                          return (
-                            <span>
-                              {place}
-                              {authority}
-                              {link ? (
-                                <NavLink href={link}>{citation}</NavLink>
-                              ) : (
-                                citation
-                              )}
-                            </span>
-                          );
-                        })}
-                      </dd>
-                        )}
-                        {hand.scribe.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                          Schreiber:</dt>
-                        <dd class="pl-5">{hand.scribe.map(sc => 
-                        <NavLink href={`/scribes/${sc.hit_id}`}>{sc.name}</NavLink>)}</dd>)}
-                       
-                       {hand.hand_roles.length > 0 && (
-                      <>
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                          Aktivitäten:
-                        </dt>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
+					<dd class="pl-5">{manuscript?.extent} Bll.</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+					<dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
+					<dd class="pl-5">{manuscript?.foliation ?? "N/A"}</dd>
+					<dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
+					<dd class="pl-5">
+						{
+							manuscript.quire_structure && (
+								<span set:html={makeSuperScript(manuscript?.quire_structure)} />
+							)
+						}
+					</dd>
 
-                        <dd class="pl-5">
-                          <ul>
-                          {hand.hand_roles.map((role) => {
-                            const c = role.content[0];
-                            const link = c.hit_id ? (
-                              <NavLink href={`/msitems/${c.hit_id}`}>({c.locus})</NavLink>
-                            ) : (
-                              <span>{c.locus ? `fols. ${c.locus}` : "fol. ?"}</span>
-                            );
-                            return (
-                              <li>
-                                {c.title_work?.map((t) => {
-                                  const authors =
-                                    t.author?.length > 0
-                                      ? `${t.author.map((a) => a.name).join(", ")}: `
-                                      : "";
+					<dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
+					<dd class="pl-5">
+						{manuscript?.binding_date.map((date) => <span>{date?.value}</span>)}
+						{manuscript?.binding}
+					</dd>
 
-                                  return (
-                                    <span>
-                                      {authors}
-                                      {t.title} {link} {role.all_in_one ? ` — ${role.all_in_one}` : ''}
-                                    </span>
-                                  );
-                                })}
-                              </li>
-                            );
-                          })}
-                          </ul>
-                        </dd>
-                      </>
-                    )}
+					{
+						manuscript?.acc_mat && (
+							<>
+								<dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
+								<dd class="pl-5">{manuscript?.acc_mat}</dd>
+							</>
+						)
+					}
+				</dl>
+			</details>
+		</section>
 
-                  </dl>
-                ))}
-              </p>
-            </details>
-          </section> 
-          : ''
-        }
-          
-          {manuscript?.cod_units?.length > 0 
-          ?
-          <section aria-labelledby="codUnits" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-                    
-                    {manuscript.cod_units.map((unit) => (
-                      <>  
-                      <details open class="border-b border-neutral-200">
-                        <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="codUnits" >
-                          Kodikologische Einheit {unit.number}               
-                        </summary> 
-                        <p class="px-3 text-brand-900">{unit.notes}</p>                         
-                          <dl class=" grid grid-cols-[1fr_5fr] p-3">
-                             <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
-                            <dd class="pl-5">
-                                {unit.material 
-                                ? unit.material
-                                : 'N/A'}
-                                {unit.material_spec 
-                                ? `: ${unit.material_spec}`
-                                : ''}
-                                {unit.basic_structure.length > 0 ? 
-                                `(${unit.basic_structure.map(struct => struct).join(', ')})` :  ''}
-                                
-                            </dd>
-                            <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
-                            <dd class="pl-5">
-                                {unit.locus 
-                                ? unit.locus
-                                : 'N/A'}
-                                
-                            </dd>
+		{manuscript?.hands?.length > 0 ? <MsHands manuscript={manuscript} /> : ""}
 
-                             {unit.quiremarks && (
-                  <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
-                  <dd class="pl-5">{unit?.quiremarks}</dd>
-                 )}
-                {unit.catchwords && (
-                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
-                     <dd class="pl-5">{unit?.catchwords}</dd>
-                )}                            
-                            
-                            {unit.heigth && unit.width
-                              ? 
-                            ( <>
-                              <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-                              <dd class="pl-5">
-                              {unit.heigth} × {unit.width} mm
-                              
-                              {unit.written_height && unit.written_width && 
-                              <>
-                                [{unit.written_height} × {unit.written_width} mm]
-                              </>}                      
-                            </dd>
-                            </>)
-                              : ''
-                            } 
-                            
-                            
-                              {unit.columns.length > 0 &&
-                              <dt class="font-semibold border-r border-gray-300 pr-2">Spalten:</dt>
-                                <dd class="pl-5">
-                            
-                                  {unit.columns.map(col => col).join(', ')} 
-                              </dd> }
-                            {unit.lines_number
-                            ? <dt class="font-semibold border-r border-gray-300 pr-2">Zeilen:</dt>
-                            <dd class="pl-5">
-                                {unit.lines_number} 
-                            </dd>
-                            : ''}    
-                            {unit.decoration &&
-                            <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
-                            <dd class="pl-5">
-                                {unit.decoration} 
-                            </dd>    
-                            } 
-                          
-                            {unit.prov_place.length > 0 &&
-                            (
-                              <dt class="font-semibold border-r border-gray-300 pr-2">Entstehungsort:</dt>
-                              <dd class="pl-5">
-                                <ul>
-                                  {unit.prov_place.filter(prov => prov.type === 'orig')
-                                  .map(prov_unit => (
-                                  <li>
-                                    {                               
-                                    prov_unit.places.map(place => place.value)}                          
-                                    {/* check if there are dates for the origin */ }
-                                  {prov_unit.from.length > 0 &&
-                                    <span>ab 
-                                      {prov_unit.from.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_from === true && '(?)'}
-                                    </span>}
-                                    
-                                    {prov_unit.till.length > 0 &&
-                                    <span>(dort bis 
-                                      {prov_unit.till.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_till === true && '(?)'})
-                                    </span>}
-                                  </li>
-                                ))}
-                                  </ul>
-                              </dd>)}
-                            {unit.prov_place.length > 0 && unit.prov_place.some(prov => prov.type === 'prov') &&
-                            (
-                              <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
-                            <dd class="pl-5">
-                                <ul>
-                                  {unit.prov_place.filter(prov => prov.type === 'prov')
-                                  .map(prov_unit => (
-                                  <li>                                    
-                                    {prov_unit.places.map(place => place.value)}                          
-                                    {/* check if there are dates for the origin */ }
-                                  {prov_unit.from.length > 0 &&
-                                    <span>ab 
-                                      {prov_unit.from.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_from === true && '(?)'}
-                                    </span>}
-                                    
-                                    {prov_unit.till.length > 0 &&
-                                    <span>bis 
-                                      {prov_unit.till.map(date => date.value).join(', ')}
-                                      {prov_unit.uncertain_till === true && '(?)'}
-                                    </span>}
-                                  </li>
-                                ))}
-                                  </ul>
-                              </dd>
-                            )}    
-                          </dl>                          
-                          </details>
-                      </>
-                    ))}
+		{manuscript?.cod_units?.length > 0 ? <MsCodUnits manuscript={manuscript} /> : ""}
+		<MsHistory manuscript={manuscript} />
 
-                    </section>
-                    : ''  
-          } 
-          <section aria-labelledby="msHistory" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msHistory" >
-                Geschichte               
-              </summary>
-               {manuscript?.history !== undefined 
-                  ? <p class="px-3 text-brand-900">{manuscript?.history}</p>
-                  : ''
-                }
-              <dl class=" grid grid-cols-[1fr_5fr] p-3">               
-                <dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
-                <dd class="pl-5">{manuscript?.orig_place.map(place => {
-                  return place.value}).join(', ')}</dd>
-                <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
-                <dd class="pl-5">
-                  {
-                      manuscript?.provenance.map((entry, index) => (
-                        <>{entry.abbreviation}                         
-              
-                          {index < manuscript.provenance.length - 1 && ', '}
-                        </>
-                      ))
-                    }</dd>
-                <dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
-                <dd class="pl-5">
-                    {manuscript?.orig_date.length > 0 &&
-                    <ul>
-                      {manuscript.orig_date.map((d) => {
-                        const authority = d.authority[0]?.author ? ` nach ${d.authority[0].author}` : '';
-                          const citation = d.authority[0]?.citation
-                            ? ` (${d.authority[0].citation}${d.page ? `, S. ${d.page}` : ''})`
-                            : '';
-                          const link = d.authority[0]?.link;
-                          const date = d.date.length > 0
-                            ? d.date.map(date => date.value).join(', ')
-                            : '';
+		{manuscript.bibliography.length > 0 ? <MsBibliography manuscript={manuscript} /> : ""}
 
-                          return date && (
-                            <li>
-                              {date}
-                              {authority}
-                              {link ? (
-                                <NavLink href={link}>{citation}</NavLink>
-                              ) : (
-                                citation
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>}
-                </dd>
-              </dl> 
-               
-            </details>
-            </section>
+		<MsContent manuscript={manuscript} />
 
-          {manuscript.bibliography.length > 0 
-            ? 
-            <section aria-labelledby="bibl" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="bibl" >
-                Bibliographie              
-              </summary>
-           
-              <ul>
-                {manuscript.bibliography.map(bibl => 
-                (<li>{bibl}</li>))}
-              </ul>
-               </details>
-            </section>
-            : ''
-          }
-
-        <section aria-labelledby="msContent" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-          <details open>
-            <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msContent" >
-              Inhalt               
-            </summary>
-             <p>
-            {manuscript.cod_units.map((unit) => (
-                <dl class="grid grid-cols-[1fr_5fr] p-3">
-                <dt class="font-semibold border-r border-gray-300 pr-2">
-                  {manuscript.cod_units.length > 1 && `Kod. Einheit ${unit.number} (fols. ${unit.locus})`}</dt>
-                <dd class="pl-5"></dd>
-
-                {unit.content
-                   .sort((a, b) => {
-                const parseLocus = (locus) => {
-                  return locus.split('-').map(part => {
-                    const match = part.match(/^(\d+)([rv]?)$/);
-                    if (!match) return [Infinity, "z"]; // Default if parsing fails
-                    return [parseInt(match[1], 10), match[2] || ""]; // Extract number & letter
-                  });
-                };
-
-                // Extract start and end locus parts for both items
-                const [startA, endA = startA] = parseLocus(a.locus);
-                const [startB, endB = startB] = parseLocus(b.locus);
-
-                return (
-                  startA[0] - startB[0] ||  // Compare start numbers
-                  startA[1].localeCompare(startB[1]) || // "r" before "v"
-                  endA[0] - endB[0] || // Compare end numbers
-                  endA[1].localeCompare(endB[1]) // Compare end suffix
-                );
-              })
-                  .map(filteredItem => (
-                    
-                      <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        {filteredItem.locus}
-                      </dt>
-                      <dd class="pl-5">
-                       {filteredItem.title_work.map(work => (
-                        <span class="font-semibold">
-                          {work.author?.length > 0 ? (
-                            work.hit_id ? (
-                              <NavLink class ="underline underline-offset-2 hover:text-brand-800" href={`/msitems/${filteredItem.hit_id}`}>
-                                {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                              </NavLink>
-                            ) : (
-                              <span>
-                                {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                              </span>
-                            )
-                          ) : (
-                            work.hit_id ? (
-                              <NavLink href={`/msitems/${filteredItem.hit_id}`}>
-                                {work.title}
-                              </NavLink>
-                            ) : (
-                              <span>{work.title}</span>
-                            )
-                          )}
-                        </span>
-                      ))}
-
-
-                        {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
-                        
-                       {filteredItem.text_modification.length > 0 && <span>({filteredItem.text_modification.map(mod => mod).join(', ')})</span>}
-                       {filteredItem.interpolations.length > 0 && 
-                       <span>Interpolation: 
-                        {filteredItem.interpolations
-                          .map((inter, index) => (
-                          <>
-                            <NavLink href={`/works/${inter.hit_id}`}>{inter.title}</NavLink>
-                            {index < filteredItem.interpolations.length - 1 && ', '}
-                          </>
-                          ))
-                        }
-                        </span>}
-                        {filteredItem.rubric && (
-                          <span> 
-                            {/* check for [text] shouldl be not-italic */}
-                            ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part: string) =>
-                              part.startsWith('[') && part.endsWith(']')
-                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                : <span class="italic">{part}</span> // Italic for other text
-                            )}‹
-                          </span>
-                        )}                          
-                        
-                        {filteredItem.incipit && (
-                          <span>
-                            {filteredItem.incipit.split(/(\[ *.*?\])/).map((part: string) =>
-                              part.startsWith('[') && part.endsWith(']')
-                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                : <span class="italic">{part}</span> // Italic for other text
-                            )}
-                            {filteredItem.incipit.trim().endsWith('…') ? '' : '…'}
-                          </span>
-                        )}
-                        {filteredItem.explicit && (
-                          <span class="italic">
-                            {filteredItem.explicit.split(/(\[.*?\])/).map((part: string) =>
-                              part.startsWith('[') && part.endsWith(']')
-                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                : <span>{part}</span> // Italic for other text
-                            )}
-                            {filteredItem.explicit.trim().startsWith('…') ? '' : '…'}
-                          </span>
-                        )}
-
-                        {filteredItem.final_rubric && 
-                        <span class="italic">
-                          ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part: string) =>
-                              part.startsWith('[') && part.endsWith(']')
-                                ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                                : <span class="italic">{part}</span> // Italic for other text
-                            )}‹
-                          </span>}
-
-                        {filteredItem.decoration.length > 0 && (<br/><span>Ausstattung: {filteredItem.decoration.map(deco => deco.value).join(', ')}</span>)}
-                        
-                      </dd>
-                  ))}
-                  </dl>
-            ))}
-             {manuscript.content.length > 0 &&
-              <dl class="grid grid-cols-[1fr_5fr] p-3">
-              <dt class="font-semibold border-r border-gray-300 pr-2">
-                Einträge die zu keiner kod. Einheit zugewiesen sind</dt>
-              <dd class="pl-5"></dd>
-
-              {manuscript.content
-                 .sort((a, b) => {
-              const parseLocus = (locus) => {
-                return locus.split('-').map(part => {
-                  const match = part.match(/^(\d+)([rv]?)$/);
-                  if (!match) return [Infinity, "z"]; // Default if parsing fails
-                  return [parseInt(match[1], 10), match[2] || ""]; // Extract number & letter
-                });
-              };
-
-              // Extract start and end locus parts for both items
-              const [startA, endA = startA] = parseLocus(a.locus);
-              const [startB, endB = startB] = parseLocus(b.locus);
-
-              return (
-                startA[0] - startB[0] ||  // Compare start numbers
-                startA[1].localeCompare(startB[1]) || // "r" before "v"
-                endA[0] - endB[0] || // Compare end numbers
-                endA[1].localeCompare(endB[1]) // Compare end suffix
-              );
-            })
-                .map(filteredItem => (
-                  
-                    <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                      <NavLink href={`/msitems/${filteredItem.hit_id}`}>{filteredItem.locus}</NavLink>
-                    </dt>
-                    <dd class="pl-5">
-                     {filteredItem.title_work.map(work => (
-                      <span class="font-semibold">
-                        {work.author?.length > 0 ? (
-                          work.hit_id ? (
-                            <NavLink class ="underline underline-offset-2 hover:text-brand-800" href={`/works/${work.hit_id}`}>
-                              {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                            </NavLink>
-                          ) : (
-                            <span>
-                              {work.author.map(aut => aut.name).join(', ')}: {work.title}
-                            </span>
-                          )
-                        ) : (
-                          work.hit_id ? (
-                            <NavLink href={`/works/${work.hit_id}`}>
-                              {work.title}
-                            </NavLink>
-                          ) : (
-                            <span>{work.title}</span>
-                          )
-                        )}
-                      </span>
-                    ))}
-
-
-                      {filteredItem.title_note && <span>({filteredItem.title_note})</span>}
-                       {filteredItem.text_modification.length > 0 && <span>({filteredItem.text_modification.map(mod => mod).join(', ')})</span>}
-                      {filteredItem.rubric && (
-                        <span> 
-                          {/* check for [text] shouldl be not-italic */}
-                          ›{filteredItem.rubric.split(/(\[ *.*?\])/).map((part: string) =>
-                            part.startsWith('[') && part.endsWith(']')
-                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                              : <span class="italic">{part}</span> // Italic for other text
-                          )}‹
-                        </span>
-                      )}                          
-                      
-                      {filteredItem.incipit && (
-                        <span>
-                          {filteredItem.incipit.split(/(\[ *.*?\])/).map((part: string) =>
-                            part.startsWith('[') && part.endsWith(']')
-                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                              : <span class="italic">{part}</span> // Italic for other text
-                          )}
-                          {filteredItem.incipit.trim().endsWith('…') ? '' : '…'}
-                        </span>
-                      )}
-                      {filteredItem.explicit && (
-                        <span class="italic">
-                          {filteredItem.explicit.split(/(\[.*?\])/).map((part: string) =>
-                            part.startsWith('[') && part.endsWith(']')
-                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                              : <span>{part}</span> // Italic for other text
-                          )}
-                          {filteredItem.explicit.trim().startsWith('…') ? '' : '…'}
-                        </span>
-                      )}
-
-                      {filteredItem.final_rubric && 
-                      <span class="italic">
-                        ›{filteredItem.final_rubric.split(/(\[ *.*?\])/).map((part: string) =>
-                            part.startsWith('[') && part.endsWith(']')
-                              ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                              : <span class="italic">{part}</span> // Italic for other text
-                          )}‹
-                        </span>}
-
-                      {filteredItem.decoration.length > 0 && (<br/><span>Ausstattung: {filteredItem.decoration.map(deco => deco.value).join(', ')}</span>)}
-                      
-                    </dd>
-                ))}
-                </dl>
-   }</p>
-          </details>
-        </section> 
-        
-        {manuscript.strata.length > 0 
-        ?                    
-        <section aria-labelledby="msStrata" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msStrata" >
-                Strata               
-              </summary>
-          
-           
-            <dl class="grid grid-cols-[1fr_5fr] p-3">
-                  {manuscript.strata.map(stratum => {
-                      return <>
-                      <dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">
-                        <NavLink href=`/strata/${stratum.hit_id}`>Stratum {stratum.number}:</NavLink> 
-                        </dt>
-                      <dd class="pl-5">
-                        <span class="underlined">
-                          {Array.isArray(stratum.character) && stratum.character.length > 0 
-                            ? stratum.character.join(', ') 
-                            : 'N/A'}
-                        </span>
-                        {stratum?.note ? `: ${stratum.note}` : ''}
-                      </dd>
-
-                        </>
-            
-                  })}
-            </dl>
-          {/* Table for displaying information about the strata - each strata is defined by the hands_role */}
-            <div class="overflow-x-auto mb-5">
-            <div class="flex justify-end">
-              <button id="download-table-btn" class="mb-2 border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-              >CSV</button>
-            </div>
-              <table id="strata-table" class="w-full bg-brand-100 rounded-xs shadow-xs border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
-                <thead class="bg-brand-300">
-                  <tr>
-                    <th class="text-center p-2 font-semibold border border-gray-300">
-                        <form role="search" data-search-form>
-                          <label class="flex flex-col items-start p-2">
-                            <div>Stratum</div>
-                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                          </label>
-                        </form>
-                      </th>
-              
-                      <th class="text-center p-2 font-semibold border border-gray-300 min-w-32">
-                        <form role="search" data-search-form>
-                          <div>Datierung</div>
-                          <div class="xl:flex">
-                            <label class="flex flex-col items-start p-2">
-                              <div class="sr-only">Datierung nach</div>
-                              <input
-                                data-filter="year"
-                                data-bound="min"
-                                placeholder="nicht vor ..."
-                                class="filter-input mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                            </label>
-                            <label class="flex flex-col items-start p-2">
-                              <div class="sr-only">Datierung vor</div>
-                              <input
-                                data-filter="year"
-                                data-bound="max"
-                                placeholder="nicht nach ..."
-                                class="filter-input mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                            </label>
-                          </div>
-                        </form>
-                      </th>
-                      <th class="text-center p-2 font-semibold border border-gray-300">
-                      <form role="search" data-search-form>
-                        <label class="flex flex-col items-start p-2">
-                          <div>Werk</div>
-                          <input type="search" name="q"
-                              data-filter="string" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                        </label>
-                      </form>
-                    </th>
-                    <th class="text-center p-2 font-semibold border border-gray-300">
-                      <form role="search" data-search-form >
-                        <label class="flex flex-col items-start p-2">
-                          <div>Hand</div>
-                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                        </label>
-                      </form>
-                    </th>
-                    <th class="text-center p-2 font-semibold border border-gray-300">
-                        <form role="search" data-search-form>
-                          <label class="flex flex-col items-start p-2">
-                            <div>Rolle</div>
-                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                          </label>
-                        </form>
-                      </th>
-                      <th class="text-center p-2 font-semibold border border-gray-300">
-                        <form role="search" data-search-form>
-                          <label class="flex flex-col items-start p-2">
-                            <div>Schreiber-Typ</div>
-                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                          </label>
-                        </form>
-                      </th>
-                     <th class="text-center p-2 font-semibold border border-gray-300">
-                        <form role="search" data-search-form>
-                          <label class="flex flex-col items-start p-2">
-                            <div>Funktion</div>
-                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                          </label>
-                        </form>
-                      </th>
-                      <th class="text-center p-2 font-semibold border border-gray-300">
-                      <form role="search" data-search-form >
-                        <label class="flex flex-col items-start p-2">
-                          <div>Umfang</div>
-                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                        </label>
-                      </form>
-                    </th>
-                    <th class="text-center p-2 font-semibold border border-gray-300">
-                        <form role="search" data-search-form>
-                          <label class="flex flex-col items-start p-2">
-                            <div>Mise-en-page</div>
-                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
-                          </label>
-                        </form>
-                      </th>
-                     
-                  </tr>
-                </thead>
-                <tbody>
-                  {manuscript.strata
-                  .flatMap(stratum => stratum.hand_roles
-                  .map((role) => (
-                    <tr class="odd:bg-brand-50 even:bg-brand-100">                      
-                      <td class="p-2 border border-gray-300 text-center">
-                        <NavLink href=`/strata/${stratum.hit_id}`>{stratum.number}</NavLink>
-                      </td>
-                      <td class="p-2 border border-gray-300">
-                        {role.hand.flatMap(hand => hand.date. map(d => d.range)).join(' | ')}
-                      </td>
-                      <td class="p-2 border border-gray-300">
-                        {role.ms_item.length > 1 ? (
-                          <ul class="list-disc list-inside">
-                            {role.ms_item.map((msItem) => (
-                             <li>
-                              <span>
-                                {msItem.author && msItem.author.length > 0
-                                  ? `${msItem.author.join(', ')}: ${msItem.title}`
-                                  : msItem.title}
-                              </span>
-                              <NavLink href={`/msitems/${msItem?.hit_id}`}>
-                                ({msItem.locus})
-                              </NavLink>
-                            </li>
-
-                            ))}
-                          </ul>
-                        ) : (
-                          role.ms_item.map((msItem) => (                           
-                          <span>
-                                {msItem.author && msItem.author.length > 0
-                                  ? `${msItem.author.join(', ')}: ${msItem.title}`
-                                  : msItem.title}
-                              </span>
-                              <NavLink href={`/msitems/${msItem?.hit_id}`}>
-                                ({msItem.locus})
-                              </NavLink>
-                              ))
-                            )
-                          }
-                        </td>
-
-              
-                     
-                      <td class="p-2 border border-gray-300">
-                        {role.hand.length > 1 ? (
-                          <ul class="list-disc list-inside">
-                            {role.hand.map((hand) => (
-                              <li>
-                        <NavLink href={`/hands/${hand?.hit_id}`}>
-                          {hand.label.split("_")[1]}
-                        </NavLink>
-                      </li>
-                            ))}
-                          </ul>
-                        ) : (
-                        <NavLink href={`/hands/${role.hand[0]?.hit_id}`}>
-                          {role.hand[0]?.label.split("_")[1]}
-                        </NavLink>
-                        )}   </td>
-                      <td class="p-2 border border-gray-300">{role.role.map(ro => ro).join(', ')}</td>
-                      <td class="p-2 border border-gray-300">{role.scribe_type.map(t => t).join(', ')}</td>
-                      <td class="p-2 border border-gray-300">{role.function.map(func => func).join(', ')}</td>
-                      <td class="p-2 border border-gray-300">{role.locus}</td>
-                      <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope).join(' | ')}</td>
-                    </tr>
-                  )))}
-                </tbody>
-              
-              </table>
-            </div> 
-             </details>
-          </section>
-          : ""
-          } 
-        
- 
-    </Article>
-    <script src="@/lib/table-search.js"></script>
+		{manuscript.strata.length > 0 ? <MsStrata manuscript={manuscript} /> : ""}
+	</Article>
+	<script src="@/lib/table-search.js"></script>
 </PageLayout>

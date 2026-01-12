@@ -1,0 +1,209 @@
+---
+const { manuscript } = Astro.props;
+import NavLink from "@/components/nav-link.astro";
+---
+<section aria-labelledby="msStrata" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
+            <details open>
+              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msStrata" >
+                Strata               
+              </summary>
+          
+           
+            <dl class="grid grid-cols-[1fr_5fr] p-3">
+                  {manuscript.strata.map(stratum => {
+                      return <>
+                      <dt class="font-semibold border-r border-gray-300 pr-2 justify-self-end">
+                        <NavLink href=`/strata/${stratum.hit_id}`>Stratum {stratum.number}:</NavLink> 
+                        </dt>
+                      <dd class="pl-5">
+                        <span class="underlined">
+                          {Array.isArray(stratum.character) && stratum.character.length > 0 
+                            ? stratum.character.join(', ') 
+                            : 'N/A'}
+                        </span>
+                        {stratum?.note ? `: ${stratum.note}` : ''}
+                      </dd>
+
+                        </>
+            
+                  })}
+            </dl>
+          {/* Table for displaying information about the strata - each strata is defined by the hands_role */}
+            <div class="overflow-x-auto mb-5">
+            <div class="flex justify-end py-4">
+             
+              <button id="download-table-btn"
+					aria-label="Als CSV herunterladen"
+					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
+					CSV
+				</button>
+            </div>
+              <table id="strata-table" class="w-full bg-brand-100 rounded-xs shadow-xs border border-gray-200 lg:leading-7 text-sm lg:text-base data-table">
+                <thead class="bg-brand-300">
+                  <tr>
+                    <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Stratum</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                          </label>
+                        </form>
+                      </th>
+              
+                      <th class="text-center p-2 font-semibold border border-gray-300 min-w-32">
+                        <form role="search" data-search-form>
+                          <div>Datierung</div>
+                          <div class="xl:flex">
+                            <label class="flex flex-col items-start p-2">
+                              <div class="sr-only">Datierung nach</div>
+                              <input
+                                data-filter="year"
+                                data-bound="min"
+                                placeholder="nicht vor ..."
+                                class="filter-input mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                            </label>
+                            <label class="flex flex-col items-start p-2">
+                              <div class="sr-only">Datierung vor</div>
+                              <input
+                                data-filter="year"
+                                data-bound="max"
+                                placeholder="nicht nach ..."
+                                class="filter-input mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                            </label>
+                          </div>
+                        </form>
+                      </th>
+                      <th class="text-center p-2 font-semibold border border-gray-300">
+                      <form role="search" data-search-form>
+                        <label class="flex flex-col items-start p-2">
+                          <div>Werk</div>
+                          <input type="search" name="q"
+                              data-filter="string" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                        </label>
+                      </form>
+                    </th>
+                    <th class="text-center p-2 font-semibold border border-gray-300">
+                      <form role="search" data-search-form >
+                        <label class="flex flex-col items-start p-2">
+                          <div>Hand</div>
+                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                        </label>
+                      </form>
+                    </th>
+                    <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Rolle</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                          </label>
+                        </form>
+                      </th>
+                      <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Schreiber-Typ</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                          </label>
+                        </form>
+                      </th>
+                     <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Funktion</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                          </label>
+                        </form>
+                      </th>
+                      <th class="text-center p-2 font-semibold border border-gray-300">
+                      <form role="search" data-search-form >
+                        <label class="flex flex-col items-start p-2">
+                          <div>Umfang</div>
+                          <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                        </label>
+                      </form>
+                    </th>
+                    <th class="text-center p-2 font-semibold border border-gray-300">
+                        <form role="search" data-search-form>
+                          <label class="flex flex-col items-start p-2">
+                            <div>Mise-en-page</div>
+                            <input type="search" data-filter="string" name="q" placeholder="Suche ..." class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50">
+                          </label>
+                        </form>
+                      </th>
+                     
+                  </tr>
+                </thead>
+                <tbody>
+                  {manuscript.strata
+                  .flatMap(stratum => stratum.hand_roles
+                  .map((role) => (
+                    <tr class="odd:bg-brand-50 even:bg-brand-100">                      
+                      <td class="p-2 border border-gray-300 text-center">
+                        <NavLink href=`/strata/${stratum.hit_id}`>{stratum.number}</NavLink>
+                      </td>
+                      <td class="p-2 border border-gray-300">
+                        {role.hand.flatMap(hand => hand.date. map(d => d.range)).join(' | ')}
+                      </td>
+                      <td class="p-2 border border-gray-300">
+                        {role.ms_item.length > 1 ? (
+                          <ul class="list-disc list-inside">
+                            {role.ms_item.map((msItem) => (
+                             <li>
+                              <span>
+                                {msItem.author && msItem.author.length > 0
+                                  ? `${msItem.author.join(', ')}: ${msItem.title}`
+                                  : msItem.title}
+                              </span>
+                              <NavLink href={`/msitems/${msItem?.hit_id}`}>
+                                ({msItem.locus})
+                              </NavLink>
+                            </li>
+
+                            ))}
+                          </ul>
+                        ) : (
+                          role.ms_item.map((msItem) => (                           
+                          <span>
+                                {msItem.author && msItem.author.length > 0
+                                  ? `${msItem.author.join(', ')}: ${msItem.title}`
+                                  : msItem.title}
+                              </span>
+                              <NavLink href={`/msitems/${msItem?.hit_id}`}>
+                                ({msItem.locus})
+                              </NavLink>
+                              ))
+                            )
+                          }
+                        </td>
+
+              
+                     
+                      <td class="p-2 border border-gray-300">
+                        {role.hand.length > 1 ? (
+                          <ul class="list-disc list-inside">
+                            {role.hand.map((hand) => (
+                              <li>
+                        <NavLink href={`/hands/${hand?.hit_id}`}>
+                          {hand.label.split("_")[1]}
+                        </NavLink>
+                      </li>
+                            ))}
+                          </ul>
+                        ) : (
+                        <NavLink href={`/hands/${role.hand[0]?.hit_id}`}>
+                          {role.hand[0]?.label.split("_")[1]}
+                        </NavLink>
+                        )}   </td>
+                      <td class="p-2 border border-gray-300">{role.role.map(ro => ro).join(', ')}</td>
+                      <td class="p-2 border border-gray-300">{role.scribe_type.map(t => t).join(', ')}</td>
+                      <td class="p-2 border border-gray-300">{role.function.map(func => func).join(', ')}</td>
+                      <td class="p-2 border border-gray-300">{role.locus}</td>
+                      <td class="p-2 border border-gray-300">{role.locus_layout.map(scope => scope).join(' | ')}</td>
+                    </tr>
+                  )))}
+                </tbody>
+              
+              </table>
+            </div> 
+             </details>
+          </section>

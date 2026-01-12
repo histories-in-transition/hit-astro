@@ -1,0 +1,73 @@
+---
+const { manuscript } = Astro.props;
+import NavLink from "@/components/nav-link.astro";
+---
+
+<section
+	aria-labelledby="msHistory"
+	class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5"
+>
+	<details open>
+		<summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msHistory">
+			Geschichte
+		</summary>
+		{
+			manuscript?.history !== undefined ? (
+				<p class="px-3 text-brand-900">{manuscript?.history}</p>
+			) : (
+				""
+			)
+		}
+		<dl class="grid grid-cols-[1fr_5fr] p-3">
+			<dt class="font-semibold border-r border-gray-300 pr-2">Herkunfsort:</dt>
+			<dd class="pl-5">
+				{
+					manuscript?.orig_place
+						.map((place) => {
+							return place.value;
+						})
+						.join(", ")
+				}
+			</dd>
+			<dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+			<dd class="pl-5">
+				{
+					manuscript?.provenance.map((entry, index) => (
+						<>
+							{entry.abbreviation}
+
+							{index < manuscript.provenance.length - 1 && ", "}
+						</>
+					))
+				}
+			</dd>
+			<dt class="font-semibold border-r border-gray-300 pr-2">Datierung:</dt>
+			<dd class="pl-5">
+				{
+					manuscript?.orig_date.length > 0 && (
+						<ul>
+							{manuscript.orig_date.map((d) => {
+								const authority = d.authority[0]?.author ? ` nach ${d.authority[0].author}` : "";
+								const citation = d.authority[0]?.citation
+									? ` (${d.authority[0].citation}${d.page ? `, S. ${d.page}` : ""})`
+									: "";
+								const link = d.authority[0]?.link;
+								const date = d.date.length > 0 ? d.date.map((date) => date.value).join(", ") : "";
+
+								return (
+									date && (
+										<li>
+											{date}
+											{authority}
+											{link ? <NavLink href={link}>{citation}</NavLink> : citation}
+										</li>
+									)
+								);
+							})}
+						</ul>
+					)
+				}
+			</dd>
+		</dl>
+	</details>
+</section>

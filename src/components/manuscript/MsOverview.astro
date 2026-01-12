@@ -1,0 +1,33 @@
+---
+import MapLeaf from "../map-leaflet.svelte";
+import { processMSData } from "@/lib/make-geojson.ts";
+const { manuscript } = Astro.props;
+const geoData = processMSData(manuscript);
+import MsSection from "./MsSection.astro";
+import DescriptionList from "@/components/ui/DescriptionList.astro";
+---
+
+<MsSection heading="Überblick" id="msInfo">
+	<div class="lg:grid lg:grid-cols-[2fr_5fr] items-start lg:gap-4 p-3">
+		<DescriptionList
+			items={[
+				{ label: "Titel:", value: manuscript.title || "TBD" },
+				{ label: "Ort:", value: manuscript?.library[0]?.place[0]?.value },
+				{ label: "Bibliothek:", value: manuscript.library[0].library_full },
+				{ label: "Signatur:", value: manuscript?.shelfmark },
+				{ label: "Olim:", value: manuscript?.idno_former },
+				{ label: "Typ der HS:", value: manuscript.charakter.join(", ") },
+				{ label: "Case study:", value: manuscript.case_study.join(", ") },
+			]}
+		/>
+		<div class="print:hidden hidden md:block">
+			<MapLeaf client:only="svelte" geoJsonData={geoData} />
+		</div>
+	</div>
+
+	{
+		manuscript.content_summary && (
+			<DescriptionList items={[{ label: "Zusammenfassung:", value: manuscript.content_summary }]} />
+		)
+	}
+</MsSection>

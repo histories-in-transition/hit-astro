@@ -1,0 +1,136 @@
+---
+const { manuscript } = Astro.props;
+---
+ <section aria-labelledby="codUnits" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
+                    
+                    {manuscript.cod_units.map((unit) => (
+                      <>  
+                      <details open class="border-b border-neutral-200">
+                        <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="codUnits" >
+                          Kodikologische Einheit {unit.number}               
+                        </summary> 
+                        <p class="px-3 text-brand-900">{unit.notes}</p>                         
+                          <dl class=" grid grid-cols-[1fr_5fr] p-3">
+                             <dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
+                            <dd class="pl-5">
+                                {unit.material 
+                                ? unit.material
+                                : 'N/A'}
+                                {unit.material_spec 
+                                ? `: ${unit.material_spec}`
+                                : ''}
+                                {unit.basic_structure.length > 0 ? 
+                                `(${unit.basic_structure.map(struct => struct).join(', ')})` :  ''}
+                                
+                            </dd>
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Fols:</dt>
+                            <dd class="pl-5">
+                                {unit.locus 
+                                ? unit.locus
+                                : 'N/A'}
+                                
+                            </dd>
+
+                             {unit.quiremarks && (
+                  <dt class="font-semibold border-r border-gray-300 pr-2">Kustoden:</dt>
+                  <dd class="pl-5">{unit?.quiremarks}</dd>
+                 )}
+                {unit.catchwords && (
+                     <dt class="font-semibold border-r border-gray-300 pr-2">Reklamanten:</dt>
+                     <dd class="pl-5">{unit?.catchwords}</dd>
+                )}                            
+                            
+                            {unit.heigth && unit.width
+                              ? 
+                            ( <>
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
+                              <dd class="pl-5">
+                              {unit.heigth} × {unit.width} mm
+                              
+                              {unit.written_height && unit.written_width && 
+                              <>
+                                [{unit.written_height} × {unit.written_width} mm]
+                              </>}                      
+                            </dd>
+                            </>)
+                              : ''
+                            } 
+                            
+                            
+                              {unit.columns.length > 0 &&
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Spalten:</dt>
+                                <dd class="pl-5">
+                            
+                                  {unit.columns.map(col => col).join(', ')} 
+                              </dd> }
+                            {unit.lines_number
+                            ? <dt class="font-semibold border-r border-gray-300 pr-2">Zeilen:</dt>
+                            <dd class="pl-5">
+                                {unit.lines_number} 
+                            </dd>
+                            : ''}    
+                            {unit.decoration &&
+                            <dt class="font-semibold border-r border-gray-300 pr-2">Dekoration:</dt>
+                            <dd class="pl-5">
+                                {unit.decoration} 
+                            </dd>    
+                            } 
+                          
+                            {unit.prov_place.length > 0 &&
+                            (
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Entstehungsort:</dt>
+                              <dd class="pl-5">
+                                <ul>
+                                  {unit.prov_place.filter(prov => prov.type === 'orig')
+                                  .map(prov_unit => (
+                                  <li>
+                                    {                               
+                                    prov_unit.places.map(place => place.value)}                          
+                                    {/* check if there are dates for the origin */ }
+                                  {prov_unit.from.length > 0 &&
+                                    <span>ab 
+                                      {prov_unit.from.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_from === true && '(?)'}
+                                    </span>}
+                                    
+                                    {prov_unit.till.length > 0 &&
+                                    <span>(dort bis 
+                                      {prov_unit.till.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_till === true && '(?)'})
+                                    </span>}
+                                  </li>
+                                ))}
+                                  </ul>
+                              </dd>)}
+                            {unit.prov_place.length > 0 && unit.prov_place.some(prov => prov.type === 'prov') &&
+                            (
+                              <dt class="font-semibold border-r border-gray-300 pr-2">Provenienz:</dt>
+                            <dd class="pl-5">
+                                <ul>
+                                  {unit.prov_place.filter(prov => prov.type === 'prov')
+                                  .map(prov_unit => (
+                                  <li>                                    
+                                    {prov_unit.places.map(place => place.value)}                          
+                                    {/* check if there are dates for the origin */ }
+                                  {prov_unit.from.length > 0 &&
+                                    <span>ab 
+                                      {prov_unit.from.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_from === true && '(?)'}
+                                    </span>}
+                                    
+                                    {prov_unit.till.length > 0 &&
+                                    <span>bis 
+                                      {prov_unit.till.map(date => date.value).join(', ')}
+                                      {prov_unit.uncertain_till === true && '(?)'}
+                                    </span>}
+                                  </li>
+                                ))}
+                                  </ul>
+                              </dd>
+                            )}    
+                          </dl>                          
+                          </details>
+                      </>
+                    ))}
+
+                    </section>
