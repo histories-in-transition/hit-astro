@@ -152,8 +152,9 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 		if (library?.place) {
 			for (const pl of library.place) {
 				const feature = createPointFeature(pl, {
-					title: mssData.shelfmark,
-					description: `Aktueller Standort: ${pl.value}, ${library.library_full ?? "N/A"}`,
+					title: `HS: ${library.abbreviation}, ${mssData.shelfmark}`,
+					description: `Repositorium: ${library.library_full ?? "N/A"}`,
+					place: pl.value ? `Aufbewahrungsort: ${pl.value}` : "",
 					type: "currentLocation",
 					url: `/places/${pl.hit_id}`,
 					hit_id: mssData.hit_id,
@@ -172,11 +173,9 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 				for (const prov of unit.prov_place) {
 					for (const pl of prov.places ?? []) {
 						const feature = createPointFeature(pl, {
-							title: codUnits.length > 1 ? unit.value : mssData.shelfmark,
+							title: `HS: ${codUnits.length > 1 ? unit.value : ""}`,
 							url: `/manuscripts/${mssData.hit_id}`,
-							description: `${pl.value} ${
-								prov.type === "orig" ? "~> Entstehungsort" : "~> Provenienz"
-							}`,
+							place: `${prov.type === "orig" ? "Entstehungsort:" : "Provenienz:"} ${pl.value}`,
 							period: formatPeriod(prov),
 							provenanceType: prov.type ?? "N/A",
 							type: prov.type === "orig" ? "origin" : "provenance",
@@ -198,8 +197,8 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 			// Origin place
 			for (const pl of mssData.orig_place ?? []) {
 				const feature = createPointFeature(pl, {
-					title: mssData.shelfmark,
-					description: `${pl.value} ~> Entstehungsort`,
+					title: `HS: ${library.abbreviation}, ${mssData.shelfmark}`,
+					place: pl.value ? `Entstehungsort: ${pl.value}` : "",
 					type: "origin",
 					url: `/manuscripts/${mssData.hit_id}`,
 					hit_id: mssData.hit_id,
@@ -213,8 +212,8 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 			for (const placement of mssData.provenance ?? []) {
 				for (const pl of placement.place ?? []) {
 					const feature = createPointFeature(pl, {
-						title: mssData.shelfmark,
-						description: `${pl.value} ~> Provenienz`,
+						title: `HS: ${library.abbreviation}, ${mssData.shelfmark}`,
+						place: pl.value ? `Provenienz: ${pl.value}` : "",
 						type: "provenance",
 						url: `/manuscripts/${mssData.hit_id}`,
 						hit_id: mssData.hit_id,
