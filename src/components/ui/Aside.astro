@@ -1,0 +1,18 @@
+---
+const { sections } = Astro.props; // Array of { id, title }
+---
+
+<aside class="hidden md:block">
+	<nav class="sticky top-50 bg-white border rounded-md shadow-md">
+		<h2 class="font-semibold text-lg bg-brand-600 text-brand-50 px-4 py-2">Inhalt</h2>
+		<ul>
+			{
+				sections.map((section) => (
+					<li class="px-4 py-2 text-brand-700 hover:bg-brand-500 hover:text-brand-950 hover:font-semibold transition-colors">
+						<a href={`#${section.id}`}>{section.title}</a>
+					</li>
+				))
+			}
+		</ul>
+	</nav>
+</aside>

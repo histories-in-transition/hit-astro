@@ -10,7 +10,7 @@ import { Icon } from "astro-icon/components";
 			manuscript.handschriftenportal_url && (
 				<NavLink
 					href={manuscript.handschriftenportal_url}
-					class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600  text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+					class=" rounded-md py-2 px-4 bg-brand-600  text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 				>
 					HSP
 				</NavLink>
@@ -20,7 +20,7 @@ import { Icon } from "astro-icon/components";
 			manuscript.manuscripta_url && (
 				<NavLink
 					href={manuscript.manuscripta_url}
-					class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+					class=" rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 				>
 					manuscripta
 				</NavLink>
@@ -30,7 +30,7 @@ import { Icon } from "astro-icon/components";
 			manuscript.digi_url && (
 				<NavLink
 					href={manuscript.digi_url}
-					class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+					class=" rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 				>
 					Digitalisat
 				</NavLink>
@@ -40,7 +40,7 @@ import { Icon } from "astro-icon/components";
 			manuscript.catalog_url && (
 				<NavLink
 					href={manuscript.catalog_url}
-					class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 bg-opacity-85 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+					class=" rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 				>
 					Katalog
 				</NavLink>
@@ -59,12 +59,12 @@ import { Icon } from "astro-icon/components";
 	<div class="flex gap-2 justify-center md:justify-end">
 		<NavLink
 			href=`/tei/manuscripts/${manuscript.hit_id}.xml`
-			class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+			class="rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 			id="download-tei">TEI</NavLink
 		>
 		<NavLink
 			href=`/pdf/manuscripts/${manuscript.hit_id}.pdf`
-			class="border border-brand-800 rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
+			class="rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 			id="download-pdf">PDF</NavLink
 		>
 	</div>

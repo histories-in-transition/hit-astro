@@ -1,17 +1,17 @@
 ---
 import PageLayout from "@/layouts/page-layout.astro";
-import Article from "@/components/article.astro";
+import Article from "@/components/articleMs.astro";
 import type { Manuscript } from "@/types/index.ts";
 import manuscripts from "@/content/data/manuscripts.json";
 import MsHeader from "@/components/manuscript/MsHeader.astro";
 import MsOverview from "@/components/manuscript/MsOverview.astro";
 import MsHands from "@/components/manuscript/MsHands.astro";
-import MsCodUnits from "@/components/manuscript/MsCodUnits.astro";
 import MsHistory from "@/components/manuscript/MsHistory.astro";
 import MsBibliography from "@/components/manuscript/MsBibliography.astro";
 import MsContent from "@/components/manuscript/MsContent.astro";
 import MsStrata from "@/components/manuscript/MsStrata.astro";
-import { makeSuperScript } from "@/lib/utils.ts";
+import MsMaterial from "@/components/manuscript/MsMaterial.astro";
+import Aside from "@/components/ui/Aside.astro";
 
 export async function getStaticPaths() {
 	const paths = manuscripts.map((manuscript) => {
@@ -22,85 +22,50 @@ export async function getStaticPaths() {
 			props: { data: manuscript as Manuscript },
 		};
 	});
-
 	return paths;
 }
 
 const { data: manuscript } = Astro.props;
+
+// Collect TOC sections (id + heading) manually
+const tocSections = [
+	{ id: "msInfo", title: "Überblick" },
+	{ id: "msMaterial", title: "Materialität" },
+	{ id: "msHands", title: "Paläographie" },
+	{ id: "msHistory", title: "Geschichte" },
+	{ id: "msContent", title: "Inhalt" },
+	{ id: "msStrata", title: "Strata" },
+	// Add more as needed
+];
 ---
 
 <PageLayout title={manuscript?.shelfmark}>
-	<Article
-		prevLink={`/manuscripts/${manuscript.prev.id}`}
-		nextLink={`/manuscripts/${manuscript.next.id}`}
-		mainTitle={manuscript?.library[0]?.place[0]?.value +
-			", " +
-			manuscript.library[0].abbreviation +
-			", " +
-			manuscript.shelfmark}
-		authorEntry={manuscript?.author_entry.map((a) => a).join(", ")}
-	>
-		<MsHeader manuscript={manuscript} />
-		<MsOverview manuscript={manuscript} />
-		<!-- added msMaterial without components because of the makeSuperScript which returns html - cant be added in astro as props -->
-		<section
-			aria-labelledby="msMaterial"
-			class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5"
+	<div class="grid grid-cols-1 md:grid-cols-[1fr_12fr] gap-8 pl-6">
+		<!-- Sidebar / TOC -->
+		<Aside sections={tocSections} />
+		<Article
+			prevLink={`/manuscripts/${manuscript.prev.id}`}
+			nextLink={`/manuscripts/${manuscript.next.id}`}
+			mainTitle={manuscript?.library[0]?.place[0]?.value +
+				", " +
+				manuscript.library[0].abbreviation +
+				", " +
+				manuscript.shelfmark}
+			authorEntry={manuscript?.author_entry.map((a) => a).join(", ")}
 		>
-			<details open>
-				<summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msMaterial">
-					Materialität
-				</summary>
+			<MsHeader manuscript={manuscript} />
+			<MsOverview manuscript={manuscript} />
+			<MsMaterial manuscript={manuscript} />
 
-				<dl class="grid grid-cols-[1fr_5fr] p-3">
-					<dt class="font-semibold border-r border-gray-300 pr-2">Material:</dt>
-					<dd class="pl-5">
-						{manuscript?.material}
-					</dd>
+			{manuscript?.hands?.length > 0 ? <MsHands manuscript={manuscript} /> : ""}
 
-					<dt class="font-semibold border-r border-gray-300 pr-2">Umfang:</dt>
-					<dd class="pl-5">{manuscript?.extent} Bll.</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Maße:</dt>
-					<dd class="pl-5">{manuscript?.height} × {manuscript?.width} mm</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Foliierung:</dt>
-					<dd class="pl-5">{manuscript?.foliation ?? "N/A"}</dd>
-					<dt class="font-semibold border-r border-gray-300 pr-2">Lagenstruktur:</dt>
-					<dd class="pl-5">
-						{
-							manuscript.quire_structure && (
-								<span set:html={makeSuperScript(manuscript?.quire_structure)} />
-							)
-						}
-					</dd>
+			<MsHistory manuscript={manuscript} />
 
-					<dt class="font-semibold border-r border-gray-300 pr-2">Einband:</dt>
-					<dd class="pl-5">
-						{manuscript?.binding_date.map((date) => <span>{date?.value}</span>)}
-						{manuscript?.binding}
-					</dd>
+			{manuscript.bibliography.length > 0 ? <MsBibliography manuscript={manuscript} /> : ""}
 
-					{
-						manuscript?.acc_mat && (
-							<>
-								<dt class="font-semibold border-r border-gray-300 pr-2">Fragmente:</dt>
-								<dd class="pl-5">{manuscript?.acc_mat}</dd>
-							</>
-						)
-					}
-				</dl>
-			</details>
-		</section>
+			<MsContent manuscript={manuscript} />
 
-		{manuscript?.hands?.length > 0 ? <MsHands manuscript={manuscript} /> : ""}
-
-		{manuscript?.cod_units?.length > 0 ? <MsCodUnits manuscript={manuscript} /> : ""}
-		<MsHistory manuscript={manuscript} />
-
-		{manuscript.bibliography.length > 0 ? <MsBibliography manuscript={manuscript} /> : ""}
-
-		<MsContent manuscript={manuscript} />
-
-		{manuscript.strata.length > 0 ? <MsStrata manuscript={manuscript} /> : ""}
-	</Article>
-	<script src="@/lib/table-search.js"></script>
+			{manuscript.strata.length > 0 ? <MsStrata manuscript={manuscript} /> : ""}
+		</Article>
+	</div>
 </PageLayout>

@@ -1,0 +1,46 @@
+---
+import MsSection from "./MsSection.astro";
+import DescriptionList from "@/components/ui/DescriptionList.astro";
+import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
+import { makeSuperScript } from "@/lib/utils";
+import MsCodUnits from "./MsCodUnits.astro";
+
+const { manuscript } = Astro.props;
+---
+
+<MsSection heading="Materialität" id="msMaterial">
+	<DescriptionList>
+		<DescriptionListItem label="Material:">
+			{manuscript?.material}
+		</DescriptionListItem>
+		<DescriptionListItem label="Umfang:">{manuscript?.extent} Bll.</DescriptionListItem>
+		<DescriptionListItem label="Maße:"
+			>{manuscript?.height ?? "N/A"} × {manuscript?.width ?? "N/A"} mm</DescriptionListItem
+		>
+		<DescriptionListItem label="Foliierung:">{manuscript?.foliation ?? "N/A"}</DescriptionListItem>
+		<DescriptionListItem label="Lagenstruktur:">
+			{
+				manuscript.quire_structure && (
+					<span set:html={makeSuperScript(manuscript?.quire_structure)} />
+				)
+			}
+		</DescriptionListItem>
+		<DescriptionListItem label="Einband:">
+			{manuscript?.binding_date.map((date) => <span>{date?.value}</span>)}
+			{manuscript?.binding}
+		</DescriptionListItem>
+		{
+			manuscript?.acc_mat && (
+				<DescriptionListItem label="Fragmente">{manuscript?.acc_mat}</DescriptionListItem>
+			)
+		}
+	</DescriptionList>
+	<!-- Kodikologische Einheiten -->
+	{
+		manuscript.cod_units.length > 0 ? (
+			manuscript.cod_units.map((unit) => <MsCodUnits unit={unit} />)
+		) : (
+			<p class="p-3">Keine kodikologischen Einheiten vorhanden.</p>
+		)
+	}
+</MsSection>

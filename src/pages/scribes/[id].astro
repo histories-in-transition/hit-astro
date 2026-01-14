@@ -85,8 +85,9 @@ const geoJson = processScribesData(scribe);
                     </dd>
 				</dl>
                 {scribe.places.length > 0 && 
-                <MapLeaflet client:only="svelte"
-                geoJsonData={geoJson}></MapLeaflet>}
+                 <div>
+                    <MapLeaflet client:only="svelte" geoJsonData={geoJson}></MapLeaflet>
+                  </div>}
                 </div>
             </section>
             <section>

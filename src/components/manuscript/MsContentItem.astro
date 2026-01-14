@@ -1,0 +1,116 @@
+---
+import NavLink from "@/components/nav-link.astro";
+const { item } = Astro.props;
+---
+
+<>
+	<dt class="md:border-r border-gray-300 pr-2 justify-self-end">
+		{item.hit_id ? <NavLink href={`/msitems/${item.hit_id}`}>{item.locus}</NavLink> : item.locus}
+	</dt>
+
+	<dd class="pl-5 space-x-1">
+		{
+			item.title_work.map((work) => (
+				<span class="font-semibold">
+					{work.author?.length ? `${work.author.map((a) => a.name).join(", ")}: ` : ""}
+					{work.hit_id ? (
+						<NavLink href={`/works/${work.hit_id}`}>{work.title}</NavLink>
+					) : (
+						work.title
+					)}
+				</span>
+			))
+		}
+
+		{item.title_note && <span>({item.title_note})</span>}
+
+		{item.text_modification?.length > 0 && <span>({item.text_modification.join(", ")})</span>}
+
+		{
+			item.interpolations?.length > 0 && (
+				<span>
+					Interpolation:{" "}
+					{item.interpolations.map((i, idx) => (
+						<>
+							<NavLink href={`/works/${i.hit_id}`}>{i.title}</NavLink>
+							{idx < item.interpolations.length - 1 && ", "}
+						</>
+					))}
+				</span>
+			)
+		}
+
+		{
+			item.rubric && (
+				<span>
+					›
+					{item.rubric
+						.split(/(\[.*?\])/)
+						.map((p) =>
+							p.startsWith("[") ? (
+								<span class="not-italic">{p}</span>
+							) : (
+								<span class="italic">{p}</span>
+							),
+						)}
+					‹
+				</span>
+			)
+		}
+
+		{
+			item.incipit && (
+				<span>
+					{item.incipit
+						.split(/(\[.*?\])/)
+						.map((p) =>
+							p.startsWith("[") ? (
+								<span class="not-italic">{p}</span>
+							) : (
+								<span class="italic">{p}</span>
+							),
+						)}
+					{!item.incipit.endsWith("…") && "…"}
+				</span>
+			)
+		}
+
+		{
+			item.explicit && (
+				<span class="italic">
+					{item.explicit
+						.split(/(\[.*?\])/)
+						.map((p) => (p.startsWith("[") ? <span class="not-italic">{p}</span> : p))}
+					{!item.explicit.startsWith("…") && "…"}
+				</span>
+			)
+		}
+
+		{
+			item.final_rubric && (
+				<span class="italic">
+					›
+					{item.final_rubric
+						.split(/(\[.*?\])/)
+						.map((p) =>
+							p.startsWith("[") ? (
+								<span class="not-italic">{p}</span>
+							) : (
+								<span class="italic">{p}</span>
+							),
+						)}
+					‹
+				</span>
+			)
+		}
+
+		{
+			item.decoration?.length > 0 && (
+				<>
+					<br />
+					<span>Ausstattung: {item.decoration.map((d) => d.value).join(", ")}</span>
+				</>
+			)
+		}
+	</dd>
+</>

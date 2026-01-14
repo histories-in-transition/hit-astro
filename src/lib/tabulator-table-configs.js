@@ -440,6 +440,132 @@ export const strataTableConfig = {
 	},
 };
 
+// strata table in manuscript detail page
+export const strataMsTableConfig = {
+	transformData: (strata) => {
+		return strata.flatMap((stratum) =>
+			stratum.hand_roles.map((role) => {
+				const origDate = role.hand?.[0]?.date
+					? [...new Map(role.hand[0].date.map((d) => [d.id, d])).values()]
+					: [];
+
+				const works =
+					role.ms_item.length > 0 &&
+					role.ms_item
+						.map((item) =>
+							item.author.length > 0
+								? `${item.author[0].name}: ${item.title} (${item.locus})`
+								: `${item.title} (${item.locus})`,
+						)
+						.join("\n");
+
+				return {
+					id: stratum.id || "",
+					hit_id: stratum.hit_id || "",
+					number: stratum.number || "",
+					texts: works,
+					origDate: origDate,
+					place: stratum.place.length > 0 ? stratum.place.map((pl) => pl.value).join(" | ") : "",
+					hands: role.hand?.map((h) => h.label.split("_")[1]).join("\n") || "",
+					role: role.role?.join(", ") || "",
+					type: role.scribe_type?.join(", ") || "",
+					function: role.function?.join(", ") || "",
+					extent: role.locus || "",
+					mise_en_page: role.locus_layout?.join(" | ") || "",
+				};
+			}),
+		);
+	},
+
+	getColumns() {
+		const columns = [
+			{
+				title: "Stratum",
+				field: "number",
+				headerFilterPlaceholder: "e.g. 1",
+				minWidth: 100,
+				widthGrow: 1,
+				responsive: 0,
+			},
+			{
+				title: "Datierung",
+				headerTooltip:
+					"Für Terminus post quem 'nach' verwenden; für Terminus ante quem 'vor' verwenden",
+				field: "origDate",
+				headerFilterPlaceholder: "e.g. 850, nach 850",
+				minWidth: 80,
+				widthGrow: 2,
+				responsive: 2,
+			},
+
+			{
+				title: "Werk",
+				field: "texts",
+				headerFilterPlaceholder: "e.g. Ostertafel",
+				minWidth: 150,
+				formatter: "textarea",
+				widthGrow: 2,
+				responsive: 1,
+			},
+			{
+				title: "Hand",
+				field: "hands",
+				headerFilterPlaceholder: "e.g. 3",
+				minWidth: 100,
+				formatter: "textarea",
+				widthGrow: 1,
+				responsive: 2,
+			},
+			{
+				title: "Rolle",
+				field: "role",
+				headerFilterPlaceholder: "e.g. Korrektor",
+				minWidth: 150,
+				responsive: 2,
+				widthGrow: 1,
+			},
+			{
+				title: "Schreiber-Typ",
+				field: "type",
+				headerFilterPlaceholder: "e.g. Erweiterung",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+			},
+			{
+				title: "Funktion",
+				field: "function",
+				headerFilterPlaceholder: "e.g. inhaltlich",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+			},
+			{
+				title: "Umfang",
+				field: "extent",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+			},
+			{
+				title: "Mise-en-page",
+				field: "mise_en_page",
+				headerFilterPlaceholder: "e.g. Schriftraum",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+			},
+		];
+		return addHeaderFilters(columns);
+	},
+	// Row click configuration
+	getRowClickConfig: {
+		urlPattern: "/strata/{id}",
+		idField: "hit_id",
+		target: "_self",
+	},
+};
+
 export const msItemsTableConfig = {
 	transformData: (msitems) => {
 		return msitems.map((item) => {

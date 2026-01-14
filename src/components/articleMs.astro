@@ -1,0 +1,44 @@
+---
+import NavLink from "./nav-link.astro";
+import { Icon } from "astro-icon/components";
+import Citation from "./citation.astro";
+// Props for the component
+const { prevLink, nextLink, mainLink, mainTitle, subtitle, authorEntry } = Astro.props;
+---
+
+<article class="mx-auto grid grid-cols-1 p-2 md:p-5 pb-10 gap-y-2 mr-20">
+	<div class="flex justify-between gap-3 text-brand-800 md:text-3xl text-xl md:mb-5">
+		{
+			prevLink && (
+				<NavLink href={prevLink} class="flex items-center">
+					<Icon aria-hidden="true" name="lucide:circle-chevron-left" class="size-8" />
+					<span class="sr-only">zum vorherigen Eintrag</span>
+				</NavLink>
+			)
+		}
+		<h1 class="font-semibold py-3 text-brand-800">
+			{
+				mainLink ? (
+					<NavLink href={mainLink} class="underline underline-offset-2">
+						{mainTitle}
+					</NavLink>
+				) : (
+					mainTitle
+				)
+			}
+			{subtitle && <span> ({subtitle}) </span>}
+		</h1>
+		{
+			nextLink && (
+				<NavLink href={nextLink} class="flex items-center">
+					<Icon aria-hidden="true" name="lucide:circle-chevron-right" class="size-8" />
+					<span class="sr-only">zum nächsten Eintrag</span>
+				</NavLink>
+			)
+		}
+	</div>
+	<slot />
+	<Citation>
+		{authorEntry ? authorEntry + ", " : ""} "{mainTitle}",
+	</Citation>
+</article>

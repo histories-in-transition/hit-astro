@@ -1,23 +1,36 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	import { TabulatorFull as Tabulator } from "tabulator-tables";
 	import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
+	import type { Options as TabulatorOptions, ColumnDefinition } from "tabulator-tables";
+
 
 	import { withBasePath } from "@/lib/withBasePath";
 	import { dateAccessor, dateFormatter, dateRangeFilter } from "@/lib/tabulator-utils.js";
 
-	export let data = [];
-	export let columns = [];
+	 export let data: any[] = [];
+  	export let columns: ColumnDefinition[] = [];
 	export let tableId = "tabulator-table";
-	export let options = {};
+	export let options: Partial<TabulatorOptions> = {};
+
 	export let showDownloadButtons = true;
 	export let downloadTitle = "data";
-	export let rowClickConfig = null;
+	export let rowClickConfig:
+  | {
+      urlPattern?: string;
+      idField?: string;
+      target?: string;
+      getUrl?: (rowData: any) => string;
+    }
+  | null = null;
+
 	export let updateMapOnFilter = false;
 	export let mapIdField = "hit_id";
 
-	let tableEl;
-	let tabulator;
+	let tableEl: HTMLDivElement;
+	let tabulator: Tabulator | null = null;
+	let processedColumns: ColumnDefinition[] = [];
+
 
 	// preprocess columns (reactive)
 	$: processedColumns = columns.map((column) => {
@@ -32,15 +45,16 @@
 		return column;
 	});
 
-	const defaultOptions = {
-		layout: "fitColumns",
-		headerFilterLiveFilterDelay: 600,
-		responsiveLayout: "hide",
-		paginationSize: 25,
-		pagination: true,
-		movableColumns: true,
-		resizableRows: true,
-	};
+	const defaultOptions: Partial<TabulatorOptions> = {
+  layout: "fitColumns",
+  headerFilterLiveFilterDelay: 600,
+  responsiveLayout: "hide",
+  paginationSize: 25,
+  pagination: true,
+  movableColumns: true,
+  resizableRows: true,
+};
+
 
 	function extractMapIds(rowData, field) {
 		const ids = [];
@@ -99,9 +113,10 @@
 
 			if (counter1 && counter2) {
 				const updateCounters = () => {
-					counter1.textContent = tabulator.getDataCount("active");
-					counter2.textContent = tabulator.getDataCount("all");
-				};
+					counter1.textContent = String(tabulator!.getDataCount("active"));
+					counter2.textContent = String(tabulator!.getDataCount("all"));
+					};
+
 
 				tabulator.on("dataFiltered", updateCounters);
 				updateCounters();
@@ -158,17 +173,17 @@
 			<div class="flex gap-2 justify-end">
 				<button on:click={() => download("csv", "csv")}
 					aria-label="Als CSV herunterladen"
-					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
+					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
 					CSV
 				</button>
 				<button on:click={() => download("json", "json")}
 					aria-label="Als JSON herunterladen"
-					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
+					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
 					JSON
 				</button>
 				<button on:click={() => download("html", "html", { style: true })}
 					aria-label="Als HTML herunterladen"
-					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-800 text-sm">
+					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
 					HTML
 				</button>
 			</div>

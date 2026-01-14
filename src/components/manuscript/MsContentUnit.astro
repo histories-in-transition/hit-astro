@@ -1,0 +1,21 @@
+---
+import MsContentItem from "./MsContentItem.astro";
+const { unit, showHeader } = Astro.props;
+import { parseLocus, sortByLocus } from "@/lib/utils";
+---
+
+<dl class="md:grid grid-cols-[1fr_5fr] md:p-3">
+	{
+		showHeader && (
+			<>
+				<dt class="font-semibold ">
+					Kod. Einheit {unit.number} (fols. {unit.locus})
+				</dt>
+				<dd />
+				{unit.content.sort(sortByLocus).map((item) => (
+					<MsContentItem item={item} />
+				))}
+			</>
+		)
+	}
+</dl>
