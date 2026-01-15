@@ -164,8 +164,8 @@
 </script>
 
 <div class="text-sm md:text-base w-full">
-	<div class="grid gap-2 md:flex my-4 md:justify-between items-start md:items-center mb-2">
-		<div class="text-brand-800 text-xl">
+	<div class="grid md:flex my-4 md:justify-between items-start md:items-center mb-2">
+		<div class="text-brand-800">
 			Es werden <span id="counter1"></span> von <span id="counter2"></span> Einträgen angezeigt
 		</div>
 
@@ -189,6 +189,9 @@
 			</div>
 		{/if}
 	</div>
-
-	<div bind:this={tableEl} id={tableId} style="min-height:100px; width:100%;" ></div>
+	
+	<!-- MAP SLOT -->
+	 <slot name="map" />
+  <!-- TABULATOR ROOT -->
+  <div bind:this={tableEl} id={tableId} class="w-full min-w-24"></div>
 </div>

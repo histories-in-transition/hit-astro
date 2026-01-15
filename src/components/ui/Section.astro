@@ -1,0 +1,27 @@
+---
+import { Icon } from "astro-icon/components";
+const { heading, id } = Astro.props;
+---
+
+<section aria-labelledby={id} class="text-sm md:leading-7
+	md:text-base md:p-1">
+	<details
+		open
+		class="group grid grid-cols-1 gap-2 border border-neutral-300 rounded-md overflow-hidden"
+	>
+		<summary
+			class="flex justify-start gap-1.5 text-xl cursor-pointer p-3 bg-brand-50 font-semibold text-brand-800"
+			id={id}
+		>
+			<Icon
+				class="transition-transform duration-200 group-open:rotate-90 inline-flex size-6"
+				aria-hidden="true"
+				name="lucide:circle-chevron-right"
+			/>
+			<span>{heading ? heading : ""}</span>
+		</summary>
+		<div class="grid grid-cols-1 gap-1.5 py-1 px-3 bg-brand-100 text-brand-900">
+			<slot />
+		</div>
+	</details>
+</section>

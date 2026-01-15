@@ -440,6 +440,107 @@ export const strataTableConfig = {
 	},
 };
 
+export const msItemsStratumTableConfig = {
+	transformData: (items) => {
+		return items.map((item) => {
+			const work = item.work[0].title;
+			const author = item.author[0]?.name;
+			const work_aut = author ? `${author}: ${work}` : work;
+			const hands = item.hands.map((hand) => hand.label.split("_")[1]);
+			const jobs = item.hands.flatMap((hand) => hand.jobs);
+			const rolls = jobs.map((j) => j.role.map((r) => r.value)).join("\n");
+			const scribe_type = jobs.map((j) => j.scribe_type.map((st) => st.value)).join(" | ");
+			const func = jobs.map((j) => j.function.map((f) => f.value)).join(" | ");
+			const scope = jobs.map((j) => j.locus);
+			const mise = jobs.map((j) => j.locus_layout.map((l) => l.value)).join(" | ");
+			return {
+				id: item.id || "",
+				hit_id: item.hit_id || "",
+				work: work_aut,
+				hands: hands,
+				rolls: rolls,
+				scribe_type: scribe_type,
+				function: func,
+				scope: scope,
+				mise: mise,
+			};
+		});
+	},
+
+	getColumns() {
+		const columns = [
+			{
+				title: "Werk",
+				field: "work",
+				headerFilterPlaceholder: "e.g. Ostertafel",
+				minWidth: 150,
+				widthGrow: 3,
+				responsive: 0,
+			},
+			{
+				title: "Hand",
+				field: "hands",
+				headerFilterPlaceholder: "e.g. 1",
+				minWidth: 80,
+				widthGrow: 1,
+				responsive: 1,
+			},
+
+			{
+				title: "Rolle",
+				field: "rolls",
+				headerFilterPlaceholder: "e.g. Ostertafel",
+				minWidth: 150,
+				formatter: "textarea",
+				widthGrow: 1,
+				responsive: 2,
+			},
+			{
+				title: "Schreiber-Typ",
+				field: "scribe_type",
+				headerFilterPlaceholder: "e.g. Anlage",
+				minWidth: 150,
+				formatter: "textarea",
+				widthGrow: 1,
+				responsive: 2,
+			},
+			{
+				title: "Funktion",
+				headerTooltip: "Datierung der beteiligten Hände",
+				field: "function",
+				headerFilterPlaceholder: "e.g. 850, nach 850",
+				minWidth: 150,
+				responsive: 2,
+				widthGrow: 1,
+			},
+			{
+				title: "Umfang",
+				field: "scope",
+				headerFilterPlaceholder: "e.g. Reims",
+				minWidth: 100,
+				formatter: "textarea",
+				responsive: 2,
+			},
+			{
+				title: "Mise-en-page",
+				field: "mise",
+				headerFilterPlaceholder: "e.g. Reims",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+				widthGrow: 2,
+			},
+		];
+		return addHeaderFilters(columns);
+	},
+	// Row click configuration for strata table
+	getRowClickConfig: {
+		urlPattern: "/msitems/{id}",
+		idField: "hit_id",
+		target: "_self",
+	},
+};
+
 // strata table in manuscript detail page
 export const strataMsTableConfig = {
 	transformData: (strata) => {
@@ -655,6 +756,213 @@ export const msItemsTableConfig = {
 				field: "decoration",
 				minWidth: 100,
 				responsive: 99,
+			},
+		];
+		return addHeaderFilters(columns);
+	},
+	// Row click configuration for strata table
+	getRowClickConfig: {
+		urlPattern: "/msitems/{id}",
+		idField: "hit_id",
+		target: "_self",
+	},
+};
+// tabulator for hand detail view page showing hand_roles
+export const handTableConfig = {
+	transformData: (hand) => {
+		return hand.hand_roles.map((role) => {
+			const works = role.content.map((msitem) => msitem.title_work[0]);
+			const work_aut = works
+				.map((w) => (w.author.length > 0 ? `${w.author[0].name}: ${w.title}` : w.title))
+				.join("; ");
+			return {
+				hit_id: role.hit_id,
+				id: role.content[0].hit_id,
+				locus: role.content.map((msitem) => msitem.locus).join("; "),
+				works: work_aut,
+				rolle: role.role.map((r) => r.value).join(", "),
+				typ: role.scribe_type.map((st) => st.value).join(", "),
+				function: role.function.map((f) => f.value).join(", "),
+				scope: role.scope,
+				locus_layout: role.locus_layout.map((ll) => ll.value).join(", "),
+			};
+		});
+	},
+
+	getColumns() {
+		const columns = [
+			{
+				title: "Locus",
+				resizable: true,
+				field: "locus",
+				minWidth: 100,
+				responsive: 1,
+				widthGrow: 0,
+			},
+			{
+				title: "Werk",
+				headerFilterPlaceholder: "e.g. Ostertafel",
+				field: "works",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 1,
+				widthGrow: 3,
+			},
+			{
+				title: "Rolle",
+				headerFilterPlaceholder: "e.g. Überarbeiter",
+				field: "rolle",
+				minWidth: 100,
+				formatter: "textarea",
+				responsive: 2,
+				widthGrow: 2,
+			},
+			{
+				title: "Schreiber-Typ",
+				headerFilterPlaceholder: "e.g. Erweiterung",
+				field: "typ",
+				formatter: "textarea",
+				minWidth: 100,
+				responsive: 2,
+				widthGrow: 2,
+			},
+			{
+				title: "Funktion",
+				field: "function",
+				minWidth: 100,
+				headerFilterPlaceholder: "e.g. inhaltlich",
+				responsive: 2,
+				widthGrow: 2,
+			},
+			{
+				title: "Umfang",
+				field: "scope",
+				minWidth: 110,
+				responsive: 2,
+				widthGrow: 1,
+			},
+			{
+				title: "Mise-en-page",
+				headerFilterPlaceholder: "e.g. marginal",
+				field: "locus_layout",
+				minWidth: 100,
+				formatter: "textarea",
+				responsive: 2,
+				widthGrow: 2,
+			},
+		];
+
+		return addHeaderFilters(columns);
+	},
+	// Row click configuration for strata table
+	getRowClickConfig: {
+		urlPattern: "/msitems/{id}",
+		idField: "id",
+		target: "_self",
+	},
+};
+
+export const msItemTableConfig = {
+	transformData: (hands) => {
+		return hands.flatMap((hand) => {
+			const origDate = [
+				...new Map(
+					hand.dating.flatMap((dating) => dating.date?.map((date) => [date.id, date])) || [],
+				).values(),
+			];
+
+			return (
+				hand.jobs
+					// keep only NON-Schreiber jobs
+					.filter((job) => !job.role.some((r) => r.value === "Schreiber"))
+					// one row per job
+					.map((job) => ({
+						id: "",
+						hit_id: "",
+						hand: hand.label.split("_")[1],
+						role: job.role.map((r) => r.value).join(" | "),
+						scribe: hand.scribe[0]?.value,
+						scope: job.locus,
+						layout: job.locus_layout.map((l) => l.value).join(" | "),
+						type: job.scribe_type?.map((st) => st.value).join(" | "),
+						function: job.function?.map((f) => f.value).join(" | "),
+						origDate: origDate,
+					}))
+			);
+		});
+	},
+
+	getColumns() {
+		const columns = [
+			{
+				title: "Bearbeitungsart",
+				field: "role",
+				headerFilterPlaceholder: "e.g. Überarbeiter",
+				minWidth: 150,
+				widthGrow: 3,
+				responsive: 0,
+			},
+			{
+				title: "Schreiberhand",
+				field: "hand",
+				headerFilterPlaceholder: "e.g. 1",
+				minWidth: 100,
+				widthGrow: 2,
+				responsive: 1,
+			},
+
+			{
+				title: "Schreiber",
+				field: "scribe",
+				headerFilterPlaceholder: "e.g. Ostertafel",
+				minWidth: 100,
+				formatter: "textarea",
+				widthGrow: 2,
+				responsive: 2,
+			},
+			{
+				title: "Datierung",
+				field: "origDate",
+				headerFilterPlaceholder: "e.g. 850, nach 850",
+				minWidth: 150,
+				formatter: "textarea",
+				widthGrow: 1,
+				responsive: 2,
+			},
+			{
+				title: "Umfang",
+				headerTooltip: "Datierung der beteiligten Hände",
+				field: "scope",
+				minWidth: 100,
+				responsive: 2,
+				widthGrow: 2,
+			},
+			{
+				title: "Mise-en-page",
+				field: "layout",
+				headerFilterPlaceholder: "e.g. marginal",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+				widthGrow: 2,
+			},
+			{
+				title: "Typ",
+				field: "type",
+				headerFilterPlaceholder: "e.g. Erweiterung",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+				widthGrow: 2,
+			},
+			{
+				title: "Funktion",
+				field: "function",
+				headerFilterPlaceholder: "e.g. inhaltlich",
+				minWidth: 150,
+				formatter: "textarea",
+				responsive: 2,
+				widthGrow: 2,
 			},
 		];
 		return addHeaderFilters(columns);

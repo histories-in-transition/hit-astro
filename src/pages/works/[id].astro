@@ -3,15 +3,16 @@ import PageLayout from "@/layouts/page-layout.astro";
 import NavLink from "@/components/nav-link.astro";
 import { Icon } from "astro-icon/components";
 import Article from "@/components/article.astro";
+import Section from "@/components/ui/Section.astro"
+import DescriptionList from "@/components/ui/DescriptionList.astro";
+import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
 import worksjson from "@/content/data/works.json";
 import type {Work} from "@/types";
 
 import TabulatorTable from "@/components/tabulator-table.svelte";
-
 import { workDetailTableConfig } from "@/lib/tabulator-table-configs.js";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
-
 import {processWorkData} from "@/lib/make-geojson.ts";
 
 export async function getStaticPaths() {
@@ -19,13 +20,11 @@ export async function getStaticPaths() {
 const works = Object.values(worksjson);
 	const paths = works.map((work) => {
 		const workId = work.hit_id;
-
 		return {
 			params: { id: workId },
 			props: { data: work as Work}, 
 		};
 	});
-
 	return paths;
 }
 
@@ -35,6 +34,7 @@ const geoJsonData = processWorkData(work as Work);
 
 // Transform data and prepare columns for Tabulator Table
 const tableData = workDetailTableConfig.transformData(work.ms_transmission);
+// conditions for rendering columns:
 const hasVersion = work.ms_transmission.some(item => item.version.length > 0);
 const hasTextModification = work.ms_transmission.some(item => item.text_modification.length > 0);
 const hasForm = work.ms_transmission.some(item => item.form.length > 0);
@@ -57,18 +57,17 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 			  : work?.title
 		  }
 		 > 
-		
 		<div
 			class="border-2 rounded-sm border-brandBrown bg-brand-100
 			text-sm md:leading-7 md:text-base"
 		>
-			<section class="m-5 overflow-x-auto" aria-labelledby="workInfo">
-				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">Allgemeine Info zum Werk:</h2>
+		<section class="m-5 overflow-x-auto space-y-5" aria-labelledby="transmission">
+				<h2 id="transmission" class="text-xl font-semibold text-brand-800">Allgemeine Info zum Werk:</h2>
 				
-					<dl class="md:grid grid-cols-[1fr_6fr]">
-						<dt class="font-semibold md:border-r border-gray-300 pr-2">Titel:</dt>
-						<dd class="pl-5">
-							{work?.title}
+		
+			<DescriptionList>
+				<DescriptionListItem label="Titel:">
+					{work?.title}
 							{String(work?.gnd_url).trim() &&
 									<NavLink href={work.gnd_url}>
 										(GND: {work.gnd_url.split("gnd/")[1]}
@@ -78,57 +77,43 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 											name="lucide:external-link"
 										/>)
 									</NavLink>
-						}						
-						</dd>
-					{work.author.length > 0 && (
-						<>
-							<dt class="font-semibold md:border-r border-gray-300 pr-2">Author:</dt>
-							<dd class="pl-5">
-								{work.author.map((item) => 
-								<ul>
-									<li>{item.name} {item.gnd_url && (						
-										<NavLink href={item.gnd_url}>
-											(GND: {item.gnd_url.split("gnd/")[1]}
-											<Icon
-												class="inline-flex align-baseline"
-												aria-hidden="true"
-												name="lucide:external-link"
-											/>)
-										</NavLink>)
-									}</li>
-								</ul>)}
-								
-							</dd>
-						</>)
-					}
-					{work.bibliography.length > 0 && (
-						<>
-							<dt class="font-semibold md:border-r border-gray-300 pr-2">Bibliographie:</dt>
-							<dd class="pl-5">
-								{work.bibliography.map((item) => item)}
-							</dd>
-						</>)
-						}
-						{work.source_text.length > 0 &&		(				
-						<>
-							<dt class="font-semibold md:border-r border-gray-300 pr-2">Quelle:</dt>
-							<dd class="pl-5">
-								{work.source_text.map((text) => (
-												<NavLink href={`/works/${text.hit_id}`} 
-												>
-													{text.title}
-												</NavLink>
-											))
-								}
+						}			
+				</DescriptionListItem>
+				{work.author.length > 0 && (
+					<DescriptionListItem label="Author:">
+							{work.author.map((item) => 
+									<ul>
+										<li>{item.name} {item.gnd_url && (						
+											<NavLink href={item.gnd_url}>
+												(GND: {item.gnd_url.split("gnd/")[1]}
+												<Icon
+													class="inline-flex align-baseline"
+													aria-hidden="true"
+													name="lucide:external-link"
+												/>)
+											</NavLink>)
+										}</li>
+									</ul>)}
+					</DescriptionListItem>)}
+				{work.bibliography.length > 0 && (
+					<DescriptionListItem label="Bibliographie:">
+						{work.bibliography.map((item) => item).join('; ')}
+					</DescriptionListItem>)}
+				{work.source_text.length > 0 &&		(	
+					<DescriptionListItem label="Quellen:">
+						{work.source_text.map((text) => (
+							<>
+								<NavLink href={`/works/${text.hit_id}`}>
+									{text.author ? `${text.author}: ${text.title}`: text.title}
+								</NavLink>
+										
 								{work.note_source ? <span>({work.note_source})</span> : ""}
-							</dd>
-						</>)
+							</>))
 						}
-						{work.joined_transmission.length > 0 && (
-						<>
-							<dt class="font-semibold md:border-r border-gray-300 pr-2">Überlieferungsgemeinschaft:</dt>
-							<dd class="pl-5">
-								<ul class="list-disc list-inside" data-showmore-list>
+					</DescriptionListItem>)}
+				{work.joined_transmission.length > 0 && (
+					<DescriptionListItem label="Überlieferungsgemeinschaft:">
+						<ul class="list-disc list-inside" data-showmore-list>
 									{work.joined_transmission.slice(0, 2).map((tr) => (
 										<li>
 										<NavLink href={`/works/${tr.hit_id}`}>{tr.author.length > 0 ? `${tr.author[0].name}: ${tr.title}` : tr.title}</NavLink>
@@ -149,91 +134,50 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 										Show more
 									</button>
 									)}
-							</dd>
-						</>)
-						}
-						{work.genre.length > 0 && (
-							<>
-							<dt class="font-semibold md:border-r border-gray-300 pr-2">Genre:</dt>
-							<dd class="pl-5">
-								{work.genre.map((item, index) => {
-												return (
-													<>
-														{item.main_genre.length > 0 &&
-															item.value}
-														{index < work.genre.length - 1 && " | "}
-													</>
-												);
-											})
-								}
-							</dd>
-						</>
-						)
-						
-						}
-						{work.source_text.length > 0 && (
-							<>
-								<dt class="font-semibold md:border-r border-gray-300 pr-2">Quelle:</dt>
-								<dd class="pl-5">
-									{work.source_text.map((item, index) => {
-													return (
-														<>
-															{item.author.length > 0 &&
-																`${item.author}: `}
-															{item.title}
-															{index < work.genre.length - 1 && " | "}
-														</>
-													);
-												})
-											}
-								</dd>
-							</>
-						)
-							
-									}
-					</dl>
-					
-			</section>
+					</DescriptionListItem>
+				)}
+				{work.genre.length > 0 && (
+					<DescriptionListItem label="Genre:">
+						{work.genre.map((item, index) => {
+							return (
+								<>
+									{item.main_genre.length > 0 &&
+										item.value}
+									{index < work.genre.length - 1 && " | "}
+								</>
+							);
+						})}
+					</DescriptionListItem>
+				)}
+			</DescriptionList>
+		</section>
+			
 
-			{work.ms_transmission.length > 0 && (
+		{work.ms_transmission.length > 0 && (
 			<section class="m-5 overflow-x-auto space-y-5" aria-labelledby="transmission">
 				<h2 id="transmission" class="text-xl font-semibold text-brand-800">Überlieferung:</h2>
-				{work.ms_transmission?.map(tr => tr.orig_place).flat().length > 0 &&					
-					<MapLeaflet client:only="svelte" geoJsonData={geoJsonData}/>
-				}
-					{/* mss transmission in details for small screens */}
+				
+				{/* {work.ms_transmission?.map(tr => tr.orig_place).flat().length > 0 &&					
+					
+				} */}
 
-					<div class="space-y-4 lg:hidden mt-3">
-					{work.ms_transmission.map((item) => (
-						<div class="border border-neutral-300 rounded-md overflow-hidden">
-						<details class="group">
-							<summary class="flex cursor-pointer bg-brand-50 p-4 font-semibold text-brand-800 space-x-1.5">
-								<span>{item.manuscript[0].value}</span>
-									<Icon
-											class=" transition-transform duration-200 group-open:rotate-90 inline-flex ml-auto size-6"
-											aria-hidden="true"
-											name="lucide:circle-chevron-right"
-										/>
-							</summary>
-							<div class="bg-white p-4 space-y-3 text-sm lg:text-base text-brand-900">
-								<dl class="md:grid grid-cols-[1fr_6fr]">
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2">Handschrift</dt>
-									<dd class="pl-5">
-										<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
-								{item.manuscript[0].value}
-							</NavLink>
-								</dd>
-								<dt class="font-semibold md:border-r border-neutral-300 pr-2">Locus</dt>
-								<dd class="pl-5">
+				{/* mss transmission in details for small screens */}
+				{work.ms_transmission.map((item) => (
+				<div class="lg:hidden">
+					<Section heading={item.manuscript[0].value}>
+						<DescriptionList>
+							<DescriptionListItem label="Handschrift">
+								<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0].id}`}>
+									{item.manuscript[0].value}
+								</NavLink>
+							</DescriptionListItem>
+							<DescriptionListItem label="Locus">	
 								<NavLink href={`/msitems/${item.hit_id}`}>
 									{item.locus}
 								</NavLink>
-								</dd>
-								
-								{item?.commented_msitem.length > 0 && (
-								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Zusammengehörig</dt>
-									<dd class="pl-5">									
+							</DescriptionListItem>
+							{item?.commented_msitem.length > 0 && (
+								<DescriptionListItem label="Zusammengehörig">
 									{item.commented_msitem.length > 0 && (
 										<ul class="list-disc list-inside mt-1">
 										{item.commented_msitem.map((msitem) => (
@@ -245,94 +189,71 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 										))}
 										</ul>
 									)}
-									</dd>
-								</>
-								)}
-								
-								<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Schreibort</dt>
-								<dd class="pl-5">
+								</DescriptionListItem>
+							)}
+							<DescriptionListItem label="Schreibort">									
 								{[...new Set(item.orig_place.flatMap(p => p.place.map(pl => pl.value)))].join(', ')}
-								</dd>
-								
-								<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Datierung</dt>
-								<dd class="pl-5">
+							</DescriptionListItem>
+							<DescriptionListItem label="Datierung">
 								{[...new Set(item.orig_date.flatMap(oDat => oDat.date.map(d => d.value)))].join(' | ')}
-								</dd>
-								{item.annotation_date.length > 0 &&	(
-								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Annotationen - Datierung</dt>
-									<dd class="pl-5">
-										{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
-									</dd>
-								</>)
-								}
-								{item.annotation_typ.length > 0 && (
-									<>
-										<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Annotationen - Typ</dt>
-										<dd class="pl-5">
-										{[...new Set(item.annotation_typ.map(type => type))].join(' | ')}
-										</dd>
-									</>)
-								}
-								{item.version.length > 0 && (
-									<>
-										<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Version</dt>
-										<dd class="pl-5">
-										{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
-										</dd>
-									</>
-								)}
+							</DescriptionListItem>
+							{item.annotation_date.length > 0 &&	(
+								<DescriptionListItem label="Annotationen - Datierung">
+									{[...new Set(item.annotation_date.flatMap(anDat => anDat.date.map(d => d.value)))].join(' | ')}
+								</DescriptionListItem>
+							)
+							}
+							{item.annotation_typ.length > 0 && (
+								<DescriptionListItem label="Annotationen - Typ">
+									{[...new Set(item.annotation_typ.map(type => type))].join(' | ')}
+								</DescriptionListItem>)
+							}
+							{item.version.length > 0 && (
+								<DescriptionListItem label="Version">
+									{[...new Set(item.version.map(ver => ver.value))].join(' | ')}
+								</DescriptionListItem>
+							)}
 							{item.text_modification.length > 0 && (
-								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Textmodifikation</dt>
-									<dd class="pl-5">
-										{[...new Set(item.text_modification)].join(' | ')}
-									</dd>
-								</>
+								<DescriptionListItem label="Textmodifikation">
+									{[...new Set(item.text_modification)].join(' | ')}
+								</DescriptionListItem>
 							)
 									
 								}
 							{item.decoration.length > 0 && (
-								<>
-									<dt class="font-semibold md:border-r border-neutral-300 pr-2 ">Dekoration</dt>
-									<dd class="pl-5">
-										{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
-									</dd>
-								</>
-							)
-								
-							}
-							</dl>
-							</div>
-						</details>
-						</div>
-					))}
-					</div>
-
-					{/* // table for medium and larger screens */}
-				<div class="hidden lg:block mt-3">
-
+								<DescriptionListItem label="Dekoration">									
+									{[...new Set(item.decoration.map(deco => deco.value))].join(' | ')}
+								</DescriptionListItem>
+							)}
+						</DescriptionList>
+					</Section>
+				</div>))}
+				{/* // table for medium and larger screens */}
+				<div class="hidden lg:block mt-3">    
+					<TabulatorTable 
+					client:load 
+					data={tableData}
+					columns={columns}
+					tableId="work-detail-table"
+					options={{
+						paginationSize: 25,
+						responsiveLayout: "collapse",
+					}}
+					downloadTitle = {work.title.replace(/\s+/g, '_').toLowerCase()},
+					updateMapOnFilter={true}
+						mapIdField="hit_id"
+					rowClickConfig={rowClickConfig}
+					>
+						
+						<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData}/>
 					
-    
-    <TabulatorTable 
-     client:load 
-	  data={tableData}
-      columns={columns}
-      tableId="work-detail-table"
-      options={{
-        paginationSize: 25,
-        responsiveLayout: "collapse",
-	}}
-	downloadTitle = {work.title.replace(/\s+/g, '_').toLowerCase()},
-	updateMapOnFilter={true}
-          mapIdField="hit_id"
-	rowClickConfig={rowClickConfig}
-    />
+					</TabulatorTable>
 				
 				</div>
 			</section>
+			
 			)}
-		</div>
+			</div>
 	</Article>
 	
 </PageLayout>

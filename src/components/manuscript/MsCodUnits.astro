@@ -1,5 +1,5 @@
 ---
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import DescriptionList from "../ui/DescriptionList.astro";
 
 const formatDates = (dates, uncertain) =>
@@ -25,7 +25,7 @@ const formatProvPlaces = (prov_places, type) => {
 const { unit } = Astro.props;
 ---
 
-<MsSection heading={`Kodikologische Einheiten ${unit?.number}`} id="codUnits">
+<Section heading={`Kodikologische Einheiten ${unit?.number}`} id="codUnits">
 	<p class="px-3 text-brand-900">{unit.notes}</p>
 	<DescriptionList
 		items={[
@@ -60,4 +60,4 @@ const { unit } = Astro.props;
 				: []),
 		]}
 	/>
-</MsSection>
+</Section>

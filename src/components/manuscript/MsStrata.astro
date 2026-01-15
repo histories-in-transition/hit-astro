@@ -1,8 +1,7 @@
 ---
 import NavLink from "@/components/nav-link.astro";
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import type { Stratum } from "@/types";
-import TableHead from "@/components/table-head.astro";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { strataMsTableConfig } from "@/lib/tabulator-table-configs.js";
 
@@ -13,7 +12,8 @@ const columns = strataMsTableConfig.getColumns();
 const rowClickConfig = strataMsTableConfig.getRowClickConfig;
 ---
 
-<MsSection heading="Strata" id="msStrata">
+<Section heading="Strata" id="msStrata">
+	<!-- use custom dl to have link in dt (DescriptionListItem has label: string) -->
 	<dl class="md:grid grid-cols-[1fr_5fr] p-3">
 		{
 			manuscript.strata.map((stratum: Stratum) => {
@@ -48,4 +48,4 @@ const rowClickConfig = strataMsTableConfig.getRowClickConfig;
 		updateMapOnFilter={true}
 		mapIdField="hit_id"
 	/>
-</MsSection>
+</Section>

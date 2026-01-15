@@ -18,7 +18,6 @@ const rowClickConfig = manuscriptsTableConfig.getRowClickConfig;
 
 <PageLayout title="manuscripts">
 	<TableHead title="Handschriften">
-		<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 		<TabulatorTable
 			client:only="svelte"
 			data={tableData}
@@ -28,6 +27,8 @@ const rowClickConfig = manuscriptsTableConfig.getRowClickConfig;
 			rowClickConfig={rowClickConfig}
 			updateMapOnFilter={true}
 			mapIdField="hit_id"
-		/>
+		>
+			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
+		</TabulatorTable>
 	</TableHead>
 </PageLayout>

@@ -19,7 +19,6 @@ const rowClickConfig = worksTableConfig.getRowClickConfig;
 
 <PageLayout title="works">
 	<TableHead title="Werke">
-		<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 		<TabulatorTable
 			client:only="svelte"
 			data={tableData}
@@ -35,6 +34,8 @@ const rowClickConfig = worksTableConfig.getRowClickConfig;
 			rowClickConfig={rowClickConfig}
 			updateMapOnFilter={true}
 			mapIdField="hit_id"
-		/>
+		>
+			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
+		</TabulatorTable>
 	</TableHead>
 </PageLayout>

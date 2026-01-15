@@ -21,7 +21,6 @@ const rowClickConfig = msItemsTableConfig.getRowClickConfig;
 		title="MS Elemente"
 		definition="Manuskriptelement bezeichnet ein einzelnes Werk oder Element innerhalb des Inhalts einer Handschrift."
 	>
-		<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 		<TabulatorTable
 			client:only="svelte"
 			data={tableData}
@@ -36,6 +35,8 @@ const rowClickConfig = msItemsTableConfig.getRowClickConfig;
 			rowClickConfig={rowClickConfig}
 			updateMapOnFilter={true}
 			mapIdField="hit_id"
-		/>
+		>
+			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
+		</TabulatorTable>
 	</TableHead>
 </PageLayout>

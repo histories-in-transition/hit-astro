@@ -2,7 +2,7 @@
 const { items = [] } = Astro.props;
 ---
 
-<dl class="md:grid grid-cols-[1fr_5fr] px-3">
+<dl class="md:grid grid-cols-[1fr_5fr] px-3 text-brand-800">
 	{
 		items.length > 0 ? (
 			items.map(({ label, value }) =>

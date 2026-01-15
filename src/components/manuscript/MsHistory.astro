@@ -1,6 +1,6 @@
 ---
 import NavLink from "@/components/nav-link.astro";
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import DescriptionList from "@/components/ui/DescriptionList.astro";
 import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
 const { manuscript } = Astro.props;
@@ -22,7 +22,7 @@ const origDates = manuscript?.orig_date
 	.filter(Boolean);
 ---
 
-<MsSection heading="Geschichte" id="msHistory">
+<Section heading="Geschichte" id="msHistory">
 	{
 		manuscript?.history !== undefined ? (
 			<p class="px-3 text-brand-900">{manuscript?.history}</p>
@@ -56,4 +56,4 @@ const origDates = manuscript?.orig_date
 			}
 		</DescriptionListItem>
 	</DescriptionList>
-</MsSection>
+</Section>

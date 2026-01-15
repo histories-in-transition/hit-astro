@@ -3,11 +3,11 @@ import MapLeaf from "../map-leaflet.svelte";
 import { processMSData } from "@/lib/make-geojson.ts";
 const { manuscript } = Astro.props;
 const geoData = processMSData(manuscript);
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import DescriptionList from "@/components/ui/DescriptionList.astro";
 ---
 
-<MsSection heading="Überblick" id="msInfo">
+<Section heading="Überblick" id="msInfo">
 	<div class="lg:grid lg:grid-cols-[2fr_5fr] items-start lg:gap-4 p-3">
 		<DescriptionList
 			items={[
@@ -30,4 +30,4 @@ import DescriptionList from "@/components/ui/DescriptionList.astro";
 			<DescriptionList items={[{ label: "Zusammenfassung:", value: manuscript.content_summary }]} />
 		)
 	}
-</MsSection>
+</Section>

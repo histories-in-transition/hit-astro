@@ -4,12 +4,15 @@ import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import hands from "@/content/data/hands.json";
 import type { Hand } from "@/types";
-import MsSection from "@/components/manuscript/MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import DescriptionList from "@/components/ui/DescriptionList.astro";
 import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
 import { processHandsData } from "@/lib/make-geojson.ts";
+
+import TabulatorTable from "@/components/tabulator-table.svelte";
+import { handTableConfig } from "@/lib/tabulator-table-configs.js";
 
 export async function getStaticPaths() {
 	const paths = Object.values(hands).map((item) => ({
@@ -21,6 +24,11 @@ export async function getStaticPaths() {
 }
 
 const { data: item } = Astro.props;
+
+// Transform data and prepare columns for Tabulator Table
+const tableData = handTableConfig.transformData(item);
+const columns = handTableConfig.getColumns();
+const rowClickConfig = handTableConfig.getRowClickConfig;
 
 const geoJsonData = processHandsData(item);
 const origDates = item?.date
@@ -67,7 +75,7 @@ const origPlaces = item?.placed
 		authorEntry={item.author_entry}
 	>
 		<div class="border-2 rounded-sm border-brandBrown bg-brand-100">
-			<MsSection heading="Eingaben über die Hand">
+			<Section heading="Eingaben über die Hand">
 				<div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start">
 					<DescriptionList>
 						<DescriptionListItem label="Handschrift:">
@@ -98,7 +106,7 @@ const origPlaces = item?.placed
 								</DescriptionListItem>
 							)
 						}
-						<DescriptionListItem label="Datiert">
+						<DescriptionListItem label="Datiert:">
 							{
 								origDates.map((d, index) => (
 									<>
@@ -118,7 +126,7 @@ const origPlaces = item?.placed
 								))
 							}
 						</DescriptionListItem>
-						<DescriptionListItem label="Lokalisiert">
+						<DescriptionListItem label="Lokalisiert:">
 							{
 								origPlaces.map((pl, index) => (
 									<>
@@ -156,88 +164,28 @@ const origPlaces = item?.placed
 					</DescriptionList>
 					{
 						item.placed.length > 0 && (
-							<div>
+							<div class="hidden md:block">
 								<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
 							</div>
 						)
 					}
 				</div>
-			</MsSection>
-			<MsSection heading="Beteiligung innerhalb der Handschrift:">
-				<table
-					class="w-full bg-brand-100 rounded-xs shadow-xs border border-gray-200 lg:leading-7 text-sm lg:text-base data-table"
-				>
-					<thead class="bg-brand-300">
-						<tr>
-							<th class="text-center p-2 font-semibold border border-gray-300">Locus</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Werk</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Rolle</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Schreiber-Typ</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Funktion</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Umfang</th>
-							<th class="text-center p-2 font-semibold border border-gray-300">Mise-en-page</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						{
-							item.hand_roles.map((role) =>
-								role.content
-									// have no idea why this sort doesnt work
-									.sort((a, b) => {
-										const parseLocus = (locus) => {
-											return locus.split("-").map((part) => {
-												const match = part.match(/^(\d+)([rv]?)$/);
-												if (!match) return [Infinity, "z"]; // Default if parsing fails
-												return [parseInt(match[1], 10), match[2] || ""]; // Extract number & letter
-											});
-										};
-
-										// Extract start and end locus parts for both items
-										const [startA, endA = startA] = parseLocus(a.locus);
-										const [startB, endB = startB] = parseLocus(b.locus);
-
-										return (
-											startA[0] - startB[0] || // Compare start numbers
-											startA[1].localeCompare(startB[1]) || // "r" before "v"
-											endA[0] - endB[0] || // Compare end numbers
-											endA[1].localeCompare(endB[1]) // Compare end suffix
-										);
-									})
-									.map((msItem) => (
-										<tr class="odd:bg-brand-50 even:bg-brand-100">
-											<td class="p-2 border border-gray-300">
-												<NavLink href={`/msitems/${msItem.hit_id}`}>{msItem.locus}</NavLink>
-											</td>
-											<td class="p-2 border border-gray-300">
-												{msItem.title_work?.map((work) => (
-													<NavLink href={`/msitems/${msItem.hit_id}`}>
-														{work.author.length > 0
-															? `${work.author.map((a) => a.name).join(", ")}: ${work.title}`
-															: work.title}
-													</NavLink>
-												))}
-											</td>
-											<td class="p-2 border border-neutral-200">
-												{role.role.map((r) => r.value).join(" und ")}
-											</td>
-											<td class="p-2 border border-neutral-200">
-												{role.scribe_type?.map((type) => type.value).join(", ")}
-											</td>
-											<td class="p-2 border border-neutral-200">
-												{role.function?.map((func) => func.value).join(", ")}
-											</td>
-											<td class="p-2 border border-gray-300">{role.scope}</td>
-											<td class="p-2 border border-gray-300">
-												{role.locus_layout?.map((layout) => layout.value).join(", ")}
-											</td>
-										</tr>
-									)),
-							)
-						}
-					</tbody>
-				</table>
-			</MsSection>
+			</Section>
+			<Section heading="Beteiligung innerhalb der Handschrift:">
+				<div class="text-sm md:text-base">
+					<div id="{`${item.label}-table`}"></div>
+				</div>
+				<TabulatorTable
+					client:only="svelte"
+					data={tableData}
+					columns={columns}
+					tableId={`${item.label}-table`}
+					downloadTitle={`${item.label}-table`}
+					rowClickConfig={rowClickConfig}
+					updateMapOnFilter={true}
+					mapIdField="hit_id"
+				/>
+			</Section>
 		</div>
 	</Article>
 </PageLayout>

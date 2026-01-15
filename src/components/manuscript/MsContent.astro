@@ -1,12 +1,14 @@
 ---
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import MsContentUnit from "./MsContentUnit.astro";
 import MsContentItem from "./MsContentItem.astro";
 import { sortByLocus } from "@/lib/utils";
+import DescriptionList from "../ui/DescriptionList.astro";
+import DescriptionListItem from "../ui/DescriptionListItem.astro";
 const { manuscript } = Astro.props;
 ---
 
-<MsSection heading="Inhalt" id="msContent">
+<Section heading="Inhalt" id="msContent">
 	{
 		manuscript.cod_units.map((unit) => (
 			<MsContentUnit unit={unit} showHeader={manuscript.cod_units.length > 1} />
@@ -15,13 +17,13 @@ const { manuscript } = Astro.props;
 
 	{
 		manuscript.content.length > 0 && (
-			<dl class="grid grid-cols-[1fr_5fr] p-3">
-				<dt class="font-semibold border-r border-gray-300 pr-2">Einträge ohne kod. Einheit</dt>
-				<dd />
-				{manuscript.content.sort(sortByLocus).map((item) => (
-					<MsContentItem item={item} />
-				))}
-			</dl>
+			<DescriptionList>
+				<DescriptionListItem label="Einträge ohne kod. Einheit">
+					{manuscript.content.sort(sortByLocus).map((item) => (
+						<MsContentItem item={item} />
+					))}
+				</DescriptionListItem>
+			</DescriptionList>
 		)
 	}
-</MsSection>
+</Section>

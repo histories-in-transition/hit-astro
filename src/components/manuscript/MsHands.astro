@@ -1,6 +1,6 @@
 ---
 import NavLink from "@/components/nav-link.astro";
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import DescriptionList from "../ui/DescriptionList.astro";
 const { manuscript } = Astro.props;
 const hands = manuscript.hands.slice().sort((a, b) => {
@@ -10,7 +10,7 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 });
 ---
 
-<MsSection heading="Paläographie" id="msHands">
+<Section heading="Paläographie" id="msHands">
 	<DescriptionList
 		items={[
 			{
@@ -151,141 +151,4 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 			</dl>
 		))
 	}
-</MsSection>
-
-<!-- <section aria-labelledby="msHands" class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5">
-            <details open>
-              <summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="msHands" >
-                Paläographie               
-              </summary>
-              <p>
-                {manuscript.hands.sort((a, b) => {
-                  const numA = Number(a.label.split('_H. ')[1]);
-                  const numB = Number(b.label.split('_H. ')[1]);
-                  return numA - numB;
-                })
-                .map((hand) => (
-                  <dl class="grid grid-cols-[1fr_5fr] p-3">
-                    <dt class="font-semibold border-r border-gray-300 pr-2">
-                     <NavLink href={`/hands/${hand.hit_id}`}>{hand.label.split('_')[1]}</NavLink></dt>
-                    <dd class="pl-5"></dd>
-                    {(hand.description || hand.nr_daniel) && (
-                     <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Beschreibung:
-                      </dt>
-                      <dd class="pl-5"> 
-                          {hand.description ? hand.description : ''}{hand.nr_daniel ? ` (Daniel Nr. ${hand.nr_daniel})` : ''}
-                      </dd>
-                    )}
-                   
-                      {hand.similar_hands.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Ähnliche Hände:</dt> 
-                        <dd class="pl-5">{hand.similar_hands.map(sh => (
-                          <NavLink href={`/hands/hit_hands__${sh.id}`}>{sh.value}</NavLink>
-                        ))}</dd>
-                        )}
-                      {hand.date.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Datierung:</dt> 
-                        <dd class="pl-5">
-                        {hand.date.map((d) => {
-                          const authority = d.authority[0]?.author ? ` nach ${d.authority[0].author}` : '';
-                          const citation = d.authority[0]?.citation
-                            ? ` (${d.authority[0].citation}${d.page ? `, S. ${d.page}` : ''})`
-                            : '';
-                          const link = d.authority[0]?.link;
-                          const date = d.dated.length > 0
-                            ? d.dated.map(date => date.value).join(', ')
-                            : 'N/A';
-
-                          return (
-                            <span>
-                              {date}
-                              {authority}
-                              {link ? (
-                                <NavLink href={link}>{citation}</NavLink>
-                              ) : (
-                                citation
-                              )}
-                            </span>
-                          );
-                        })}
-                      </dd>)}
-                      {hand.placed.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                        Herkunftsorte:</dt>
-                        <dd class="pl-5">
-                        {hand.placed.map((placement) => {
-                          const authority = placement.authority[0]?.author ? ` nach ${placement.authority[0].author}` : '';
-                          const citation = placement.authority[0]?.citation
-                            ? ` (${placement.authority[0].citation}${placement.page ? `, S.${placement.page}` : ''})`
-                            : '';
-                          const link = placement.authority[0]?.link;
-                          const place = placement.place.length > 0
-                            ? placement.place.map(pl => pl.value).join(', ')
-                            : 'N/A';
-
-                          return (
-                            <span>
-                              {place}
-                              {authority}
-                              {link ? (
-                                <NavLink href={link}>{citation}</NavLink>
-                              ) : (
-                                citation
-                              )}
-                            </span>
-                          );
-                        })}
-                      </dd>
-                        )}
-                        {hand.scribe.length > 0 && (
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                          Schreiber:</dt>
-                        <dd class="pl-5">{hand.scribe.map(sc => 
-                        <NavLink href={`/scribes/${sc.hit_id}`}>{sc.name}</NavLink>)}</dd>)}
-                       
-                       {hand.hand_roles.length > 0 && (
-                      <>
-                        <dt class="border-r border-gray-300 pr-2 justify-self-end">
-                          Aktivitäten:
-                        </dt>
-
-                        <dd class="pl-5">
-                          <ul>
-                          {hand.hand_roles.map((role) => {
-                            const c = role.content[0];
-                            const link = c.hit_id ? (
-                              <NavLink href={`/msitems/${c.hit_id}`}>({c.locus})</NavLink>
-                            ) : (
-                              <span>{c.locus ? `fols. ${c.locus}` : "fol. ?"}</span>
-                            );
-                            return (
-                              <li>
-                                {c.title_work?.map((t) => {
-                                  const authors =
-                                    t.author?.length > 0
-                                      ? `${t.author.map((a) => a.name).join(", ")}: `
-                                      : "";
-
-                                  return (
-                                    <span>
-                                      {authors}
-                                      {t.title} {link} {role.all_in_one ? ` — ${role.all_in_one}` : ''}
-                                    </span>
-                                  );
-                                })}
-                              </li>
-                            );
-                          })}
-                          </ul>
-                        </dd>
-                      </>
-                    )}
-
-                  </dl>
-                ))}
-              </p>
-            </details>
-          </section>  -->
+</Section>

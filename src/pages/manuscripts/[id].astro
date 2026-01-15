@@ -40,7 +40,7 @@ const tocSections = [
 ---
 
 <PageLayout title={manuscript?.shelfmark}>
-	<div class="grid grid-cols-1 md:grid-cols-[1fr_12fr] gap-8 pl-6">
+	<div class="grid grid-cols-1 md:grid-cols-[1fr_12fr] gap-8 md:pl-6">
 		<!-- Sidebar / TOC -->
 		<Aside sections={tocSections} />
 		<Article
@@ -62,9 +62,12 @@ const tocSections = [
 			<MsHistory manuscript={manuscript} />
 
 			{manuscript.bibliography.length > 0 ? <MsBibliography manuscript={manuscript} /> : ""}
-
-			<MsContent manuscript={manuscript} />
-
+			{
+				manuscript.content.length > 0 ||
+				manuscript.cod_units.some((unit) => unit.content.length > 0) ? (
+					<MsContent manuscript={manuscript} />
+				) : null
+			}
 			{manuscript.strata.length > 0 ? <MsStrata manuscript={manuscript} /> : ""}
 		</Article>
 	</div>

@@ -2,20 +2,25 @@
 import MsContentItem from "./MsContentItem.astro";
 const { unit, showHeader } = Astro.props;
 import { parseLocus, sortByLocus } from "@/lib/utils";
+import DescriptionList from "../ui/DescriptionList.astro";
+import DescriptionListItem from "../ui/DescriptionListItem.astro";
+const label = `Kod. Einheit ${unit.number} (fols. ${unit.locus}`;
 ---
 
-<dl class="md:grid grid-cols-[1fr_5fr] md:p-3">
+<DescriptionList>
 	{
-		showHeader && (
-			<>
-				<dt class="font-semibold ">
-					Kod. Einheit {unit.number} (fols. {unit.locus})
-				</dt>
-				<dd />
+		showHeader ? (
+			<DescriptionListItem label={label}>
 				{unit.content.sort(sortByLocus).map((item) => (
 					<MsContentItem item={item} />
 				))}
-			</>
+			</DescriptionListItem>
+		) : (
+			<DescriptionListItem>
+				{unit.content.sort(sortByLocus).map((item) => (
+					<MsContentItem item={item} />
+				))}
+			</DescriptionListItem>
 		)
 	}
-</dl>
+</DescriptionList>

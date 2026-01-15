@@ -81,27 +81,17 @@ header {
 /* ################ TABULATOR ################# */
 /* ############################################# */
 
-/* background color of all headers */
-.tabulator .tabulator-header {
-	@apply bg-brand-100 text-brand-800;
-}
-
-/* .tabulator .tabulator-col-sorter-element {
-	@apply bg-brand-200;
-}
- */
-
 .tabulator .tabulator-row .tabulator-cell .tabulator-data-tree-control {
 	@apply w-5 h-5;
 }
 
 .tabulator .tabulator-col-content {
-	@apply border-l border-brand-300;
+	@apply border-l border-t border-brand-900;
 }
 
 /* background, font, text size of each header column */
 .tabulator .tabulator-col-content {
-	@apply bg-brand-100 text-brand-800 font-semibold text-base;
+	@apply bg-brand-600 opacity-90 text-brand-50 font-semibold text-base;
 }
 
 /* Ensure header filter inputs match the styling */
@@ -121,8 +111,15 @@ header {
 .tabulator .tabulator-row:nth-child(even) {
 	@apply bg-brand-50;
 }
+
+/* Row hover */
+.tabulator .tabulator-row:hover .tabulator-cell {
+	background-color: theme("colors.brand.500") !important;
+}
+
+/* Cell borders */
 .tabulator .tabulator-cell {
-	@apply border-l;
+	@apply border-l border-neutral-200;
 }
 
 /* Apply styles only for small screens (Mobile: <640px) */

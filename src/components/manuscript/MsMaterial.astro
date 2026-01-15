@@ -1,5 +1,5 @@
 ---
-import MsSection from "./MsSection.astro";
+import Section from "@/components/ui/Section.astro";
 import DescriptionList from "@/components/ui/DescriptionList.astro";
 import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
 import { makeSuperScript } from "@/lib/utils";
@@ -8,7 +8,7 @@ import MsCodUnits from "./MsCodUnits.astro";
 const { manuscript } = Astro.props;
 ---
 
-<MsSection heading="Materialität" id="msMaterial">
+<Section heading="Materialität" id="msMaterial">
 	<DescriptionList>
 		<DescriptionListItem label="Material:">
 			{manuscript?.material}
@@ -43,4 +43,4 @@ const { manuscript } = Astro.props;
 			<p class="p-3">Keine kodikologischen Einheiten vorhanden.</p>
 		)
 	}
-</MsSection>
+</Section>

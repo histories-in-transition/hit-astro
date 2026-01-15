@@ -271,7 +271,7 @@ cleanupResize = enableVerticalResize(mapEl, map, resizeHandle);
  <!-- Drag handle -->
   <div
   bind:this={resizeHandle}
-  class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-brand-600 hover:bg-brand-700 active:bg-brand-500 text-brand-50 select-none"
+  class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-neutral-400  active:bg-brand-500 text-brand-50 select-none"
 title="Kartenhöhe ändern"
   aria-label="Kartenhöhe ändern"
   ><svg xmlns="http://www.w3.org/2000/svg" 

@@ -5,6 +5,11 @@ import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import type { MsItem } from "@/types/index.ts";
 import msitems from "@/content/data/ms_items.json";
+import DescriptionList from "@/components/ui/DescriptionList.astro";
+import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
+
+import TabulatorTable from "@/components/tabulator-table.svelte";
+import { msItemTableConfig } from "@/lib/tabulator-table-configs.js";
 
 export async function getStaticPaths() { 
   const msItemsList = Object.values(msitems);
@@ -22,7 +27,12 @@ export async function getStaticPaths() {
 }
        
 const { data: item } = Astro.props;
+// filter hands which are NOT screiber (for the 'Bearbeitungsschritten')
+const tableData =  msItemTableConfig.transformData(item.hands
+                  .filter(hand => hand.jobs.some(j => !j.role.some(r => r.value ==='Schreiber'))))
 
+const columns = msItemTableConfig.getColumns();
+const rowClickConfig = msItemTableConfig.getRowClickConfig;
 ---
 
 <PageLayout title={item.view_label}>
@@ -42,161 +52,190 @@ const { data: item } = Astro.props;
             <h2 id="msitemInfo" class="text-xl font-semibold text-brand-800">Allgemeine Info über das MS Element
           
             </h2>
-            <dl class="md:grid grid-cols-[1fr_6fr] p-5">
-              <dt class="font-semibold md:border-r border-gray-300 pr-2">Handschrift:</dt>
-              <dd class="pl-5">
-                <NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`} >
-                  {item.library_place.map(p => p.value) + ', ' + item.manuscript[0]?.value}
-                </NavLink>
-              </dd>
-              <dt class="font-semibold md:border-r border-gray-300 pr-2">Locus:</dt>
-              <dd class="pl-5">{item.locus}</dd>
-              <dt class="font-semibold md:border-r border-gray-300 pr-2">Titel:</dt>
-                <dd class="pl-5">
-                  {item.title_work?.map((title) => (
-                   title.hit_id
-                   ? <NavLink href={`/works/${title?.hit_id}`}
-                        >{title.title}
-                    </NavLink>
-                    : title.title)
+           <DescriptionList>
+
+                <DescriptionListItem label="Handschrift:">
+                  <NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`}>
+                    {item.library_place.map(p => p.value).join(", ")}, {item.manuscript[0]?.value}
+                  </NavLink>
+                </DescriptionListItem>
+
+                <DescriptionListItem label="Locus:">
+                  {item.locus}
+                </DescriptionListItem>
+
+                <DescriptionListItem label="Titel:">
+                  {item.title_work?.map((title) =>
+                    title.hit_id ? (
+                      <NavLink href={`/works/${title.hit_id}`}>{title.title}</NavLink>
+                    ) : (
+                      title.title
+                    )
                   )}
-                </dd>
-               {item.title_work?.some((title: any) => title.author?.length > 0) &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Author:</dt>
-                  <dd class="pl-5">{item.title_work?.map((title:any) => title.author.map((aut: any) =>
-                    aut.gnd_url !== '' ?
-                    <NavLink href={aut.gnd_url} target="_blank"
-                        >{aut.name}
-                        <Icon
-                                  class="inline-flex align-middle"
-                                  aria-hidden="true"
-                                  name="lucide:external-link"
-                                />
-                    </NavLink>
-                    :
-                    <span>{aut.name}</span>
-                    ))}</dd>
-                }
-                <dt class="font-semibold md:border-r border-gray-300 pr-2">Sprache:</dt>
-                <dd class="pl-5">{item.language.map(lang => lang.value).join(', ')}</dd>
-                {item.text_modification.length > 0 &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Textmodifikation:</dt>
-                  <dd class="pl-5">{item.text_modification.map(tm => tm).join(', ')}</dd>
-                }
-                {item.interpolations.length > 0 &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Interpolation:</dt>
-                  <dd class="pl-5"><ul>{item.interpolations.flatMap(i =>
-                    <li>
-                     <NavLink href={`/works/${i.hit_id}`}>
-                     {i.author.length > 0
-                     ? `${i.author.map(a => a.name).join(', ')} : ${i.title}` : i.title }</NavLink>
-                        </li>
-                  )}</ul>
-                  </dd>
-                }
-                {item.title_note &&
-                <dt class="font-semibold md:border-r border-gray-300 pr-2">Bemerkung:</dt>
-                <dd class="pl-5">{item?.title_note}</dd>
-                }
-                {item?.rubric &&
-                <dt class="font-semibold md:border-r border-gray-300 pr-2">Rubrik:</dt>
-                 <dd class="pl-5">
-                    {/* check for [text in square brackets] should be not-italic */}
-                    ›{item.rubric.split(/(\[ *.*?\])/).map((part) =>
-                      part.startsWith('[') && part.endsWith(']')
-                        ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                        : <span class="italic">{part}</span> // Italic for other text
-                    )}‹
-                  </dd>}
-                {item.incipit &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Incipit:</dt>
-                  <dd class="pl-5 italic">
-                      {item.incipit.split(/(\[ *.*?\])/).map((part) =>
-                        part.startsWith('[') && part.endsWith(']')
-                          ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                          : <span class="italic">{part}</span> // Italic for other text
-                      )}
-                      {item.incipit.trim().endsWith('…') ? '' : '…'}
-                    </dd>}
-                {item.explicit &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Explicit:</dt>
-                  <dd class="pl-5 italic">
-                    {item.explicit.split(/(\[.*?\])/).map((part) =>
-                      part.startsWith('[') && part.endsWith(']')
-                        ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                        : <span>{part}</span> // Italic for other text
+                </DescriptionListItem>
+
+                {item.title_work?.some(title => title.author?.length > 0) && (
+                  <DescriptionListItem label="Autor:">
+                    {item.title_work.map(title =>
+                      title.author.map(aut =>
+                        aut.gnd_url ? (
+                          <NavLink href={aut.gnd_url} target="_blank">
+                            {aut.name}
+                            <Icon
+                              class="inline-flex align-middle"
+                              aria-hidden="true"
+                              name="lucide:external-link"
+                            />
+                          </NavLink>
+                        ) : (
+                          <span>{aut.name}</span>
+                        )
+                      )
                     )}
-                    {item.explicit.trim().startsWith('…') ? '' : '…'}
-                  </dd>}
-                {item?.final_rubric &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Final Rubrik:</dt>
-                   <dd class="pl-5">
-                      {/* check for [text] shouldl be not-italic */}
-                      ›{item.final_rubric.split(/(\[ *.*?\])/).map((part) =>
-                        part.startsWith('[') && part.endsWith(']')
-                          ? <span class="not-italic">{part}</span> // Non-italic for bracketed text
-                          : <span class="italic">{part}</span> // Italic for other text
-                      )}‹
-                    </dd>}
-                { item.decoration.length > 0 &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Dekoration:</dt>
-                  <dd class="pl-5">{item?.decoration.map(d => d.value).join(', ')}</dd>
-                }
-                { item.form.length > 0 &&
-                  <dt class="font-semibold md:border-r border-gray-300 pr-2">Form:</dt>
-                  <dd class="pl-5">{item?.form.map(f => f.value).join(', ')}
-                  {item.form_note &&
-                    <span class="italic"> ({item.form_note})</span>
-                  }
-                  </dd>
-                }
-              <dt class="font-semibold md:border-r border-gray-300 pr-2">Schreiberhände:</dt>
-                <dd class="pl-5">
-                  {item.hands.map(hand => hand.jobs.length > 0) &&
-                  item.hands
-                  // filter hands with jobs.role 'Schreiber'
-                  .filter(hand => hand.jobs.some(h_job => h_job.role.some(r => r.value ==='Schreiber')))
-                  .map(filteredHand => {
-                    return <ul>
-                            <li>
-                              <NavLink href={`/hands/${filteredHand.hit_id}`}>
-                                {filteredHand.label}
-                              </NavLink>
-                              {(filteredHand.place.length > 0 ||
-                                filteredHand.dating.length > 0 ||
-                                filteredHand.jobs.some(j => j.role_context.length > 0)) &&
-                                <span>
-                                  <Icon class="inline-flex align-middle" aria-hidden="true" name="lucide:arrow-right" />
-                                  {filteredHand.place.length > 0 &&
-                                    filteredHand.place.map(pl =>
-                                      pl.place?.map(place => place.value).join(', ')
-                                    ).join('; ')}
-                                  {filteredHand.dating?.length > 0 &&
-                                    `| ${filteredHand.dating.map(d =>
-                                      d.date?.map(date => date.value).join(', ')
-                                    ).join('; ')}`}
-                                  {filteredHand.jobs.some(j => j.role_context.length > 0) &&
-                                    `| ${filteredHand.jobs.flatMap(job =>
-                                      job.role_context.map(rc => rc.value)
-                                    ).join(', ')}`}
-          
-                                </span>
-                              }
-                            </li>
+                  </DescriptionListItem>
+                )}
+
+                <DescriptionListItem label="Sprache:">
+                  {item.language.map(lang => lang.value).join(", ")}
+                </DescriptionListItem>
+
+                {item.text_modification.length > 0 && (
+                  <DescriptionListItem label="Textmodifikation:">
+                    {item.text_modification.join(", ")}
+                  </DescriptionListItem>
+                )}
+
+                {item.interpolations.length > 0 && (
+                  <DescriptionListItem label="Interpolation:">
+                    <ul>
+                      {item.interpolations.map(i => (
+                        <li>
+                          <NavLink href={`/works/${i.hit_id}`}>
+                            {i.author.length > 0
+                              ? `${i.author.map(a => a.name).join(", ")} : ${i.title}`
+                              : i.title}
+                          </NavLink>
+                        </li>
+                      ))}
                     </ul>
-          
-                  })}
-                </dd>
-                {item.commented_msitem.length > 0 &&
-                <dt class="font-semibold md:border-r border-gray-300 pr-2">Bezug zu anderen Texten:</dt>
-                <dd class="pl-5">
-                  {item.commented_msitem
-                  .map(i =>
-                    <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>)}
-                </dd>
-                }
-          
-              </dl>
+                  </DescriptionListItem>
+                )}
+
+                {item.title_note && (
+                  <DescriptionListItem label="Bemerkung:">
+                    {item.title_note}
+                  </DescriptionListItem>
+                )}
+
+                {item.rubric && (
+                  <DescriptionListItem label="Rubrik:">
+                    ›{item.rubric.split(/(\[.*?\])/).map(part =>
+                      part.startsWith("[") && part.endsWith("]")
+                        ? <span class="not-italic">{part}</span>
+                        : <span class="italic">{part}</span>
+                    )}‹
+                  </DescriptionListItem>
+                )}
+
+                {item.incipit && (
+                  <DescriptionListItem label="Incipit:">
+                    <span class="italic">
+                      {item.incipit.split(/(\[.*?\])/).map(part =>
+                        part.startsWith("[") && part.endsWith("]")
+                          ? <span class="not-italic">{part}</span>
+                          : <span class="italic">{part}</span>
+                      )}
+                      {!item.incipit.trim().endsWith("…") && "…"}
+                    </span>
+                  </DescriptionListItem>
+                )}
+
+                {item.explicit && (
+                  <DescriptionListItem label="Explicit:">
+                    <span class="italic">
+                      {item.explicit.split(/(\[.*?\])/).map(part =>
+                        part.startsWith("[") && part.endsWith("]")
+                          ? <span class="not-italic">{part}</span>
+                          : <span>{part}</span>
+                      )}
+                      {!item.explicit.trim().startsWith("…") && "…"}
+                    </span>
+                  </DescriptionListItem>
+                )}
+
+                {item.final_rubric && (
+                  <DescriptionListItem label="Final Rubrik:">
+                    ›{item.final_rubric.split(/(\[.*?\])/).map(part =>
+                      part.startsWith("[") && part.endsWith("]")
+                        ? <span class="not-italic">{part}</span>
+                        : <span class="italic">{part}</span>
+                    )}‹
+                  </DescriptionListItem>
+                )}
+
+                {item.decoration.length > 0 && (
+                  <DescriptionListItem label="Dekoration:">
+                    {item.decoration.map(d => d.value).join(", ")}
+                  </DescriptionListItem>
+                )}
+
+                {item.form.length > 0 && (
+                  <DescriptionListItem label="Form:">
+                    {item.form.map(f => f.value).join(", ")}
+                    {item.form_note && <span class="italic"> ({item.form_note})</span>}
+                  </DescriptionListItem>
+                )}
+
+                <DescriptionListItem label="Schreiberhände:">
+                  {item.hands
+                    .filter(hand =>
+                      hand.jobs.some(job =>
+                        job.role.some(r => r.value === "Schreiber")
+                      )
+                    )
+                    .map(filteredHand => (
+                      <ul>
+                        <li>
+                          <NavLink href={`/hands/${filteredHand.hit_id}`}>
+                            {filteredHand.label}
+                          </NavLink>
+
+                          {(filteredHand.place.length > 0 ||
+                            filteredHand.dating.length > 0 ||
+                            filteredHand.jobs.some(j => j.role_context.length > 0)) && (
+                            <span>
+                              <Icon
+                                class="inline-flex align-middle"
+                                aria-hidden="true"
+                                name="lucide:arrow-right"
+                              />
+                              {filteredHand.place.map(pl =>
+                                pl.place?.map(p => p.value).join(", ")
+                              ).join("; ")}
+                              {filteredHand.dating.length > 0 &&
+                                ` | ${filteredHand.dating.map(d =>
+                                  d.date?.map(dt => dt.value).join(", ")
+                                ).join("; ")}`}
+                              {filteredHand.jobs.some(j => j.role_context.length > 0) &&
+                                ` | ${filteredHand.jobs.flatMap(j =>
+                                  j.role_context.map(rc => rc.value)
+                                ).join(", ")}`}
+                            </span>
+                          )}
+                        </li>
+                      </ul>
+                    ))}
+                </DescriptionListItem>
+
+                {item.commented_msitem.length > 0 && (
+                  <DescriptionListItem label="Bezug zu anderen Texten:">
+                    {item.commented_msitem.map(i => (
+                      <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>
+                    ))}
+                  </DescriptionListItem>
+                )}
+              </DescriptionList>
+            
           </section>
           {item.facs_url && 
           <div class="p-5 place-self-start">
@@ -210,46 +249,21 @@ const { data: item } = Astro.props;
               
           <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
              <h2 id="msitemRework" class="text-xl font-semibold text-brand-800 mb-5">Bearbeitungsschritte</h2>
-            <table class="w-full bg-brand-100 shadow-xs border border-gray-300 lg:leading-7 text-sm lg:text-base data-table p-5">
-              <thead class="bg-brand-300">
-                <tr> 
-                  <th class="text-start p-2 font-semibold border border-gray-300">Bearbeitungsart</th>
-                  <th class="text-start p-2 font-semibold border border-gray-300">Schreiberhand</th>    
-                  <th class="text-start p-2 font-semibold border border-gray-300">Schreiber</th> 
-                  <th class="text-start p-2 font-semibold border border-gray-300">Datierung</th> 
-                  <th class="text-start p-2 font-semibold border border-gray-300">Umfang</th> 
-                  <th class="text-start p-2 font-semibold border border-gray-300">Mise-en-page</th> 
-                  <th class="text-start p-2 font-semibold border border-gray-300">Typ</th>
-                  <th class="text-start p-2 font-semibold border border-gray-300">Funktion</th>
-                </tr>
-              </thead>
-              <tbody>
-                {item.hands
-                  .filter(hand => hand.jobs.some(j => !j.role.some(r => r.value ==='Schreiber')))
-                  .map(filteredHand => (
-                      <tr>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role.map(r => r.value).join(', ')).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">
-                                  <NavLink href={`/hands/${filteredHand.hit_id}`}>
-                                  {filteredHand.label}</NavLink>
-                                </td>
-                                <td class="p-2 border border-gray-300">
-                                  {filteredHand.scribe.length > 0
-                                    ? filteredHand.scribe.map(scr => scr.value).join(', ')
-                                  : 'N/A'}
-                                  </td>
-                                <td class="p-2 border border-gray-300">{filteredHand.dating.flatMap(d => d.date.map(date => date.value).join(' | '))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j?.locus).join(', ')}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.locus_layout.map(ll => ll.value).join(', '))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.flatMap(j => j.role_context.map(rc => rc.value).join(', '))}</td>
-                                <td class="p-2 border border-gray-300">{filteredHand.jobs.map(j => j.function?.map(f => f.value).join(', '))}</td>
-                            </tr>
-                          ))
-                        }         
-
-              </tbody>
-                
-            </table>
+            
+            <div class="text-sm md:text-base">
+					<div id={`${item.label}-table`}></div>
+				</div>
+				<TabulatorTable
+					client:only="svelte"
+					data={tableData}
+					columns={columns}
+					tableId={`${item.label}-table`}
+					downloadTitle={`${item.label}-table`}
+					rowClickConfig={rowClickConfig}
+					updateMapOnFilter={true}
+					mapIdField="hit_id"
+				/>
+          
           </section>
       }
       </div>

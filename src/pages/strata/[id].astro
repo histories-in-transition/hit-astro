@@ -2,6 +2,11 @@
 import PageLayout from "@/layouts/page-layout.astro";
 import NavLink from "@/components/nav-link.astro";
 import Article from "@/components/article.astro";
+import DescriptionList from "@/components/ui/DescriptionList.astro";
+import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
+import TabulatorTable from "@/components/tabulator-table.svelte";
+import { msItemsStratumTableConfig } from "@/lib/tabulator-table-configs.js";
+
 import stratajson from "@/content/data/strata.json";
 import type { Stratum } from "@/types";
 
@@ -9,17 +14,18 @@ export async function getStaticPaths() {
 	const strata = Object.values(stratajson);
 	const paths = strata.map((stratum) => {
 		const stratumId = stratum.hit_id;
-
 		return {
 			params: { id: stratumId },
 			props: { data: stratum as Stratum },
 		};
 	});
-
 	return paths;
 }
-
 const { data: stratum } = Astro.props;
+
+const tableData = msItemsStratumTableConfig.transformData(stratum.msitems);
+const columns = msItemsStratumTableConfig.getColumns();
+const rowClickConfig = msItemsStratumTableConfig.getRowClickConfig;
 ---
 
 <PageLayout title={stratum?.label}>
@@ -37,258 +43,73 @@ const { data: stratum } = Astro.props;
 				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">
 					Allgemeine Info zum Stratum:
 				</h2>
-				<dl class="md:grid grid-cols-[1fr_6fr]">
-					<dt class="font-semibold md:border-r border-gray-300 pr-2">Handschrift:</dt>
-					<dd class="pl-5">
+				<DescriptionList>
+					<DescriptionListItem label="Handschrift:">
 						<NavLink href=`/manuscripts/hit_manuscript__${stratum.manuscript[0]?.id}`>
 							{stratum.manuscript[0]?.library[0].value}, {stratum.manuscript[0]?.value}
 						</NavLink>
-					</dd>
-					<dt class="font-semibold md:border-r border-gray-300 pr-2">Datierung:</dt>
-					<dd class="pl-5">
+					</DescriptionListItem>
+					<DescriptionListItem label="Datierung:">
 						{stratum.date.length > 0 ? stratum.date.map((d) => d.value).join(" | ") : "N/A"}
-					</dd>
-					<dt class="font-semibold md:border-r border-gray-300 pr-2">Ort:</dt>
-					<dd class="pl-5">
+					</DescriptionListItem>
+					<DescriptionListItem label="Ort:">
 						{stratum.place.length > 0 ? stratum.place.map((pl) => pl.value).join(" | ") : "N/A"}
-					</dd>
-					<dt class="font-semibold md:border-r border-gray-300 pr-2">Charakter:</dt>
-					<dd class="pl-5">{stratum.character.join("; ")}</dd>
-					<dt class="font-semibold md:border-r border-gray-300 pr-2">Beschreibung:</dt>
-					<dd class="pl-5">{stratum.note}</dd>
-					<!-- /* Display the filiations of the stratum, if available */ -->
+					</DescriptionListItem>
+					<DescriptionListItem label="Charakter:">
+						{stratum.character.join("; ")}
+					</DescriptionListItem>
+					<DescriptionListItem label="Beschreibung:">
+						{stratum.note}
+					</DescriptionListItem>
+
 					{
 						stratum.stratum_filiations && stratum.stratum_filiations.length > 0 ? (
-							<>
-								<dt class="font-semibold md:border-r border-gray-300 pr-2">Filiationen:</dt>
-								<dd class="pl-5">
-									<ul class="list-disc pl-5">
-										{stratum.stratum_filiations.map((filiation) => (
-											<li>
-												{filiation.filiated_strata.map((str, strIndex) => (
-													<span>
-														{str.internal ? (
-															<NavLink href={`/strata/${str.hit_id}`}>{str.value}</NavLink>
-														) : str.catalog_url ? (
-															<NavLink href={str.catalog_url}>{str.value}</NavLink>
-														) : (
-															str.value
-														)}
-														{str.locus && ` (fols. ${str.locus})`}
-														{str.note && ` - ${str.note}`}
-														{strIndex < filiation.filiated_strata.length - 1 && ", "}
-													</span>
-												))}
-												{filiation.reason && ` - ${filiation.reason}`}
-												{filiation.note && ` - ${filiation.note}`}
-											</li>
-										))}
-									</ul>
-								</dd>
-							</>
+							<DescriptionListItem label="Filiationen">
+								<ul class="list-disc pl-5">
+									{stratum.stratum_filiations.map((filiation) => (
+										<li>
+											{filiation.filiated_strata.map((str, strIndex) => (
+												<span>
+													{str.internal ? (
+														<NavLink href={`/strata/${str.hit_id}`}>{str.value}</NavLink>
+													) : str.catalog_url ? (
+														<NavLink href={str.catalog_url}>{str.value}</NavLink>
+													) : (
+														str.value
+													)}
+													{str.locus && ` (fols. ${str.locus})`}
+													{str.note && ` - ${str.note}`}
+													{strIndex < filiation.filiated_strata.length - 1 && ", "}
+												</span>
+											))}
+											{filiation.reason && ` - ${filiation.reason}`}
+											{filiation.note && ` - ${filiation.note}`}
+										</li>
+									))}
+								</ul>
+							</DescriptionListItem>
 						) : null
 					}
-				</dl>
-				{
-					/* Table for displaying information about the msitems and hand_roles defining the stratum */
-				}
-				<div class="overflow-x-auto mb-5">
-					<div class="flex justify-end">
-						<button
-							id="download-table-btn"
-							class="mb-2 border border-brand-800 rounded-md py-2 px-4 bg-brand-800 text-brand-100 hover:bg-brand-100 hover:text-brand-800 transition"
-							>CSV</button
-						>
-					</div>
-					<table
-						id="stratum-table"
-						class="w-full bg-brand-100 rounded-xs shadow-xs border border-gray-200 lg:leading-7 text-sm lg:text-base data-table"
-					>
-						<thead class="bg-brand-300">
-							<tr>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Werk</div>
-											<input
-												type="search"
-												name="q"
-												data-filter="string"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Hand</div>
-											<input
-												type="search"
-												data-filter="string"
-												name="q"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Rolle</div>
-											<input
-												type="search"
-												data-filter="string"
-												name="q"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Schreiber-Typ</div>
-											<input
-												type="search"
-												data-filter="string"
-												name="q"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Funktion</div>
-											<input
-												type="search"
-												data-filter="string"
-												name="q"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Umfang</div>
-											<input
-												type="search"
-												data-filter="string"
-												name="q"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-								<th class="text-center p-2 font-semibold border border-gray-300">
-									<form role="search" data-search-form>
-										<label class="flex flex-col items-start p-2">
-											<div>Mise-en-page</div>
-											<input
-												type="search"
-												data-filter="string"
-												name="q"
-												placeholder="Suche ..."
-												class="mt-2 w-full p-2 border border-gray-300 rounded-sm font-normal bg-brand-50"
-											/>
-										</label>
-									</form>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{
-								stratum.msitems.map((item) => (
-									<tr class="odd:bg-brand-50 even:bg-brand-100">
-										<td class="p-2 border border-gray-300">
-											{item.w_aut}
-											<NavLink href={`/msitems/${item?.hit_id}`}>({item.locus})</NavLink>
-										</td>
+				</DescriptionList>
+			</section>
 
-										<td class="p-2 border border-gray-300">
-											{item.hands.map((hand) => (
-												<>
-													<NavLink href={`/hands/${hand?.hit_id}`}>
-														{hand.label.split("_")[1]}
-													</NavLink>
-													<br />
-												</>
-											))}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{item.hands
-												.flatMap((hand) =>
-													hand.jobs.flatMap((job) => job.role.map((ro) => ro.value)),
-												)
-												.map((role) => (
-													<>
-														{role}
-														<br />
-													</>
-												))}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{item.hands
-												.flatMap((hand) =>
-													hand.jobs.map((job) => job.scribe_type?.map((t) => t.value)),
-												)
-												.map((role) => (
-													<>
-														{role}
-														<br />
-													</>
-												))}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{item.hands
-												.flatMap((hand) =>
-													hand.jobs.map((job) => job.function.map((func) => func.value)),
-												)
-												.map((role) => (
-													<>
-														{role}
-														<br />
-													</>
-												))}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{item.hands
-												.flatMap((hand) => hand.jobs.map((job) => job.locus))
-												.map((role) => (
-													<>
-														{role}
-														<br />
-													</>
-												))}
-										</td>
-										<td class="p-2 border border-gray-300">
-											{item.hands
-												.flatMap((hand) =>
-													hand.jobs.map((job) => job.locus_layout.map((scope) => scope.value)),
-												)
-												.map((role) => (
-													<>
-														{role}
-														<br />
-													</>
-												))}
-										</td>
-									</tr>
-								))
-							}
-						</tbody>
-					</table>
+			<!-- /* Table for displaying information about the msitems and hand_roles defining the stratum */ -->
+
+			<section class="m-5 overflow-x-auto" aria-labelledby="workInfo">
+				<h2 id="workInfo" class="text-xl font-semibold text-brand-800 mb-5">Stratums Inhalt:</h2>
+				<div class="text-sm md:text-base">
+					<div id={`${stratum.label}-table`}></div>
 				</div>
+				<TabulatorTable
+					client:only="svelte"
+					data={tableData}
+					columns={columns}
+					tableId={`${stratum.label}-table`}
+					downloadTitle={`${stratum.label}-table`}
+					rowClickConfig={rowClickConfig}
+					updateMapOnFilter={true}
+					mapIdField="hit_id"
+				/>
 			</section>
 		</div>
 	</Article>
