@@ -8,7 +8,7 @@
 	--color-brand-100: #f6f0e6;
 	--color-brand-200: #f0e5d8;
 	--color-brand-300: #e9dfcd;
-	--color-brand-400: #d9c7a9;
+	--color-brand-400: #f3cb87c4;
 	--color-brand-500: orange;
 	--color-brand-600: #953c04;
 	--color-brand-700: #7f3303;
@@ -114,7 +114,7 @@ header {
 
 /* Row hover */
 .tabulator .tabulator-row:hover .tabulator-cell {
-	background-color: theme("colors.brand.500") !important;
+	background-color: theme("colors.brand.400") !important;
 }
 
 /* Cell borders */
