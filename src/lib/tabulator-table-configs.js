@@ -489,7 +489,7 @@ export const msItemsStratumTableConfig = {
 			{
 				title: "Rolle",
 				field: "rolls",
-				headerFilterPlaceholder: "e.g. Ostertafel",
+				headerFilterPlaceholder: "e.g. Schreiber",
 				minWidth: 150,
 				formatter: "textarea",
 				widthGrow: 1,
@@ -498,7 +498,7 @@ export const msItemsStratumTableConfig = {
 			{
 				title: "Schreiber-Typ",
 				field: "scribe_type",
-				headerFilterPlaceholder: "e.g. Anlage",
+				headerFilterPlaceholder: "e.g. Fortsetzung",
 				minWidth: 150,
 				formatter: "textarea",
 				widthGrow: 1,
@@ -506,7 +506,7 @@ export const msItemsStratumTableConfig = {
 			},
 			{
 				title: "Funktion",
-				headerTooltip: "Datierung der beteiligten Hände",
+				headerTooltip: "Anlage",
 				field: "function",
 				headerFilterPlaceholder: "e.g. 850, nach 850",
 				minWidth: 150,
@@ -516,7 +516,6 @@ export const msItemsStratumTableConfig = {
 			{
 				title: "Umfang",
 				field: "scope",
-				headerFilterPlaceholder: "e.g. Reims",
 				minWidth: 100,
 				formatter: "textarea",
 				responsive: 2,
@@ -524,7 +523,7 @@ export const msItemsStratumTableConfig = {
 			{
 				title: "Mise-en-page",
 				field: "mise",
-				headerFilterPlaceholder: "e.g. Reims",
+				headerFilterPlaceholder: "e.g. Schriftraum",
 				minWidth: 150,
 				formatter: "textarea",
 				responsive: 2,
