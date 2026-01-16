@@ -49,12 +49,6 @@ const base = import.meta.env.BASE_URL;
 		>
 			<ul class="flex place-content-start gap-x-8 text-md text-brand-50">
 				<li
-					class={`${pathname === base + "/strata" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
-				>
-					<NavLink class="none" href="/strata">Strata</NavLink>
-				</li>
-				<li
 					class={`${pathname === base + "/manuscripts" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
@@ -85,7 +79,12 @@ const base = import.meta.env.BASE_URL;
 				>
 					<NavLink class="none" href="/hands">Hände</NavLink>
 				</li>
-
+				<li
+					class={`${pathname === base + "/strata" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
+				>
+					<NavLink class="none" href="/strata">Strata</NavLink>
+				</li>
 				<li
 					class={`${pathname === base + "/about" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
@@ -147,7 +146,7 @@ const base = import.meta.env.BASE_URL;
 		</li>
 		<li>
 			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/about">
-				Über uns
+				Über das Projekt
 			</NavLink>
 		</li>
 		<li>
