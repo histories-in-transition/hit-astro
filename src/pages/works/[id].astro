@@ -43,7 +43,7 @@ const hasAnnotationType = work.ms_transmission.some(item => item.annotation_typ.
 const hasAnnotationDate = work.ms_transmission.some(item => item.annotation_date.length > 0);
 const columns = workDetailTableConfig.getColumns(hasVersion, hasTextModification, hasForm, hasAnnotationType, hasAnnotationDate, hasCommentedItem);
 const rowClickConfig = workDetailTableConfig.getRowClickConfig(); 
-
+const versions = [...new Set(work.ms_transmission.flatMap(item => item.version.map(v => v.value)))]
 ---
 
 <PageLayout title={work?.title}>
@@ -149,6 +149,13 @@ const rowClickConfig = workDetailTableConfig.getRowClickConfig();
 						})}
 					</DescriptionListItem>
 				)}
+				{hasVersion 
+					? <DescriptionListItem label="Fassungen:">
+								<ul class="list-disc list-inside">{versions.map((version) => (
+										<li>{version}	</li>
+									))}
+									
+								</ul></DescriptionListItem> :  null}
 			</DescriptionList>
 		</section>
 			

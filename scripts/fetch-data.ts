@@ -32,6 +32,7 @@ const fileNames: string[] = [
 	"places.json",
 	"genres.json",
 	"people.json",
+	"work_versions.json",
 ];
 
 async function fetchData(fileName: string): Promise<void> {
