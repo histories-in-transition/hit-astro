@@ -87,7 +87,7 @@ const refinementListProject = wrapInPanel("Projekt");
 
 const refinementListModifications = wrapInPanel("Textvariationen");
 
-const refinementListInterpolations = wrapInPanel("Interpolations");
+const refinementListInterpolations = wrapInPanel("Interpolationen");
 
 // Initialize a custom Algolia widget to allow users to filter results by a range of years
 // filter input from and to to two different attributes in the schema (not possible with the default range input widget)

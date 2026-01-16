@@ -69,7 +69,7 @@ const refinementListWork = wrapInPanel("Werk");
 
 const refinementListMS = wrapInPanel("Handschrift");
 
-const refinementListCentury = wrapInPanel("Entstehungs Jh");
+const refinementListCentury = wrapInPanel("Entstehungs Jahrhundert");
 
 const refinementListOrigPlace = wrapInPanel("Entstehungsort");
 
@@ -91,7 +91,7 @@ const refinementListProject = wrapInPanel("Projekt");
 
 const refinementListModifications = wrapInPanel("Textvariationen");
 
-const refinementListInterpolations = wrapInPanel("Interpolations");
+const refinementListInterpolations = wrapInPanel("Interpolationen");
 
 const hierarchicalMenuGenre = wrapHierarcicalMenuInPanel("Genre");
 
@@ -621,6 +621,9 @@ search.addWidgets([
 
 	clearRefinements({
 		container: "#clear-refinements",
+		templates: {
+			resetLabel: "Filter zurücksetzen",
+		},
 	}),
 
 	currentRefinements({

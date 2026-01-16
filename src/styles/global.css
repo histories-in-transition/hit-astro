@@ -146,11 +146,11 @@ header {
 }
 
 .ais-CurrentRefinements-delete {
-	@apply hover:font-semibold hover:text-brand-600;
+	@apply hover:font-semibold hover:text-brand-600 cursor-pointer;
 }
 
 .ais-ClearRefinements-button {
-	@apply py-2 px-3  border rounded-md hover:border-brand-800 bg-brand-600 text-brand-50 font-semibold text-sm hover:bg-brand-100 hover:text-brand-800 transition;
+	@apply py-2 px-3  border cursor-pointer rounded-md hover:border-brand-800 bg-brand-600 text-brand-50 font-semibold text-sm hover:bg-brand-100 hover:text-brand-800 transition;
 }
 
 .ais-ClearRefinements-button--disabled {
