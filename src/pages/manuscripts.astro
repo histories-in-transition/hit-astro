@@ -27,6 +27,7 @@ const rowClickConfig = manuscriptsTableConfig.getRowClickConfig;
 			rowClickConfig={rowClickConfig}
 			updateMapOnFilter={true}
 			mapIdField="hit_id"
+			options={{ initialSort: [{ column: "library", dir: "asc" }] }}
 		>
 			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
 		</TabulatorTable>

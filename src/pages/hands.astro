@@ -23,6 +23,9 @@ const rowClickConfig = handsTableConfig.getRowClickConfig;
 			tableId="hands-table"
 			downloadTitle="hit_hands"
 			rowClickConfig={rowClickConfig}
+			options={{
+				initialSort: [{ column: "manuscript", dir: "asc" }],
+			}}
 		/>
 	</TableHead>
 </PageLayout>
