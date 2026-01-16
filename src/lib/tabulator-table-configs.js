@@ -279,6 +279,7 @@ export const worksTableConfig = {
 				origPlace: orgPlace,
 				provenance: provenance,
 				origDate: orgDate,
+				sortkey: `${[...new Set(work.author.map((a) => a.name))].join(", ")}|||${work.title}`,
 				_children: transmission, // children for the msTransmission msitems in dataTree
 			};
 		});
@@ -286,13 +287,7 @@ export const worksTableConfig = {
 
 	getColumns() {
 		const columns = [
-			{
-				title: "Titel",
-				field: "title",
-				responsive: 1,
-				widthGrow: 3,
-				minWidth: 150,
-			},
+			{ title: "sortKey", field: "sortkey", visible: false },
 			{
 				title: "Autor",
 				field: "author",
@@ -300,6 +295,13 @@ export const worksTableConfig = {
 				minWidth: 100,
 				widthGrow: 2,
 				responsive: 1,
+			},
+			{
+				title: "Titel",
+				field: "title",
+				responsive: 1,
+				widthGrow: 3,
+				minWidth: 150,
 			},
 			{
 				title: "Genre",
