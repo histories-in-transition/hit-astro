@@ -12,26 +12,42 @@ about page as well as the project site in the
 - [Project Structure](#project-structure)
 - [License](#license)
 
-## Datamodel
+## Data Model
 
-This project uses the data model defined in
-[dbdiagram.io](https://dbdiagram.io/d/HiT-6731b349e9daa85acafee5fa) (last updated Dez. 2025) to
-organize and store manuscripts, codicological units, manuscript items, works, authors, genres, and
-related metadata. To suit the researchers' aim the data is entered in a relational database
-[baserow](https://baserow.io/). This data is dumped on a regular basis in a
-[sister repository](https://github.com/histories-in-transition/hit-baserow-dump). The JSON files are
-then processed in the current repository, making visualizations and advanced filtered search
-possible.  
-For the preprocessing we use the following scripts:
+This project is based on the data model defined in
+[dbdiagram.io](https://dbdiagram.io/d/HiT-6731b349e9daa85acafee5fa) (last updated Dec. 2025), which
+structures information on manuscripts, codicological units, manuscript items, works, authors,
+genres, and related metadata.
+
+To support the researchers’ workflow, the data is entered into a relational database using
+[Baserow](https://baserow.io/). The database content is regularly exported as JSON files and stored
+in a [sister repository](https://github.com/histories-in-transition/hit-baserow-dump). These JSON
+files are then processed in the current repository, enabling visualizations, tabular views, and
+advanced filtered search.
 
 ## Data Processing Scripts
 
-All data preprocessing and export scripts are located in the `scripts/` folder:
+All data preprocessing and export scripts are located in the `scripts/` directory:
 
-- **preprocess/** – Load and normalize raw JSON manuscripts.
-- **export/** – Generate LaTeX, PDF, and TEI XML exports.
-- **search-index/** – Build and update the two search indices (Typesense).
-- data-fetch - fetches json row data from a sister repo.
+- **`preprocess/`** – Load and normalize raw JSON data (e.g. manuscripts, works, and related
+  entities).
+- **`export/`** – Generate LaTeX, PDF, and TEI XML exports from the processed data.
+- **`search-index/`** – Build and update the search indices (Typesense).
+- **`data-fetch/`** – Fetch raw JSON row data from the sister repository.
+
+### Current and planned processing pipeline
+
+Currently, the preprocessing pipeline is implemented primarily in JavaScript and operates on raw
+JSON data fetched from Baserow exports.
+
+Planned improvements include:
+
+- introducing Zod schemas to validate raw Baserow JSON at fetch and build time,
+- migrating preprocessing scripts and tei-export scripts from JavaScript to TypeScript,
+- adopting an immutable transformation approach (using shallow copies) to improve type safety,
+  maintainability, and reliability of the data pipeline.
+- Implement an OAI-PMH endpoint for harvesting TEI XML exports
+- Implement visualisations: transmission, networks, and spatial analysis of the data
 
 ## Getting Started
 
@@ -67,16 +83,20 @@ All data preprocessing and export scripts are located in the `scripts/` folder:
 
 ## Project Structure
 
-- **`src/content/`**: Contains collections of the row and processed JSON data files.
-- **`src/components/`**: Contains _astro_ components such as header, footer etc.
-- **`src/pages/`**: Contains the web pages to tables (of manuscripts, works etc.) or detail view of
-  single items (manuscripts, works etc).
-- **`src/lib/`**: Contains scripts for the advanced search, and the
-  [Tabulator library](https://tabulator.info/) used to display JSON data in tables and other minor
-  scripts.
-- **`src/lib/advanced search` and `src/pages/search.astro`** (search interface): Implements the
-  search page with (Algolia) instant search (using
-  [Typsesence instance search adapter](https://typesense.org/docs/guide/search-ui-components.html#using-instantsearch-js)).
+- **`src/content/`**: Contains collections of raw and processed JSON data files.
+- **`src/components/`**: Contains Astro components (e.g. header, footer), as well as two
+  [Svelte](https://svelte.dev/) components used for [Tabulator](https://tabulator.info/) tables and
+  the [Leaflet](https://leafletjs.com/) map.
+- **`src/pages/`**: Contains pages for tabular views (manuscripts, works, etc.) and detail views of
+  individual items.
+- **`src/types/`**: Contains TypeScript types and interfaces.
+- **`src/lib/`**: Contains configuration and utility functions for the
+  [Tabulator](https://tabulator.info/) library, including table-specific configurations for each
+  data type.
+- **Search interface**  
+  **`src/lib/advanced-search/`** and **`src/pages/search.astro`**: Implements the search page with
+  instant search (Algolia-compatible), using the
+  [Typesense InstantSearch adapter](https://typesense.org/docs/guide/search-ui-components.html#using-instantsearch-js).
 
 ## License
 
