@@ -2,7 +2,6 @@
 import NavLink from "./nav-link.astro";
 import { Icon } from "astro-icon/components";
 const pathname = Astro.url.pathname;
-const base = import.meta.env.BASE_URL;
 ---
 
 <header class="sticky top-0 z-50">
@@ -49,44 +48,44 @@ const base = import.meta.env.BASE_URL;
 		>
 			<ul class="flex place-content-start gap-x-8 text-md text-brand-50">
 				<li
-					class={`${pathname === base + "/manuscripts" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("manuscripts") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/manuscripts">Handschriften</NavLink>
 				</li>
 				<li
-					class={`${pathname === base + "/works" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("works") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/works">Werke</NavLink>
 				</li>
 				<li
-					class={`${pathname === base + "/msitems" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("msitems") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/msitems">MS Elemente</NavLink>
 				</li>
 
 				<li
-					class={`${pathname === base + "/scribes" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("scribes") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/scribes">Schreiber</NavLink>
 				</li>
 				<li
-					class={`${pathname === base + "/hands" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("hands") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/hands">Hände</NavLink>
 				</li>
 				<li
-					class={`${pathname === base + "/strata" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("strata") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/strata">Strata</NavLink>
 				</li>
 				<li
-					class={`${pathname === base + "/about" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					class={`${pathname.split("/").includes("about") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
 					<NavLink class="none" href="/about">Über das Projekt</NavLink>
@@ -97,15 +96,16 @@ const base = import.meta.env.BASE_URL;
 				<input
 					type="text"
 					id="searchInput"
-					class="hidden md:block px-2 w-64 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
+					class="hidden 2xl:block px-2 w-64 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
 					placeholder="Autor, Werk, Handschrift"
 					aria-label="suche nach Autor, Werk, Handschrift"
 				/>
 				<button
 					id="searchButton"
 					type="submit"
-					class={`${pathname === base + "/search" ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-				hover:underline underline-offset-4 decoration-2 decoration-brand-50`}>Suche</button
+					class={`${pathname.split("/").includes("search") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+				hover:underline underline-offset-4 decoration-2 decoration-brand-50 cursor-pointer`}
+					>Erweiterte Suche</button
 				>
 			</form>
 		</nav>

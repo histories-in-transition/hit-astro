@@ -31,11 +31,23 @@ const { data: manuscript } = Astro.props;
 const tocSections = [
 	{ id: "msInfo", title: "Überblick" },
 	{ id: "msMaterial", title: "Materialität" },
-	{ id: "msHands", title: "Paläographie" },
-	{ id: "msHistory", title: "Geschichte" },
-	{ id: "msContent", title: "Inhalt" },
-	{ id: "msStrata", title: "Strata" },
-	// Add more as needed
+
+	...(manuscript?.hands?.length > 0 ? [{ id: "msHands", title: "Paläographie" }] : []),
+
+	...(manuscript?.history ||
+	manuscript?.orig_place.length > 0 ||
+	manuscript?.provenance.length > 0 ||
+	manuscript?.orig_date.length > 0
+		? [{ id: "msHistory", title: "Geschichte" }]
+		: []),
+
+	...(manuscript?.content?.length > 0 ? [{ id: "msContent", title: "Inhalt" }] : []),
+
+	...(manuscript?.strata?.length > 0 ? [{ id: "msStrata", title: "Strata" }] : []),
+
+	...(manuscript?.bibliography?.length > 0
+		? [{ id: "msBibliography", title: "Bibliographie" }]
+		: []),
 ];
 ---
 
