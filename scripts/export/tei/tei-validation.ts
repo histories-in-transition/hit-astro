@@ -1,10 +1,3 @@
-import { Eta } from "eta";
-import { join } from "path";
-import { readFileSync, writeFileSync, mkdirSync } from "fs";
-import { DOMParser } from "@xmldom/xmldom";
-import { XMLValidator } from "fast-xml-parser";
-import { execSync } from "child_process";
-
 /**
  * Downloads schema with all dependencies (only if not present)
  * @param {string} baseUrl - Base URL for schema

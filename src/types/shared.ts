@@ -110,5 +110,9 @@ export interface Author {
 }
 
 export interface Bibliography {
-	/* Currently empty array in JSON */
+	hit_id: string;
+	citation: string;
+	link: string;
+	author: string;
+	title: string; /* Currently empty array in JSON */
 }
