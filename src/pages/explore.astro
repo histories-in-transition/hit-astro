@@ -4,10 +4,42 @@ import GenrePieChart from "@/components/visualisations/GenrePieChart.svelte";
 ---
 
 <PageLayout title="About">
-	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10">
-		<div class="prose max-w-(--breakpoint-md)">
-			<h1 class="text-2xl font-semibold">Dashboard for visualisations</h1>
-			<GenrePieChart client:load />
+	<div class="mx-auto w-full max-w-11/12 md:max-w-3/4 p-2 md:px-10 md:py-16">
+		<div>
+			<h1 class="text-4xl font-semibold">Dashboard für Visualisierungen</h1>
+			<div>
+				<h2 class="text-2xl font-semibold py-5 text-brand-600">Genre Chart</h2>
+				<div class="md:grid grid-cols-[1fr_3fr] gap-6">
+					<div class="py-5 md:p-5-0 font-light gap-2 flex flex-col">
+						<p>
+							Diese Visualisierung zeigt die Verteilung historiographischer Sub-Genres in den
+							Handschriftenüberlieferungen. Nach Auswahl eines Ortes (Schreiberort) werden
+							ausschließlich Werke der Hauptgattung <span class="font-semibold"
+								>Historiographie</span
+							> berücksichtigt.* Dargestellt ist die Anzahl der Überlieferungen pro Sub-Genre, gegliedert
+							nach Jahrhunderten.
+						</p>
+						<p>
+							<span class="font-semibold">Beispiel</span>: Die Grafik für die Abtei Saint-Bertin im
+							10. Jh. zeigt den Eintrag „Chronik: 7 (29,17 %)“. Das bedeutet, dass an diesem Ort im
+							10. Jh. sieben Werke verfasst wurden, die dem Genre „Chronik“ zuzuordnen sind. Dies
+							entspricht 29,17 % aller historiographischen Werke, die für diesen Ort und dieses
+							Jahrhundert nachgewiesen sind. [Stand der Daten: Januar 2026.]
+						</p>
+						<p>
+							Die Zeitachse ermöglicht es, Veränderungen und Schwerpunkte der historiographischen
+							Überlieferung über die Jahrhunderte hinweg nachzuvollziehen.
+						</p>
+						<hr />
+						<p>
+							* Es wurden bewusst keine Werke mit nicht-historiographischen Genres dargestellt, da
+							das Projekt ausschließlich Handschriften mit historiographischen Werken erfasst. Eine
+							Darstellung aller Genres wäre daher irreführend.
+						</p>
+					</div>
+					<GenrePieChart client:load />
+				</div>
+			</div>
 		</div>
 	</div></PageLayout
 >
