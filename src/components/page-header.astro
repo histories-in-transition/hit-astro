@@ -90,6 +90,12 @@ const pathname = Astro.url.pathname;
 				>
 					<NavLink class="none" href="/about">Über das Projekt</NavLink>
 				</li>
+				<li
+					class={`${pathname.split("/").includes("explore") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
+				>
+					<NavLink class="none" href="/explore">Dashboard für Visualisierungen</NavLink>
+				</li>
 			</ul>
 			<form id="searchForm" class="hidden md:flex items-center gap-x-2">
 				<label for="searchInput" class="sr-only">Volltextsuche</label>
@@ -147,6 +153,11 @@ const pathname = Astro.url.pathname;
 		<li>
 			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/about">
 				Über das Projekt
+			</NavLink>
+		</li>
+		<li>
+			<NavLink class="py-1 px-3 hover:underline underline-offset-4 text-brand-50" href="/explore">
+				Dashboard für Visualisierungen
 			</NavLink>
 		</li>
 		<li>
