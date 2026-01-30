@@ -406,8 +406,20 @@ header {
 /* ############################################# */
 /* ################ Leaflet ################### */
 /* ############################################# */
-.leaflet-control-layers-selector {
-	accent-color: var(--brand-600);
+/* Customize Leaflet layer control checkboxes */
+/* orig place → red checkbox */
+.leaflet-control-layers label:has(.layer-origplace) .leaflet-control-layers-selector {
+	accent-color: #b33a3a; /* red-600 */
+}
+
+/* provenance → green checkbox */
+.leaflet-control-layers label:has(.layer-provenance) .leaflet-control-layers-selector {
+	accent-color: #407955; /* green-600 */
+}
+
+/* current location → blue checkbox */
+.leaflet-control-layers label:has(.layer-currentLocation) .leaflet-control-layers-selector {
+	accent-color: #3c7ac0; /* green-600 */
 }
 
 .map-popup h3 a {

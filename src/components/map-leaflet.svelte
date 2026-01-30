@@ -195,9 +195,9 @@
 			L.control.layers(
 				{},
 				{
-					Entstehungsort: originLayer,
-					Provenienz: provenanceLayer,
-					"Aktueller Standort": currentLocationLayer,
+					'<span class="layer-origplace">Entstehungsort</span>': originLayer,
+					'<span class="layer-provenance">Provenienz</span>': provenanceLayer,
+					'<span class="layer-currentLocation">Aktueller Standort</span>': currentLocationLayer,
 				},
 				{ collapsed: false }
 			).addTo(map);
