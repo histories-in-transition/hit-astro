@@ -34,6 +34,7 @@ const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
 	},
 	additionalSearchParameters: {
 		query_by: `${main_search_field},${secondary_search_field}, ${third_search_field}`,
+		sort_by: "sort_id:asc",
 	},
 });
 
@@ -283,8 +284,7 @@ search.addWidgets([
 							class="text-lg underline underline-offset-2 font-semibold text-brand-800 wrap-break-word"
 						>
 							<a href="${href}">
-								<span class="absolute inset-0 z-10"></span>
-								<span>(#${hit.id}) </span>
+								<span class="absolute inset-0 z-10 bg-brand-300/15"></span>
 								${hit.work[0]?.author?.length
 									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
 									: ""}

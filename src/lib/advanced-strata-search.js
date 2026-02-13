@@ -270,12 +270,13 @@ search.addWidgets([
 				const href = withBasePath(`/strata/${hit.hit_id}`);
 
 				return html`
-					<article class="w-full p-2 md:px-4 border-brand-300 border rounded-md">
-						<a href="${href}"
-							><h2 class="text-lg underline underline-offset-2 font-semibold text-brand-800">
-								<span>(#${hit.id}) ${hit.label}</span>
-							</h2></a
-						>
+					<article class="relative isolate w-full p-2 md:px-4 border-brand-300 border rounded-md">
+						<h2 class="text-lg underline underline-offset-2 font-semibold text-brand-800">
+							<a href="${href}">
+								<span class="absolute inset-0 z-10 bg-brand-300/15"></span>
+								<span>${hit.label}</span>
+							</a>
+						</h2>
 						<div class="text-gray-700">
 							<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
 								<dt class="font-semibold pr-2">Handschrift:</dt>
