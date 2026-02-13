@@ -278,18 +278,19 @@ search.addWidgets([
 				const href = withBasePath(`/msitems/${hit.hit_id}`);
 
 				return html`
-					<article class="w-full p-2 md:px-4 border-brand-300 border rounded-md">
-						<a href="${href}"
-							><h2
-								class="text-lg underline underline-offset-2 font-semibold text-brand-800 wrap-break-word"
-							>
+					<article class="relative isolate w-full p-2 md:px-4 border-brand-300 border rounded-md">
+						<h2
+							class="text-lg underline underline-offset-2 font-semibold text-brand-800 wrap-break-word"
+						>
+							<a href="${href}">
+								<span class="absolute inset-0 z-10"></span>
 								<span>(#${hit.id}) </span>
 								${hit.work[0]?.author?.length
 									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
 									: ""}
 								<span class="italic wrap-break-word">${hit.work[0]?.title || "Untitled"}</span>
-							</h2></a
-						>
+							</a>
+						</h2>
 						<div class="text-gray-700">
 							<dl class="md:grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
 								${hit.title_note !== ""
