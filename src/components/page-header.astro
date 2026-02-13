@@ -84,17 +84,28 @@ const pathname = Astro.url.pathname;
 				>
 					<NavLink class="none" href="/strata">Strata</NavLink>
 				</li>
-				<li
-					class={`${pathname.split("/").includes("about") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
-				>
-					<NavLink class="none" href="/about">Über das Projekt</NavLink>
-				</li>
-				<li
-					class={`${pathname.split("/").includes("explore") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
-				>
-					<NavLink class="none" href="/explore">Dashboard für Visualisierungen</NavLink>
+				<li class="relative group">
+					<button class="flex gap-0.5 items-center" aria-haspopup="true" aria-expanded="false"
+						>Projekt
+						<Icon
+							aria-hidden="true"
+							class="size-4.5 transition-transform group-hover:rotate-180"
+							name="lucide:chevron-down"
+						/>
+					</button>
+
+					<div
+						class="absolute left-0 top-full hidden w-48 bg-brand-800 rounded-md p-3 group-hover:grid"
+					>
+						<NavLink
+							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
+							href="/explore">Dashboard für Visualisierungen</NavLink
+						>
+						<NavLink
+							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
+							href="/about">Über das Projekt</NavLink
+						>
+					</div>
 				</li>
 			</ul>
 			<form id="searchForm" class="hidden md:flex items-center gap-x-2">
