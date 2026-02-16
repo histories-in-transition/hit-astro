@@ -2,18 +2,24 @@
   import { onMount } from "svelte";
   import * as echarts from "echarts";
   import type { Work } from "@/types/work";
+  import {
+    countSubGenres,
+    buildDatasetSource,
+  } from "@/lib/helpers/visualisations";
   import works from "@/content/data/works.json";
 
   
   let chartEl: HTMLDivElement;
   let chart: echarts.ECharts | null = null;
 
-  let selectedPlace: string | null = null;
-
-  // select element dropdown data
   const places = extractOrigPlaces(works).sort((a, b) =>
     a.label.localeCompare(b.label)
   );
+  
+  let selectedPlace: string | null = 
+    places.length ? places[0].hit_id : null;
+
+  // select element dropdown data
 
   // reactive data
   let filteredWorks: Work[] = [];
@@ -86,6 +92,16 @@ $: datasetSource =
   const lineSeries = buildLineSeries(datasetSource, colorMap);
 
 chart.setOption({
+  title: {
+    text: selectedPlace
+      ? `Genre-Verteilung für ${places.find(p => p.hit_id === selectedPlace)?.label}`
+      : 'Bitte wählen Sie einen Ort aus',
+    left: 'center',
+    top: 20,
+    textStyle: {
+      fontSize: 18,
+      color: '#333'
+  }},
   legend: {},
   tooltip: {
     trigger: 'axis',
@@ -109,9 +125,6 @@ chart.setOption({
     }
   ]
 });
-
-
-
 
   }
 
@@ -146,97 +159,7 @@ chart.setOption({
     return works.filter(w => workHasOrigPlace(w, placeHitId));
   }
 
-  // interest only in historiography sub-genres
-function getHistoriographieSubGenres(work: Work): string[] {
-  return (
-    work.genre
-      ?.filter(g => g.main_genre === "Historiographie")
-      .map(g => g.sub_genre?.trim() || "Unspecified")
-    ?? []
-  );
-}
 
-function normalizeCentury(raw: string): number | null {
-  const match = raw.match(/\d+/);
-  return match ? Number(match[0]) : null;
-}
-
-
-function getCenturiesFromTransmission(ms: any): number[] {
-  const centuries = [];
-
-  for (const od of ms.orig_date ?? []) {
-    for (const d of od.date ?? []) {
-      for (const c of d.century ?? []) {
-        const norm = normalizeCentury(c);
-        if (norm) centuries.push(norm);
-      }
-    }
-  }
-
-  return centuries;
-}
-// count sub-genres by century from ms_transmission data
-function countSubGenres(works: Work[]) {
-  const result = new Map<string, Map<number, number>>();
-// filter for historiographie sub-genres
-  for (const work of works) {
-    const subGenres = getHistoriographieSubGenres(work);
-    if (!subGenres.length) continue;
-// get centuries from ms_transmission
-    for (const ms of work.ms_transmission ?? []) {
-      const centuries = getCenturiesFromTransmission(ms);
-      if (!centuries.length) continue;
-
-      for (const sg of subGenres) {
-        if (!result.has(sg)) {
-          result.set(sg, new Map());
-        }
-        const centuryMap = result.get(sg)!;
-
-        for (const c of centuries) {
-          centuryMap.set(c, (centuryMap.get(c) ?? 0) + 1);
-        }
-      }
-    }
-  }
-
-  return result;
-}
-
-// centuries for the line chart
-function collectCenturies(
-  data: Map<string, Map<number, number>>
-): number[] {
-  const set = new Set<number>();
-
-  for (const centuryMap of data.values()) {
-    for (const c of centuryMap.keys()) {
-      set.add(c);
-    }
-  }
-
-  return [...set].sort((a, b) => a - b);
-}
-
-
-function buildDatasetSource(
-  data: Map<string, Map<number, number>>
-) {
-  const centuries = collectCenturies(data);
-
-  const header = ['sub_genre', ...centuries.map(c => `${c}th`)];
-  const rows = [];
-
-  for (const [subGenre, centuryMap] of data.entries()) {
-    rows.push([
-      subGenre,
-      ...centuries.map(c => centuryMap.get(c) ?? 0)
-    ]);
-  }
-
-  return [header, ...rows];
-}
 
 // for each sub-genre one line row, choosing the right color
 function buildLineSeries(datasetSource: any[], colorMap: Map<string, string>) {
