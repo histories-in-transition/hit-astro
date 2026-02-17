@@ -5,12 +5,19 @@
   import {
     countSubGenres,
     buildDatasetSource,
+    buildGenreColorMap,
+    extractHistoriographyGenres
   } from "@/lib/helpers/visualisations";
   import works from "@/content/data/works.json";
-
+import {withBasePath} from "@/lib/withBasePath"
   
+  const allGenres = extractHistoriographyGenres(works);
+const genreColorMap = buildGenreColorMap(allGenres);
+
   let chartEl: HTMLDivElement;
   let chart: echarts.ECharts | null = null;
+
+  let selectedCentury: string | null = null;
 
   const places = extractOrigPlaces(works).sort((a, b) =>
     a.label.localeCompare(b.label)
@@ -24,7 +31,6 @@
   // reactive data
   let filteredWorks: Work[] = [];
   let genreData: { genre: string; count: number }[] = [];
-  let colorMap: Map<string, string> = new Map();
 
   // run once, after DOM is ready
  onMount(() => {
@@ -32,14 +38,15 @@
   chart = echarts.init(chartEl);
 
   chart.on('updateAxisPointer', (event: {
-  axesInfo?: Array<{
-    value: number
-  }>
-}) => {
+    axesInfo?: Array<{
+      value: number
+        }>
+      }) => {
     const xAxisInfo = event.axesInfo[0];
-    if (!xAxisInfo || !colorMap || !datasetSource?.length) return;
+    if (!xAxisInfo || !datasetSource?.length) return;
 
     const dim = xAxisInfo.value + 1;
+    selectedCentury = datasetSource[0][dim];
 
     const pieData = datasetSource
       .slice(1)
@@ -47,7 +54,7 @@
         name: row[0],
         value: row[dim],
         itemStyle: {
-          color: colorMap.get(row[0])
+          color: genreColorMap.get(row[0])
         }
       }))
       .filter(d => d.value > 0);
@@ -58,15 +65,54 @@
         data: pieData
       }
     });
+  
   });
+
+    // Add click handler to link to search results for the genre
+   chart.on("click", function (params: any) {
+        if (!params.data) return;
+
+        const place = places.find(p => p.hit_id === selectedPlace)?.label;
+        const genre = params.data.name != 'Historiographie allgemein' ? params.data.name : '';
+        const century = selectedCentury; 
+
+        const searchParams = new URLSearchParams();
+
+        // --- Refinement: Century ---
+        if (century) {
+          searchParams.append(
+            "hit__msitems[refinementList][orig_date.date.century][0]",
+            century
+          );
+        }
+
+        // --- Refinement: Place ---
+        if (place) {
+          searchParams.append(
+            "hit__msitems[refinementList][orig_place.place.value][0]",
+            place
+          );
+        }
+
+        // --- Hierarchical Genre ---
+        searchParams.append(
+          "hit__msitems[hierarchicalMenu][main_genre][0]",
+          "Historiographie"
+        );
+      if(genre) {
+        searchParams.append(
+          "hit__msitems[hierarchicalMenu][main_genre][1]",
+          genre
+        )};
+
+        window.location.href = withBasePath(`/search/?${searchParams.toString()}`);
+});
 
   window.addEventListener("resize", () => chart?.resize());
 });
   // ---------- reactive data updates ----------
 
-  // build color map when dataset source changes
-  $: colorMap =
-    buildColorMap(datasetSource); 
+
 
 $: console.log("genreData", genreData);
 
@@ -78,18 +124,18 @@ $: console.log("genreData", genreData);
 
 
  $: subGenreCounts =
-  countSubGenres(filteredWorks);
+  selectedPlace
+    ? countSubGenres(works, selectedPlace)
+    : new Map();
 
 $: datasetSource =
   buildDatasetSource(subGenreCounts);
 
-
-
   
   // redraw chart when data + svg are ready
  // --- update chart ---
- $: if (chart && datasetSource.length && colorMap.size) {
-  const lineSeries = buildLineSeries(datasetSource, colorMap);
+ $: if (chart && datasetSource.length ) {
+  const lineSeries = buildLineSeries(datasetSource, genreColorMap);
 
 chart.setOption({
   title: {
@@ -107,6 +153,23 @@ chart.setOption({
     trigger: 'axis',
     showContent: false
   },
+   toolbox: {
+            show: true,
+            orient: "vertical",
+            right: 30,
+            top: 20,
+            itemSize: 20,
+            itemGap: 20,
+            feature: {
+            saveAsImage: {
+                show: true,
+                title: "Herunterladen als PNG",
+                type: "png",
+                pixelRatio: 2,
+                backgroundColor: "#fff",
+            },
+            },
+        },
   dataset: { source: datasetSource },
   xAxis: { type: 'category' },
   yAxis: {},
@@ -132,8 +195,8 @@ chart.setOption({
 
   function extractOrigPlaces(works: Work[]) {
     const places = new Map<string, string>();
-
-    for (const work of works) {
+    const histWorks = works.filter(w => w.genre.some(g => g.main_genre === "Historiographie"))
+    for (const work of histWorks) {
       for (const ms of work.ms_transmission ?? []) {
         for (const op of ms.orig_place ?? []) {
           for (const p of op.place ?? []) {
@@ -160,45 +223,29 @@ chart.setOption({
   }
 
 
-
 // for each sub-genre one line row, choosing the right color
-function buildLineSeries(datasetSource: any[], colorMap: Map<string, string>) {
-  return datasetSource.slice(1).map(row => ({
-    type: 'line',
-    smooth: true,
-    seriesLayoutBy: 'row',
-    emphasis: { focus: 'series' },
-    lineStyle: {
-      color: colorMap.get(row[0])
-    },
-    itemStyle: {
-      color: colorMap.get(row[0])
-    }
-  }));
-}
+function buildLineSeries(
+  datasetSource: any[],
+  genreColorMap: Map<string, string>
+) {
+  return datasetSource.slice(1).map(row => {
+    const genreName = row[0];
 
-
-// control colors of carts
-const palette = [
-  '#2563eb', // blue-600
-  '#b6d634', // green
-  '#d97706', // amber-600
-  '#dc2626', // red-600
-  '#7c3aed', // violet-600
-  '#0d9488', // teal-600
-  '#9333ea'  // purple-600
-];
-
-function buildColorMap(datasetSource: any[]) {
-  const map = new Map<string, string>();
-
-  datasetSource.slice(1).forEach((row, i) => {
-    map.set(row[0], palette[i % palette.length]);
+    return {
+      name: genreName,
+      type: 'line',
+      smooth: true,
+      seriesLayoutBy: 'row',
+      emphasis: { focus: 'series' },
+      lineStyle: {
+        color: genreColorMap.get(genreName)
+      },
+      itemStyle: {
+        color: genreColorMap.get(genreName)
+      }
+    };
   });
-
-  return map;
 }
-
 
   
 </script>

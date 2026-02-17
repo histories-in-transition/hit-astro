@@ -4,9 +4,10 @@
   import europeGeoJSON from "@/maps/europe-geo.json";
 
   import works from "@/content/data/works.json";
+  import {withBasePath} from "@/lib/withBasePath"
 
   import {
-    aggregateWorks
+    aggregateWorks, buildGenreColorMap, extractHistoriographyGenres
   } from "@/lib/helpers/visualisations";
 
   let chartEl: HTMLDivElement;
@@ -14,6 +15,9 @@
 
 const aggregated = aggregateWorks(works);
 const placeData = aggregated.places;
+
+  const allGenres = extractHistoriographyGenres(works);
+const genreColorMap = buildGenreColorMap(allGenres);
 
 
   // collect all centuries available for the select dropdown, sorted
@@ -26,43 +30,12 @@ const placeData = aggregated.places;
 
   let selectedCentury: number = centuries[0];
 
-  // color map global for all genres
-  const palette = [
-    '#2563eb',
-    '#b6d634',
-    '#d97706',
-    '#dc2626',
-    '#7c3aed',
-    '#0d9488',
-    '#9333ea'
-  ];
+  
 
-  function buildColorMapForCentury(century: number) {
-  const genres = new Set<string>();
-
-  for (const place of placeData.values()) {
-    const g = place.centuries.get(century);
-    if (g) {
-      for (const name of g.keys()) {
-        genres.add(name);
-      }
-    }
-  }
-
-  const genreList = Array.from(genres);
-
-  const map = new Map<string, string>();
-  genreList.forEach((g, i) => {
-    map.set(g, palette[i % palette.length]);
-  });
-
-  return { colorMap: map, genreList };
-}
+  
 
 
-  function updateChart(century: number) {
-    const { colorMap, genreList } =
-  buildColorMapForCentury(selectedCentury);
+  function updateChart(century: number) { 
 
 
     const pieSeries = [];
@@ -76,7 +49,7 @@ const placeData = aggregated.places;
           name,
           value,
           itemStyle: {
-            color: colorMap.get(name)
+            color: genreColorMap.get(name)
           }
         })
       );
@@ -101,8 +74,24 @@ const placeData = aggregated.places;
         show: true,
         bottom: 20,
         left: "center",
-        data: genreList
+        data: allGenres
       },
+       toolbox: {
+            show: true,
+            orient: "vertical",
+            right: 30,
+            itemSize: 20,
+            itemGap: 20,
+            feature: {
+            saveAsImage: {
+                show: true,
+                title: "Herunterladen als PNG",
+                type: "png",
+                pixelRatio: 2,
+                backgroundColor: "#fff",
+            },
+            },
+        },
       series: [
         {
           type: "map",
@@ -141,6 +130,45 @@ const placeData = aggregated.places;
     });
 
     updateChart(selectedCentury);
+// function to add hyperlink from pie charts to search
+    chart.on("click", function (params: any) {
+      if (!params.data) return;
+
+      const place = params.seriesName;
+      const genre = params.data.name != 'Historiographie allgemein' ? params.data.name : '';
+      const century = `${selectedCentury.toString()}. Jh.`; 
+
+      const searchParams = new URLSearchParams();
+
+      // --- Refinement: Century ---
+      if (century) {
+        searchParams.append(
+          "hit__msitems[refinementList][orig_date.date.century][0]",
+          century
+        );
+      }
+
+      // --- Refinement: Place ---
+      if (place) {
+        searchParams.append(
+          "hit__msitems[refinementList][orig_place.place.value][0]",
+          place
+        );
+      }
+
+      // --- Hierarchical Genre ---
+      searchParams.append(
+        "hit__msitems[hierarchicalMenu][main_genre][0]",
+        "Historiographie"
+      );
+    if(genre) {
+      searchParams.append(
+        "hit__msitems[hierarchicalMenu][main_genre][1]",
+        genre
+      )};
+
+      window.location.href = withBasePath(`/search/?${searchParams.toString()}`);
+    });
 
     window.addEventListener("resize", () => chart.resize());
   });
@@ -162,5 +190,5 @@ const placeData = aggregated.places;
     {/each}
   </select>
 
-  <div bind:this={chartEl} class="w-full h-[700px]"></div>
+  <div bind:this={chartEl} class="w-full h-[700px] border border-neutral-300 rounded bg-blue-200/35"></div>
 </div>
