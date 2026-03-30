@@ -12,6 +12,15 @@ import {
 	HitManuscriptDatedSchema,
 	HitLibrarySchema,
 	HitHandSchema,
+	HitHandRoleSchema,
+	HitHandsPlacedSchema,
+	HitHandsDatedSchema,
+	HitGenresSchema,
+	HitFiliatedStrataSchema,
+	HitCodunitsSchema,
+	HitDatesSchema,
+	HitBibliographySchema,
+	HitCodPlacedSchema,
 } from "@/types/zod/zod-types";
 
 // function to load JSON files from the raw content directory
@@ -48,6 +57,22 @@ export function loadAllData() {
 		z.record(z.string(), HitLibrarySchema),
 	);
 	const hands = loadJSON("hands.json", z.record(z.string(), HitHandSchema));
+	const handsrole = loadJSON("hands_role.json", z.record(z.string(), HitHandRoleSchema));
+	const hands_placed = loadJSON("hands_placed.json", z.record(z.string(), HitHandsPlacedSchema));
+	const hands_dated = loadJSON("hands_dated.json", z.record(z.string(), HitHandsDatedSchema));
+	const genres = loadJSON("genres.json", z.record(z.string(), HitGenresSchema));
+	const filiated_strata = loadJSON(
+		"filiated_strata.json",
+		z.record(z.string(), HitFiliatedStrataSchema),
+	);
+	const dates = loadJSON("dates.json", z.record(z.string(), HitDatesSchema));
+	const cod_units = loadJSON("cod_units.json", z.record(z.string(), HitCodunitsSchema));
+	const bibliography = loadJSON("bibliography.json", z.record(z.string(), HitBibliographySchema));
+	const cod_unit_placed = loadJSON(
+		"cod_unit_placed.json",
+		z.record(z.string(), HitCodPlacedSchema),
+	);
+
 	return {
 		manuscripts: manuscripts,
 		msitems: msitemsRecord,
@@ -59,24 +84,15 @@ export function loadAllData() {
 		manuscript_dated: manuscript_dated,
 		libraries_organisations: libraries,
 		hands: hands,
-		// bibliography: loadJSON("bibliography.json"),
-		// cod_units: loadJSON("cod_units.json"),
-		// cod_unitsprov: loadJSON("cod_unit_placed.json"),
-		// dates: loadJSON("dates.json"),
-		// genres: loadJSON("genres.json"),
-		// hands: loadJSON("hands.json"),
-		// handsdated: loadJSON("hands_dated.json"),
-		// handsplaced: loadJSON("hands_placed.json"),
-		// handsrole: loadJSON("hands_role.json"),
-		// libraries: loadJSON("libraries_organisations.json"),
-		// manuscripts_dated: loadJSON("manuscripts_dated.json"),
-		// people: loadJSON("people.json"),
-		// places: loadJSON("places.json"),
-		// scribes: loadJSON("scribes.json"),
-		// strataa: loadJSON("strata.json"),
-		// works: loadJSON("works.json"),
-		// strata_filiations: loadJSON("strata_filiations.json"),
-		// filiated_strata: loadJSON("filiated_strata.json"),
+		hands_role: handsrole,
+		hands_placed: hands_placed,
+		hands_dated: hands_dated,
+		genres: genres,
+		filiated_strata: filiated_strata,
+		dates: dates,
+		cod_units: cod_units,
+		bibliography: bibliography,
+		cod_unit_placed: cod_unit_placed,
 	};
 }
 loadAllData();

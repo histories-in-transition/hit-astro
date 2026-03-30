@@ -295,3 +295,159 @@ export const HitHandSchema = z.object({
 	author_entry: arrayOrEmpty(RefSchema),
 });
 export type HitHand = z.infer<typeof HitHandSchema>;
+
+export const HitHandRoleSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	hand: arrayOrEmpty(RefSchema),
+	ms_item: arrayOrEmpty(RefSchema),
+	role: arrayOrEmpty(multiSelectSchema),
+	locus: stringOrEmpty,
+	text: arrayOrEmpty(TableRefSchema),
+	locus_text: arrayOrEmpty(LabelSchema),
+	"Last modified by": EdBySchema,
+	"Created by": EdBySchema,
+	"Created on": stringOrEmpty,
+	"Last modified": stringOrEmpty,
+	locus_layout: arrayOrEmpty(multiSelectSchema),
+	function: arrayOrEmpty(multiSelectSchema),
+	scribe_type: arrayOrEmpty(multiSelectSchema),
+	strata: arrayOrEmpty(RefSchema),
+});
+export type HitHandRole = z.infer<typeof HitHandRoleSchema>;
+
+export const HitHandsPlacedSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	hand: arrayOrEmpty(RefSchema),
+	authority: arrayOrEmpty(RefSchema),
+	page: stringOrEmpty,
+	place: arrayOrEmpty(RefSchema),
+	"Last modified by": EdBySchema,
+});
+export type HitHandsPlaced = z.infer<typeof HitHandsPlacedSchema>;
+
+export const HitHandsDatedSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	authority: z.array(RefSchema),
+	page: stringOrEmpty,
+	dated: z.array(RefSchema),
+	hand: z.array(RefSchema),
+	new_dating: z.boolean(),
+	"Created by": EdBySchema,
+	"Last modified by": EdBySchema,
+	"Last modified": stringOrEmpty,
+	"Created on": stringOrEmpty,
+	note: stringOrEmpty,
+});
+export type HitHandsDated = z.infer<typeof HitHandsDatedSchema>;
+
+export const HitGenresSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	label: stringOrEmpty,
+	genre: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	m_genre: arrayOrEmpty(RefSchema),
+	"Created by": EdBySchema,
+	"Created on": stringOrEmpty,
+	"Last modified by": EdBySchema,
+	"Last modified": stringOrEmpty,
+	sub_genre: stringOrEmpty,
+	main_genre: stringOrEmpty,
+});
+export type HitGenres = z.infer<typeof HitGenresSchema>;
+export const HitFiliatedStrataSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	label: arrayOrEmpty(LabelSchema),
+	library: arrayOrEmpty(RefSchema),
+	idno: stringOrEmpty,
+	locus: stringOrEmpty,
+	catalog_url: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	note: stringOrEmpty,
+});
+export type HitFiliatedStrata = z.infer<typeof HitFiliatedStrataSchema>;
+
+export const HitDatesSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	label: stringOrEmpty,
+	not_before: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	not_after: stringOrEmpty,
+	"Created by": EdBySchema,
+	"Last modified by": EdBySchema,
+	"Last modified": stringOrEmpty,
+});
+export type HitDates = z.infer<typeof HitDatesSchema>;
+
+export const HitCodunitsSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	label: arrayOrEmpty(TableRefSchema),
+	notes: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	locus: stringOrEmpty,
+	manuscript: arrayOrEmpty(RefSchema),
+	number: stringOrEmpty,
+	"Created by": EdBySchema,
+	"Created on": stringOrEmpty,
+	"Last modified by": EdBySchema,
+	"Last modified": stringOrEmpty,
+	orig_date: arrayOrEmpty(z.any()),
+	heigth: stringOrEmpty,
+	lines_number: stringOrEmpty,
+	decorations: stringOrEmpty,
+	basic_structure: arrayOrEmpty(z.any()),
+	written_width: stringOrEmpty,
+	written_height: stringOrEmpty,
+	width: stringOrEmpty,
+	columns: arrayOrEmpty(z.any()),
+	cod_unit_placed: arrayOrEmpty(RefSchema),
+	prov_place: arrayOrEmpty(TableRefSchema),
+	strata: arrayOrEmpty(RefSchema),
+	ruling: stringOrEmpty,
+	material: multiSelectSchema.nullable(),
+	material_spec: stringOrEmpty,
+	catchwords: stringOrEmpty,
+	quiremarks: stringOrEmpty,
+});
+export type HitCodunits = z.infer<typeof HitCodunitsSchema>;
+
+export const HitCodPlacedSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	cod_unit: arrayOrEmpty(RefSchema),
+	place: arrayOrEmpty(RefSchema),
+	from: arrayOrEmpty(RefSchema),
+	type: multiSelectSchema.nullable(),
+	till: arrayOrEmpty(RefSchema),
+	ms: arrayOrEmpty(LabelSchema),
+	authority: arrayOrEmpty(RefSchema),
+	page: stringOrEmpty,
+	uncertain_from: z.boolean(),
+	uncertain_till: z.boolean(),
+	uncertain_place: z.boolean(),
+});
+export type HitCodPlaced = z.infer<typeof HitCodPlacedSchema>;
+
+export const HitBibliographySchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	author: stringOrEmpty,
+	short_title: stringOrEmpty,
+	zotero_id: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	title: stringOrEmpty,
+	year: stringOrEmpty,
+	citation: stringOrEmpty,
+	link: stringOrEmpty,
+});
+export type HitBibliography = z.infer<typeof HitBibliographySchema>;
