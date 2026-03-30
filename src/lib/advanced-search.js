@@ -126,8 +126,10 @@ const customDateRangeWidget = (containerId) => {
               <div class="mt-2">
                 <form class="flex flex-col gap-2">
                   <div class="flex gap-2 items-center">
+				  <label for="date-from-year" class="sr-only">Von Jahr</label>
                     <input class="w-full text-sm py-1.5 px-2 border border-gray-300 rounded-sm" type="number" id="date-from-year" min="70" max="1600" placeholder="Von" aria-label="Von Jahr">
                     <span class="text-gray-500" aria-hidden="true">-</span>
+					<label for="date-to-year" class="sr-only">Bis Jahr</label>
                     <input class="w-full text-sm py-1.5 px-2 border border-gray-300 rounded-sm" type="number" id="date-to-year" min="70" max="1600" placeholder="Bis" aria-label="Bis Jahr">
                   </div>
                   <button type="submit" class="w-full py-1.5 text-sm bg-brand-600 text-white rounded-sm hover:bg-brand-700 transition">Suche</button>
@@ -154,7 +156,7 @@ const customDateRangeWidget = (containerId) => {
 				const to = parseInt(toInput.value, 10);
 				// Validate: Ensure 'From year' < 'To year'
 				if (from >= to) {
-					toInput.setCustomValidity("The 'To year' must be greater than the 'From year'.");
+					toInput.setCustomValidity("Das 'Bis Jahr' muss größer sein als das 'Von Jahr'.");
 					// Don't submit if validation fails
 					return;
 				} else {
@@ -162,16 +164,19 @@ const customDateRangeWidget = (containerId) => {
 				}
 
 				// Proceed if both values are valid numbers;
-				// helper.addNummericRefinemnt - standard Algolia method to add a numeric filter
-				if (!isNaN(from)) {
-					helper.addNumericRefinement("terminus_post_quem", ">=", from);
-				}
-				if (!isNaN(to)) {
-					helper.addNumericRefinement("terminus_ante_quem", "<=", to);
-				}
+				if (!isNaN(from) && !isNaN(to)) {
+					// check if either work_date_not_before or work_date_not_after falls within the range or from-to
+					const dateFilter = `
+						(
+							(terminus_post_quem:>=${from} && terminus_post_quem:<=${to})
+							||
+							(terminus_ante_quem:>=${from} && terminus_ante_quem:<=${to})
+						)
+						`.replace(/\s+/g, " ");
 
-				// Perform the search after validation
-				helper.search();
+					helper.setQueryParameter("filters", dateFilter);
+					helper.search();
+				}
 			});
 			// Add real-time validation reset to allow resubmission after correcting the input
 			fromInput.addEventListener("input", () => {

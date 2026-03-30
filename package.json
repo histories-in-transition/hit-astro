@@ -8,6 +8,7 @@
 		"format:fix": "pnpm run format:check --write",
 		"get-data": "pnpm tsx ./scripts/fetch-data.ts",
 		"process-data": "pnpm tsx ./scripts/preprocess/preprocess-data.ts",
+		"zod-data": "pnpm tsx ./scripts/preprocess/data-loader.ts",
 		"generate-tei": "node ./scripts/export/tei/generate-tei.js",
 		"generate-tex": "node ./scripts/export/tex/generate-tex.js",
 		"generate-index": "node ./scripts/search-index/generate-search-index.js && node ./scripts/search-index/generate-strata-index.js",
@@ -50,7 +51,8 @@
 		"tailwindcss": "^4.1.17",
 		"tsx": "^4.21.0",
 		"typesense": "^2.1.0",
-		"typesense-instantsearch-adapter": "^2.9.0"
+		"typesense-instantsearch-adapter": "^2.9.0",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@acdh-oeaw/prettier-config": "^2.0.1",

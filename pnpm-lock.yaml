@@ -110,6 +110,9 @@ importers:
       typesense-instantsearch-adapter:
         specifier: ^2.9.0
         version: 2.9.0(@babel/runtime@7.28.4)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@acdh-oeaw/prettier-config':
         specifier: ^2.0.1
@@ -3302,8 +3305,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.1.13:
-    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
   zrender@6.0.0:
     resolution: {integrity: sha512-41dFXEEXuJpNecuUQq6JlbybmnHaqqpGlbH1yxnA5V9MMP4SbohSVZsJIwz+zdjQXSSlR1Vc34EgH1zxyTDvhg==}
@@ -3319,19 +3322,19 @@ snapshots:
     dependencies:
       prettier: 3.7.4
 
-  '@ai-sdk/gateway@2.0.19(zod@4.1.13)':
+  '@ai-sdk/gateway@2.0.19(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.18(zod@4.1.13)
+      '@ai-sdk/provider-utils': 3.0.18(zod@4.3.6)
       '@vercel/oidc': 3.0.5
-      zod: 4.1.13
+      zod: 4.3.6
 
-  '@ai-sdk/provider-utils@3.0.18(zod@4.1.13)':
+  '@ai-sdk/provider-utils@3.0.18(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0
       eventsource-parser: 3.0.6
-      zod: 4.1.13
+      zod: 4.3.6
 
   '@ai-sdk/provider@2.0.0':
     dependencies:
@@ -4323,13 +4326,13 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  ai@5.0.110(zod@4.1.13):
+  ai@5.0.110(zod@4.3.6):
     dependencies:
-      '@ai-sdk/gateway': 2.0.19(zod@4.1.13)
+      '@ai-sdk/gateway': 2.0.19(zod@4.3.6)
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.18(zod@4.1.13)
+      '@ai-sdk/provider-utils': 3.0.18(zod@4.3.6)
       '@opentelemetry/api': 1.9.0
-      zod: 4.1.13
+      zod: 4.3.6
 
   ajv-draft-04@1.0.0(ajv@8.17.1):
     optionalDependencies:
@@ -5327,10 +5330,10 @@ snapshots:
   instantsearch-ui-components@0.15.2(react@19.2.1):
     dependencies:
       '@babel/runtime': 7.28.4
-      ai: 5.0.110(zod@4.1.13)
+      ai: 5.0.110(zod@4.3.6)
       markdown-to-jsx: 7.7.17(react@19.2.1)
-      zod: 4.1.13
-      zod-to-json-schema: 3.24.6(zod@4.1.13)
+      zod: 4.3.6
+      zod-to-json-schema: 3.24.6(zod@4.3.6)
     transitivePeerDependencies:
       - react
 
@@ -5345,7 +5348,7 @@ snapshots:
       '@types/google.maps': 3.58.1
       '@types/hogan.js': 3.0.5
       '@types/qs': 6.14.0
-      ai: 5.0.110(zod@4.1.13)
+      ai: 5.0.110(zod@4.3.6)
       algoliasearch: 5.10.0
       algoliasearch-helper: 3.26.1(algoliasearch@5.10.0)
       hogan.js: 3.0.2
@@ -5355,8 +5358,8 @@ snapshots:
       qs: 6.9.7
       react: 19.2.1
       search-insights: 2.17.3
-      zod: 4.1.13
-      zod-to-json-schema: 3.24.6(zod@4.1.13)
+      zod: 4.3.6
+      zod-to-json-schema: 3.24.6(zod@4.3.6)
 
   internmap@2.0.3: {}
 
@@ -6759,9 +6762,9 @@ snapshots:
 
   zimmerframe@1.1.4: {}
 
-  zod-to-json-schema@3.24.6(zod@4.1.13):
+  zod-to-json-schema@3.24.6(zod@4.3.6):
     dependencies:
-      zod: 4.1.13
+      zod: 4.3.6
 
   zod-to-json-schema@3.25.0(zod@3.25.76):
     dependencies:
@@ -6774,7 +6777,7 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.1.13: {}
+  zod@4.3.6: {}
 
   zrender@6.0.0:
     dependencies:
