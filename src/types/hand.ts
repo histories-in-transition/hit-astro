@@ -19,7 +19,7 @@ export interface Hand {
 	similar_hands?: SimilarHand[];
 	nr_daniel?: string;
 	note?: string;
-	scribe?: Scribe[];
+	scribe?: ScribeForHand[];
 	group?: boolean;
 	date?: HandDate[] | DateInfo[];
 	dating?: OrigDate[];
@@ -93,7 +93,7 @@ interface HandRoleContent {
 	title_work?: TitleWork[];
 	locus: string;
 }
-export interface Scribe {
+export interface ScribeForHand {
 	id: number;
 	hit_id?: string;
 	name?: string;

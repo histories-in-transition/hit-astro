@@ -1,49 +1,35 @@
 import { addPrevNextToMsItems, enrichPlaces, enrichDates } from "./utils.js";
-
-/**
- * Process strata data by cleaning and standardizing the structure
- * @param {Array} strata - Raw strata data
- * @param {Object} deps - All dependencies
- * @param {Array} deps.handsrole - Hand roles data
- * @param {Array} deps.hands - Raw hands data
- * @param {Array} deps.handsdated - Hand dating data
- * @param {Array} deps.handsplaced - Hand placement data
- * @param {Array} deps.msItemsPlus - Processed manuscript items
- * @param {Array} deps.places - Places data
- * @param {Array} deps.dates - Dates data
- * @param {Array} deps.bibliography - Bibliography data
- * @param {Array} deps.strata_filiations - Strata filiations data
- * @returns {Array} Processed strata with prev/next navigation
- */
-
-type RawStratum = {
-	id: string | number;
-	hit_id: string;
-	number?: string;
-	label?: { value: string }[];
-	character?: { value: string }[];
-	note?: string;
-	locus?: string;
-	manuscript: { id: string | number; hit_id: string; value?: string }[];
-	hand_role: { id: string | number }[];
-};
+import type {
+	HitStrata,
+	HitStrataFiliation,
+	HitWorks,
+	HitHandRole,
+	HitFiliatedStrata,
+	HitDates,
+	HitHand,
+	HitHandsDated,
+	HitHandsPlaced,
+	HitPlace,
+	HitBibliography,
+} from "@/types/zod/zod-types.ts";
+import type { Stratum } from "@/types/stratum.ts";
 
 type StrataDeps = {
-	handsrole: unknown[];
-	hands: unknown[];
-	handsdated: unknown[];
-	handsplaced: unknown[];
+	handsrole: HitHandRole[];
+	hands: HitHand[];
+	handsdated: HitHandsDated[];
+	handsplaced: HitHandsPlaced[];
 	msItemsPlus: unknown[];
-	places: unknown[];
-	dates: unknown[];
-	bibliography: unknown[];
-	strata_filiations: unknown;
+	places: HitPlace[];
+	dates: HitDates[];
+	bibliography: HitBibliography[];
+	strata_filiations: HitStrataFiliation[];
 	strataa: unknown;
-	filiated_strata: unknown;
-	works: unknown[];
+	filiated_strata: HitFiliatedStrata;
+	works: HitWorks[];
 };
 
-export function processStrata(strata: RawStratum[], deps: StrataDeps): unknown[] {
+export function processStrata(strata: HitStrata[], deps: StrataDeps): Stratum[] {
 	if (!Array.isArray(strata)) {
 		throw new Error("processStrata expects an array of strata");
 	}

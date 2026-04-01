@@ -3,7 +3,7 @@ import PageLayout from "@/layouts/page-layout.astro";
 import Article from "@/components/article.astro";
 import NavLink from "@/components/nav-link.astro";
 import scribesJson from "@/content/data/scribes.json";
-import type { Scribe } from "@/types";
+import type { Scribe } from "@/types/index.ts";
 
 import MapLeaflet from "@/components/map-leaflet.svelte";
 import {processScribesData} from "@/lib/make-geojson.ts";
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 	return paths;
 }
 
-const { data: scribe } = Astro.props;
+const { data: scribe} = Astro.props;
 const geoJson = processScribesData(scribe);
 ---
 

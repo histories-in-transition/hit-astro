@@ -1,25 +1,11 @@
 import { addPrevNextToMsItems, enrichPlaces } from "./utils.js";
+import type { HitPlace, HitLibrary } from "@/types/zod/zod-types.js";
 
 /**
  * Process libraries data by cleaning and standardizing the structure
  */
 
-type RawLibrary = {
-	id?: number;
-	hit_id?: string;
-	label?: string;
-	library_full?: string;
-	settlement?: string;
-	wikidata?: string;
-	gnd_url?: string;
-};
-
-type RawPlace = {
-	id?: number;
-	hit_id?: string;
-};
-
-export function processLibraries(libraries: RawLibrary[], places: RawPlace[]) {
+export function processLibraries(libraries: HitLibrary[], places: HitPlace[]) {
 	if (!Array.isArray(libraries)) {
 		throw new Error("processLibraries expects an array of libraries");
 	}
@@ -41,7 +27,7 @@ export function processLibraries(libraries: RawLibrary[], places: RawPlace[]) {
  * @param {Array} places - Places data for enrichment
  * @returns {Object} Transformed library
  */
-function transformLibrary(library: RawLibrary, places: RawPlace[]) {
+function transformLibrary(library: HitLibrary, places: HitPlace[]) {
 	return {
 		id: library.id,
 		hit_id: library.hit_id,

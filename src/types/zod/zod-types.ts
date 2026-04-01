@@ -451,3 +451,14 @@ export const HitBibliographySchema = z.object({
 	link: stringOrEmpty,
 });
 export type HitBibliography = z.infer<typeof HitBibliographySchema>;
+
+export const HitStrataFiliationSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	hit_id: stringOrEmpty,
+	stratum: arrayOrEmpty(RefSchema),
+	filiated_stratum: arrayOrEmpty(RefSchema),
+	reason: multiSelectSchema.nullable(),
+	note: stringOrEmpty,
+});
+export type HitStrataFiliation = z.infer<typeof HitStrataFiliationSchema>;
