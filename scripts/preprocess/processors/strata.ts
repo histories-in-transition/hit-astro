@@ -9,10 +9,11 @@ import type {
 	HitHand,
 	HitHandsDated,
 	HitHandsPlaced,
-	HitPlace,
 	HitBibliography,
 } from "@/types/zod/zod-types.ts";
 import type { Stratum } from "@/types/stratum.ts";
+import type { Place } from "@/types/index.js";
+import type { Hit } from "instantsearch.js";
 
 type StrataDeps = {
 	handsrole: HitHandRole[];
@@ -20,12 +21,12 @@ type StrataDeps = {
 	handsdated: HitHandsDated[];
 	handsplaced: HitHandsPlaced[];
 	msItemsPlus: unknown[];
-	places: HitPlace[];
+	places: Place[];
 	dates: HitDates[];
 	bibliography: HitBibliography[];
 	strata_filiations: HitStrataFiliation[];
-	strataa: unknown;
-	filiated_strata: HitFiliatedStrata;
+	strataa: HitStrata[];
+	filiated_strata: HitFiliatedStrata[];
 	works: HitWorks[];
 };
 
@@ -165,45 +166,48 @@ type RawStratumLite = {
 };
 function getStratumFiliations(
 	stratum: { id: string | number },
-	strata_filiations: Record<string, RawFiliation>,
-	filiated_strata: Record<string, RawStratumLite>,
-	strataa: Record<string, RawStratumLite>,
+	strata_filiations: RawFiliation[],
+	filiated_strata: RawStratumLite[],
+	strataa: RawStratumLite[],
 ) {
-	return Object.values(strata_filiations || {})
+	return (strata_filiations ?? [])
 		.filter((filiation) => filiation.stratum.some((str) => str.id === stratum.id))
 		.map((filiation) => {
 			// External filiations
 			const ext = filiation.filiated_stratum.map((fs) => {
-				const externalStratum = Object.values(filiated_strata).find((s) => s.id === fs.id);
+				const externalStratum = filiated_strata.find((s) => s.id === fs.id);
+
 				return {
-					hit_id: externalStratum.hit_id,
-					value: externalStratum.label[0].value,
-					note: externalStratum.note || "",
-					locus: externalStratum.locus || "",
+					hit_id: externalStratum?.hit_id ?? "",
+					value: externalStratum?.label?.[0]?.value ?? "Unknown Stratum",
+					note: externalStratum?.note ?? "",
+					locus: externalStratum?.locus ?? "",
 					internal: false,
-					catalog_url: externalStratum.catalog_url || "",
+					catalog_url: externalStratum?.catalog_url ?? "",
 				};
 			});
+
 			// Internal filiations
 			const inter = filiation.stratum
 				.filter((str) => str.id !== stratum.id)
 				.map((str) => {
-					const internalStratum = Object.values(strataa).find((s) => s.id === str.id);
+					const internalStratum = strataa.find((s) => s.id === str.id);
+
 					return {
-						hit_id: internalStratum.hit_id,
-						value: internalStratum.label[0].value || "Unknown Stratum",
+						hit_id: internalStratum?.hit_id ?? "",
+						value: internalStratum?.label?.[0]?.value ?? "Unknown Stratum",
 						internal: true,
 					};
 				});
+
 			return {
 				hit_id: filiation.hit_id,
-				reason: filiation.reason.value || "",
+				reason: filiation.reason?.value ?? "",
 				filiated_strata: [...ext, ...inter],
-				note: filiation.note || "",
+				note: filiation.note ?? "",
 			};
 		});
 }
-
 /**
  * Process hand role for stratum context
  */

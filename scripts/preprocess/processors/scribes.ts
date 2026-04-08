@@ -1,12 +1,16 @@
 import { addPrevNextToMsItems } from "./utils.js";
+import type { HitScribe } from "@/types/zod/zod-types.ts";
 
-/**
- * Process scribes data by cleaning and standardizing the structure
- * @param {Array} scribes - Raw scribes data
- * @param {Array} handsPlus - Processed hands data for enrichment
- * @returns {Array} Processed enriched scribes with prev/next navigation
- */
-export function processScribes(scribes, handsPlus) {
+type HandBase = {
+	id: number;
+	hit_id: string;
+	scribe: { id: number }[];
+	date: unknown[];
+	placed: unknown[];
+	author_entry: unknown[];
+};
+
+export function processScribes(scribes: HitScribe[], handsPlus: HandBase[]) {
 	if (!Array.isArray(scribes)) {
 		throw new Error("processScribes expects an array of scribes");
 	}
@@ -26,7 +30,7 @@ export function processScribes(scribes, handsPlus) {
 				name: scribe.name ?? "N/A",
 				description: scribe.description ?? "N/A",
 				group: scribe.group,
-				hands: scribalHands.map(({ scribe, author_entry, places, dated, ...rest }) => rest),
+				hands: scribalHands.map(({ scribe, author_entry, placed, date, ...rest }) => rest),
 				date: date,
 				places: place,
 				author_entry: scribe.author_entry.map((a) => a.value) || [],

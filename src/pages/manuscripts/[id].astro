@@ -41,7 +41,11 @@ const tocSections = [
 		? [{ id: "msHistory", title: "Geschichte" }]
 		: []),
 
-	...(manuscript?.content?.length > 0 ? [{ id: "msContent", title: "Inhalt" }] : []),
+	...(manuscript?.content?.length > 0
+		? [{ id: "msContent", title: "Inhalt" }]
+		: manuscript?.cod_units.some((unit) => unit.content.length > 0)
+			? [{ id: "msContent", title: "Inhalt" }]
+			: []),
 
 	...(manuscript?.strata?.length > 0 ? [{ id: "msStrata", title: "Strata" }] : []),
 

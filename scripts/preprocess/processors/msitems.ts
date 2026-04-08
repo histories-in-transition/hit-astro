@@ -5,19 +5,39 @@ import {
 	enrichBibl,
 	enrichDates,
 } from "./utils.js";
+import type {
+	HitMsitem,
+	HitManuscript,
+	HitWorks,
+	HitPeople,
+	HitHand,
+	HitHandRole,
+	HitHandsDated,
+	HitHandsPlaced,
+	HitGenres,
+	HitCodPlaced,
+	HitBibliography,
+	HitDates,
+} from "@/types/zod/zod-types.js";
+import type { Place, Library, MsItem } from "@/types/index.js";
 
-/**
- * Process manuscript items - Version 2: Dependencies object
- * @param {Array} msItems - Raw manuscript items data
- * @param {Object} deps - All dependencies in one object
- * @returns {Array} Processed manuscript items
- */
-export function processMsItems(msItems, deps) {
-	if (!Array.isArray(msItems)) {
-		throw new Error("processMsItems expects an array of manuscript items");
-	}
+type MsItemDeps = {
+	manuscripts: HitManuscript[];
+	places: Place[];
+	librariesPlus: Library[];
+	works: HitWorks[];
+	people: HitPeople[];
+	genres: HitGenres[];
+	hands: HitHand[];
+	handsdated: HitHandsDated[];
+	handsplaced: HitHandsPlaced[];
+	handsrole: HitHandRole[];
+	cod_unitsprov: HitCodPlaced[];
+	bibliography: HitBibliography[];
+	dates: HitDates[];
+};
 
-	// Transform each manuscript item
+export function processMsItems(msItems: HitMsitem[], deps: MsItemDeps): MsItem[] {
 	const msItemsPlus = msItems
 		.filter((item) => item.manuscript.length > 0 && (item.title_work.length > 0 || item.title_note))
 		.map((item) => transformMsItem(item, deps, msItems)); // Pass original msItems array
@@ -25,14 +45,7 @@ export function processMsItems(msItems, deps) {
 	return addPrevNextToMsItems(msItemsPlus);
 }
 
-/**
- * Transform a single manuscript item
- * @param {Object} item - Raw manuscript item
- * @param {Object} deps - All dependencies
- * @param {Array} originalMsItems - Original msItems array for commented items
- * @returns {Object} Transformed manuscript item
- */
-function transformMsItem(item, deps, originalMsItems) {
+function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: HitMsitem[]) {
 	const {
 		manuscripts,
 		places,
@@ -62,7 +75,7 @@ function transformMsItem(item, deps, originalMsItems) {
 	const relatedWorks = enrichWorks(item.title_work, works, people, genres);
 	const interpolations = enrichWorks(item.interpolations, works, people, genres);
 
-	// Get related hands (this is the complex part)
+	// Get related hands and enrich them with dating, placement, and roles
 	const relatedHand = getRelatedHands(
 		item,
 		hands,
@@ -81,10 +94,10 @@ function transformMsItem(item, deps, originalMsItems) {
 	return {
 		id: item.id,
 		hit_id: item.hit_id,
-		view_label: item.manuscript[0]?.value + ", fol. " + item.locus_grp,
-		label: item.label[0]?.value,
+		view_label: `${item.manuscript[0]?.value ?? "Unknown"}, fol. ${item.locus_grp}`,
+		label: item.label[0]?.value ?? "",
 		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
-		joined_transmission: getJoinedTransmission(item, originalMsItems, works, people, genres),
+		joined_transmission: getJoinedTransmission(item, originalMsItems, works, genres, people),
 		library: library,
 		library_place: library_place,
 		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
@@ -117,13 +130,13 @@ function transformMsItem(item, deps, originalMsItems) {
 }
 
 // Helper functions to break down the complexity
-function getAuthorEntry(item, manuscripts) {
+function getAuthorEntry(item: HitMsitem, manuscripts: HitManuscript[]) {
 	return manuscripts
 		.filter((ms) => ms.id === item.manuscript[0]?.id)
 		.flatMap((ms) => ms.author_entry.map((a) => a.value));
 }
 
-function getLibraryInfo(item, manuscripts, librariesPlus) {
+function getLibraryInfo(item: HitMsitem, manuscripts: HitManuscript[], librariesPlus: Library[]) {
 	const library = manuscripts
 		.filter((ms) => ms.id === item.manuscript[0]?.id)
 		.flatMap((ms) => ms.library_full);
@@ -135,21 +148,21 @@ function getLibraryInfo(item, manuscripts, librariesPlus) {
 	return { library, library_place };
 }
 
-function getProjectInfo(item, manuscripts) {
+function getProjectInfo(item: HitMsitem, manuscripts: HitManuscript[]) {
 	return manuscripts
 		.filter((ms) => ms.id === item.manuscript[0]?.id)
 		.flatMap((ms) => ms.case_study?.map((cs) => cs.value) || []);
 }
 
 function getRelatedHands(
-	item,
-	hands,
-	handsdated,
-	handsplaced,
-	handsrole,
-	places,
-	bibliography,
-	dates,
+	item: HitMsitem,
+	hands: HitHand[],
+	handsdated: HitHandsDated[],
+	handsplaced: HitHandsPlaced[],
+	handsrole: HitHandRole[],
+	places: Place[],
+	bibliography: HitBibliography[],
+	dates: HitDates[],
 ) {
 	const handLabelsSet = new Set(item.hand.map((h) => h.value));
 
@@ -190,7 +203,12 @@ function getRelatedHands(
 		});
 }
 
-function getHandDating(hand, handsdated, bibliography, dates) {
+function getHandDating(
+	hand: HitHand,
+	handsdated: HitHandsDated[],
+	bibliography: HitBibliography[],
+	dates: HitDates[],
+) {
 	return handsdated
 		.filter((hDated) => hDated.hand.some((h) => h.id === hand.id))
 		.map((hDated) => ({
@@ -202,7 +220,12 @@ function getHandDating(hand, handsdated, bibliography, dates) {
 		}));
 }
 
-function getHandPlacement(hand, handsplaced, places, bibliography) {
+function getHandPlacement(
+	hand: HitHand,
+	handsplaced: HitHandsPlaced[],
+	places: Place[],
+	bibliography: HitBibliography[],
+) {
 	return handsplaced
 		.filter((hPlaced) => hPlaced.hand.some((h) => h.id === hand.id))
 		.map((hPlaced) => ({
@@ -214,7 +237,7 @@ function getHandPlacement(hand, handsplaced, places, bibliography) {
 		}));
 }
 
-function getHandRoles(hand, item, handsrole) {
+function getHandRoles(hand: HitHand, item: HitMsitem, handsrole: HitHandRole[]) {
 	return handsrole
 		.filter((hRole) => hRole.hand.some((h) => h.id === hand.id))
 		.filter((hRole) => hRole.ms_item.some((m_item) => m_item.id === item.id))
@@ -230,7 +253,13 @@ function getHandRoles(hand, item, handsrole) {
 		}));
 }
 
-function getProvenance(item, cod_unitsprov, places, dates, bibliography) {
+function getProvenance(
+	item: HitMsitem,
+	cod_unitsprov: HitCodPlaced[],
+	places: Place[],
+	dates: HitDates[],
+	bibliography: HitBibliography[],
+) {
 	return cod_unitsprov
 		.filter((unit_pr) => unit_pr.cod_unit.length > 0)
 		.filter((unit_pr) => item.cod_unit.some((c) => c.id === unit_pr.cod_unit[0].id))
@@ -247,7 +276,7 @@ function getProvenance(item, cod_unitsprov, places, dates, bibliography) {
 		}));
 }
 
-function getCommentedMsItems(item, msItems) {
+function getCommentedMsItems(item: HitMsitem, msItems: HitMsitem[]) {
 	// Add safety check for commented_msitem
 	if (!item.commented_msitem || !Array.isArray(item.commented_msitem)) {
 		return [];
@@ -263,7 +292,13 @@ function getCommentedMsItems(item, msItems) {
 		};
 	});
 }
-function getJoinedTransmission(item, msItems, works, genres, people) {
+function getJoinedTransmission(
+	item: HitMsitem,
+	msItems: HitMsitem[],
+	works: HitWorks[],
+	genres: HitGenres[],
+	people: HitPeople[],
+) {
 	const itemManuscriptId =
 		Array.isArray(item.manuscript) && item.manuscript.length > 0
 			? item.manuscript[0].id
@@ -288,7 +323,7 @@ function getJoinedTransmission(item, msItems, works, genres, people) {
 				// check if there is a title_work else use title_note
 				if (msItem.title_work.length > 0) {
 					//use enrich function to get author
-					const enrichedwork = enrichWorks(msItem.title_work, works, genres, people);
+					const enrichedwork = enrichWorks(msItem.title_work, works, people, genres);
 					id = enrichedwork[0].id;
 					title =
 						enrichedwork[0].author?.length > 0

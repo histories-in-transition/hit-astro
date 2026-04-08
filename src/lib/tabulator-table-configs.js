@@ -556,7 +556,7 @@ export const strataMsTableConfig = {
 					role.ms_item
 						.map((item) =>
 							item.author.length > 0
-								? `${item.author[0].name}: ${item.title} (${item.locus})`
+								? `${item.author[0]}: ${item.title} (${item.locus})`
 								: `${item.title} (${item.locus})`,
 						)
 						.join("\n");

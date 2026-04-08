@@ -1,47 +1,61 @@
-export function addPrevNextToMsItems(msItems, idField = "hit_id", labelField = "view_label") {
+import type {
+	HitGenres,
+	HitBibliography,
+	HitDates,
+	HitPeople,
+	HitWorks,
+} from "@/types/zod/zod-types.js";
+import type { Place } from "@/types/index.ts";
+
+export function addPrevNextToMsItems(items, idField = "hit_id", labelField = "view_label") {
 	// Sort msItems by their keys or any specific field (if needed)
-	const sortedMsItems = [...msItems].sort((a, b) => a[idField] - b[idField]);
+	const sortedItems = [...items].sort((a, b) => a[idField] - b[idField]);
 
 	// Loop through the sorted array and add 'prev' and 'next' properties
-	for (let i = 0; i < sortedMsItems.length; i++) {
-		const prevIndex = (i - 1 + sortedMsItems.length) % sortedMsItems.length; // Wrap around to the last item
-		const nextIndex = (i + 1) % sortedMsItems.length; // Wrap around to the first item
+	for (let i = 0; i < sortedItems.length; i++) {
+		const prevIndex = (i - 1 + sortedItems.length) % sortedItems.length; // Wrap around to the last item
+		const nextIndex = (i + 1) % sortedItems.length; // Wrap around to the first item
 
 		// Get the previous and next items
-		const prevItem = sortedMsItems[prevIndex];
-		const nextItem = sortedMsItems[nextIndex];
+		const prevItem = sortedItems[prevIndex];
+		const nextItem = sortedItems[nextIndex];
 
 		// Add 'prev' and 'next' properties to the current item
-		sortedMsItems[i]["prev"] = {
+		sortedItems[i]["prev"] = {
 			id: prevItem[idField],
 			label: prevItem[labelField] || prevItem[idField], // Fallback to id if label is not available
 		};
-		sortedMsItems[i]["next"] = {
+		sortedItems[i]["next"] = {
 			id: nextItem[idField],
 			label: nextItem[labelField] || nextItem[idField], // Fallback to id if label is not available
 		};
 	}
 
-	return sortedMsItems;
+	return sortedItems;
 }
 // functions to enrich data
 
-export function enrichPlaces(placeArray, places) {
+type PlaceRaw = { id: number; value: string; order: string };
+type DateRaw = { id: number; value: string; order: string };
+type BiblRaw = { id: number; value: string; order: string };
+type WorkRaw = { id: number; value: string; order: string };
+
+export function enrichPlaces(placeArray: PlaceRaw[], places: Place[]) {
 	return placeArray.map((place) => {
 		// Find matching place in places.json
-		const place_geo = places.find((p) => p.id === place.id) || {};
+		const place_geo = places.find((p) => p.id === place.id) || null;
 		return {
 			id: place.id,
 			value: place.value,
-			geonames_url: place_geo.geonames_url ?? "",
-			hit_id: place_geo.hit_id ?? "",
-			lat: place_geo.lat ?? "",
-			long: place_geo.long ?? "",
+			geonames_url: place_geo?.geonames_url ?? "",
+			hit_id: place_geo?.hit_id ?? "",
+			lat: place_geo?.lat ?? "",
+			long: place_geo?.long ?? "",
 		};
 	});
 }
 
-export function enrichDates(dateArray, dates) {
+export function enrichDates(dateArray: DateRaw[], dates: HitDates[]) {
 	return dateArray.map((date) => {
 		// Find matching date in dates.json
 		const dateRange = dates.find((d) => d.id === date.id);
@@ -75,7 +89,7 @@ export function enrichDates(dateArray, dates) {
 
 // Helper function to calculate the century of not_before not_after dates
 
-function getCentury(year) {
+function getCentury(year: string): string {
 	if (!year) return "N/A"; // Handle null or undefined dates
 
 	const century = Math.ceil((parseInt(year) + 1) / 100);
@@ -83,22 +97,27 @@ function getCentury(year) {
 	return `${century}. Jh.`;
 }
 
-export function enrichBibl(biblArray, bibliography) {
+export function enrichBibl(biblArray: BiblRaw[], bibliography: HitBibliography[]) {
 	return biblArray.map((bibl) => {
 		// find matching bibl entreis in bibl_entries.json
 		const bibl_entries = bibliography.find((bibl_entry) => bibl_entry.id === bibl.id);
 		return {
-			hit_id: bibl_entries.hit_id,
-			citation: bibl_entries.citation ?? "",
-			link: bibl_entries.link ?? "",
-			author: bibl_entries.author ?? "",
-			title: bibl_entries.title ?? "",
+			hit_id: bibl_entries?.hit_id ?? "",
+			citation: bibl_entries?.citation ?? "",
+			link: bibl_entries?.link ?? "",
+			author: bibl_entries?.author ?? "",
+			title: bibl_entries?.title ?? "",
 		};
 	});
 }
 
 // Function to enrich works (relatedWorks or interpolations)
-export function enrichWorks(itemWorks, works, people, genres) {
+export function enrichWorks(
+	itemWorks: WorkRaw[],
+	works: HitWorks[],
+	people: HitPeople[],
+	genres: HitGenres[],
+) {
 	return works
 		.map((work) => {
 			// Check if the msitem has any related works

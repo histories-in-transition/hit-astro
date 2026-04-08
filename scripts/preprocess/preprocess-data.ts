@@ -39,15 +39,15 @@ function saveJSON(filename: string, data: unknown): void {
  * Main processing pipeline
  */
 async function processAllData(): Promise<{
-	places: Place[];
-	libraries: Library[];
-	msItems: MsItem[];
-	hands: Hand[];
-	scribes: Scribe[];
 	codUnits: Codunit[];
+	hands: Hand[];
+	libraries: Library[];
+	manuscripts: Manuscript[];
+	msItems: MsItem[];
+	places: Place[];
+	scribes: Scribe[];
 	strata: Stratum[];
 	works: Work[];
-	manuscripts: Manuscript[];
 }> {
 	try {
 		console.log("Starting data preprocessing...");
@@ -120,7 +120,7 @@ async function processAllData(): Promise<{
 		// 7. Process strata (reusable!)
 		console.log("Processing strata...");
 
-		const processedStrata = processStrata(Object.values(rawData.strata), {
+		const processedStrata = processStrata(rawData.strata, {
 			handsrole: rawData.hands_role,
 			hands: rawData.hands,
 			handsdated: rawData.hands_dated,
@@ -202,7 +202,7 @@ async function saveAllProcessedData(processedData: {
 }): Promise<void> {
 	console.log("Saving processed data...");
 
-	// Save each file - simple and straightforward
+	// Save each file
 	saveJSON("places.json", processedData.places);
 	saveJSON("libraries.json", processedData.libraries);
 	saveJSON("ms_items.json", processedData.msItems);
