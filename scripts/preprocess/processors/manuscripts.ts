@@ -1,30 +1,38 @@
-//ts-check
-import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.ts";
 
 import { getCodUnitsForManuscript } from "./cod-units.js";
-import { getStrataForManuscript, createTBDStratum } from "./strata.js";
+import { getStrataForManuscript, createTBDStratum } from "./strata.ts";
+import type {
+	HitManuscript,
+	HitHand,
+	HitManuscriptDated,
+	HitHandsDated,
+	HitHandsPlaced,
+	HitHandRole,
+	HitLibrary,
+	HitBibliography,
+	HitDates,
+} from "@/types/zod/zod-types.ts";
+import type { Manuscript, Place, Library, MsItem, Hand, Codunit, Stratum } from "@/types/index.ts";
 
-/**
- * Process manuscripts data by cleaning and standardizing the structure
- * @param {Array} manuscripts - Raw manuscripts data
- * @param {Object} deps - All dependencies
- * @param {Array} deps.manuscripts_dated - Manuscript dating data
- * @param {Array} deps.processedCodUnits - Already processed cod units
- * @param {Array} deps.processedStrata - Already processed strata
- * @param {Array} deps.libraries - Raw libraries data
- * @param {Array} deps.librariesPlus - Processed libraries data
- * @param {Array} deps.handsWithScribe - Processed hands with scribe data
- * @param {Array} deps.msItemsPlus - Processed manuscript items
- * @param {Array} deps.places - Places data
- * @param {Array} deps.dates - Dates data
- * @param {Array} deps.bibliography - Bibliography data
- * @param {Array} deps.handsrole - Hand roles data (for TBD strata)
- * @param {Array} deps.hands - Raw hands data (for TBD strata)
- * @param {Array} deps.handsdated - Hand dating data (for TBD strata)
- * @param {Array} deps.handsplaced - Hand placement data (for TBD strata)
- * @returns {Array} Processed manuscripts with prev/next navigation
- */
-export function processManuscripts(manuscripts, deps) {
+type ManuscriptDeps = {
+	manuscripts_dated: HitManuscriptDated[];
+	processedCodUnits: Codunit[];
+	processedStrata: Stratum[];
+	libraries: HitLibrary[];
+	librariesPlus: Library[];
+	handsWithScribe: Hand[];
+	msItemsPlus: MsItem[];
+	places: Place[];
+	dates: HitDates[];
+	bibliography: HitBibliography[];
+	handsrole: HitHandRole[];
+	hands: HitHand[];
+	handsdated: HitHandsDated[];
+	handsplaced: HitHandsPlaced[];
+};
+
+export function processManuscripts(manuscripts: HitManuscript[], deps: ManuscriptDeps) {
 	if (!Array.isArray(manuscripts)) {
 		throw new Error("processManuscripts expects an array of manuscripts");
 	}
@@ -36,13 +44,7 @@ export function processManuscripts(manuscripts, deps) {
 	return addPrevNextToMsItems(manuscriptsPlus, "hit_id", "shelfmark");
 }
 
-/**
- * Transform a single manuscript object
- * @param {Object} manuscript - Raw manuscript data
- * @param {Object} deps - All dependencies
- * @returns {Object} Transformed manuscript
- */
-function transformManuscript(manuscript, deps) {
+function transformManuscript(manuscript: HitManuscript, deps: ManuscriptDeps): Manuscript {
 	const {
 		manuscripts_dated,
 		processedCodUnits,
@@ -98,10 +100,13 @@ function transformManuscript(manuscript, deps) {
 	const provenance = getProvenance(manuscript, librariesPlus);
 	const content = getManuscriptContent(manuscript, msItemsPlus);
 
+	const shelfmarkRaw = manuscript.shelfmark?.[0]?.value ?? "";
+	const shelfmark = shelfmarkRaw.includes(",") ? shelfmarkRaw.split(",")[1].trim() : shelfmarkRaw;
+
 	return {
 		id: manuscript.id,
 		hit_id: manuscript.hit_id,
-		shelfmark: manuscript.shelfmark[0].value.split(",")[1].trim(),
+		shelfmark: shelfmark,
 		library: library,
 		title: manuscript.title ?? "",
 		manuscripta_url: manuscript.manuscripta_url,
@@ -138,10 +143,16 @@ function transformManuscript(manuscript, deps) {
 /**
  * Get manuscript dating information
  */
-// joins data from two sets + deduplication with priority (recommended)
+// joins data from two sets + deduplication with priority
 // Keeps data from manuscripts_dated when there are duplicates
 // Only adds cod_units data if it's truly unique
-function getManuscriptDating(manuscript, manuscripts_dated, dates, bibliography, cod_units) {
+function getManuscriptDating(
+	manuscript: HitManuscript,
+	manuscripts_dated: HitManuscriptDated[],
+	dates: HitDates[],
+	bibliography: HitBibliography[],
+	cod_units: Codunit[],
+) {
 	// 1. from table manuscripts_dated (higher priority)
 	const datedArr = manuscripts_dated
 		.filter((mDated) => mDated.manuscript.some((m) => m.id === manuscript.id))
@@ -199,14 +210,14 @@ function getManuscriptDating(manuscript, manuscripts_dated, dates, bibliography,
 /**
  * Get library information for manuscript
  */
-function getLibraryInfo(manuscript, libraries, places) {
+function getLibraryInfo(manuscript: HitManuscript, libraries: HitLibrary[], places: Place[]) {
 	return libraries
 		.filter((lib) => manuscript.library.some((l) => l.id === lib.id))
 		.map((library) => ({
 			id: library.id,
 			hit_id: library.hit_id,
-			abbreviation: manuscript.library[0].value,
-			library_full: manuscript.library_full[0].value,
+			abbreviation: manuscript.library?.[0]?.value ?? "",
+			library_full: manuscript.library_full?.[0]?.value ?? "",
 			place: enrichPlaces(library.settlement, places),
 			gnd_url: library.gnd_url || "",
 			wikidata: library.wikidata || "",
@@ -216,7 +227,7 @@ function getLibraryInfo(manuscript, libraries, places) {
 /**
  * Get relevant hands for manuscript
  */
-function getRelevantHands(manuscript, handsWithScribe) {
+function getRelevantHands(manuscript: HitManuscript, handsWithScribe: Hand[]) {
 	return handsWithScribe
 		.filter((hand) => hand.manuscript[0]?.id === manuscript.id)
 		.map((hand) => ({
@@ -237,14 +248,14 @@ function getRelevantHands(manuscript, handsWithScribe) {
 /**
  * Get provenance information
  */
-function getProvenance(manuscript, librariesPlus) {
+function getProvenance(manuscript: HitManuscript, librariesPlus: Library[]) {
 	return librariesPlus.filter((lib) => manuscript.provenance.some((prov) => prov.id === lib.id));
 }
 
 /**
  * Get manuscript content (msItems not in cod units)
  */
-function getManuscriptContent(manuscript, msItemsPlus) {
+function getManuscriptContent(manuscript: HitManuscript, msItemsPlus: MsItem[]) {
 	return msItemsPlus
 		.filter(
 			(item) =>
@@ -257,7 +268,7 @@ function getManuscriptContent(manuscript, msItemsPlus) {
 /**
  * Clean ms item data for manuscript display
  */
-function cleanMsItemForManuscript(item) {
+function cleanMsItemForManuscript(item: MsItem) {
 	const {
 		manuscript,
 		cod_unit,

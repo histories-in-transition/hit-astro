@@ -12,6 +12,19 @@ export interface Place {
 	long?: string;
 }
 
+export interface Library {
+	id: number;
+	hit_id: string;
+	value: string;
+	abbreviation: string;
+	library_full: string;
+	place: Place[];
+	wikidata: string;
+	gnd_url: string;
+	prev: NavigationLink;
+	next: NavigationLink;
+}
+
 export interface Authority {
 	hit_id: string;
 	citation?: string;
@@ -20,14 +33,6 @@ export interface Authority {
 	title?: string;
 }
 
-export interface DateInfo {
-	id: number;
-	value: string;
-	range?: string;
-	not_before?: string;
-	not_after?: string;
-	century?: string[];
-}
 export interface ShortRef {
 	id: number;
 	value: string;
@@ -37,14 +42,6 @@ export interface Value {
 	value: string;
 }
 
-export interface Place {
-	id: number;
-	value: string;
-	geonames_url?: string;
-	hit_id: string;
-	lat?: string;
-	long?: string;
-}
 export interface OrigPlace {
 	id?: number;
 	hit_id?: string;
@@ -53,13 +50,24 @@ export interface OrigPlace {
 	page?: string;
 }
 export interface OrigDate {
+	hit_id?: string;
 	date?: DateInfo[];
 	authority?: Authority[];
 	page?: string;
 	preferred_date?: boolean;
 	id?: number;
-	hit_id?: string;
 }
+
+export interface HandDate {
+	hit_id?: string;
+	id?: number;
+	authority?: Authority[];
+	page?: string;
+	dated?: DateInfo[];
+	dating?: boolean;
+	note?: string;
+}
+
 export interface DateInfo {
 	id: number;
 	value: string;
@@ -68,6 +76,7 @@ export interface DateInfo {
 	not_after?: string;
 	century?: string[];
 }
+
 export interface Authority {
 	hit_id: string;
 	citation?: string;

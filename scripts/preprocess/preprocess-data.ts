@@ -10,6 +10,17 @@ import { processCodUnits } from "./processors/cod-units.js";
 import { processStrata } from "./processors/strata.js";
 import { processWorks } from "./processors/works.js";
 import { processManuscripts } from "./processors/manuscripts.js";
+import type {
+	Scribe,
+	Codunit,
+	Place,
+	MsItem,
+	Hand,
+	Manuscript,
+	Stratum,
+	Library,
+	Work,
+} from "@/types/index.ts";
 
 // Set up output folder
 const outputFolder = join(process.cwd(), "src", "content", "data");
@@ -21,22 +32,22 @@ mkdirSync(outputFolder, { recursive: true });
 function saveJSON(filename: string, data: unknown): void {
 	const filePath = join(outputFolder, filename);
 	writeFileSync(filePath, JSON.stringify(data, null, 2), { encoding: "utf-8" });
-	console.log(`💾 Saved ${filename}`);
+	console.log(`Saved ${filename}`);
 }
 
 /**
  * Main processing pipeline
  */
 async function processAllData(): Promise<{
-	places: unknown[];
-	libraries: unknown[];
-	msItems: unknown[];
-	hands: unknown[];
-	scribes: unknown[];
-	codUnits: unknown[];
-	strata: unknown[];
-	works: unknown[];
-	manuscripts: unknown[];
+	codUnits: Codunit[];
+	hands: Hand[];
+	libraries: Library[];
+	manuscripts: Manuscript[];
+	msItems: MsItem[];
+	places: Place[];
+	scribes: Scribe[];
+	strata: Stratum[];
+	works: Work[];
 }> {
 	try {
 		console.log("Starting data preprocessing...");
@@ -64,10 +75,10 @@ async function processAllData(): Promise<{
 			people: rawData.people,
 			genres: rawData.genres,
 			hands: rawData.hands,
-			handsdated: rawData.handsdated,
-			handsplaced: rawData.handsplaced,
-			handsrole: rawData.handsrole,
-			cod_unitsprov: rawData.cod_unitsprov,
+			handsdated: rawData.hands_dated,
+			handsplaced: rawData.hands_placed,
+			handsrole: rawData.hands_role,
+			cod_unitsprov: rawData.cod_unit_placed,
 			bibliography: rawData.bibliography,
 			dates: rawData.dates,
 		});
@@ -76,9 +87,9 @@ async function processAllData(): Promise<{
 		// 3. Process hands (first pass - without scribe data)
 		console.log("Processing hands (first pass)...");
 		const handsFirstPass = processHands(rawData.hands, {
-			handsdated: rawData.handsdated,
-			handsplaced: rawData.handsplaced,
-			handsrole: rawData.handsrole,
+			handsdated: rawData.hands_dated,
+			handsplaced: rawData.hands_placed,
+			handsrole: rawData.hands_role,
 			msItemsPlus: processedMsItems,
 			places: processedPlaces,
 			bibliography: rawData.bibliography,
@@ -98,7 +109,7 @@ async function processAllData(): Promise<{
 		// 6. Process cod units (reusable!)
 		console.log("Processing cod units...");
 		const processedCodUnits = processCodUnits(rawData.cod_units, {
-			cod_unitsprov: rawData.cod_unitsprov,
+			cod_unitsprov: rawData.cod_unit_placed,
 			msItemsPlus: processedMsItems,
 			places: processedPlaces,
 			dates: rawData.dates,
@@ -109,28 +120,17 @@ async function processAllData(): Promise<{
 		// 7. Process strata (reusable!)
 		console.log("Processing strata...");
 
-		type RawStratum = {
-			id: string | number;
-			hit_id: string;
-			number?: string;
-			label?: { value: string }[];
-			character?: { value: string }[];
-			note?: string;
-			locus?: string;
-			manuscript: { id: string | number; hit_id: string; value?: string }[];
-			hand_role: { id: string | number }[];
-		};
-		const processedStrata = processStrata(Object.values(rawData.strataa) as RawStratum[], {
-			handsrole: rawData.handsrole,
+		const processedStrata = processStrata(rawData.strata, {
+			handsrole: rawData.hands_role,
 			hands: rawData.hands,
-			handsdated: rawData.handsdated,
-			handsplaced: rawData.handsplaced,
+			handsdated: rawData.hands_dated,
+			handsplaced: rawData.hands_placed,
 			msItemsPlus: processedMsItems,
 			places: processedPlaces,
 			dates: rawData.dates,
 			bibliography: rawData.bibliography,
 			strata_filiations: rawData.strata_filiations,
-			strataa: rawData.strataa,
+			strataa: rawData.strata,
 			filiated_strata: rawData.filiated_strata,
 			works: rawData.works,
 		});
@@ -149,7 +149,7 @@ async function processAllData(): Promise<{
 		// 9. Process manuscripts (depends on almost everything)
 		console.log("Processing manuscripts...");
 		const processedManuscripts = processManuscripts(rawData.manuscripts, {
-			manuscripts_dated: rawData.manuscripts_dated,
+			manuscripts_dated: rawData.manuscript_dated,
 			processedCodUnits: processedCodUnits,
 			processedStrata: processedStrata,
 			libraries: rawData.libraries,
@@ -160,10 +160,10 @@ async function processAllData(): Promise<{
 			dates: rawData.dates,
 			bibliography: rawData.bibliography,
 			// Still need these for TBD strata
-			handsrole: rawData.handsrole,
+			handsrole: rawData.hands_role,
 			hands: rawData.hands,
-			handsdated: rawData.handsdated,
-			handsplaced: rawData.handsplaced,
+			handsdated: rawData.hands_dated,
+			handsplaced: rawData.hands_placed,
 		});
 		console.log(`Processed ${processedManuscripts.length} manuscripts`);
 
@@ -202,7 +202,7 @@ async function saveAllProcessedData(processedData: {
 }): Promise<void> {
 	console.log("Saving processed data...");
 
-	// Save each file - simple and straightforward
+	// Save each file
 	saveJSON("places.json", processedData.places);
 	saveJSON("libraries.json", processedData.libraries);
 	saveJSON("ms_items.json", processedData.msItems);

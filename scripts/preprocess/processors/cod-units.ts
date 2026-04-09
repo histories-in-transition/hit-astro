@@ -1,19 +1,27 @@
-import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.ts";
+
+import type {
+	HitCodunits,
+	HitCodPlaced,
+	HitDates,
+	HitBibliography,
+} from "@/types/zod/zod-types.ts";
+
+import type { Place, MsItem, Codunit } from "@/types/index.ts";
+
+// ===== TYPES =====
+
+type CodUnitDeps = {
+	cod_unitsprov: HitCodPlaced[];
+	msItemsPlus: MsItem[];
+	places: Place[];
+	dates: HitDates[];
+	bibliography: HitBibliography[];
+};
 
 // ===== COD UNITS PROCESSOR =====
 
-/**
- * Process cod units data by cleaning and standardizing the structure
- * @param {Array} cod_units - Raw cod units data
- * @param {Object} deps - All dependencies
- * @param {Array} deps.cod_unitsprov - Cod unit provenance data
- * @param {Array} deps.msItemsPlus - Processed manuscript items
- * @param {Array} deps.places - Places data
- * @param {Array} deps.dates - Dates data
- * @param {Array} deps.bibliography - Bibliography data
- * @returns {Array} Processed cod units with prev/next navigation
- */
-export function processCodUnits(cod_units, deps) {
+export function processCodUnits(cod_units: HitCodunits[], deps: CodUnitDeps): Codunit[] {
 	if (!Array.isArray(cod_units)) {
 		throw new Error("processCodUnits expects an array of cod units");
 	}
@@ -27,27 +35,24 @@ export function processCodUnits(cod_units, deps) {
 	return addPrevNextToMsItems(processedCodUnits);
 }
 
-/**
- * Transform a single cod unit
- * @param {Object} unit - Raw cod unit data
- * @param {Array} cod_unitsprov - Cod unit provenance data
- * @param {Array} msItemsPlus - Processed manuscript items
- * @param {Array} places - Places data
- * @param {Array} dates - Dates data
- * @param {Array} bibliography - Bibliography data
- * @returns {Object} Transformed cod unit
- */
-function transformCodUnit(unit, cod_unitsprov, msItemsPlus, places, dates, bibliography) {
-	// Get provenance places for this cod unit
+// ===== TRANSFORM =====
+
+function transformCodUnit(
+	unit: HitCodunits,
+	cod_unitsprov: HitCodPlaced[],
+	msItemsPlus: MsItem[],
+	places: Place[],
+	dates: HitDates[],
+	bibliography: HitBibliography[],
+): Codunit {
 	const prov_place = getCodUnitProvenance(unit, cod_unitsprov, places, dates, bibliography);
 
-	// Get relevant ms items for this cod unit
 	const relevantMsItems = getCodUnitContent(unit, msItemsPlus);
 
 	return {
 		id: unit.id,
 		hit_id: unit.hit_id,
-		value: unit.label[0]?.value || "Unknown Unit",
+		value: unit.label?.[0]?.value ?? "Unknown Unit",
 		number: unit.number,
 		notes: unit.notes ?? "",
 		locus: unit.locus,
@@ -64,17 +69,21 @@ function transformCodUnit(unit, cod_unitsprov, msItemsPlus, places, dates, bibli
 		ruling: unit.ruling ?? "",
 		decoration: unit.decorations ?? "",
 		basic_structure: unit.basic_structure?.map((str) => str.value) ?? [],
-		prov_place: prov_place,
+		prov_place,
 		content: relevantMsItems,
-		// Add manuscript reference for easy lookup
 		manuscript: unit.manuscript?.map(({ order, ...rest }) => rest) ?? [],
 	};
 }
 
-/**
- * Get provenance information for a cod unit
- */
-function getCodUnitProvenance(unit, cod_unitsprov, places, dates, bibliography) {
+// ===== HELPERS =====
+
+function getCodUnitProvenance(
+	unit: HitCodunits,
+	cod_unitsprov: HitCodPlaced[],
+	places: Place[],
+	dates: HitDates[],
+	bibliography: HitBibliography[],
+) {
 	return cod_unitsprov
 		.filter((prov) => prov.cod_unit.some((c) => c.id === unit.id))
 		.map((prov) => ({
@@ -90,19 +99,13 @@ function getCodUnitProvenance(unit, cod_unitsprov, places, dates, bibliography) 
 		}));
 }
 
-/**
- * Get content (ms items) for a cod unit
- */
-function getCodUnitContent(unit, msItemsPlus) {
+function getCodUnitContent(unit: HitCodunits, msItemsPlus: MsItem[]) {
 	return msItemsPlus
 		.filter((item) => item.cod_unit?.some((u) => u.id === unit.id))
 		.map(cleanMsItemForCodUnit);
 }
 
-/**
- * Clean ms item data for cod unit display
- */
-function cleanMsItemForCodUnit(item) {
+function cleanMsItemForCodUnit(item: MsItem) {
 	const {
 		manuscript,
 		cod_unit,
@@ -111,21 +114,21 @@ function cleanMsItemForCodUnit(item) {
 		library,
 		library_place,
 		author_entry,
+		joined_transmission,
+		project,
 		prev,
 		next,
 		...rest
 	} = item;
+
 	return rest;
 }
 
-// ===== UTILITY FUNCTIONS FOR MANUSCRIPT PROCESSOR =====
+// ===== REUSE HELPERS =====
 
-/**
- * Get cod units for a specific manuscript from processed cod units
- * @param {Object} manuscript - Manuscript object
- * @param {Array} processedCodUnits - Already processed cod units
- * @returns {Array} Cod units belonging to this manuscript
- */
-export function getCodUnitsForManuscript(manuscript, processedCodUnits) {
+export function getCodUnitsForManuscript(
+	manuscript: { id: string | number },
+	processedCodUnits: Codunit[],
+) {
 	return processedCodUnits.filter((unit) => unit.manuscript.some((ms) => ms.id === manuscript.id));
 }

@@ -13,9 +13,10 @@ import type { MsItemHand } from "./hand";
 export interface MsItem {
 	id?: number;
 	hit_id: string;
-	label?: string;
+	label: string;
 	view_label?: string;
 	manuscript?: ShortRef[];
+	joined_transmission?: joinedTransmission[];
 	library?: ShortRef[];
 	library_place?: Place[];
 	cod_unit?: ShortRef[];
@@ -42,11 +43,12 @@ export interface MsItem {
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
-	language?: FormItem[];
+	language: FormItem[];
 	version: FormItem[];
-	facs_url?: string;
+	facs_url: string;
 	annotation_typ?: string[];
 	annotation_date?: OrigDate[];
+	project?: string[];
 }
 
 interface FormItem {
@@ -56,5 +58,11 @@ interface CommentedMsItem {
 	id: number;
 	value?: string;
 	title?: string;
+	hit_id: string;
+}
+
+interface joinedTransmission {
+	id: number;
+	title: string;
 	hit_id: string;
 }

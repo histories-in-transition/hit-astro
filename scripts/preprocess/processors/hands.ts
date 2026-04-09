@@ -1,39 +1,36 @@
-import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.js";
+import { addPrevNextToMsItems, enrichPlaces, enrichBibl, enrichDates } from "./utils.ts";
+import type { Place, MsItem, Scribe } from "@/types/index.ts";
+import type {
+	HitHand,
+	HitHandsDated,
+	HitHandsPlaced,
+	HitHandRole,
+	HitBibliography,
+	HitDates,
+} from "@/types/zod/zod-types.ts";
 
-/**
- * Process hands data by cleaning and standardizing the structure
- * @param {Array} hands - Raw hands data
- * @param {Object} deps - All dependencies in one object
- * @param {Array} deps.handsdated - Hands dating data
- * @param {Array} deps.handsplaced - Hands placement data
- * @param {Array} deps.handsrole - Hands role data
- * @param {Array} deps.msItemsPlus - Processed manuscript items data
- * @param {Array} deps.places - Places data
- * @param {Array} deps.bibliography - Bibliography data
- * @param {Array} deps.dates - Dates data
- * @returns {Array} Processed hands with prev/next navigation
- */
-export function processHands(hands, deps) {
+type HandsDeps = {
+	handsdated: HitHandsDated[];
+	handsplaced: HitHandsPlaced[];
+	handsrole: HitHandRole[];
+	msItemsPlus: MsItem[];
+	places: Place[];
+	bibliography: HitBibliography[];
+	dates: HitDates[];
+};
+export function processHands(hands: HitHand[], deps: HandsDeps) {
 	if (!Array.isArray(hands)) {
 		throw new Error("processHands expects an array of hands");
 	}
 
-	// Transform each hand
 	const handsPlus = hands
-		.filter((hand) => hand.label.length > 0) // skip hands with empty labels
+		.filter((hand) => hand.label.length > 0)
 		.map((hand) => transformHand(hand, deps));
 
-	// Add navigation (prev/next)
 	return addPrevNextToMsItems(handsPlus);
 }
 
-/**
- * Transform a single hand object
- * @param {Object} hand - Raw hand data
- * @param {Object} deps - All dependencies
- * @returns {Object} Transformed hand
- */
-function transformHand(hand, deps) {
+function transformHand(hand: HitHand, deps: HandsDeps) {
 	const { handsdated, handsplaced, handsrole, msItemsPlus, places, bibliography, dates } = deps;
 
 	// Get hand dating information
@@ -76,15 +73,14 @@ function transformHand(hand, deps) {
 	};
 }
 
-/**
- * Get dating information for a hand
- * @param {Object} hand - Hand object
- * @param {Array} handsdated - Hands dating data
- * @param {Array} bibliography - Bibliography data
- * @param {Array} dates - Dates data
- * @returns {Array} Hand dating information
+/** Get dating information for a hand
  */
-function getHandDating(hand, handsdated, bibliography, dates) {
+function getHandDating(
+	hand: HitHand,
+	handsdated: HitHandsDated[],
+	bibliography: HitBibliography[],
+	dates: HitDates[],
+) {
 	return handsdated
 		.filter((dhand) => dhand.hand.some((h) => h.id === hand.id))
 		.map((dathand) => ({
@@ -97,15 +93,13 @@ function getHandDating(hand, handsdated, bibliography, dates) {
 		}));
 }
 
-/**
- * Get placement information for a hand
- * @param {Object} hand - Hand object
- * @param {Array} handsplaced - Hands placement data
- * @param {Array} places - Places data
- * @param {Array} bibliography - Bibliography data
- * @returns {Array} Hand placement information
- */
-function getHandPlacement(hand, handsplaced, places, bibliography) {
+/* placement information for a hand*/
+function getHandPlacement(
+	hand: HitHand,
+	handsplaced: HitHandsPlaced[],
+	places: Place[],
+	bibliography: HitBibliography[],
+) {
 	return handsplaced
 		.filter((hplaced) => hplaced.hand.some((h) => h.id === hand.id))
 		.map((p_hand) => ({
@@ -116,14 +110,8 @@ function getHandPlacement(hand, handsplaced, places, bibliography) {
 		}));
 }
 
-/**
- * Get role information for a hand
- * @param {Object} hand - Hand object
- * @param {Array} handsrole - Hands role data
- * @param {Array} msItemsPlus - Processed manuscript items data
- * @returns {Array} Hand role information
- */
-function getHandRoles(hand, handsrole, msItemsPlus) {
+/**  role information for a hand*/
+function getHandRoles(hand: HitHand, handsrole: HitHandRole[], msItemsPlus: MsItem[]) {
 	return handsrole
 		.filter((hrol) => hrol.hand.some((h) => h.id === hand.id))
 		.filter((hrol) => hrol.ms_item.length > 0) // Only include roles with manuscript items
@@ -147,13 +135,8 @@ function getHandRoles(hand, handsrole, msItemsPlus) {
 		});
 }
 
-/**
- * Get manuscript items related to a hand role
- * @param {Object} hand_r - Hand role object
- * @param {Array} msItemsPlus - Processed manuscript items data
- * @returns {Array} Related manuscript items
- */
-function getMsItemsForHandRole(hand_r, msItemsPlus) {
+/** manuscript items related to a hand role*/
+function getMsItemsForHandRole(hand_r: HitHandRole, msItemsPlus: MsItem[]) {
 	return msItemsPlus
 		.filter((m) => m.hands.some((han) => han.jobs.some((j) => j.hit_id === hand_r.hit_id)))
 		.map((msit) => ({
@@ -169,10 +152,8 @@ function getMsItemsForHandRole(hand_r, msItemsPlus) {
 
 /**
  * Generate a descriptive string for hand qualities
- * @param {Object} hand_r - Hand role object
- * @returns {string} Hand qualities description
  */
-function generateHandQualities(hand_r) {
+function generateHandQualities(hand_r: HitHandRole): string {
 	const roles = hand_r.role.map((r) => r.value);
 	const scribeTypes = hand_r.scribe_type.map((s) => s.value);
 	const functions = hand_r.function.map((f) => f.value);
@@ -188,20 +169,13 @@ function generateHandQualities(hand_r) {
 
 // function for second pass of hands processing to enrich with enriched scribes
 
-/**
- * Enrich hands with scribe data (second pass)
- * @param {Array} hands - Hands from first processing pass
- * @param {Array} scribes - Processed scribes data
- * @returns {Array} Hands enriched with scribe data
- */
-export function enrichHandsWithScribes(hands, scribes) {
+export function enrichHandsWithScribes(hands: ReturnType<typeof processHands>, scribes: Scribe[]) {
 	return hands.map((hand) => {
-		// Find matching scribes for this hand
 		const enrichedScribes = scribes.filter((scribe) => hand.scribe.some((s) => s.id === scribe.id));
 
 		return {
 			...hand,
-			scribe: enrichedScribes, // Replace simple scribe refs with full scribe data
+			scribe: enrichedScribes,
 		};
 	});
 }
