@@ -30,7 +30,7 @@ export function processScribes(scribes: HitScribe[], handsPlus: HandBase[]) {
 				name: scribe.name ?? "N/A",
 				description: scribe.description ?? "N/A",
 				group: scribe.group,
-				hands: scribalHands.map(({ scribe, author_entry, placed, date, ...rest }) => rest),
+				hands: scribalHands.map(({ scribe, author_entry, ...rest }) => rest),
 				date: date,
 				places: place,
 				author_entry: scribe.author_entry.map((a) => a.value) || [],
