@@ -1,0 +1,18 @@
+---
+import SearchPanel from "@/components/search/search-panel.svelte";
+import PageLayout from "@/layouts/page-layout.astro";
+import WorkTransmission from "@/components/visualisations/WorkTransmission.svelte";
+---
+
+<PageLayout title="Dashboard">
+	<div class="flex h-screen w-full">
+		<div class="h-screen bg-brand-200/10 border-r w-80 p-3">
+			<aside class="sticky top-25 self-start">
+				<SearchPanel client:only="svelte" />
+			</aside>
+		</div>
+		<div class="grid grid-cols-[repeat(auto-fit,minmax(1000px,1fr))] overflow-auto w-full mx-auto">
+			<WorkTransmission client:only="svelte" />
+		</div>
+	</div>
+</PageLayout>

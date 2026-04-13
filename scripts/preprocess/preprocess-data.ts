@@ -9,6 +9,7 @@ import { processScribes } from "./processors/scribes.js";
 import { processCodUnits } from "./processors/cod-units.js";
 import { processStrata } from "./processors/strata.js";
 import { processWorks } from "./processors/works.js";
+import { workGraph } from "./processors/work-transmission-graph.js";
 import { processManuscripts } from "./processors/manuscripts.js";
 import type {
 	Scribe,
@@ -145,6 +146,14 @@ async function processAllData(): Promise<{
 			bibliography: rawData.bibliography,
 		});
 		console.log(`Processed ${processedWorks.length} works`);
+
+		//8a. Process works for graph shoing work transmission
+		console.log("Processing works for graph...");
+		const wokrGraph = workGraph(processedWorks);
+		saveJSON("work-graph.json", wokrGraph);
+		console.log(
+			`Processed work graph with ${wokrGraph.nodes.length} nodes and ${wokrGraph.edges.length} edges`,
+		);
 
 		// 9. Process manuscripts (depends on almost everything)
 		console.log("Processing manuscripts...");
