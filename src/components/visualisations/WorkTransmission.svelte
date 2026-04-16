@@ -8,6 +8,8 @@ import type { GraphData } from "@/types/graph";
 
 let container: HTMLDivElement;
 
+$: genres = Array.from(new Set(workgraph.nodes.map(d => d.genre)));
+$: genreColors = new Map(genres.map((genre, i) => [genre, d3.schemePaired[i % 10]]));
 
 onMount(() => {
     const graphData: GraphData = workgraph;
@@ -15,9 +17,11 @@ onMount(() => {
     $dataWorksGraph = graphData;
 
 let activeFilterIds: Set<string> | null = null;
-const nodeColor: string = "#953c04"
-const highlightNodeColor : string = "#953c04"
-const neighborNode : string = "orange"
+// collect all genres
+// assign a color to each genre
+const genreColors = new Map(genres.map((genre, i) => [genre, d3.schemePaired[i % 10]]));
+
+
 const linkColor: string = "#953c049d"
 
 // state for nodes when clicked to introduce a freeze state
@@ -74,7 +78,7 @@ const width = 1000;
 const height = 1000;
 
 const rScale = d3.scaleSqrt()
-  .domain([0, d3.max(graphData.nodes, (d: GraphData["nodes"][number]) => d.degree) ?? 0])
+  .domain([0, d3.max(graphData.nodes, (d: GraphData["nodes"][number]) => d.value) ?? 0])
   .range([4, 14]);
 
 // start drawing
@@ -87,12 +91,13 @@ const svg = root.append("svg")
 const tooltip = root.append("div")
   .style("position","fixed")
   .style("background","white")
-  .style("border","1px solid #999")
+  .style("border","1px solid #7f3303")
   .style("border-radius","0.3rem")
   .style("padding","4px 6px")
   .style("font-size","12px")
   .style("pointer-events","none")
   .style("visibility","hidden");
+
 
 
 const canvas = svg.append("g").attr("class","canvas").attr("transform","translate(40,0)");
@@ -113,8 +118,8 @@ const links = linksGroup.selectAll("line")
 const nodes = nodesGroup.selectAll("circle")
   .data(graphData.nodes)
   .enter().append("circle")
-  .attr("r", d => rScale(d.degree))
-  .attr("fill", nodeColor)
+  .attr("r", d => rScale(d.value))
+  .attr("fill", d => genreColors.get(d.genre) || "#999")
   .attr("cx", () => Math.random() * width)
   .attr("cy", () => Math.random() * height);
 
@@ -216,7 +221,7 @@ const simulation = d3.forceSimulation(graphData.nodes)
   )
   .force("charge", d3.forceManyBody().strength(-8))
   .force("center", d3.forceCenter(width / 2, height / 2))
-  .force("collide", d3.forceCollide(d => rScale(d.degree) + 2))
+  .force("collide", d3.forceCollide(d => rScale(d.value) + 2))
   .force("boundary", forceInsideCircle(radius, width / 2, height / 2))
   .on("tick", ticked);
 
@@ -264,24 +269,14 @@ filteredIds.subscribe((ids: Set<string>) => {
 //highlight on mouse over
 function highlightNode(d: GraphData["nodes"][number]){
   const allRelatives = neighborMap.get(d.id) || new Set();
-   nodes
-    .attr("fill", n => {
-      if (n.id === d.id) return highlightNodeColor;
-      if (allRelatives.has(n.id)) return neighborNode;
-
-      if (activeFilterIds) {
-        return activeFilterIds.has(n.id) ? nodeColor : "#ccc";
-      }
-
-      return "#ccc";
-    })
+   nodes   
     .attr("opacity", n => {
       if (n.id === d.id || allRelatives.has(n.id)) return 1;
       if (activeFilterIds) return activeFilterIds.has(n.id) ? 1 : 0.15;
       return 0.2;
     })
     .attr("r", n =>
-      n.id === d.id ? rScale(n.degree) * 1.5 : rScale(n.degree)
+      n.id === d.id ? rScale(n.value) * 1.5 : rScale(n.value)
     );
  links
   .attr("stroke", l => {
@@ -301,12 +296,10 @@ function highlightNode(d: GraphData["nodes"][number]){
       : 0.2;
   });
 }
-function resetHighlight(){
- 
+function resetHighlight(){ 
   nodes
-    .attr("fill", nodeColor)
     .attr("opacity",1)
-    .attr("r", d => rScale(d.degree));
+    .attr("r", d => rScale(d.value));
 
   links
     .attr("stroke", linkColor)
@@ -320,7 +313,6 @@ function highlightNodesByIds(ids: Set<string>) {
     const filteredNodes = graphData.nodes.filter(n => n.msItems?.some(item => ids.has(item)));
     const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
   nodes
-    .attr("fill", d => d.msItems?.some(item => ids.has(item)) ? highlightNodeColor : nodeColor)
     .attr("opacity", d => d.msItems?.some(item => ids.has(item)) ? 1 : 0.15);
 // highlight only links which have both source and target in the ids set
   links
@@ -351,19 +343,11 @@ function showNodeTooltip(d, el) {
     .style("visibility", "visible")
     .html(`<strong>${d.name ?? ""}</strong><br/>
            <span>Genre: ${d.genre}</span><br/>
-           <span>Handschriften: ${d.value || 0}</span>`);
+           <span>Überlieferung: ${d.value || 0}</span>`);
 
   tooltipEl = el;
   updateTooltipPosition();
   highlightNode(d);
-
-//   const neighbors = neighborMap.get(d.id) || new Set();
-
-//   labels
-//     .attr("opacity", n => neighbors.has(n.id) ? 1 : 0)
-//     .each(function(n){
-//       if (neighbors.has(n.id)) this.parentNode.appendChild(this);
-//     });
 }
 
 function showNodeDetails(d, el) {
@@ -420,10 +404,25 @@ function forceInsideCircle(radius, cx, cy) {
   return force;
 }
 
+
 });
 
 </script>
 
 
 
-  <div id="graph-container" bind:this={container}></div>
+  <div class="border border-gray-300 rounded-sm p-4 bg-white shadow-md w-[1100px] mx-2.5">
+    <h1 class="text-2xl">Work Transmission</h1>
+    <div class="flex flex-wrap gap-3 mt-4 w-[980px] px-2.5">
+    {#each genres as genre}
+      <div class="flex items-center gap-2">
+        <span
+          class="w-3 h-3 inline-block"
+          style="background:{genreColors.get(genre)}"
+        ></span>
+        <span class="text-sm">{genre}</span>
+      </div>
+    {/each}
+    </div>
+      <div id="graph-container" bind:this={container}></div>
+  </div>
