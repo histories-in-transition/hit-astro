@@ -6,6 +6,9 @@ export const selectedHitId = writable(null);
 export const filters = writable({
 	authors: [],
 	works: [],
+	genres: [],
+	centuries: [],
+	places: [],
 	query: "",
 });
 

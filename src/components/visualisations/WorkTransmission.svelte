@@ -8,8 +8,21 @@ import type { GraphData } from "@/types/graph";
 
 let container: HTMLDivElement;
 
-$: genres = Array.from(new Set(workgraph.nodes.map(d => d.genre)));
-$: genreColors = new Map(genres.map((genre, i) => [genre, d3.schemePaired[i % 10]]));
+$: genres = Array.from(new Set(workgraph.nodes.map(d => d.genre)))
+.sort((a, b) => a.localeCompare(b));
+const palette = [
+  "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+  "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+  "#393b79", "#637939", "#8c6d31", "#843c39", "#7b4173",
+  "#3182bd", "#e6550d", "#31a354", "#756bb1", "#636363"
+];
+
+$: genreColors = new Map(
+  genres.map((genre, i) => [
+    genre,
+    palette[i % palette.length]
+  ])
+);
 
 onMount(() => {
     const graphData: GraphData = workgraph;
@@ -17,9 +30,6 @@ onMount(() => {
     $dataWorksGraph = graphData;
 
 let activeFilterIds: Set<string> | null = null;
-// collect all genres
-// assign a color to each genre
-const genreColors = new Map(genres.map((genre, i) => [genre, d3.schemePaired[i % 10]]));
 
 
 const linkColor: string = "#953c049d"
