@@ -38,7 +38,7 @@ function showMore() {
 }
 </script>
 
-<div class="text-xs border border-neutral-200 shadow-xs rounded-md p-2">
+<div class="bg-white text-xs border border-neutral-200 shadow-xs rounded-md p-2">
 <details>
   <summary class="flex justify-between gap-2 font-semibold cursor-pointer uppercase">
     <h3 class="font-semibold ">{title}</h3>
@@ -72,9 +72,9 @@ function showMore() {
             />
           <span>
             {item.name}
-            {#if item.count}
+            <!-- {#if item.count}
                 <span class="text-neutral-700">({item.count})</span>
-            {/if}
+            {/if} -->
             </span>
         </label>
       </li>

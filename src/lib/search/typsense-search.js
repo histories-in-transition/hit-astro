@@ -15,6 +15,13 @@ export async function runSearch(f) {
 		const filterParts = [
 			f.authors.length ? `authors:=${f.authors.map((a) => `"${a}"`).join(" || ")}` : null,
 			f.works.length ? `work.title:=[${f.works.map((w) => `"${w}"`).join(",")}]` : null,
+			f.genres.length ? `main_genre:=[${f.genres.map((g) => `"${g}"`).join(",")}]` : null,
+			f.centuries.length
+				? `orig_date.date.century:=[${f.centuries.map((c) => `"${c}"`).join(",")}]`
+				: null,
+			f.places.length
+				? `orig_place.place.value:=[${f.places.map((p) => `"${p}"`).join(",")}]`
+				: null,
 		].filter(Boolean);
 
 		const filter_by = filterParts.length ? filterParts.join(" && ") : undefined;
@@ -32,7 +39,8 @@ export async function runSearch(f) {
 					q: "*",
 					query_by: `${main_search_field},${secondary_search_field}, ${third_search_field}`,
 					filter_by,
-					facet_by: "authors, work.title",
+					facet_by:
+						"authors, work.title, main_genre, orig_date.date.century, orig_place.place.value",
 					max_facet_values: 500,
 					per_page: 250,
 					page,
