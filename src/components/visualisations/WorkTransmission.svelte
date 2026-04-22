@@ -8,7 +8,7 @@ import type { GraphData } from "@/types/graph";
 import {derived} from "svelte/store";
 
 let container: HTMLDivElement;
-
+let mounted = false;
  const graphData: GraphData = workgraph;
 
     $dataWorksGraph = graphData;
@@ -178,6 +178,20 @@ $: genreColors = new Map(
   ])
 );
 
+$: if (mounted) {
+  const params = new URLSearchParams();
+
+  if (lockedNode) {
+    params.set("node", lockedNode.id);
+  }
+
+  const newUrl = params.toString()
+    ? `${window.location.pathname}?${params.toString()}`
+    : window.location.pathname;
+
+  window.history.replaceState({}, "", newUrl);
+}
+
 //--- neighbor map ---
 $: neighborMap = $neighborMapStore;
 
@@ -195,10 +209,21 @@ $: {graphData.nodes.forEach(d => {
 });
 }
 
+$: if (nodes) {
+  updateUrlParams();
+}
 
 onMount(() => {  
 
+ const params = new URLSearchParams(window.location.search);
+  const nodeParam = params.get("node");
 
+  if (nodeParam) {
+    const node = graphData.nodes.find(n => n.id === nodeParam);
+    if (node) {
+      lockedNode = node;
+    }}
+    mounted = true;
 
 // *****
 const width = 1000;
@@ -478,6 +503,19 @@ function forceInsideCircle(radius, cx, cy) {
 
 
 });
+
+function updateUrlParams() {
+  const params = new URLSearchParams();
+
+  
+
+  if (lockedNode) {
+    params.set("node", lockedNode.id);
+  }
+
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState({}, "", newUrl);
+}
 
 </script>
 
