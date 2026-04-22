@@ -17,6 +17,7 @@ export interface Edge {
 	target: string;
 	value: number;
 	mss: MSItem[];
+	msitems: string[];
 }
 
 export interface MSItem {

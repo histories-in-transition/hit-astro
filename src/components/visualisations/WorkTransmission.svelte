@@ -5,8 +5,162 @@ import workgraph from "@/content/data/work-graph.json";
 import { filteredIds, dataWorksGraph } from "@/stores/hit_store";
 import { withBasePath } from "@/lib/withBasePath";
 import type { GraphData } from "@/types/graph";
+import {derived} from "svelte/store";
 
 let container: HTMLDivElement;
+
+ const graphData: GraphData = workgraph;
+
+    $dataWorksGraph = graphData;
+
+let nodes;
+let links;
+let lockedNode = null;
+let rScale;
+const linkColor: string = "#953c049d"
+// reactive block to update the graph whenever the filter changes
+$: if (nodes && links && neighborMap) {
+  if (lockedNode) {
+    highlightNode(lockedNode);
+  } else if ($filteredIds && $filteredIds.size > 0) {
+    highlightNodesByIds($filteredIds);
+  } else {
+    resetHighlight();
+  }
+}    
+
+//highlight on mouse over and on first click 
+function highlightNode(d: GraphData["nodes"][number]){
+ const allRelatives = neighborMap.get(d.id) || new Set();
+   nodes   
+    .attr("opacity", n => {
+      if (n.id === d.id || allRelatives.has(n.id)) return 1;
+      if ($filteredIds) return $filteredIds.has(n.id) ? 1 : 0.15;
+      return 0.2;
+    })
+    .attr("r", n =>
+      n.id === d.id ? rScale(n.value) * 1.5 : rScale(n.value)
+    );
+ links
+  .attr("stroke", l => {
+    const s = getSourceNodeHitId(l);
+    const t = getTargetNodeHitId(l);
+
+    return (s === d.id || t === d.id)
+      ? linkColor
+      : "#ccc";
+  })
+  .attr("stroke-opacity", l => {
+    const s = getSourceNodeHitId(l);
+    const t = getTargetNodeHitId(l);
+
+    return (s === d.id || t === d.id)
+      ? 1
+      : 0.2;
+  });
+}
+function resetHighlight(){ 
+  nodes
+    .attr("opacity",1)
+    .attr("r", d => rScale(d.value));
+
+  links
+    .attr("stroke", linkColor)
+    .attr("stroke-opacity",1);
+  if ($filteredIds) {
+    highlightNodesByIds($filteredIds);
+  }
+}
+
+function highlightNodesByIds(ids: Set<string>) {
+  let filteredNodeIds: Set<string>;
+// case where a node is locked /clicked on - show only its filtered neighbors
+  if (lockedNode) {
+    const neighbors = neighborMap.get(lockedNode.id) ?? new Set();
+
+    // include the locked node itself
+    filteredNodeIds = new Set([lockedNode.id, ...neighbors]);
+  } else {
+    const filteredNodes = graphData.nodes.filter(n =>
+      n.msItems?.some(item => ids.has(item))
+    );
+
+    filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+  }
+
+  // --- nodes ---
+  nodes.attr("opacity", d =>
+    filteredNodeIds.has(d.id) ? 1 : 0.15
+  );
+
+  // --- links ---
+  links
+    .attr("stroke", l => {
+      const s = getSourceNodeHitId(l);
+      const t = getTargetNodeHitId(l);
+
+      return filteredNodeIds.has(s) && filteredNodeIds.has(t)
+        ? linkColor
+        : "#ccc";
+    })
+    .attr("stroke-opacity", l => {
+      const s = getSourceNodeHitId(l);
+      const t = getTargetNodeHitId(l);
+
+      return filteredNodeIds.has(s) && filteredNodeIds.has(t)
+        ? 0.5
+        : 0.1;
+    });
+}
+// reactive map to get neighbors which are filtered 
+const neighborMapStore = derived(
+  [filteredIds],
+  ([$filteredIds]) => {
+    const map = new Map<string, Set<string>>();
+
+    // init all nodes
+    graphData.nodes.forEach((n) => {
+      map.set(n.id, new Set());
+    });
+
+    // if no filter → include all edges
+    const relevantEdges = !$filteredIds || $filteredIds.size === 0
+      ? graphData.edges
+      : graphData.edges.filter(edge =>
+          edge.msitems.some(ms => $filteredIds.has(ms))
+        );
+
+    // build neighbors
+    relevantEdges.forEach((l) => {
+      const sourceId = getSourceNodeHitId(l);
+      const targetId = getTargetNodeHitId(l);
+
+      if (!sourceId || !targetId) return;
+
+      map.get(sourceId)?.add(targetId);
+      map.get(targetId)?.add(sourceId);
+    });
+
+    return map;
+  }
+);
+
+
+function getSourceNodeHitId(l: { source: { id: string } | string }) {
+  return typeof l.source === "object"
+    ? l.source.id
+    : l.source;
+}
+
+function getTargetNodeHitId(l: { target: { id: string } | string }) {
+  return typeof l.target === "object"
+    ? l.target.id
+    : l.target;
+}
+
+
+// by processing the data we selected only the main_genre and the sub_genre of historiographie
+// now assign fix colors to the genres
 
 $: genres = Array.from(new Set(workgraph.nodes.map(d => d.genre)))
 .sort((a, b) => a.localeCompare(b));
@@ -24,50 +178,8 @@ $: genreColors = new Map(
   ])
 );
 
-onMount(() => {
-    const graphData: GraphData = workgraph;
-
-    $dataWorksGraph = graphData;
-
-let activeFilterIds: Set<string> | null = null;
-
-
-const linkColor: string = "#953c049d"
-
-// state for nodes when clicked to introduce a freeze state
-let lockedNode = null;
-
-
-//a new Map for storing degree for radius and neighbours highlighting functions etc.
 //--- neighbor map ---
-
-function getSourceNodeHitId(l: { source: { id: string } | string }) {
-  return typeof l.source === "object"
-    ? l.source.id
-    : l.source;
-}
-
-function getTargetNodeHitId(l: { target: { id: string } | string }) {
-  return typeof l.target === "object"
-    ? l.target.id
-    : l.target;
-}
-const neighborMap = new Map();
-
-graphData.nodes.forEach(d => neighborMap.set(d.id, new Set()));
-
-graphData.edges.forEach(l => {
-  const sourceId = getSourceNodeHitId(l);
-  const targetId = getTargetNodeHitId(l);
-
-  if (!sourceId || !targetId) {
-    console.warn("Link references missing node:", l);
-    return;
-  }
-
-  neighborMap.get(sourceId).add(targetId);
-  neighborMap.get(targetId).add(sourceId);
-});
+$: neighborMap = $neighborMapStore;
 
 const nodeByMsItem = new Map<string, string>(); // msItem → node.id
 
@@ -78,16 +190,21 @@ graphData.nodes.forEach(node => {
 });
 
 // degree = number of unique neighbors
-graphData.nodes.forEach(d => {
+$: {graphData.nodes.forEach(d => {
   d.degree = neighborMap.get(d.id).size;
 });
+}
+
+
+onMount(() => {  
+
 
 
 // *****
 const width = 1000;
 const height = 1000;
 
-const rScale = d3.scaleSqrt()
+rScale = d3.scaleSqrt()
   .domain([0, d3.max(graphData.nodes, (d: GraphData["nodes"][number]) => d.value) ?? 0])
   .range([4, 14]);
 
@@ -118,14 +235,14 @@ const labelsGroup = canvas.append("g").attr("class","labels")
 
 
 // --- draw links ---
-const links = linksGroup.selectAll("line")
+ links = linksGroup.selectAll("line")
   .data(graphData.edges)
   .enter().append("line")
   .attr("stroke", linkColor)
-  .attr("stroke-width",1);
+  .attr("stroke-width", d => Math.sqrt(d.value));
 
 // --- draw nodes ---
-const nodes = nodesGroup.selectAll("circle")
+ nodes = nodesGroup.selectAll("circle")
   .data(graphData.nodes)
   .enter().append("circle")
   .attr("r", d => rScale(d.value))
@@ -155,6 +272,14 @@ const labels = labelsGroup.selectAll("text")
 
 let tooltipEl;
 
+links
+  .on("pointerenter", function(this: SVGLineElement, event, d) {   
+    showLinkTooltip(d, this);
+  })
+  .on("pointerout", function() {
+    tooltip.style("visibility", "hidden");
+  });
+
 nodes
   .on("pointerenter", function(this: SVGCircleElement, event, d) {
     if (lockedNode && d.id !== lockedNode.id) {
@@ -180,9 +305,8 @@ nodes
   resetHighlight();
   labels.attr("opacity", 0);
 });
-//not using on click, cause of stupid chrome 
-// nodes are moving? not the same pixel during click
-// better use pointerdown, but with delay so that one can drag the graph without accidental clicks
+
+// use delay so that one can drag the graph without accidental clicks
 let downTime = 0;
 
 nodes
@@ -261,82 +385,10 @@ const zoom = d3.zoom()
   });
 svg.call(zoom as any);
 
-// connect to store for filteredID
-
-filteredIds.subscribe((ids: Set<string>) => {
-  if (!ids || ids.size === 0 || ids.size === graphData.nodes.length) {
-    activeFilterIds = null;
-    //resetHighlight();
-    return;
-  }
-  activeFilterIds = ids;
-  console.log("Graph received ids:", ids);
-  highlightNodesByIds(ids);
-});
 
 
 // --- helpers ---
-//highlight on mouse over
-function highlightNode(d: GraphData["nodes"][number]){
-  const allRelatives = neighborMap.get(d.id) || new Set();
-   nodes   
-    .attr("opacity", n => {
-      if (n.id === d.id || allRelatives.has(n.id)) return 1;
-      if (activeFilterIds) return activeFilterIds.has(n.id) ? 1 : 0.15;
-      return 0.2;
-    })
-    .attr("r", n =>
-      n.id === d.id ? rScale(n.value) * 1.5 : rScale(n.value)
-    );
- links
-  .attr("stroke", l => {
-    const s = getSourceNodeHitId(l);
-    const t = getTargetNodeHitId(l);
 
-    return (s === d.id || t === d.id)
-      ? linkColor
-      : "#ccc";
-  })
-  .attr("stroke-opacity", l => {
-    const s = getSourceNodeHitId(l);
-    const t = getTargetNodeHitId(l);
-
-    return (s === d.id || t === d.id)
-      ? 1
-      : 0.2;
-  });
-}
-function resetHighlight(){ 
-  nodes
-    .attr("opacity",1)
-    .attr("r", d => rScale(d.value));
-
-  links
-    .attr("stroke", linkColor)
-    .attr("stroke-opacity",1);
-  if (activeFilterIds) {
-    highlightNodesByIds(activeFilterIds);
-  }
-}
-
-function highlightNodesByIds(ids: Set<string>) {
-    const filteredNodes = graphData.nodes.filter(n => n.msItems?.some(item => ids.has(item)));
-    const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
-  nodes
-    .attr("opacity", d => d.msItems?.some(item => ids.has(item)) ? 1 : 0.15);
-// highlight only links which have both source and target in the ids set
-  links
-    .attr("stroke", l =>
-      filteredNodeIds.has(getTargetNodeHitId(l)) && filteredNodeIds.has(getSourceNodeHitId(l))
-        ? linkColor
-        : "#ccc"
-    )
-    .attr("stroke-opacity", l =>
-      filteredNodeIds.has(getTargetNodeHitId(l)) && filteredNodeIds.has(getSourceNodeHitId(l))
-        ? 0.5
-        : 0.1
-    );
-}
 // need to get the position based on node
 function updateTooltipPosition() {
   if (!tooltipEl) return;
@@ -359,11 +411,9 @@ function showNodeTooltip(d, el) {
   updateTooltipPosition();
   highlightNode(d);
 }
-
+// on a second click on the same node show label of the one node and highligh neighbours
 function showNodeDetails(d, el) {
   tooltip.style("visibility", "hidden");
-  highlightNode(d);
-
   highlightNode(d);
 
   // show ONLY main node label
@@ -383,6 +433,17 @@ function showNeighborTooltip(d, el) {
     .html(`<strong>${d.name ?? ""}</strong><br/>
            <span>Genre: ${d.genre}</span><br/>
            <span>Handschriften: ${d.value || 0}</span>`);
+
+  tooltipEl = el;
+  updateTooltipPosition();
+
+}
+
+function showLinkTooltip(d, el) {
+  tooltip
+    .style("visibility", "visible")
+    .html(`<strong>${d.value} Manuscripts</strong><br/>
+           <span>${d.mss.map(ms => ms.shelfmark).join(" | ")}</span>`);
 
   tooltipEl = el;
   updateTooltipPosition();
@@ -413,6 +474,7 @@ function forceInsideCircle(radius, cx, cy) {
 
   return force;
 }
+
 
 
 });
