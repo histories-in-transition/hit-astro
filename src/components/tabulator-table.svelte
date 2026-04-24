@@ -4,6 +4,7 @@
 	import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
 	import type { Options as TabulatorOptions, ColumnDefinition } from "tabulator-tables";
 
+	import { filteredIds } from "@/stores/hit_store";
 
 	import { withBasePath } from "@/lib/withBasePath";
 	import { dateAccessor, dateFormatter, dateRangeFilter } from "@/lib/tabulator-utils.js";
@@ -84,8 +85,15 @@
 			...defaultOptions,
 			...options,
 		});
-
+		
 		tabulator.on("tableBuilt", () => {
+			const rows = tabulator.getData("active");
+
+			const ids = new Set(
+				rows.flatMap((r) => extractMapIds(r, mapIdField))
+			);
+
+			filteredIds.set(ids);
 			// Row click navigation
 			if (rowClickConfig) {
 				tabulator.on("rowClick", (e, row) => {
@@ -122,33 +130,31 @@
 				updateCounters();
 			}
 
-			// Map updates
+			// Store/Map updates
 
 			if (updateMapOnFilter) {
 				let timeout;
 				let lastFilterSignature = null;
 
-
 				tabulator.on("dataFiltered", (filters) => {
-				// tabulator fires update also on expanding dataTree children rows
-				// need to check if the filters really changes the state, update map only then
-				const signature = JSON.stringify(filters || []);
+					const signature = JSON.stringify(filters || []);
 
-				// Ignore dataTree expand/collapse
-				if (signature === lastFilterSignature) {
-					return;
-				}
+					// Ignore dataTree expand/collapse
+					if (signature === lastFilterSignature) {
+						return;
+					}
 
-				lastFilterSignature = signature;
+					lastFilterSignature = signature;
 
-				clearTimeout(timeout);
-				timeout = setTimeout(() => {
-					const rows = tabulator.getData("active");
-					const ids = [...new Set(rows.flatMap(r => extractMapIds(r, mapIdField)))];
-					window.updateMapWithFilteredIds?.(ids);
-				}, 50);
-			});
+					clearTimeout(timeout);
+					timeout = setTimeout(() => {
+						const rows = tabulator.getData("active");
+						const ids = new Set(rows.flatMap((r) => extractMapIds(r, mapIdField)));
 
+						// write filtered ids to store
+						filteredIds.set(new Set(ids));
+					}, 50);
+				});
 			}
 		});
 	});
@@ -161,6 +167,14 @@
 	function download(type, ext, opts = {}) {
 		tabulator?.download(type, `${downloadTitle}.${ext}`, opts);
 	}
+
+	function updateFilteredIds() {
+	const rows = tabulator.getData("active");
+	const ids = new Set(
+		rows.flatMap((r) => extractMapIds(r, mapIdField))
+	);
+	filteredIds.set(ids);
+}
 </script>
 
 <div class="text-sm md:text-base w-full">

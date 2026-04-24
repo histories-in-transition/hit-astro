@@ -6,6 +6,8 @@
 	import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 	import "leaflet/dist/leaflet.css";
 
+	import { filteredIds } from "@/stores/hit_store";
+
 	import { withBasePath } from "@/lib/withBasePath";
 
 	export let geoJsonData;
@@ -18,6 +20,7 @@
 	let originLayer;
 	let provenanceLayer;
 	let currentLocationLayer;
+	let unsubscribe;
 
 	// Icons
 	const pinGreen = new URL("@/icons/map-pin-green.png", import.meta.url).toString();
@@ -215,16 +218,20 @@
 
 		updateMapMarkers(geoJsonData);
 
-		// Expose global update hook (used by Tabulator)
-		window.updateMapWithFilteredIds = (filteredIds) => {
-			const filtered = {
-				type: "FeatureCollection",
-				features: geoJsonData.features.filter(
-					f => filteredIds.includes(f.properties?.hit_id)
-				),
-			};
+		unsubscribe = filteredIds.subscribe((ids) => {
+			const filtered = filterGeoJsonByIds(geoJsonData, ids);
 			updateMapMarkers(filtered);
-		};
+		});
+		// // Expose global update hook (used by Tabulator)
+		// window.updateMapWithFilteredIds = (filteredIds) => {
+		// 	const filtered = {
+		// 		type: "FeatureCollection",
+		// 		features: geoJsonData.features.filter(
+		// 			f => filteredIds.includes(f.properties?.hit_id)
+		// 		),
+		// 	};
+		// 	updateMapMarkers(filtered);
+		// };
 		function enableVerticalResize(mapEl, map, handle) {
 			let startY;
 			let startHeight;
@@ -260,29 +267,45 @@ cleanupResize = enableVerticalResize(mapEl, map, resizeHandle);
 });
 
 	onDestroy(() => {
-	cleanupResize?.();
-	map?.remove();
-});
+		unsubscribe?.();
+		cleanupResize?.();
+		map?.remove();
+	});
+
+// helper
+function filterGeoJsonByIds(data, ids) {
+	if (!ids || ids.length === 0) return data;
+
+	return {
+		type: "FeatureCollection",
+		features: data.features.filter((f) =>
+			ids.has(f.properties?.hit_id)
+		),
+	};
+}
 	
 
 </script>
 
-<div bind:this={mapEl} class={className} id="leaflet-map" ></div>
- <!-- Drag handle -->
-  <div
-  bind:this={resizeHandle}
-  class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-neutral-400  active:bg-brand-500 text-brand-50 select-none"
-title="Kartenhöhe ändern"
-  aria-label="Kartenhöhe ändern"
-  ><svg xmlns="http://www.w3.org/2000/svg" 
-  width="24" height="24" 
-  viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-  class="lucide lucide-separator-horizontal-icon lucide-separator-horizontal">
-  <path d="m16 16-4 4-4-4"/>
-  <path d="M3 12h18"/>
-  <path d="m8 8 4-4 4 4"/>
-</svg>
+<div class="flex flex-col w-full">
+	<div bind:this={mapEl} class={className} id="leaflet-map"></div>
+
+	<!-- Drag handle -->
+	<div
+		bind:this={resizeHandle}
+		class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-neutral-400 active:bg-brand-500 text-brand-50 select-none"
+		title="Kartenhöhe ändern"
+		aria-label="Kartenhöhe ändern"
+	>
+		<svg xmlns="http://www.w3.org/2000/svg" 
+			width="24" height="24" 
+			viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+			stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="m16 16-4 4-4-4"/>
+			<path d="M3 12h18"/>
+			<path d="m8 8 4-4 4 4"/>
+		</svg>
+	</div>
 </div>
 
 

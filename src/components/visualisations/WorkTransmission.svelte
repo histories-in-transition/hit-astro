@@ -424,7 +424,7 @@ function updateTooltipPosition() {
     .style("left", rect.x + rect.width / 2 + 5 + "px")
     .style("top", rect.y + "px");
 }
-// show tooltip on hover, click, neighbours and links remain
+// show tooltip on hover, neighbours and links remain
 function showNodeTooltip(d, el) {
   tooltip
     .style("visibility", "visible")
@@ -436,10 +436,11 @@ function showNodeTooltip(d, el) {
   updateTooltipPosition();
   highlightNode(d);
 }
-// on a second click on the same node show label of the one node and highligh neighbours
+// on a click on the same node show label of the one node and highligh neighbours
 function showNodeDetails(d, el) {
   tooltip.style("visibility", "hidden");
   highlightNode(d);
+
 
   // show ONLY main node label
   labels
@@ -522,7 +523,7 @@ function updateUrlParams() {
 
 
   <div class="border border-gray-300 rounded-sm p-4 bg-white shadow-md w-[1100px] mx-2.5">
-    <h1 class="text-2xl">Work Transmission</h1>
+    <h1 class="text-2xl">Netzwerk aller Werken</h1>
     <div class="flex flex-wrap gap-3 mt-4 w-[980px] px-2.5">
     {#each genres as genre}
       <div class="flex items-center gap-2">
