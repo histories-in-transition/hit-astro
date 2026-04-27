@@ -140,6 +140,15 @@ export function createWorkGraph(container, graphData, { onNavigate, onLockChange
 		// --- links ---
 		links
 			.on("pointerenter", (event, d) => {
+				if (lockedNode) {
+					const s = getId(d.source);
+					const t = getId(d.target);
+
+					const isConnected = s === lockedNode.id || t === lockedNode.id;
+
+					if (!isConnected) return;
+				}
+
 				showLinkTooltip(d, event);
 			})
 			.on("pointerout", hideTooltip);
@@ -147,10 +156,25 @@ export function createWorkGraph(container, graphData, { onNavigate, onLockChange
 		// --- nodes ---
 		nodes
 			.on("pointerenter", (event, d) => {
-				if (lockedNode && d.id !== lockedNode.id) {
-					showNeighborTooltip(d, event);
+				if (lockedNode) {
+					const isSame = d.id === lockedNode.id;
+					const isNeighbor = neighborMap.get(lockedNode.id)?.has(d.id);
+
+					if (isSame) {
+						showNodeTooltip(d, event);
+						return;
+					}
+
+					if (isNeighbor) {
+						showNeighborTooltip(d, event);
+						return;
+					}
+
+					// not neighbor - no tooltip
 					return;
 				}
+
+				// no locked node -> normal behavior
 				showNodeTooltip(d, event);
 			})
 			.on("pointerout", () => {
@@ -292,8 +316,10 @@ export function createWorkGraph(container, graphData, { onNavigate, onLockChange
 		tooltip.style("left", event.clientX + 10 + "px").style("top", event.clientY + "px");
 	}
 
-	function showLinkTooltip(d, event) {
-		tooltip.style("visibility", "visible").html(`<strong>${d.value} Manuscripts</strong>`);
+	function showLinkTooltip(l, event) {
+		tooltip.style("visibility", "visible").html(`<strong>${l.value} Manuscripts:</strong> </br> 
+					${l.mss?.map((ms) => ms.shelfmark).join(" | ") || "N/A"}
+			`);
 
 		tooltip.style("left", event.clientX + 10 + "px").style("top", event.clientY + "px");
 	}
@@ -325,12 +351,6 @@ export function createWorkGraph(container, graphData, { onNavigate, onLockChange
 		const cx = width / 2;
 		const cy = height / 2;
 		const radius = Math.min(width, height) * 0.4;
-
-		// move nodes toward new center (key fix)
-		graphData.nodes.forEach((node) => {
-			node.x = cx + (node.x - cx) * 0.5;
-			node.y = cy + (node.y - cy) * 0.5;
-		});
 
 		simulation
 			.force("center", d3.forceCenter(cx, cy))
