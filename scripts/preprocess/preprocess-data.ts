@@ -11,6 +11,8 @@ import { processStrata } from "./processors/strata.js";
 import { processWorks } from "./processors/works.js";
 import { workGraph } from "./processors/work-transmission-graph.js";
 import { processManuscripts } from "./processors/manuscripts.js";
+
+import { processMsItemsData } from "@/lib/make-geojson.js";
 import type {
 	Scribe,
 	Codunit,
@@ -85,6 +87,9 @@ async function processAllData(): Promise<{
 		});
 		console.log(`Processed ${processedMsItems.length} manuscript items`);
 
+		// 2 geojson for msitems
+		const msItemsGeoJson = processMsItemsData(processedMsItems);
+		saveJSON("msitems-geojson.json", msItemsGeoJson);
 		// 3. Process hands (first pass - without scribe data)
 		console.log("Processing hands (first pass)...");
 		const handsFirstPass = processHands(rawData.hands, {

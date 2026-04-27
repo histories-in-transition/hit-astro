@@ -6,6 +6,8 @@
 	import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 	import "leaflet/dist/leaflet.css";
 
+	import { filteredIds, lockedIds } from "@/stores/hit_store";
+
 	import { withBasePath } from "@/lib/withBasePath";
 
 	export let geoJsonData;
@@ -13,11 +15,23 @@
 	export let initialView = [50, 10];
 	export let initialZoom = 3;
 
+
+
 	let mapEl;
 	let map;
 	let originLayer;
 	let provenanceLayer;
 	let currentLocationLayer;
+	let cleanupResize;
+	let isReady = false;
+
+	$: if (isReady) {
+		const idsToUse =
+			$lockedIds.size > 0 ? $lockedIds : $filteredIds;
+
+		const filtered = filterGeoJsonByIds(geoJsonData, idsToUse);
+		updateMapMarkers(filtered);
+		}
 
 	// Icons
 	const pinGreen = new URL("@/icons/map-pin-green.png", import.meta.url).toString();
@@ -125,7 +139,6 @@
 		}
 	}
 
-	let cleanupResize;
 	let resizeHandle;
 
 	onMount(() => {
@@ -213,18 +226,7 @@
 			).addTo(map);	
 		}
 
-		updateMapMarkers(geoJsonData);
-
-		// Expose global update hook (used by Tabulator)
-		window.updateMapWithFilteredIds = (filteredIds) => {
-			const filtered = {
-				type: "FeatureCollection",
-				features: geoJsonData.features.filter(
-					f => filteredIds.includes(f.properties?.hit_id)
-				),
-			};
-			updateMapMarkers(filtered);
-		};
+				
 		function enableVerticalResize(mapEl, map, handle) {
 			let startY;
 			let startHeight;
@@ -236,53 +238,70 @@
 			};
 
 			const onMouseUp = () => {
-				document.removeEventListener("mousemove", onMouseMove);
-				document.removeEventListener("mouseup", onMouseUp);
+				document.removeEventListener("pointermove", onMouseMove);
+				document.removeEventListener("pointerup", onMouseUp);
 			};
 
 			const onMouseDown = (e) => {
 				startY = e.clientY;
 				startHeight = mapEl.offsetHeight;
 
-				document.addEventListener("mousemove", onMouseMove);
-				document.addEventListener("mouseup", onMouseUp);
+				document.addEventListener("pointermove", onMouseMove);
+				document.addEventListener("pointerup", onMouseUp);
 			};
 
-			handle.addEventListener("mousedown", onMouseDown);
+			handle.addEventListener("pointerdown", onMouseDown);
 
 			return () => {
-				handle.removeEventListener("mousedown", onMouseDown);
-				document.removeEventListener("mousemove", onMouseMove);
-				document.removeEventListener("mouseup", onMouseUp);
+				handle.removeEventListener("pointerdown", onMouseDown);
+				document.removeEventListener("pointermove", onMouseMove);
+				document.removeEventListener("pointerup", onMouseUp);
 			};
 }
 cleanupResize = enableVerticalResize(mapEl, map, resizeHandle);
+isReady = true;
+});
+onDestroy(() => {
+	if (cleanupResize) cleanupResize();
+	if (map) map.remove();
 });
 
-	onDestroy(() => {
-	cleanupResize?.();
-	map?.remove();
-});
+
+// helper
+function filterGeoJsonByIds(data, ids) {
+	if (!data || !data.features) return { type: "FeatureCollection", features: [] };
+	if (!ids || ids.size === 0) return data;
+
+	return {
+		type: "FeatureCollection",
+		features: data.features.filter((f) =>
+			ids.has(f.properties?.hit_id)
+		),
+	};
+}
 	
 
 </script>
 
-<div bind:this={mapEl} class={className} id="leaflet-map" ></div>
- <!-- Drag handle -->
-  <div
-  bind:this={resizeHandle}
-  class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-neutral-400  active:bg-brand-500 text-brand-50 select-none"
-title="Kartenhöhe ändern"
-  aria-label="Kartenhöhe ändern"
-  ><svg xmlns="http://www.w3.org/2000/svg" 
-  width="24" height="24" 
-  viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-  class="lucide lucide-separator-horizontal-icon lucide-separator-horizontal">
-  <path d="m16 16-4 4-4-4"/>
-  <path d="M3 12h18"/>
-  <path d="m8 8 4-4 4 4"/>
-</svg>
+<div class="flex flex-col w-full">
+	<div bind:this={mapEl} class={className} id="leaflet-map"></div>
+
+	<!-- Drag handle -->
+	<div
+		bind:this={resizeHandle}
+		class="hidden md:flex items-center justify-center h-6 cursor-row-resize py-4 bg-neutral-400 active:bg-brand-500 text-brand-50 select-none"
+		title="Kartenhöhe ändern"
+		aria-label="Kartenhöhe ändern"
+	>
+		<svg xmlns="http://www.w3.org/2000/svg" 
+			width="24" height="24" 
+			viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+			stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="m16 16-4 4-4-4"/>
+			<path d="M3 12h18"/>
+			<path d="m8 8 4-4 4 4"/>
+		</svg>
+	</div>
 </div>
 
 

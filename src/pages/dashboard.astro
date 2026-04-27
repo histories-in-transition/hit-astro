@@ -2,6 +2,9 @@
 import SearchPanel from "@/components/search/search-panel.svelte";
 import PageLayout from "@/layouts/page-layout.astro";
 import WorkTransmission from "@/components/visualisations/WorkTransmission.svelte";
+
+import geoJsonData from "@/content/data/msitems-geojson.json";
+import MapLeaflet from "@/components/map-leaflet.svelte";
 ---
 
 <PageLayout title="Dashboard">
@@ -11,8 +14,11 @@ import WorkTransmission from "@/components/visualisations/WorkTransmission.svelt
 				<SearchPanel client:only="svelte" />
 			</aside>
 		</div>
-		<div class="grid grid-cols-[repeat(auto-fit,minmax(1000px,1fr))] overflow-auto w-full mx-auto">
+		<div
+			class="grid grid-cols-[repeat(auto-fit,minmax(1000px,1fr))] overflow-auto w-full mx-auto gap-2 p-4"
+		>
 			<WorkTransmission client:only="svelte" />
+			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
 		</div>
 	</div>
 </PageLayout>
