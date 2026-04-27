@@ -14,4 +14,6 @@ export const filters = writable({
 
 export const filteredIds = writable(new Set<string>());
 
+export const lockedIds = writable(new Set<string>());
+
 export const dataWorksGraph = writable<GraphData>({ nodes: [], edges: [] });

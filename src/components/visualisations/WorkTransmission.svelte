@@ -2,7 +2,7 @@
 import { onMount } from "svelte";
 import * as d3 from "d3";
 import workgraph from "@/content/data/work-graph.json";
-import { filteredIds, dataWorksGraph } from "@/stores/hit_store";
+import { filteredIds, dataWorksGraph, lockedIds } from "@/stores/hit_store";
 import { withBasePath } from "@/lib/withBasePath";
 import type { GraphData } from "@/types/graph";
 import {derived} from "svelte/store";
@@ -77,7 +77,7 @@ function highlightNodesByIds(ids: Set<string>) {
 // case where a node is locked /clicked on - show only its filtered neighbors
   if (lockedNode) {
     const neighbors = neighborMap.get(lockedNode.id) ?? new Set();
-
+   
     // include the locked node itself
     filteredNodeIds = new Set([lockedNode.id, ...neighbors]);
   } else {
@@ -319,8 +319,7 @@ nodes
 
   if (lockedNode) {
     // restore locked state
-    highlightNode(lockedNode);
-
+    highlightNode(lockedNode); 
     labels
       .attr("opacity", n => n.id === lockedNode.id ? 1 : 0);
 
@@ -347,6 +346,7 @@ nodes
       // first click → lock
       lockedNode = d;
       showNodeDetails(d, this);
+      
 
     } else if (lockedNode.id === d.id) {
       // second click on SAME node → open detail page of the work
@@ -362,7 +362,7 @@ nodes
 
 svg.on("pointerdown", () => {
   lockedNode = null;   //  unlock
-
+  lockedIds.set(new Set()); // clear locked IDs
   resetHighlight();
   tooltip.style("visibility", "hidden");
   labels.attr("opacity", 0);
@@ -440,7 +440,8 @@ function showNodeTooltip(d, el) {
 function showNodeDetails(d, el) {
   tooltip.style("visibility", "hidden");
   highlightNode(d);
-
+  lockedIds.set(lockedNode.msItems ? new Set(lockedNode.msItems) : new Set());
+  console.log("locked  msItems:", lockedNode.msItems);
 
   // show ONLY main node label
   labels
