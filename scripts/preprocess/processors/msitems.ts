@@ -8,6 +8,7 @@ import {
 import type {
 	HitMsitem,
 	HitManuscript,
+	HitManuscriptDated,
 	HitWorks,
 	HitPeople,
 	HitHand,
@@ -23,6 +24,7 @@ import type { Place, Library, MsItem } from "@/types/index.js";
 
 type MsItemDeps = {
 	manuscripts: HitManuscript[];
+	manuscriptDated: HitManuscriptDated[];
 	places: Place[];
 	librariesPlus: Library[];
 	works: HitWorks[];
@@ -48,6 +50,7 @@ export function processMsItems(msItems: HitMsitem[], deps: MsItemDeps): MsItem[]
 function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: HitMsitem[]) {
 	const {
 		manuscripts,
+		manuscriptDated,
 		places,
 		librariesPlus,
 		works,
@@ -87,8 +90,9 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 		dates,
 	);
 
-	// Get provenance
+	// Get provenance from cod. units and enrich it with place and date information
 	const provenance = getProvenance(item, cod_unitsprov, places, dates, bibliography);
+	// the same for manuscript
 
 	// Return the enriched msitem
 	return {
@@ -96,7 +100,15 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 		hit_id: item.hit_id,
 		view_label: `${item.manuscript[0]?.value ?? "Unknown"}, fol. ${item.locus_grp}`,
 		label: item.label[0]?.value ?? "",
-		manuscript: item.manuscript.map(({ order, ...rest }) => rest),
+		manuscript: item.manuscript.map((ms) => {
+			return {
+				id: ms.id,
+				value: ms.value,
+				//orig_place: getMsOrigPlace(item, manuscripts, places),
+				//provenance: getMsProvenance(item, manuscripts, places),
+				//orig_date: getMsDate(item, manuscriptDated, dates),
+			};
+		}),
 		joined_transmission: getJoinedTransmission(item, originalMsItems, works, genres, people),
 		library: library,
 		library_place: library_place,
@@ -121,9 +133,9 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 		form: item.form.map(({ value }) => ({ value })),
 		form_note: item.form_note ?? "",
 		note: item.note ?? "",
-		orig_date: getOrigDate(relatedHand, provenance),
-		orig_place: getOrigPlace(relatedHand, provenance),
-		provenance: getProvenanceData(provenance, relatedHand),
+		orig_date: getOrigDate(relatedHand, provenance, item, manuscriptDated, dates),
+		orig_place: getOrigPlace(relatedHand, provenance, item, manuscripts, places),
+		provenance: getProvenanceData(provenance, relatedHand, item, manuscripts, places),
 		author_entry: author_entry,
 		project: project,
 	};
@@ -276,6 +288,29 @@ function getProvenance(
 		}));
 }
 
+function getMsProvenance(item: HitMsitem, manuscripts: HitManuscript[], places: Place[]) {
+	const manuscript = manuscripts.find((ms) => ms.id === item.manuscript[0]?.id);
+	if (!manuscript) return [];
+
+	return enrichPlaces(manuscript.provenance, places);
+}
+
+function getMsOrigPlace(item: HitMsitem, manuscripts: HitManuscript[], places: Place[]) {
+	const manuscript = manuscripts.find((ms) => ms.id === item.manuscript[0]?.id);
+	if (!manuscript) return [];
+
+	return enrichPlaces(manuscript.orig_place, places);
+}
+
+function getMsDate(item: HitMsitem, manuscriptsDated: HitManuscriptDated[], dates: HitDates[]) {
+	const manuscript = manuscriptsDated.find(
+		(ms) => ms?.manuscript[0]?.id === item.manuscript[0]?.id,
+	);
+	if (!manuscript) return [];
+
+	return enrichDates(manuscript.date, dates);
+}
+
 function getCommentedMsItems(item: HitMsitem, msItems: HitMsitem[]) {
 	// Add safety check for commented_msitem
 	if (!item.commented_msitem || !Array.isArray(item.commented_msitem)) {
@@ -342,51 +377,93 @@ function getJoinedTransmission(
 	);
 }
 
-function getOrigDate(relatedHand, provenance) {
-	return [
-		...relatedHand
-			.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-			.flatMap((hand) => hand.dating),
-		...provenance
-			.filter((prov) => prov.type === "orig")
-			.map((prov) => ({
-				hit_id: prov.hit_id,
-				date: prov.from,
-				authority: prov.authority,
-				page: prov.page,
-			})),
-	];
+function getOrigDate(relatedHand, provenance, item, manuscriptDated, dates) {
+	const handDates = relatedHand
+		.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
+		.flatMap((hand) => hand.dating);
+
+	if (handDates.length > 0) {
+		return handDates;
+	}
+
+	const provDates = provenance
+		.filter((prov) => prov.type === "orig")
+		.map((prov) => ({
+			hit_id: prov.hit_id,
+			authority: prov.authority,
+			page: prov.page,
+			date: prov.from,
+		}));
+
+	if (provDates.length > 0) {
+		return provDates;
+	}
+	const msDates = manuscriptDated
+		.filter((msDated) => msDated.manuscript[0]?.id === item.manuscript[0]?.id)
+		.flatMap((msDated) => ({
+			hit_id: msDated.hit_id,
+			date: enrichDates(msDated.date, dates),
+		}));
+
+	return msDates;
+}
+// three option to get data for orig place, check first related hand, then cod unit, and as fallback manuscript
+function getOrigPlace(relatedHand, provenance, item, manuscripts, places) {
+	// 1. From relatedHand
+	const handPlaces = relatedHand
+		.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
+		.flatMap((hand) => hand.place);
+
+	if (handPlaces.length > 0) {
+		return handPlaces;
+	}
+
+	// 2. From provenance
+	const provPlaces = provenance
+		.filter((prov) => prov.type === "orig")
+		.map((prov) => ({
+			hit_id: prov.hit_id,
+			place: prov.places,
+			authority: prov.authority,
+			page: prov.page,
+		}));
+
+	if (provPlaces.length > 0) {
+		return provPlaces;
+	}
+
+	// 3. From manuscripts (fallback)
+	const msPlaces = manuscripts
+		.filter((ms) => ms.id === item.manuscript[0]?.id)
+		.flatMap((ms) => ({
+			hit_id: ms.hit_id,
+			place: enrichPlaces(ms.orig_place, places),
+		}));
+
+	return msPlaces;
 }
 
-function getOrigPlace(relatedHand, provenance) {
-	return [
-		...relatedHand
-			.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-			.flatMap((hand) => hand.place),
-		...provenance
-			.filter((prov) => prov.type === "orig")
-			.map((prov) => ({
-				hit_id: prov.hit_id,
-				place: prov.places,
-				authority: prov.authority,
-				page: prov.page,
+function getProvenanceData(provenance, relatedHand, item, manuscripts, places) {
+	const relatedHandPlaces = relatedHand
+		.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value !== "Schreiber")))
+		.flatMap((hand) =>
+			hand.place.map((pl) => ({
+				hit_id: pl.hit_id,
+				places: pl.place,
+				from: hand.dating.flatMap((dating) => dating.date),
+				till: [],
+				authority: hand.dating.flatMap((d) => d.authority),
 			})),
-	];
-}
-
-function getProvenanceData(provenance, relatedHand) {
-	return [
-		...provenance.filter((prov) => prov.type === "prov"),
-		...relatedHand
-			.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value !== "Schreiber")))
-			.flatMap((hand) =>
-				hand.place.map((pl) => ({
-					hit_id: pl.hit_id,
-					places: pl.place,
-					from: hand.dating.flatMap((dating) => dating.date),
-					till: [],
-					authority: hand.dating.flatMap((d) => d.authority),
-				})),
-			),
-	];
+		);
+	const provenancePlaces = provenance.filter((prov) => prov.type === "prov");
+	if (provenancePlaces.length > 0 || relatedHandPlaces.length > 0) {
+		return [...provenancePlaces, ...relatedHandPlaces];
+	}
+	const msProvenance = manuscripts
+		.filter((ms) => ms.id === item.manuscript[0]?.id)
+		.flatMap((ms) => ({
+			hit_id: ms.hit_id,
+			places: enrichPlaces(ms.provenance, places),
+		}));
+	return msProvenance;
 }

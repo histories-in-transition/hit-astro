@@ -72,6 +72,7 @@ async function processAllData(): Promise<{
 		console.log("Processing manuscript items...");
 		const processedMsItems = processMsItems(rawData.msitems, {
 			manuscripts: rawData.manuscripts,
+			manuscriptDated: rawData.manuscript_dated,
 			places: processedPlaces,
 			librariesPlus: processedLibraries,
 			works: rawData.works,
