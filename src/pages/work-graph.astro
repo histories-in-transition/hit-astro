@@ -9,14 +9,28 @@ import MapLeaflet from "@/components/map-leaflet.svelte";
 
 <PageLayout title="Netzwerkdiagramm">
 	<div class="flex h-full w-full">
-		<div class="h-screen bg-brand-200/10 border-r w-80 p-3">
+		<div id="filter-panel" class="hidden md:block h-screen bg-brand-200/10 border-r w-80 p-3">
 			<aside class="sticky top-25 self-start">
 				<SearchPanel client:only="svelte" />
 			</aside>
 		</div>
+		<button id="filter-toggle" class="md:hidden bg-brand-500 text-white p-2 rounded">
+			<span class="[writing-mode:vertical-rl] rotate-180 font-bold tracking-wide uppercase"
+				>Filter</span
+			>
+		</button>
 		<div class="grid grid-cols-1 lg:grid-cols-2 w-full mx-auto gap-2 p-4">
 			<WorkTransmission client:only="svelte" />
 			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
 		</div>
 	</div>
 </PageLayout>
+<script>
+	const showFilter = document.querySelector("#filter-toggle");
+	const filters = document.querySelector("#filter-panel");
+	if (showFilter) {
+		showFilter.addEventListener("click", function () {
+			filters?.classList.toggle("hidden");
+		});
+	}
+</script>
