@@ -21,7 +21,10 @@ import MapLeaflet from "@/components/map-leaflet.svelte";
 		</button>
 		<div class="grid grid-cols-1 lg:grid-cols-2 w-full mx-auto gap-2 p-4">
 			<WorkTransmission client:only="svelte" />
-			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
+			<div>
+				<h1 class="text-2xl font-bold mb-2">Überlieferungskarte</h1>
+				<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
+			</div>
 		</div>
 	</div>
 </PageLayout>

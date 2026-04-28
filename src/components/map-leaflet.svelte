@@ -11,7 +11,7 @@
 	import { withBasePath } from "@/lib/withBasePath";
 
 	export let geoJsonData;
-	export let className = "w-full h-64 md:h-96 border rounded z-10";
+	export let className = "w-full h-64 md:h-120 border rounded z-10";
 	export let initialView = [50, 10];
 	export let initialZoom = 3;
 

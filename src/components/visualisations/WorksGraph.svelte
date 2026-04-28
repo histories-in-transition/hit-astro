@@ -37,17 +37,22 @@ $: if (graph) {
 
 <div class="w-full">
 <h1 class="text-2xl font-bold">Netzwerkdiagramm aller Werke</h1>
-<div class="flex flex-wrap gap-3 mt-4 px-2.5">
-  {#each genres as genre}
-    <div class="flex items-center gap-2">
-      <span
-        class="w-3 h-3 inline-block"
-        style="background:{genreColors.get(genre)}"
-      ></span>
-      <span class="text-sm">{genre}</span>
-    </div>
-  {/each}
-</div>
+<details open class="border rounded-md p-3 grid gap-2 bg-white mt-2">
+ <summary class="font-semibold text-xl text-brand-800 cursor-pointer">
+  Legende
+		</summary>
+  <div class="flex flex-wrap gap-2 px-3">
+    {#each genres as genre}
+      <div class="flex items-center gap-1">
+        <span
+          class="w-3 h-3 inline-block"
+          style="background:{genreColors.get(genre)}"
+        ></span>
+        <span class="text-sm">{genre}</span>
+      </div>
+    {/each}
+  </div>
+</details>
   <div
   bind:this={container}
   bind:clientWidth={width}
