@@ -17,14 +17,46 @@ onMount(() => {
     onNavigate: (node) => {
       window.location.href = withBasePath(`/works/${node.id}`);
     },
-    onLockChange: (node) => {
+   onLockChange: (node) => {
       lockedIds.set(node?.msItems ? new Set(node.msItems) : new Set());
+
+      const params = new URLSearchParams(window.location.search);
+
+      if (node) {
+        params.set("node", node.id);
+      } else {
+        params.delete("node");
+      }
+
+      const newUrl = params.toString()
+        ? `${window.location.pathname}?${params.toString()}`
+        : window.location.pathname;
+
+      window.history.replaceState({}, "", newUrl);
     }
   });
 
   genres = graph.getGenres();
   genreColors = graph.getGenreColors();
+   const params = new URLSearchParams(window.location.search);
+  const nodeId = params.get("node");
+
+  if (nodeId) {
+  const node = workgraph.nodes.find(n => n.id === nodeId);
+  if (node) {
+    lockedIds.set(node.msItems ? new Set(node.msItems) : new Set());
+  }
+}
 });
+
+$: if (graph) {
+  const node = workgraph.nodes.find(n =>
+    n.msItems?.some(ms => $lockedIds.has(ms))
+  );
+
+  graph.setLockedNode(node || null);
+}
+
 
 $: if (graph && width && height) {
   graph.updateSize(width, height);
