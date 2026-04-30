@@ -1,9 +1,8 @@
 <script lang="ts">
 import { onMount } from "svelte";
 import * as echarts from "echarts";
-import type { Work } from "@/types/work";
 import {
-  buildGenreColorMap,
+  buildGenreColorMap, parseCentury
 } from "@/lib/helpers/visualisations";
 import chartData from "@/content/data/work-genre-data.json";
 import { withBasePath } from "@/lib/withBasePath";
@@ -21,7 +20,7 @@ const places = [... new Set(chartData.map(d => d.place).sort((a,b) =>
 ))];
 
 let selectedPlace: string | null =
-  places.length ? places[0]: null;
+  places.length ? "Salzburg": null;
 
 // ---------- DATA ----------
 
@@ -182,35 +181,8 @@ $: if (chart && selectedPlace) {
   });
 }
 
-// ---------- HELPERS ----------
 
-function extractOrigPlaces(chartData: Work[]) {
-  const places = new Map<string, string>();
-  const histWorks = chartData.filter(w =>
-    w.genre.some(g => g.main_genre === "Historiographie")
-  );
 
-  for (const work of histWorks) {
-    for (const ms of work.ms_transmission ?? []) {
-      for (const op of ms.orig_place ?? []) {
-        for (const p of op.place ?? []) {
-          places.set(p.hit_id, p.value);
-        }
-      }
-    }
-  }
-
-  return Array.from(places, ([hit_id, label]) => ({
-    hit_id,
-    label
-  }));
-}
-
-// helpers
-function parseCentury(c: string): number {
-  const match = c.match(/\d+/);
-  return match ? parseInt(match[0], 10) : Infinity;
-}
   
 </script>
 <div class="flex flex-col gap-2 items-start">

@@ -23,17 +23,10 @@ import GenreMap from "@/components/visualisations/GenreMap.svelte";
 				<div class="md:grid grid-cols-[1fr_3fr] gap-6">
 					<div class="font-light gap-2 flex flex-col">
 						<p>
-							Diese Tortendiagramm zeigt die Verteilung historiographischer Sub-Genres in den
+							Diese Diagramm zeigt die Verteilung historiographischer Sub-Genres in den
 							Handschriftenüberlieferungen von einem bestimmten Ort. Nach Auswahl eines Ortes
-							(Schreiberort) Dargestellt ist die Anzahl der Überlieferungen pro Sub-Genre,
+							(Schreiberort) wird die Anzahl der Überlieferungen pro Sub-Genre dargestellt,
 							gegliedert nach Jahrhunderten.
-						</p>
-						<p>
-							<span class="font-semibold">Beispiel</span>: Die Grafik für die Abtei Saint-Bertin im
-							10. Jh. zeigt den Eintrag „Chronik: 5 (50 %)“. Das bedeutet, dass an diesem Ort im 10.
-							Jh. fünf Überlieferungen von Werken zugewiesen wurden, die dem Genre „Chronik“
-							zuzuordnen sind. Dies entspricht 50 % aller historiographischen Werke, die für diesen
-							Ort und dieses Jahrhundert nachgewiesen sind. [Stand der Daten: Februar 2026.]
 						</p>
 					</div>
 					<GenrePieChart client:load />

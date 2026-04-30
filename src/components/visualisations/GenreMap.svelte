@@ -3,109 +3,122 @@
   import * as echarts from "echarts";
   import europeGeoJSON from "@/maps/europe-geo.json";
 
-  import works from "@/content/data/works.json";
+  import chartData from "@/content/data/work-genre-data.json";
   import {withBasePath} from "@/lib/withBasePath"
 
   import {
-    aggregateWorks, buildGenreColorMap, extractHistoriographyGenres
+    buildGenreColorMap, parseCentury
   } from "@/lib/helpers/visualisations";
 
   let chartEl: HTMLDivElement;
   let chart: echarts.ECharts;
 
-const aggregated = aggregateWorks(works);
-const placeData = aggregated.places;
+const centuries = [
+  ...new Set(chartData.map(d => d.century))
+].sort((a, b) => parseCentury(a) - parseCentury(b));
 
-  const allGenres = extractHistoriographyGenres(works);
+let selectedCentury: string = centuries[0];
+
+const placeMap = new Map<
+  string,
+  { name: string; lat: number; lng: number }
+>();
+
+chartData.forEach(d => {
+  if (!placeMap.has(d.place)) {
+    placeMap.set(d.place, {
+      name: d.place,
+      lat: d.lat,
+      lng: d.lng
+    });
+  }
+});
+
+const allGenres = [
+  ...new Set(chartData.map(d => d.genre))
+].sort((a, b) => a.localeCompare(b));
+
 const genreColorMap = buildGenreColorMap(allGenres);
 
 
-  // collect all centuries available for the select dropdown, sorted
-  const centuries: number[] = Array.from(
-    new Set(
-      Array.from(placeData.values())
-        .flatMap(p => Array.from(p.centuries.keys()))
-    )
-  ).sort((a, b) => a - b) as number[];
+  function updateChart(century: string) {
+  const pieSeries = [];
 
-  let selectedCentury: number = centuries[0];
+  const filtered = chartData.filter(d => d.century === century);
 
-  
+  // group by place
+  const grouped = new Map<string, typeof filtered>();
 
-  
+  filtered.forEach(d => {
+    if (!grouped.has(d.place)) {
+      grouped.set(d.place, []);
+    }
+    grouped.get(d.place)!.push(d);
+  });
 
+  for (const [place, items] of grouped.entries()) {
+    const coords = placeMap.get(place);
+    if (!coords) continue;
 
-  function updateChart(century: number) { 
+    const data = items.map(d => ({
+      name: d.genre,
+      value: d.count,
+      itemStyle: {
+        color: genreColorMap[d.genre]
+      }
+    }));
 
+    const total = data.reduce((sum, d) => sum + d.value, 0);
 
-    const pieSeries = [];
-
-    for (const place of placeData.values()) {
-      const genreMap = place.centuries.get(century);
-      if (!genreMap) continue;
-
-      const data = Array.from(genreMap.entries()).map(
-        ([name, value]) => ({
-          name,
-          value,
-          itemStyle: {
-            color: genreColorMap.get(name)
-          }
-        })
-      );
-
-      const total = data.reduce((sum, d) => sum + d.value, 0);
-
-     pieSeries.push({
-      name: place.name,   // good practice
+    pieSeries.push({
+      name: place,
       type: "pie",
       coordinateSystem: "geo",
-      center: [place.lng, place.lat],
+      center: [coords.lng, coords.lat],
       radius: Math.max(10, Math.sqrt(total) * 3),
       data,
-      label: {
-        show: false, // labels are for the pie slices i.e. genres not the place, so we hide them
-        },
-      legend: {}
+      label: { show: false }
     });
-    }
-    chart.setOption({      
+  }
+
+  chart.setOption(
+    {
       legend: {
         show: true,
         bottom: 20,
         left: "center",
         data: allGenres
       },
-       toolbox: {
+
+      toolbox: {
+        show: true,
+        orient: "vertical",
+        right: 30,
+        itemSize: 20,
+        itemGap: 20,
+        feature: {
+          saveAsImage: {
             show: true,
-            orient: "vertical",
-            right: 30,
-            itemSize: 20,
-            itemGap: 20,
-            feature: {
-            saveAsImage: {
-                show: true,
-                title: "Herunterladen als PNG",
-                type: "png",
-                pixelRatio: 2,
-                backgroundColor: "#fff",
-            },
-            },
-        },
+            title: "Herunterladen als PNG",
+            type: "png",
+            pixelRatio: 2,
+            backgroundColor: "#fff"
+          }
+        }
+      },
+
       series: [
         {
           type: "map",
           map: "europe",
           geoIndex: 0
         },
-        ...pieSeries,
+        ...pieSeries
       ]
     },
-  { replaceMerge: ["series", "legend"] }
-
- 
+    { replaceMerge: ["series", "legend"] }
   );
-  }
+}
 
   onMount(() => {
     chart = echarts.init(chartEl);
@@ -136,7 +149,7 @@ const genreColorMap = buildGenreColorMap(allGenres);
 
       const place = params.seriesName;
       const genre = params.data.name != 'Historiographie allgemein' ? params.data.name : '';
-      const century = `${selectedCentury.toString()}. Jh.`; 
+      const century = selectedCentury; 
 
       const searchParams = new URLSearchParams();
 
@@ -183,10 +196,9 @@ const genreColorMap = buildGenreColorMap(allGenres);
     Filtern nach Jahrhundert
   </label>
   <select id="century-select" bind:value={selectedCentury}
-  on:change={(e) => selectedCentury = Number(e.currentTarget.value)}
   class="border p-2 rounded bg-white border-gray-300">
     {#each centuries as c}
-      <option value={c}>{c}th century</option>
+      <option value={c}>{c}</option>
     {/each}
   </select>
 
