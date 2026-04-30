@@ -9,7 +9,8 @@ import { processScribes } from "./processors/scribes.js";
 import { processCodUnits } from "./processors/cod-units.js";
 import { processStrata } from "./processors/strata.js";
 import { processWorks } from "./processors/works.js";
-import { workGraph } from "./processors/work-transmission-graph.js";
+import { makeWorkGenreChartsData } from "./processors/work-genre-charts.ts";
+import { workGraph } from "./processors/work-transmission-graph.ts";
 import { processManuscripts } from "./processors/manuscripts.js";
 
 import { processMsItemsData } from "@/lib/make-geojson.js";
@@ -160,6 +161,12 @@ async function processAllData(): Promise<{
 		console.log(
 			`Processed work graph with ${wokrGraph.nodes.length} nodes and ${wokrGraph.edges.length} edges`,
 		);
+
+		//8b. Process works for genre charts
+		console.log("Processing works for genre charts...");
+		const workGenreData = makeWorkGenreChartsData(processedWorks);
+		saveJSON("work-genre-data.json", workGenreData);
+		console.log(`Processed work genre data with ${workGenreData.length} entries`);
 
 		// 9. Process manuscripts (depends on almost everything)
 		console.log("Processing manuscripts...");

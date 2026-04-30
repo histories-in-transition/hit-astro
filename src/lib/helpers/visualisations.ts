@@ -47,7 +47,7 @@ export function aggregateWorks(works: Work[]): AggregatedData {
 				}
 			}
 
-			// 2️⃣ Now count once per place
+			// count once per place
 			for (const p of placeSet.values()) {
 				if (!places.has(p.hit_id)) {
 					places.set(p.hit_id, {
@@ -93,11 +93,17 @@ export function buildDatasetSource(data: Map<string, Map<number, number>>) {
 
 // interest only in historiography sub-genres
 function getHistoriographieSubGenres(work: Work): string[] {
-	return (
-		work.genre
-			?.filter((g) => g.main_genre === "Historiographie")
-			.map((g) => g.sub_genre?.trim() || "Historiographie allgemein") ?? []
-	);
+	const histGenres = work.genre?.filter((g) => g.main_genre === "Historiographie") ?? [];
+
+	if (!histGenres.length) return [];
+
+	const subGenres = histGenres.map((g) => g.sub_genre);
+
+	if (subGenres.length > 0) {
+		return [...new Set(subGenres)];
+	}
+
+	return ["Historiographie allgemein"];
 }
 
 function getCenturiesFromTransmission(ms: any): number[] {
@@ -122,35 +128,6 @@ function getCenturiesFromTransmission(ms: any): number[] {
 	return Array.from(centurySet);
 }
 
-// count sub-genres by century from ms_transmission data for GenrePieChart
-export function countSubGenres(works: Work[], selectedPlace) {
-	const result = new Map<string, Map<number, number>>();
-	// filter for historiographie sub-genres
-	for (const work of works) {
-		const subGenres = getHistoriographieSubGenres(work);
-		if (!subGenres.length) continue;
-		// get centuries from ms_transmission
-		for (const ms of work.ms_transmission ?? []) {
-			// make sure the ms_transmission is only for the selected place
-			if (!msHasOrigPlace(ms, selectedPlace)) continue;
-			const centuries = getCenturiesFromTransmission(ms);
-			if (!centuries.length) continue;
-
-			for (const sg of subGenres) {
-				if (!result.has(sg)) {
-					result.set(sg, new Map());
-				}
-				const centuryMap = result.get(sg)!;
-
-				for (const c of centuries) {
-					centuryMap.set(c, (centuryMap.get(c) ?? 0) + 1);
-				}
-			}
-		}
-	}
-
-	return result;
-}
 // helper to check if the ms should be counted in the piechart for this specific place
 function msHasOrigPlace(ms: any, placeHitId: string) {
 	return ms.orig_place?.some((op) => op.place?.some((p) => p.hit_id === placeHitId));
@@ -187,6 +164,36 @@ export function extractHistoriographyGenres(works: Work[]): string[] {
 	}
 
 	return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+// count sub-genres by century from ms_transmission data for GenrePieChart
+export function countSubGenres(works: Work[], selectedPlace) {
+	const result = new Map<string, Map<number, number>>();
+	// filter for historiographie sub-genres
+	for (const work of works) {
+		const subGenres = getHistoriographieSubGenres(work);
+		if (!subGenres.length) continue;
+		// get centuries from ms_transmission
+		for (const ms of work.ms_transmission ?? []) {
+			// make sure the ms_transmission is only for the selected place
+			if (!msHasOrigPlace(ms, selectedPlace)) continue;
+			const centuries = getCenturiesFromTransmission(ms);
+			if (!centuries.length) continue;
+
+			for (const sg of subGenres) {
+				if (!result.has(sg)) {
+					result.set(sg, new Map());
+				}
+				const centuryMap = result.get(sg)!;
+
+				for (const c of centuries) {
+					centuryMap.set(c, (centuryMap.get(c) ?? 0) + 1);
+				}
+			}
+		}
+	}
+
+	return result;
 }
 
 const PALETTE = [
