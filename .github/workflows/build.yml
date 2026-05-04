@@ -96,7 +96,7 @@ jobs:
 
       - name: setup pages
         id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           enablement: true
 
@@ -104,10 +104,10 @@ jobs:
         run: pnpm run build
 
       - name: upload artifact (the dist folder from astro)
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
       - name: Deploy to Github pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
