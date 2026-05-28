@@ -117,15 +117,14 @@ const pathname = Astro.url.pathname;
 				<input
 					type="text"
 					id="searchInput"
-					class="hidden 2xl:block px-2 w-64 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
+					class="hidden 2xl:block py-1 px-2 w-64 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
 					placeholder="Autor, Werk, Handschrift"
 					aria-label="suche nach Autor, Werk, Handschrift"
 				/>
 				<button
 					id="searchButton"
 					type="submit"
-					class={`${pathname.split("/").includes("search") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-				hover:underline underline-offset-4 decoration-2 decoration-brand-50 cursor-pointer`}
+					class="bg-brand-500 font-semibold py-1 px-2 rounded-md cursor-pointer"
 					>Erweiterte Suche</button
 				>
 			</form>
