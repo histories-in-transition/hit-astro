@@ -1,0 +1,50 @@
+---
+import Layout from "@/layouts/page-layout.astro";
+import NavLink from "@/components/nav-link.astro";
+---
+
+<Layout title="oai-pmh">
+	<div class="mx-auto grid gap-4 content-center justify-center text-center py-8 px-15 h-full">
+		<h1 class="font-extrabold text-lg md:text-5xl text-brand-800">
+			Static OAI-PMH
+			<br />
+			<span class="text-base md:text-lg"
+				>(Open Archives Initiative Protocol for Metadata Harvesting)</span
+			>
+		</h1>
+		<div class="grid grid-cols-[1fr_1fr] gap-4 text-start">
+			<div class="p-2 border rounded-md border-neutral-300 bg-brand-100">
+				<h2 class="py-3 text-center text-lg md:text-xl font-semibold text-brand-800">
+					What is OAI-PMH ?
+				</h2>
+				<div class="px-3 py-2 grid gap-2 text-justify">
+					<p>
+						The <NavLink href="https://www.openarchives.org/pmh/"
+							>Open Archives Initiative Protocol for Metadata Harvesting (OAI-PMH)</NavLink
+						> is a widely used standard for sharing and collecting metadata between digital repositories.
+						It enables libraries, archives, research projects, and other digital collections to make structured
+						descriptions of their resources available in a machine-readable format.
+					</p>
+					<p>
+						By providing an OAI-PMH endpoint, our project allows external services to harvest
+						metadata records of the manuscript descriptions and incorporate them into larger
+						discovery platforms, catalogues, and research infrastructures. This helps increase the
+						visibility, accessibility, and interoperability of our digital collection while allowing
+						institutions to maintain control over their own data and websites.
+					</p>
+				</div>
+			</div>
+			<div class="mx-auto border rounded-md w-full py-5 px-10 text-center">
+				<h2 class="py-3 text-center text-lg md:text-xl font-semibold text-brand-800">Endpoints:</h2>
+				<ul class="text-base/8 md:text-lg list-disc list-inside text-start">
+					<li>
+						<NavLink href="/oai-pmh/Identify.xml">Identify</NavLink>
+					</li>
+					<li><NavLink href="/oai-pmh/ListMetadataFormats.xml">ListMetadataFormats</NavLink></li>
+					<li><NavLink href="/oai-pmh/ListIdentifiers.xml">ListIdentifiers</NavLink></li>
+					<li><NavLink href="/oai-pmh/ListRecords.xml">ListRecords</NavLink></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</Layout>
