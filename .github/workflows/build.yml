@@ -86,6 +86,9 @@ jobs:
       - name: Build PDFs of manuscripts.json
         run: ./scripts/export/makepdf.sh
 
+      - name: generate oai-pmh
+        run: pnpm run generate-oai-pmh
+
       - name: generate typesense index
         env:
           TYPESENSE_ADMIN_API_KEY: ${{ secrets.TYPESENSE_ADMIN_API_KEY }}
