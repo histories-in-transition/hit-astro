@@ -15,7 +15,8 @@
 		"build": "astro build",
 		"start": "astro preview",
 		"astro": "astro",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"generate-oai-pmh": "node ./scripts/export/oai-pmh/generate-oai-pmh.ts"
 	},
 	"dependencies": {
 		"@acdh-oeaw/lib": "^0.1.12",
