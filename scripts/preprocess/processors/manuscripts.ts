@@ -102,10 +102,13 @@ function transformManuscript(manuscript: HitManuscript, deps: ManuscriptDeps): M
 
 	const shelfmarkRaw = manuscript.shelfmark?.[0]?.value ?? "";
 	const shelfmark = shelfmarkRaw.includes(",") ? shelfmarkRaw.split(",")[1].trim() : shelfmarkRaw;
-
+	const place = library?.[0]?.place?.[0]?.value ?? "";
+	const libAbbr = library?.[0]?.abbreviation ?? "";
+	const view_label = shelfmark && place && libAbbr ? `MS ${place}, ${libAbbr}, ${shelfmark}` : "";
 	return {
 		id: manuscript.id,
 		hit_id: manuscript.hit_id,
+		view_label: view_label,
 		shelfmark: shelfmark,
 		library: library,
 		title: manuscript.title ?? "",

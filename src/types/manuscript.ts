@@ -6,6 +6,7 @@ import type { Hand } from "./hand";
 export interface Manuscript {
 	id: number;
 	hit_id: string;
+	view_label: string;
 	shelfmark: string;
 	library: Library[];
 	title?: string;
