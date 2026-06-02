@@ -46,11 +46,13 @@ export default function Strata(strata) {
 					? texEscape(hr.hand.map((h) => h.label.split("_")[1]).join(", "))
 					: "";
 
-				const role = texEscape((hr.role ?? []).join(", "));
-				const scribe = texEscape((hr.scribe_type ?? []).join(", "));
-				const func = texEscape((hr.function ?? []).join(", "));
-				const locus = hr.locus ? texEscape(hr.locus) : "";
-				const layout = texEscape((hr.layout ?? []).join(", "));
+				const role = texEscape((hr.role.length === 0 ? ["—"] : hr.role).join(", "));
+				const scribe = texEscape((hr.scribe_type.length === 0 ? ["—"] : hr.scribe_type).join(", "));
+				const func = texEscape((hr.function.length === 0 ? ["—"] : hr.function).join(", "));
+				const locus = hr.locus ? texEscape(hr.locus) : "—";
+				const layout = texEscape(
+					(hr.locus_layout.length === 0 ? ["—"] : hr.locus_layout).join(", "),
+				);
 
 				return `${msitem} & ${hand ?? ""} & ${role} & ${scribe} & ${func} & ${locus} & ${layout} \\\\`;
 			})

@@ -22,10 +22,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout the repo # clone the repo to the docker run in ubuntu
-        uses: actions/checkout@v4 # there is already a code for this step, we refer to the path in the github ans state the version
+        uses: actions/checkout@v6 # there is already a code for this step, we refer to the path in the github ans state the version
 
       - name: Cache schemas
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: schemas/
           key: tei-schemas-${{ hashFiles('schemas/*.xsd') }}
@@ -39,12 +39,12 @@ jobs:
           xmllint --version
 
       - name: set up node.js # for our commands to be executed we need to set node in the ubuntu docker
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22 # need to specify the version
 
       - name: set up pnpm
-        uses: pnpm/action-setup@v4 # this one lives in the pnpm github repo
+        uses: pnpm/action-setup@v6 # this one lives in the pnpm github repo
         with:
           version: 9
 
@@ -99,7 +99,7 @@ jobs:
 
       - name: setup pages
         id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           enablement: true
 
@@ -107,10 +107,10 @@ jobs:
         run: pnpm run build
 
       - name: upload artifact (the dist folder from astro)
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
       - name: Deploy to Github pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
