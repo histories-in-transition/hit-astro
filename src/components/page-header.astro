@@ -84,6 +84,12 @@ const pathname = Astro.url.pathname;
 				>
 					<NavLink class="none" href="/strata">Strata</NavLink>
 				</li>
+				<li
+					class={`${pathname.split("/").includes("tools") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
+					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
+				>
+					<NavLink class="none" href="/tools">Tools</NavLink>
+				</li>
 				<li class="relative group">
 					<button class="flex gap-0.5 items-center" aria-haspopup="true" aria-expanded="false"
 						>Projekt

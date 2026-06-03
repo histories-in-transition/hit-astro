@@ -1,0 +1,32 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import GenrePieChart from "@/components/visualisations/WorksGenrePieChart.svelte";
+---
+
+<PageLayout title="Explore">
+	<div class="mx-auto w-full max-w-11/12 md:max-w-3/4 p-2 md:px-10 md:py-16">
+		<div>
+			<h1 class="font-semibold text-2xl text-brand-600 py-5">
+				Verteilung historiographischer Sub-Genres pro Schreibort
+			</h1>
+			<div class="md:grid grid-cols-[1fr_3fr] gap-6">
+				<div class="font-light gap-2 flex flex-col">
+					<p>
+						Diese Diagramm zeigt die Verteilung historiographischer Sub-Genres in den
+						Handschriftenüberlieferungen von einem bestimmten Ort. Nach Auswahl eines Ortes
+						(Schreiberort) wird die Anzahl der Überlieferungen pro Sub-Genre dargestellt, gegliedert
+						nach Jahrhunderten.
+					</p>
+					<p>
+						<span class="font-semibold">NB: </span> Die Visualisierungen zeigen die Verteilung
+						<span class="font-semibold">historiographischer</span> Sub-Genres in den Handschriftenüberlieferungen.
+						Es wurden bewusst keine Werke mit nicht-historiographischen Genres dargestellt, da das Projekt
+						ausschließlich Handschriften mit historiographischen Werken erfasst. Eine Darstellung aller
+						Genres wäre daher irreführend.
+					</p>
+				</div>
+				<GenrePieChart client:load />
+			</div>
+		</div>
+	</div>
+</PageLayout>

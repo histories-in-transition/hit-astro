@@ -1,0 +1,31 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import GenreMap from "@/components/visualisations/GenreMap.svelte";
+---
+
+<PageLayout title="Explore">
+	<div class="mx-auto w-full max-w-11/12 md:max-w-3/4 p-2 md:px-10 md:py-16">
+		<div>
+			<h1 class="font-semibold text-2xl text-brand-600 py-5">
+				Verteilung historiographischer Sub-Genres pro Schreibort
+			</h1>
+			<div class="md:grid grid-cols-[1fr_3fr] gap-6">
+				<div class="font-light gap-2 flex flex-col">
+					<p>
+						Die interaktive Karte visualisiert die räumliche Verteilung historiographischer Werke in
+						Europa. Jeder Kreis (Tortendiagramm) repräsentiert einen Überlieferungsort. Die farbigen
+						Segmente innerhalb der Kreise zeigen die jeweilige Gattungsverteilung (z. B. Chroniken,
+						Annalen oder andere Subgenres) und erlauben einen direkten Vergleich der inhaltlichen
+						Schwerpunkte zwischen verschiedenen Orten.
+					</p>
+					<p>
+						Über das Auswahlmenü kann ein bestimmtes Jahrhundert gewählt werden. Dadurch lassen sich
+						diachrone Entwicklungen nachvollziehen, regionale Konzentrationen erkennen und
+						Veränderungen in der Gattungsstruktur im Zeitverlauf analysieren.
+					</p>
+				</div>
+				<GenreMap client:load />
+			</div>
+		</div>
+	</div>
+</PageLayout>

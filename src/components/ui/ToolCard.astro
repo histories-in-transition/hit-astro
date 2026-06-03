@@ -1,0 +1,40 @@
+---
+import { Image } from "astro:assets";
+import NavLink from "@/components/nav-link.astro";
+const { titleCard, what, why, how, questions, image, href } = Astro.props as {
+	titleCard: string;
+	what?: string;
+	why?: string;
+	how?: string;
+	questions?: string;
+	image?: any;
+    href: string
+};
+---
+
+<div class="grid lg:grid-cols-2 gap-2 border-neutral-300 rounded-md bg-white shadow-lg p-5">
+	<Image src={image} alt="" class="md:w-full object-cover px-5" />
+	<div class="grid gap-y-3">
+		<h2 class="text-lg md:text-2xl text-brand-800 font-semibold">{titleCard}</h2>
+		<dl class="md:grid grid-cols-[auto_1fr] gap-x-2">
+			<dt class="font-semibold">Was:</dt>
+			<dd>{what}</dd>
+		
+			{why && (
+                <dt class="font-semibold">Warum:</dt>
+			    <dd>{why}</dd>
+            )}
+		
+			{how && (
+                <dt class="font-semibold">Wie:</dt>
+			    <dd>{how}</dd>
+            )}
+		
+			{questions && (
+                <dt class="font-semibold">Fragestellung:</dt>
+			    <dd>{questions}</dd>
+            )}
+		</dl>
+        <NavLink href={href} class="place-self-center font-semibold bg-brand-600/90 hover:bg-brand-400 text-brand-50 hover:text-brand-950 py-2 px-4 rounded-md transition border border-neutral-300">Visualisierung öffnen</NavLink>
+	</div>
+</div>
