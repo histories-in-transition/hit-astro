@@ -1,10 +1,13 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { withBasePath } from "@/lib/withBasePath.ts";
+import { Icon } from "astro-icon/components";
 
-interface Props extends HTMLAttributes<"a"> {}
+interface Props extends HTMLAttributes<"a"> {
+	external?: boolean;
+}
 
-const { href, ...rest } = Astro.props; // destructures Astro.props to extract the href property and group the remaining props into rest to be reattached.
+const { external, href, ...rest } = Astro.props; // destructures Astro.props to extract the href property and group the remaining props into rest to be reattached.
 
 const pathname = withBasePath(href);
 ---
@@ -12,5 +15,14 @@ const pathname = withBasePath(href);
 <a
 	{...rest}
 	href={pathname}
-	class="hover:text-brand-800 underline decoration-dotted underline-offset-4"><slot /></a
+	class="hover:text-brand-800 underline decoration-dotted underline-offset-4 inline-flex"
 >
+	<slot />
+	{
+		external == true ? (
+			<Icon aria-hidden="true" name="lucide:external-link" class="self-center-safe" />
+		) : (
+			""
+		)
+	}
+</a>

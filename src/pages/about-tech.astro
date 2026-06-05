@@ -6,8 +6,9 @@ import { Image } from "astro:assets";
 import DBdiagram from "/public/images/hit_dbdiagram.png";
 const tocSections = [
 	{ id: "datamodel", title: "Datenmodel" },
-	{ id: "interfaces", title: "Schnittstellen" },
+	{ id: "dataprocessing", title: "Datenverarbeitung" },
 	{ id: "encoding", title: "Kodierungsrichtlinien" },
+	{ id: "standards", title: "Quellendaten & Schnittstellen" },
 ];
 ---
 
@@ -33,7 +34,15 @@ const tocSections = [
 					über Beziehungen mit den Handschriftenobjekten verknüpft. Diese Struktur vermeidet
 					Redundanzen und ermöglicht eine konsistente Erfassung wiederkehrender Informationen.
 				</p>
-				<Image src={DBdiagram} alt="" />
+				<figure class="hidden md:block">
+					<NavLink href={DBdiagram.src} target="_blank">
+						<Image src={DBdiagram} alt="Database schema" width={500} class="border rounded" />
+					</NavLink>
+					<figcaption class="text-sm text-brand-700/80 mt-2">
+						Datenmodell der Datenbank „Histories in Transition“. Zum Öffnen der Vollbildansicht
+						bitte anklicken.
+					</figcaption>
+				</figure>
 				<p>
 					Ein zentrales Konzept des Projekts sind die sogenannten <span class="font-semibold"
 						>Strata</span
@@ -73,17 +82,133 @@ const tocSections = [
 					Visualisierungen und digitale Analysen.
 				</p>
 			</section>
-			<section id="encoding">
-				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Kodierungsrichtlinien</h2>
+			<section id="dataprocessing" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenverarbeitung</h2>
+
+				<p>
+					Die Erfassung der Forschungsdaten erfolgt kollaborativ in der relationalen Datenbank
+					Baserow. Für die Weiterverarbeitung werden die einzelnen Tabellen regelmäßig als
+					JSON-Dateien exportiert. Im Rahmen eines automatisierten Verarbeitungsprozesses werden sie
+					durch eigens entwickelte TypeScript-Skripte transformiert, angereichert und miteinander
+					verknüpft. Dabei werden insbesondere die relationalen Verbindungen zwischen den einzelnen
+					Datensätzen aufgelöst, zusätzliche Such- und Navigationsstrukturen erzeugt sowie Daten für
+					die Darstellung auf der Website vorbereitet.
+				</p>
+				<p>
+					Die so erzeugten JSON-Dateien dienen als zentrale Datengrundlage der Webanwendung. Für die
+					wichtigsten Entitäten des Projekts – darunter <NavLink href="/manuscripts"
+						>Handschriften</NavLink
+					>, <NavLink href="/works">Werke</NavLink>, <NavLink href="/msitems"
+						>Texteinheiten (msItems)</NavLink
+					>, <NavLink href="/hands">Hände</NavLink>, <NavLink href="/scribs">Schreiber</NavLink> und <NavLink
+						href="/strata">Strata</NavLink
+					> – werden sowohl tabellarische Übersichtsseiten als auch detaillierte Einzelansichten generiert.
+					Die Tabellen ermöglichen eine umfassende Recherche mit Filter- und Suchfunktionen, während die
+					Detailseiten die vollständigen Informationen eines Datensatzes sowie dessen Verknüpfungen zu
+					anderen Objekten darstellen.
+				</p>
+				<p>
+					Die verarbeiteten Daten werden statisch in die Website integriert und bilden zugleich die
+					Grundlage für weitere Export- und Austauschformate. Dadurch bleibt die Datenhaltung von
+					der Präsentationsschicht getrennt und die Daten können in unterschiedlichen Kontexten
+					nachgenutzt werden.
+				</p>
 			</section>
-			<section id="interfaces">
+			<section id="standards" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Kodierungsrichtlinien</h2>
+				<p>
+					Neben der Bereitstellung als JSON werden die Handschriftenbeschreibungen auch als
+					TEI-XML-Dokumente veröffentlicht (s. Link in einzelner Handschriftbeschreibung). Die
+					XML-Kodierung orientiert sich am Standard der <NavLink external href="https://tei-c.org/">
+						Text Encoding Initiative (TEI)
+					</NavLink> und folgt dem von der <NavLink href="https://www.hab.de/" external
+						>Herzog August Bibliothek Wolfenbüttel</NavLink
+					>
+					entwickelten <NavLink
+						external
+						href="https://diglib.hab.de/rules/schema/mss/v1.0/cataloguing.xsd">Schema</NavLink
+					> für die Beschreibung mittelalterlicher Handschriften. Dadurch wird eine hohe Interoperabilität
+					mit bestehenden digitalen Handschriftenkatalogen und Forschungsinfrastrukturen gewährleistet.
+				</p>
+				<p>
+					Die aus der Datenbank exportierten Informationen werden automatisiert in TEI-Strukturen
+					überführt. Kodikologische Einheiten werden als msPart-Elemente, Texteinheiten als
+					msItem-Elemente und Hände als eigenständige Entitäten innerhalb der
+					Handschriftenbeschreibung modelliert.
+				</p>
+				<p>
+					Eine Besonderheit des Projekts ist die Modellierung der Strata. Da diese eine analytische
+					und keine materielle Ebene repräsentieren, existiert im TEI-Standard kein unmittelbar
+					entsprechendes Element. Die Beziehungen zwischen Händen, Texteinheiten und Strata werden
+					daher mithilfe von Relationselementen abgebildet. Dadurch können Tätigkeiten einzelner
+					Hände mit bestimmten Textabschnitten verknüpft und zu historischen Produktions- oder
+					Nutzungsschichten zusammengeführt werden.
+				</p>
+				<p>
+					Ergänzend werden die Handschriftenbeschreibungen automatisiert in LaTeX-Dokumente
+					überführt und als PDF-Dateien bereitgestellt. Auf diese Weise stehen die Daten sowohl in
+					einem standardisierten maschinenlesbaren Format als auch in einer für die
+					wissenschaftliche Nutzung geeigneten Druckansicht zur Verfügung.
+				</p>
+			</section>
+			<section id="interfaces" class="grid gap-3">
 				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">
 					Quellendaten und Schnittstellen
 				</h2>
 				<p>
-					Die Daten sind in <NavLink href="https://github.com/histories-in-transition/hit-astro"
-						>GitHub Repo</NavLink
-					> verfügbar.
+					Sämtliche im Projekt veröffentlichten Daten werden über das öffentliche <NavLink
+						href="https://github.com/histories-in-transition"
+						external>GitHub-Repository</NavLink
+					>
+					bereitgestellt. Dort stehen die aus der Datenbank generierten JSON-Dateien sowie die daraus
+					erzeugten TEI-XML-, LaTeX- und PDF-Dateien zur Verfügung. Das Repository dient damit als zentrale
+					Quelle für die Nachnutzung der Forschungsdaten und gewährleistet Transparenz hinsichtlich der
+					Datenstruktur und ihrer Verarbeitung.
+				</p>
+				<p>
+					Für die automatisierte Weiterverarbeitung der Daten stellt das Projekt zudem eine
+					<NavLink href="/oai-pmh">OAI-PMH-Schnittstelle</NavLink> (Open Archives Initiative Protocol
+					for Metadata Harvesting) bereit. Über diese standardisierte Schnittstelle können Datensätze
+					von externen Forschungsinfrastrukturen, Bibliothekskatalogen und Aggregationsdiensten abgefragt
+					und in andere Systeme integriert werden. Die OAI-PMH-Schnittstelle ermöglicht sowohl den Zugriff
+					auf einzelne Datensätze als auch die Ernte größerer Datenbestände und unterstützt damit die
+					langfristige Interoperabilität der Projektdaten.
+				</p>
+				<p>
+					Zur eindeutigen Identifikation und Vernetzung der erfassten Entitäten werden etablierte
+					Normdaten- und Referenzsysteme verwendet. Personen, Autoren, Werke und Institutionen
+					werden, soweit entsprechende Normdatensätze vorhanden sind, mit Identifikatoren der
+					<NavLink
+						href="https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html"
+						external>Gemeinsamen Normdatei (GND)</NavLink
+					> verknüpft. Ortsangaben werden über <NavLink href="https://www.geonames.org/" external
+						>GeoNames</NavLink
+					> referenziert und mit Geokoordinaten angereichert. Die bibliographischen Daten des Projekts
+					werden in einer gemeinsamen <NavLink
+						href="https://www.zotero.org/groups/5525026/histories_in_transition/library"
+						external>Zotero-Bibliothek</NavLink
+					> verwaltet und mit den entsprechenden Datensätzen verknüpft.
+				</p>
+
+				<p>
+					Diese Anbindung an externe Normdaten und Schnittstellen erleichtert die Nachnutzung der
+					Daten in anderen Forschungsumgebungen und trägt zur Einbettung des Projekts in bestehende
+					digitale Forschungsinfrastrukturen bei.
+				</p>
+				<p>
+					Nach Abschluss des Projekts werden die Forschungsdaten im Langzeitarchiv <NavLink
+						external
+						href="https://arche.acdh.oeaw.ac.at/browser/"
+					>
+						ARCHE
+					</NavLink> (A Resource Centre for the Humanities Related Research in Austria) des <NavLink
+						external
+						href="https://www.oeaw.ac.at/acdh/acdh-home"
+					>
+						Austrian Centre for Digital Humanities (ACDH)
+					</NavLink> archiviert. Dadurch wird die langfristige Verfügbarkeit, Zitierbarkeit und Nachnutzbarkeit
+					der Daten sichergestellt und ihre Einbindung in die österreichische und internationale Forschungsinfrastruktur
+					gewährleistet.
 				</p>
 			</section>
 		</div>
