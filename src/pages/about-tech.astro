@@ -6,6 +6,7 @@ import { Image } from "astro:assets";
 import DBdiagram from "/public/images/hit_dbdiagram.png";
 const tocSections = [
 	{ id: "datamodel", title: "Datenmodel" },
+	{ id: "modelebene", title: "Erschließungstiefe" },
 	{ id: "dataprocessing", title: "Datenverarbeitung" },
 	{ id: "encoding", title: "Kodierungsrichtlinien" },
 	{ id: "standards", title: "Quellendaten & Schnittstellen" },
@@ -82,6 +83,36 @@ const tocSections = [
 					Visualisierungen und digitale Analysen.
 				</p>
 			</section>
+			<section id="modelebene" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">
+					Mehrstufige Erschließungstiefen
+				</h2>
+				<p>
+					Ein wesentliches Merkmal des Datenmodells ist seine Flexibilität hinsichtlich des
+					Erschließungsgrades einzelner Handschriften. Die Datenbank erlaubt die Erfassung von
+					Datensätzen bereits mit einem Minimum an Informationen. Für die Aufnahme einer Handschrift
+					genügen grundsätzlich eine Signatur sowie die Erfassung der enthaltenen Texte (msItems),
+					auch wenn zu diesen noch keine Normdatenverknüpfungen oder weiterführenden Beschreibungen
+					vorliegen.
+				</p>
+				<p>
+					Für bestimmte Funktionen der Webanwendung ist jedoch eine weitergehende Erschließung
+					erforderlich. Insbesondere die facettierte <NavLink href="/search">Suche</NavLink>,
+					statistische <NavLink href="/tools">Auswertungen und Visualisierungen</NavLink> profitieren
+					von der Verknüpfung der Texteinheiten mit normierten Werken und Autoren sowie von der Angabe
+					von Datierungen. Erst diese Informationen ermöglichen es, Handschriftenbestände systematisch
+					nach inhaltlichen, chronologischen oder geographischen Kriterien zu vergleichen.
+				</p>
+				<p>
+					Die detaillierte paläographische Analyse stellt eine weitere Erschließungsstufe dar. Die
+					Beschreibung einzelner Hände, ihre Identifikation mit bekannten Schreibern sowie die
+					Dokumentation ihrer Tätigkeiten innerhalb einer Handschrift sind nicht für jeden Datensatz
+					erforderlich. Ebenso ist die Rekonstruktion von Strata als historischen Produktions- und
+					Nutzungsschichten als vertiefende Analyseebene konzipiert. Das Datenmodell unterstützt
+					diese detaillierte Erschließung, setzt sie jedoch nicht voraus und erlaubt dadurch die
+					Aufnahme von Handschriften mit sehr unterschiedlichen Bearbeitungstiefen.
+				</p>
+			</section>
 			<section id="dataprocessing" class="grid gap-3">
 				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenverarbeitung</h2>
 
@@ -102,10 +133,26 @@ const tocSections = [
 						>Texteinheiten (msItems)</NavLink
 					>, <NavLink href="/hands">Hände</NavLink>, <NavLink href="/scribs">Schreiber</NavLink> und <NavLink
 						href="/strata">Strata</NavLink
-					> – werden sowohl tabellarische Übersichtsseiten als auch detaillierte Einzelansichten generiert.
-					Die Tabellen ermöglichen eine umfassende Recherche mit Filter- und Suchfunktionen, während die
-					Detailseiten die vollständigen Informationen eines Datensatzes sowie dessen Verknüpfungen zu
-					anderen Objekten darstellen.
+					> – werden sowohl <span class="font-semibold">tabellarische Übersichtsseite</span>n als
+					auch <span class="font-semibold">detaillierte Einzelansichte</span>n generiert. Die
+					Tabellen ermöglichen eine umfassende Recherche mit Filter- und Suchfunktionen, während die
+					Detailseiten die vollständigen Informationen eines Datensatzes sowie dessen Verknüpfungen
+					zu anderen Objekten darstellen.
+				</p>
+				<p>
+					Neben klassischen Listen- und Detailansichten bietet die Anwendung zwei <span
+						class="font-semibold">facettierte Suchoberflächen</span
+					>, die auf einem Typesense-Suchindex basieren. Die erste Suche indiziert die einzelnen
+					Handschrifteneinträge (<NavLink href="/search">msItems</NavLink>) und ermöglicht eine
+					gezielte Recherche nach den in den Handschriften überlieferten Werken. Die zweite Suche
+					indiziert die rekonstruierten Überlieferungsstränge (<NavLink href="/search-strata"
+						>Strata</NavLink
+					>) und erlaubt die Analyse von Textüberlieferungen und deren Beziehungen. Beide
+					Suchoberflächen unterstützen eine facettierte Filterung nach verschiedenen Metadaten,
+					darunter Werke, Autorinnen und Autoren, Entstehungszeitraum, Entstehungsort, Gattungen
+					bzw. Genres sowie weitere beschreibende Merkmale. Die Suchergebnisse werden in Echtzeit
+					durch das Typesense-Backend bereitgestellt und können durch die Kombination mehrerer
+					Facetten schrittweise eingegrenzt werden.
 				</p>
 				<p>
 					Die verarbeiteten Daten werden statisch in die Website integriert und bilden zugleich die
@@ -114,11 +161,12 @@ const tocSections = [
 					nachgenutzt werden.
 				</p>
 			</section>
-			<section id="standards" class="grid gap-3">
+			<section id="encoding" class="grid gap-3">
 				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Kodierungsrichtlinien</h2>
 				<p>
 					Neben der Bereitstellung als JSON werden die Handschriftenbeschreibungen auch als
-					TEI-XML-Dokumente veröffentlicht (s. Link in einzelner Handschriftbeschreibung). Die
+					TEI-XML-Dokumente veröffentlicht (s. Link in jeder einzelnen Handschriftbeschreibung oder
+					eine gesamte <NavLink href="/tei/manuscripts/index.html">Liste hier</NavLink>). Die
 					XML-Kodierung orientiert sich am Standard der <NavLink external href="https://tei-c.org/">
 						Text Encoding Initiative (TEI)
 					</NavLink> und folgt dem von der <NavLink href="https://www.hab.de/" external
