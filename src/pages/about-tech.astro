@@ -1,0 +1,91 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import Aside from "@/components/ui/Aside.astro";
+import NavLink from "@/components/nav-link.astro";
+import { Image } from "astro:assets";
+import DBdiagram from "/public/images/hit_dbdiagram.png";
+const tocSections = [
+	{ id: "datamodel", title: "Datenmodel" },
+	{ id: "interfaces", title: "Schnittstellen" },
+	{ id: "encoding", title: "Kodierungsrichtlinien" },
+];
+---
+
+<PageLayout title="Technische Umsetzung">
+	<div class="flex mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10">
+		<Aside sections={tocSections} />
+		<div class="grid gap-4">
+			<h1 class="text-2xl md:text-4xl font-semibold text-center">Technische Umsetzung</h1>
+			<section id="datamodel" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenmodel</h2>
+				<p>
+					Die Forschungsdaten des Projekts <span class="italic">Histories in Transition</span> werden
+					kollaborativ durch die Projektmitarbeitenden in einer relationalen Datenbank erfasst. Als Erfassungsoberfläche
+					dient Baserow, das die strukturierte Eingabe, Verknüpfung und Verwaltung der Daten ermöglicht.
+					Das zugrunde liegende Datenmodell wurde speziell für die Untersuchung mittelalterlicher Handschriften
+					und ihrer Überlieferungs- und Transformationsprozesse entwickelt.
+				</p>
+				<p>
+					Im Zentrum des Modells stehen die <NavLink href="/manuscripts">Handschriften</NavLink>,
+					die in kodikologische Einheiten, einzelne Texte bzw. Werkeinträge (manuscript items) und
+					Hände untergliedert werden können. Ergänzend werden Normdaten zu Personen, Schreiber,
+					Orten, Bibliotheken, Werken, Datierungen und Literatur in eigenen Tabellen verwaltet und
+					über Beziehungen mit den Handschriftenobjekten verknüpft. Diese Struktur vermeidet
+					Redundanzen und ermöglicht eine konsistente Erfassung wiederkehrender Informationen.
+				</p>
+				<Image src={DBdiagram} alt="" />
+				<p>
+					Ein zentrales Konzept des Projekts sind die sogenannten <span class="font-semibold"
+						>Strata</span
+					>. Sie beschreiben historische Schichten innerhalb einer Handschrift, die durch bestimmte
+					Schreib-, Bearbeitungs- oder Nutzungsvorgänge entstanden sind. Im Gegensatz zu
+					kodikologischen Einheiten stellen Strata nicht primär materielle Schichten eines
+					Manuskripts dar, sondern historische beziehungsweise produktionsgeschichtliche Schichten,
+					die aus den Tätigkeiten bestimmter Hände rekonstruiert werden.
+				</p>
+				<p>
+					Ein Stratum wird nicht unmittelbar einer Handschrift zugewiesen, sondern über die an
+					seiner Entstehung beteiligten Hände definiert. Die Verbindung erfolgt über die Tabelle
+					hands_role, in der dokumentiert wird, welche Hand an welchem Textabschnitt tätig war und
+					welche Funktion sie dort ausübte. Auf dieser Grundlage können einzelne oder mehrere Hände
+					einem gemeinsamen Stratum zugeordnet werden.
+				</p>
+				<p>
+					Da viele Hände paläographisch datiert und lokalisiert werden können, lassen sich diese
+					Informationen auch auf die entsprechenden Strata übertragen. Die Strata bilden damit eine
+					analytische Ebene zwischen den materiellen Merkmalen einer Handschrift und ihrer
+					historischen Interpretation. Sie ermöglichen es, unterschiedliche Entstehungs-,
+					Überarbeitungs- und Nutzungsschichten innerhalb eines Manuskripts zu modellieren und
+					miteinander in Beziehung zu setzen.
+				</p>
+				<p>
+					Über die Strata hinaus erlaubt das Datenmodell die Dokumentation von
+					Überlieferungszusammenhängen zwischen Handschriften. Mittels sogenannter Strata Filiations
+					können Beziehungen zwischen einzelnen Schichten verschiedener Handschriften erfasst
+					werden. Dadurch wird es möglich, Prozesse der Textübertragung, Bearbeitung und Rezeption
+					auf einer feineren Ebene als der gesamten Handschrift zu analysieren.
+				</p>
+				<p>
+					Das relationale Datenmodell bildet somit die Grundlage für die Erforschung von
+					Transformationsprozessen mittelalterlicher Wissensbestände. Es verbindet kodikologische,
+					paläographische, textgeschichtliche und bibliographische Informationen in einer
+					gemeinsamen Datenstruktur und schafft die Voraussetzungen für komplexe Abfragen,
+					Visualisierungen und digitale Analysen.
+				</p>
+			</section>
+			<section id="encoding">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Kodierungsrichtlinien</h2>
+			</section>
+			<section id="interfaces">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">
+					Quellendaten und Schnittstellen
+				</h2>
+				<p>
+					Die Daten sind in <NavLink href="https://github.com/histories-in-transition/hit-astro"
+						>GitHub Repo</NavLink
+					> verfügbar.
+				</p>
+			</section>
+		</div>
+	</div>
+</PageLayout>

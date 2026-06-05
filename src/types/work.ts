@@ -1,5 +1,5 @@
 import type { Author, TitleWork, NavigationLink } from "./shared";
-import type { MsItem } from "./msitem";
+import type { MsItemBase } from "./msitem";
 
 export interface Work {
 	id: number;
@@ -12,7 +12,7 @@ export interface Work {
 	source_text: SourceText[];
 	note_source: string;
 	genre: Genre[];
-	ms_transmission: MsItem[];
+	ms_transmission: MsItemBase[];
 	joined_transmission: TitleWork[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
