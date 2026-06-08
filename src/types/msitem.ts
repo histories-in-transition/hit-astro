@@ -7,13 +7,32 @@ import type {
 	OrigPlace,
 	ProvenanceItem,
 	Bibliography,
+	Value,
 } from "./shared";
 import type { MsItemHand } from "./hand";
+
+//used in work
+export interface MsItemBase {
+	hit_id: string;
+	manuscript: ShortRef[];
+	commented_msitem: CommentedMsItem[];
+	locus: string;
+	orig_date: OrigDate[];
+	orig_place: OrigPlace[];
+	provenance: ProvenanceItem[];
+	decoration: Value[];
+	annotation_date: OrigDate[];
+	annotation_place: Place[];
+	annotation_typ: string[];
+	form: Value[];
+	text_modification: string[];
+	version: Value[];
+}
 
 export interface MsItem {
 	id?: number;
 	hit_id: string;
-	label: string;
+	label?: string;
 	view_label?: string;
 	manuscript?: ShortRef[];
 	joined_transmission?: joinedTransmission[];

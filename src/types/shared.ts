@@ -50,12 +50,12 @@ export interface OrigPlace {
 	page?: string;
 }
 export interface OrigDate {
+	id?: number;
 	hit_id?: string;
-	date?: DateInfo[];
 	authority?: Authority[];
 	page?: string;
+	date?: DateInfo[];
 	preferred_date?: boolean;
-	id?: number;
 }
 
 export interface HandDate {
@@ -87,13 +87,13 @@ export interface Authority {
 export interface ProvenanceItem {
 	id?: number;
 	hit_id: string;
+	type?: string;
 	places?: Place[];
 	from?: DateInfo[];
 	till?: DateInfo[];
-	authority?: Authority[];
-	type?: string;
 	uncertain_from?: boolean;
 	uncertain_till?: boolean;
+	authority?: Authority[];
 	page?: string;
 }
 

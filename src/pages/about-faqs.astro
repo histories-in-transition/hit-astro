@@ -1,0 +1,140 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import NavLink from "@/components/nav-link.astro";
+---
+
+<PageLayout title="FAQs">
+	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10 grid gap-3">
+		<h1 class="text-2xl md:text-3xl font-semibold text-center">Häufig gestellte Fragen (FAQs)</h1>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl">Was bietet die Seite?</summary>
+			<p>
+				Histories in Transition bietet einen digitalen Forschungsdatensatz zu mittelalterlichen
+				Handschriften mit historiographischen Texten und ihren Überlieferungszusammenhängen. Die
+				Plattform ermöglicht die Recherche nach Handschriften, Werken, Schreibern, Händen und Strata
+				sowie die Analyse von Produktions-, Überlieferungs- und Transformationsprozessen. Neben
+				tabellarischen Übersichten stehen Such-, Filter- und Visualisierungswerkzeuge zur Verfügung.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Wie ist die Datenbank strukturiert?</summary
+			>
+			<p>
+				Das Datenmodell basiert auf einer relationalen Datenbank. Im Zentrum stehen Handschriften,
+				die mit kodikologischen Einheiten, Texteinheiten, Händen, Schreibern und Strata verknüpft
+				sind. Ergänzend werden Normdaten zu Personen, Werken, Orten, Institutionen und Literatur
+				eingebunden. Eine ausführliche Beschreibung des Datenmodells findet sich auf der Seite
+				<NavLink href="/about-tech">„Technische Umsetzung“</NavLink>.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Wie kann ich die Seite nutzen?</summary
+			>
+			<p>
+				Es gibt mehrere Einstiegsmöglichkeiten. Über die <span class="font-semibold"
+					>tabellarischen Übersichten</span
+				> können
+				<NavLink href="/manuscripts">Handschriften</NavLink>, <NavLink href="/works">Werke</NavLink
+				>, <NavLink href="/hands">Hände</NavLink>, <NavLink href="/scribes">Schreiber</NavLink>, <NavLink
+					href="/strata">Strata</NavLink
+				> und weitere Datensätze recherchiert werden. Alle Tabellen bieten Such-, Sortier- und Filterfunktionen.
+				Darüber hinaus stehen <span class="font-semibold">zwei facettierte Suchoberflächen</span> für
+				<NavLink href="/search">Texteinheiten (msItems)</NavLink> und <NavLink href="/search-strata"
+					>Strata</NavLink
+				> zur Verfügung, die eine Kombination verschiedener Suchkriterien ermöglichen. Die Suchergebnisse
+				können zudem mit <NavLink href="/tools">Analyse- und Visualisierungswerkzeugen</NavLink>
+				weiter untersucht werden.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Welche Handschriften und Texte sind erfasst?</summary
+			>
+			<p>
+				Derzeit umfasst der Datensatz die beiden Fallstudien Salzburg und Freising. Der Fokus liegt
+				auf historiographischen Texten und den Handschriften, in denen diese überliefert werden. Der
+				Datenbestand wird fortlaufend erweitert. Für eine zukünftige Projektphase ist zudem die
+				Einbindung weiterer Handschriftenbeschreibungen aus externen Repositorien vorgesehen, die
+				durch die Projektmitarbeitenden nacherschlossen und mit Normdaten zu Autoren und Werken
+				verknüpft werden können.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Wo finde ich die TEI-XML-Dateien?</summary
+			>
+			<p>
+				Die TEI-XML-Dateien können über die
+				<NavLink href="/tei/manuscripts/index.html">TEI-Übersicht</NavLink>
+				aufgerufen werden. Zusätzlich sind die XML-Dateien in den Detailansichten der einzelnen Handschriften
+				verlinkt.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Kann ich die Daten herunterladen?</summary
+			>
+			<p>
+				Jede Handschriftenbeschreibung kann in den jeweiligen Detailansichten als TEI-XML-Datei
+				heruntergeladen werden. Darüber hinaus steht eine <NavLink
+					href="/tei/manuscripts/index.html">Übersicht</NavLink
+				> aller verfügbaren TEI-XML-Dateien zur Verfügung.
+			</p>
+			<p>
+				Die Rohdaten der Datenbank werden als JSON-Dateien im öffentlichen <NavLink
+					href="https://github.com/histories-in-transition/hit-baserow-dump"
+					>GitHub-Repository</NavLink
+				> des Projekts bereitgestellt. Die für die Website aufbereiteten Datensätze können zudem direkt
+				aus den Tabellenansichten exportiert werden. Hierfür stehen verschiedene Formate wie JSON, CSV
+				und HTML zur Verfügung.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Unter welcher Lizenz stehen die Daten?</summary
+			>
+			<p>
+				Die im Projekt entwickelten Skripte und Softwarekomponenten werden unter der MIT-Lizenz
+				veröffentlicht. Die Handschriftenbeschreibungen und Forschungsdaten stehen unter der Lizenz
+				Creative Commons Attribution 4.0 International (CC BY 4.0), sofern nicht anders angegeben.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Wie zitiere ich einen Datensatz oder eine Beschreibung?</summary
+			>
+			<p>
+				Für einzelne Datensätze wird in den Detailansichten ein Zitierhinweis bereitgestellt. Für
+				die Zitierung des gesamten Datensatzes empfehlen wir die Angabe „Histories in Transition“
+				mit Erscheinungsjahr, URL und Abrufdatum. Nach der Archivierung in ARCHE werden zudem
+				persistente Identifikatoren für die Zitierung zur Verfügung stehen.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl">Was sind Strata?</summary>
+			<p>
+				Der Begriff „Stratum“ stammt ursprünglich aus der Archäologie und bezeichnet dort eine
+				zeitlich oder funktional unterscheidbare Schicht innerhalb eines Befundes. Im Projekt
+				<em>Histories in Transition</em> wird das Konzept auf Handschriften übertragen.
+			</p>
+			<p>
+				Strata beschreiben historische Arbeits- und Bearbeitungsschichten innerhalb einer
+				Handschrift. Sie werden aus den Aktivitäten einzelner Hände rekonstruiert und können
+				Schreib-, Korrektur-, Ergänzungs- oder Kommentierungsprozesse umfassen. Technisch wird ein
+				Stratum als eine oder mehrere zusammengehörige <code>hands_role</code>-Einträge modelliert,
+				die einer gemeinsamen Produktions-, Bearbeitungs- oder Nutzungsschicht zugeordnet werden.
+			</p>
+		</details>
+	</div>
+</PageLayout>

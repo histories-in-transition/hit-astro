@@ -1,5 +1,4 @@
 ---
-import "@fontsource-variable/inter";
 import "@/styles/global.css";
 import ScrollToTop from "@/components/scroll-to-top.astro";
 import PageFooter from "@/components/page-footer.astro";
@@ -37,9 +36,9 @@ const { title = "Histories in transition" } = Astro.props;
 		<main>
 			{!["Home", "404"].includes(title) && <BreadCrumbs />}
 			<slot />
+			<ScrollToTop />
 		</main>
 		<PageFooter />
-		<ScrollToTop />
 	</body>
 </html>
 

@@ -1,0 +1,51 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import NavLink from "@/components/nav-link.astro";
+import ToolsCard from "@/components/ui/ToolCard.astro";
+import GenreTool from "/public/images/genre_tool.png";
+import GenreMap from "/public/images/genre_map.png";
+import WorkGraph from "/public/images/work_graph.png";
+---
+
+<PageLayout title="Tools">
+	<div class="mx-auto w-full max-w-6xl p-2 md:px-10 md:py-16">
+		<div>
+			<div class="p-4 md:p-8 border-neutral-300 rounded-md bg-white shadow-lg">
+				<h1 class="text-2xl md:text-4xl font-semibold text-brand-900 pb-4">
+					Analyse- und Visualisierungswerkzeuge
+				</h1>
+				<p>
+					Die folgenden interaktiven Visualisierungswerkzeuge ermöglichen die Erforschung der
+					historiographischen Überlieferung aus räumlicher, zeitlicher und netzwerkanalytischer
+					Perspektive.
+				</p>
+			</div>
+			<div class="grid gap-5 py-5">
+				<ToolsCard
+					titleCard="Netzwerk der Handschriftenüberlieferung"
+					href="/tools/work-graph"
+					image={WorkGraph}
+					what="Visualisiert die Beziehungen zwischen historiographischen Werken auf Grundlage ihrer gemeinsamen Handschriftenüberlieferung."
+					why="Das Netzwerk macht Überlieferungszusammenhänge sichtbar, die in einzelnen Handschriftenkatalogen oft verborgen bleiben. Es ermöglicht, Gruppen eng verbundener Werke sowie zentrale Texte innerhalb der Überlieferung zu identifizieren."
+					how="Nutzen Sie die Filter, um die angezeigten Daten einzuschränken. Die ausgewählten Ergebnisse werden gleichzeitig im Netzwerk und auf der Karte dargestellt."
+					questions="Welche Werke werden besonders häufig gemeinsam überliefert? Welche Muster der Vernetzung lassen sich innerhalb der historiographischen Tradition erkennen?"
+				/>
+				<ToolsCard
+					titleCard="Zeitliche Entwicklung historiographischer Subgenres nach Schreibort"
+					href="/tools/genre-chart"
+					image={GenreTool}
+					what="Diese Diagramm zeigt die Verteilung historiographischer Sub-Genres in den Handschriftenüberlieferungen von einem bestimmten Ort."
+					how="Wählen Sie einen Schreibort aus dem Dropdown-Menü aus. Das Diagramm zeigt die Verteilung der historiographischen Subgenres nach Jahrhunderten; jede Linie repräsentiert ein Subgenre."
+				/>
+				<ToolsCard
+					titleCard="Kartierung historiographischer Überlieferungen"
+					href="/tools/genre-map-chart"
+					image={GenreMap}
+					what="Visualisiert die räumliche Verteilung historiographischer Werke und ihrer Subgenres an den Überlieferungsorten in Europa."
+					how="Wählen Sie ein Jahrhundert aus dem Dropdown-Menü. Die Karte zeigt für jeden Überlieferungsort ein Tortendiagramm, dessen Segmente die Verteilung der historiographischen Gattungen darstellen."
+					questions="Welche historiographischen Gattungen dominieren in bestimmten Regionen? Wie verändern sich ihre räumlichen Schwerpunkte im Laufe der Zeit?"
+				/>
+			</div>
+		</div>
+	</div>
+</PageLayout>

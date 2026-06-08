@@ -228,7 +228,7 @@ function validateTEIFallback(xmlContent, filename) {
 
 // Main execution
 async function main() {
-	console.log("🏗️  Starting TEI generation...");
+	console.log(" Starting TEI generation...");
 
 	const isCI = process.env.CI === "true";
 	const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
@@ -241,7 +241,7 @@ async function main() {
 	}
 
 	// Read the source JSON file
-	console.log("📖 Reading manuscripts data...");
+	console.log("Reading manuscripts data...");
 	const mss = JSON.parse(
 		readFileSync(join(process.cwd(), "src", "content", "data", "manuscripts.json"), "utf-8"),
 	);
@@ -253,7 +253,7 @@ async function main() {
 	// Eta views path
 	const eta = new Eta({ views: join(process.cwd(), "tei-templates") });
 
-	console.log(`🏭 Generating TEI for ${mss.length} manuscripts...\n`);
+	console.log(`Generating TEI for ${mss.length} manuscripts...\n`);
 
 	let successCount = 0;
 	let wellFormednessErrors = 0;
@@ -272,7 +272,7 @@ async function main() {
 		if (hasXmllint) {
 			hasValidSchema = await downloadSchemaWithDependencies(schemaBaseUrl, schemaDir);
 			if (!hasValidSchema) {
-				console.log("❌ Failed to obtain valid schema - skipping schema validation");
+				console.log("Failed to obtain valid schema - skipping schema validation");
 			}
 		}
 	}
@@ -297,7 +297,7 @@ async function main() {
 				wellFormedness = validateWellFormedness(xml, filename);
 
 				if (!wellFormedness.success) {
-					console.log(`❌ [${index + 1}/${mss.length}] ${filename} - Well-formedness failed:`);
+					console.log(`[${index + 1}/${mss.length}] ${filename} - Well-formedness failed:`);
 					wellFormedness.errors.forEach((error) => {
 						console.log(`   ${error}`);
 					});
@@ -314,22 +314,22 @@ async function main() {
 				}
 
 				if (!schemaValidation.success) {
-					console.log(`⚠️  [${index + 1}/${mss.length}] ${filename} - Schema validation failed:`);
+					console.log(` [${index + 1}/${mss.length}] ${filename} - Schema validation failed:`);
 					schemaValidation.errors.forEach((error) => {
 						console.log(`   ${error}`);
 					});
 					schemaErrors++;
 					validationResults.push({ ...schemaValidation, type: "schema" });
 				} else {
-					console.log(`✅ [${index + 1}/${mss.length}] ${filename} - Generated and validated`);
+					console.log(`[${index + 1}/${mss.length}] ${filename} - Generated and validated`);
 				}
 			} else {
-				console.log(`✅ [${index + 1}/${mss.length}] ${filename} - Generated`);
+				console.log(`[${index + 1}/${mss.length}] ${filename} - Generated`);
 			}
 
 			successCount++;
 		} catch (error) {
-			console.log(`💥 [${index + 1}/${mss.length}] Error processing manuscript:`, error.message);
+			console.log(`[${index + 1}/${mss.length}] Error processing manuscript:`, error.message);
 			wellFormednessErrors++;
 			validationResults.push({
 				filename: filename,
@@ -339,18 +339,81 @@ async function main() {
 			});
 		}
 	}
+	// Generate index.html with links to all TEI files
+	const rows = mss
+		.map((ms) => {
+			const filename = ms.hit_id ? `${ms.hit_id}.xml` : `manuscript_${ms.id}.xml`;
 
+			return `
+      <tr>
+        <td><a href="./${filename}">${filename}</a></td>
+        <td>${ms.view_label ?? ""}</td>
+        <td>${ms.title ?? ""}</td>
+      </tr>
+    `;
+		})
+		.join("\n");
+
+	const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TEI Manuscripts</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    th {
+      background: #f5f5f5;
+    }
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <h1>TEI Manuscripts</h1>
+  <p>${mss.length} manuscripts</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>TEI File</th>
+        <th>Shelfmark</th>
+        <th>Title</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows}
+    </tbody>
+  </table>
+</body>
+</html>`;
+
+	writeFileSync(join(mssFolderPath, "index.html"), indexHtml, "utf8");
+
+	console.log("Generated manuscripts/index.html");
 	// Summary
 	console.log("\n═══════════════════════════════════════");
-	console.log("🏁 GENERATION SUMMARY");
+	console.log(" GENERATION SUMMARY");
 	console.log("═══════════════════════════════════════");
-	console.log(`📊 Total manuscripts: ${mss.length}`);
-	console.log(`✅ Successfully generated: ${successCount}`);
+	console.log(`Total manuscripts: ${mss.length}`);
+	console.log(`Successfully generated: ${successCount}`);
 	if (isCI) {
-		console.log(`❌ Well-formedness errors: ${wellFormednessErrors}`);
-		console.log(`⚠️  Schema validation errors: ${schemaErrors}`);
+		console.log(`Well-formedness errors: ${wellFormednessErrors}`);
+		console.log(`Schema validation errors: ${schemaErrors}`);
 		if (validationResults.length > 0) {
-			console.log("\n📋 Files with issues:");
+			console.log("\n Files with issues:");
 			validationResults.forEach((result) => {
 				console.log(`   • ${result.filename} (${result.type})`);
 			});

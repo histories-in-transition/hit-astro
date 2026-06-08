@@ -1,0 +1,305 @@
+---
+import PageLayout from "@/layouts/page-layout.astro";
+import Aside from "@/components/ui/Aside.astro";
+import NavLink from "@/components/nav-link.astro";
+import { Image } from "astro:assets";
+import DBdiagram from "/public/images/hit_dbdiagram.png";
+import handSchema from "/public/images/hand-role.svg";
+const tocSections = [
+	{ id: "datamodel", title: "Datenmodel" },
+	{ id: "modelebene", title: "Erschließungstiefe" },
+	{ id: "dataprocessing", title: "Datenverarbeitung" },
+	{ id: "encoding", title: "Kodierungsrichtlinien" },
+	{ id: "standards", title: "Quellendaten & Schnittstellen" },
+];
+---
+
+<PageLayout title="Technische Umsetzung">
+	<div class="flex mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10">
+		<Aside sections={tocSections} />
+		<div class="grid gap-4 text-justify">
+			<h1 class="text-2xl md:text-3xl font-semibold text-center">Technische Umsetzung</h1>
+			<section id="datamodel" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenmodel</h2>
+				<p>
+					Die Forschungsdaten des Projekts <span class="italic">Histories in Transition</span> werden
+					kollaborativ durch die Projektmitarbeitenden in einer relationalen Datenbank erfasst. Als Erfassungsoberfläche
+					dient <NavLink href="https://baserow.io/" external>Baserow</NavLink>, das die
+					strukturierte Eingabe, Verknüpfung und Verwaltung der Daten ermöglicht. Das zugrunde
+					liegende Datenmodell wurde speziell für die Untersuchung mittelalterlicher Handschriften
+					und ihrer Überlieferungs- und Transformationsprozesse entwickelt.
+				</p>
+				<p>
+					Im Zentrum des Modells stehen die <NavLink href="/manuscripts">Handschriften</NavLink>,
+					die in kodikologische Einheiten, einzelne Texte bzw. Werkeinträge (manuscript items) und
+					Hände untergliedert werden können. Ergänzend werden Normdaten zu Personen, Schreiber,
+					Orten, Bibliotheken, Werken, Datierungen und Literatur in eigenen Tabellen verwaltet und
+					über Beziehungen mit den Handschriftenobjekten verknüpft. Diese Struktur vermeidet
+					Redundanzen und ermöglicht eine konsistente Erfassung wiederkehrender Informationen.
+				</p>
+				<figure class="hidden md:block">
+					<NavLink href={DBdiagram.src} target="_blank">
+						<Image src={DBdiagram} alt="Database schema" width={500} class="border rounded" />
+					</NavLink>
+					<figcaption class="text-sm text-brand-700/80 mt-2">
+						Fig. 1. Datenmodell der Datenbank „Histories in Transition“. Zum Öffnen der
+						Vollbildansicht bitte anklicken.
+					</figcaption>
+				</figure>
+				<p>
+					Ein zentrales Konzept des Projekts sind die sogenannten <span class="font-semibold"
+						>Strata</span
+					>. Sie beschreiben historische Schichten innerhalb einer Handschrift, die durch bestimmte
+					Schreib-, Bearbeitungs- oder Nutzungsvorgänge entstanden sind. Im Gegensatz zu
+					kodikologischen Einheiten stellen Strata nicht primär materielle Schichten eines
+					Manuskripts dar, sondern historische beziehungsweise produktionsgeschichtliche Schichten,
+					die aus den Tätigkeiten bestimmter Hände rekonstruiert werden.
+				</p>
+				<p>
+					Ein Stratum wird nicht unmittelbar einer Handschrift zugewiesen, sondern über die an
+					seiner Entstehung beteiligten Hände definiert. Die Verbindung erfolgt über die Tabelle
+					<code>hands_role</code>, in der dokumentiert wird, welche Hand an welchem Textabschnitt
+					tätig war und welche Funktion sie dort ausübte. Auf dieser Grundlage können einzelne oder
+					mehrere Hände einem gemeinsamen Stratum zugeordnet werden.
+				</p>
+				<figure class="hidden md:block">
+					<Image
+						src={handSchema}
+						width={700}
+						alt="Das Schema zeigt die Beziehung zwischen Schreiber, Hände, Hand-Aktivitäten, Texteinheiten und Strata."
+						class="mx-auto border rounded"
+					/>
+					<figcaption class="text-sm text-brand-700/80 mt-2">
+						Fig. 2. Modellierung Hand-Aktivitäten. Eine Hand kann einem bestimmten Schreiber
+						zugeordnet werden (scribe) und darüber hinaus räumlich (place) sowie zeitlich (date)
+						eingeordnet werden. Ihre Aktivität innerhalb einer Handschrift wird durch eine oder
+						mehrere hand roles beschrieben. Eine hand role kann sich auf eine oder mehrere
+						Texteinheiten (ms items) beziehen und durch verschiedene Merkmale näher charakterisiert
+						werden: die genaue Position innerhalb der Texteinheit (locus), die Platzierung auf der
+						Seite, etwa im Randbereich oder interlinear (locus layout), ihre Funktion,
+						beispielsweise als grammatikalische oder inhaltliche Erläuterung (function), ihre Rolle
+						als Kommentator, Korrektor oder Überarbeiter (role) sowie ihren Typ, etwa Erweiterung
+						oder Fortsetzung (type). Eine oder mehrere solcher Aktivitäten (hand roles) können
+						schließlich zu einem gemeinsamen Stratum zusammengefasst werden.
+					</figcaption>
+				</figure>
+				<p>
+					Da viele Hände paläographisch datiert und lokalisiert werden können, lassen sich diese
+					Informationen auch auf die entsprechenden Strata übertragen. Die Strata bilden damit eine
+					analytische Ebene zwischen den materiellen Merkmalen einer Handschrift und ihrer
+					historischen Interpretation. Sie ermöglichen es, unterschiedliche Entstehungs-,
+					Überarbeitungs- und Nutzungsschichten innerhalb eines Manuskripts zu modellieren und
+					miteinander in Beziehung zu setzen.
+				</p>
+				<p>
+					Über die Strata hinaus erlaubt das Datenmodell die Dokumentation von
+					Überlieferungszusammenhängen zwischen Handschriften. Mittels sogenannter Strata Filiations
+					können Beziehungen zwischen einzelnen Schichten verschiedener Handschriften erfasst
+					werden. Dadurch wird es möglich, Prozesse der Textübertragung, Bearbeitung und Rezeption
+					auf einer feineren Ebene als der gesamten Handschrift zu analysieren.
+				</p>
+				<p>
+					Das relationale Datenmodell bildet somit die Grundlage für die Erforschung von
+					Transformationsprozessen mittelalterlicher Wissensbestände. Es verbindet kodikologische,
+					paläographische, textgeschichtliche und bibliographische Informationen in einer
+					gemeinsamen Datenstruktur und schafft die Voraussetzungen für komplexe Abfragen,
+					Visualisierungen und digitale Analysen.
+				</p>
+			</section>
+			<section id="modelebene" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">
+					Mehrstufige Erschließungstiefen
+				</h2>
+				<p>
+					Ein wesentliches Merkmal des Datenmodells ist seine Flexibilität hinsichtlich des
+					Erschließungsgrades einzelner Handschriften. Die Datenbank erlaubt die Erfassung von
+					Datensätzen bereits mit einem Minimum an Informationen. Für die Aufnahme einer Handschrift
+					genügen grundsätzlich eine Signatur sowie die Erfassung der enthaltenen Texte (msItems),
+					auch wenn zu diesen noch keine Normdatenverknüpfungen oder weiterführenden Beschreibungen
+					vorliegen.
+				</p>
+				<p>
+					Für bestimmte Funktionen der Webanwendung ist jedoch eine weitergehende Erschließung
+					erforderlich. Insbesondere die facettierte <NavLink href="/search">Suche</NavLink>,
+					statistische <NavLink href="/tools">Auswertungen und Visualisierungen</NavLink> profitieren
+					von der Verknüpfung der Texteinheiten mit normierten Werken und Autoren sowie von der Angabe
+					von Datierungen. Erst diese Informationen ermöglichen es, Handschriftenbestände systematisch
+					nach inhaltlichen, chronologischen oder geographischen Kriterien zu vergleichen.
+				</p>
+				<p>
+					Die detaillierte paläographische Analyse stellt eine weitere Erschließungsstufe dar. Die
+					Beschreibung einzelner Hände, ihre Identifikation mit bekannten Schreibern sowie die
+					Dokumentation ihrer Tätigkeiten innerhalb einer Handschrift sind nicht für jeden Datensatz
+					erforderlich. Ebenso ist die Rekonstruktion von Strata als historischen Produktions- und
+					Nutzungsschichten als vertiefende Analyseebene konzipiert. Das Datenmodell unterstützt
+					diese detaillierte Erschließung, setzt sie jedoch nicht voraus und erlaubt dadurch die
+					Aufnahme von Handschriften mit sehr unterschiedlichen Bearbeitungstiefen.
+				</p>
+			</section>
+			<section id="dataprocessing" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenverarbeitung</h2>
+
+				<p>
+					Die Erfassung der Forschungsdaten erfolgt kollaborativ in der relationalen Datenbank
+					Baserow. Für die Weiterverarbeitung werden die einzelnen Tabellen regelmäßig als
+					JSON-Dateien exportiert. Im Rahmen eines automatisierten Verarbeitungsprozesses werden sie
+					durch eigens entwickelte TypeScript-Skripte transformiert, angereichert und miteinander
+					verknüpft. Dabei werden insbesondere die relationalen Verbindungen zwischen den einzelnen
+					Datensätzen aufgelöst, zusätzliche Such- und Navigationsstrukturen erzeugt sowie Daten für
+					die Darstellung auf der Website vorbereitet.
+				</p>
+				<p>
+					Die so erzeugten JSON-Dateien dienen als zentrale Datengrundlage der Webanwendung. Für die
+					wichtigsten Entitäten des Projekts – darunter <NavLink href="/manuscripts"
+						>Handschriften</NavLink
+					>, <NavLink href="/works">Werke</NavLink>, <NavLink href="/msitems"
+						>Texteinheiten (msItems)</NavLink
+					>, <NavLink href="/hands">Hände</NavLink>, <NavLink href="/scribs">Schreiber</NavLink> und <NavLink
+						href="/strata">Strata</NavLink
+					> – werden sowohl <span class="font-semibold">tabellarische Übersichtsseite</span>n als
+					auch <span class="font-semibold">detaillierte Einzelansichte</span>n generiert. Die
+					Tabellen ermöglichen eine umfassende Recherche mit Filter- und Suchfunktionen, während die
+					Detailseiten die vollständigen Informationen eines Datensatzes sowie dessen Verknüpfungen
+					zu anderen Objekten darstellen.
+				</p>
+				<p>
+					Neben klassischen Listen- und Detailansichten bietet die Anwendung zwei <span
+						class="font-semibold">facettierte Suchoberflächen</span
+					>, die auf einem Typesense-Suchindex basieren. Die erste Suche indiziert die einzelnen
+					Handschrifteneinträge (<NavLink href="/search">msItems</NavLink>) und ermöglicht eine
+					gezielte Recherche nach den in den Handschriften überlieferten Werken. Die zweite Suche
+					indiziert die rekonstruierten Überlieferungsstränge (<NavLink href="/search-strata"
+						>Strata</NavLink
+					>) und erlaubt die Analyse von Textüberlieferungen und deren Beziehungen. Beide
+					Suchoberflächen unterstützen eine facettierte Filterung nach verschiedenen Metadaten,
+					darunter Werke, Autorinnen und Autoren, Entstehungszeitraum, Entstehungsort, Gattungen
+					bzw. Genres sowie weitere beschreibende Merkmale. Die Suchergebnisse werden in Echtzeit
+					durch das Typesense-Backend bereitgestellt und können durch die Kombination mehrerer
+					Facetten schrittweise eingegrenzt werden.
+				</p>
+				<p>
+					Die verarbeiteten Daten werden statisch in die Website integriert und bilden zugleich die
+					Grundlage für weitere Export- und Austauschformate. Dadurch bleibt die Datenhaltung von
+					der Präsentationsschicht getrennt und die Daten können in unterschiedlichen Kontexten
+					nachgenutzt werden.
+				</p>
+			</section>
+			<section id="encoding" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Kodierungsrichtlinien</h2>
+				<p>
+					Neben der Bereitstellung als JSON werden die Handschriftenbeschreibungen auch als
+					TEI-XML-Dokumente veröffentlicht (s. Link in jeder einzelnen Handschriftbeschreibung oder
+					eine gesamte <NavLink href="/tei/manuscripts/index.html">Liste hier</NavLink>). Die
+					XML-Kodierung orientiert sich am Standard der <NavLink external href="https://tei-c.org/">
+						Text Encoding Initiative (TEI)
+					</NavLink> und folgt dem von der <NavLink href="https://www.hab.de/" external
+						>Herzog August Bibliothek Wolfenbüttel</NavLink
+					>
+					entwickelten <NavLink
+						external
+						href="https://diglib.hab.de/rules/schema/mss/v1.0/cataloguing.xsd">Schema</NavLink
+					> für die Beschreibung mittelalterlicher Handschriften. Dadurch wird eine hohe Interoperabilität
+					mit bestehenden digitalen Handschriftenkatalogen und Forschungsinfrastrukturen gewährleistet.
+				</p>
+				<p>
+					Die aus der Datenbank exportierten Informationen werden automatisiert in TEI-Strukturen
+					überführt. Kodikologische Einheiten werden als msPart-Elemente, Texteinheiten als
+					msItem-Elemente und Hände als eigenständige Entitäten innerhalb der
+					Handschriftenbeschreibung modelliert.
+				</p>
+				<p>
+					Eine Besonderheit des Projekts ist die Modellierung der Strata. Da diese eine analytische
+					und keine materielle Ebene repräsentieren, existiert im TEI-Standard kein unmittelbar
+					entsprechendes Element. Die Beziehungen zwischen Händen, Texteinheiten und Strata werden
+					daher mithilfe von Element <code>&lt;relation&gt;</code> abgebildet. Dadurch können Tätigkeiten
+					einzelner Hände mit bestimmten Textabschnitten verknüpft und zu historischen Produktions- oder
+					Nutzungsschichten zusammengeführt werden.
+				</p>
+				<pre
+					class="border text-xs">
+<code>
+	&lt;relation xml:id="hit_hands_role__63" active="#hit_hands__41" passive="#hit_ms_items__137"&gt;
+		&lt;desc&gt;
+			&lt;list type="msitems"&gt;
+			&lt;item&gt;
+				&lt;ref target="#hit_ms_items__137"&gt;Fratres de foris&lt;/ref&gt;
+			&lt;/item&gt;
+			&lt;/list&gt;
+			&lt;locus/&gt;
+			&lt;term type="scribe_role"&gt;Schreiber&lt;/term&gt;
+			&lt;term type="scribe_type"/&gt;
+			&lt;term type="function"&gt;anlegend / Anlage&lt;/term&gt;
+			&lt;term type="locus_layout"&gt;"Schriftraum"&lt;/term&gt;
+		&lt;/desc&gt;
+	&lt;/relation&gt;
+</code></pre>
+				<p>
+					Ergänzend werden die Handschriftenbeschreibungen automatisiert in LaTeX-Dokumente
+					überführt und als PDF-Dateien bereitgestellt. Auf diese Weise stehen die Daten sowohl in
+					einem standardisierten maschinenlesbaren Format als auch in einer für die
+					wissenschaftliche Nutzung geeigneten Druckansicht zur Verfügung.
+				</p>
+			</section>
+			<section id="interfaces" class="grid gap-3">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">
+					Quellendaten und Schnittstellen
+				</h2>
+				<p>
+					Sämtliche im Projekt veröffentlichten Daten werden über das öffentliche <NavLink
+						href="https://github.com/histories-in-transition"
+						external>GitHub-Repository</NavLink
+					>
+					bereitgestellt. Dort stehen die aus der Datenbank generierten JSON-Dateien sowie die daraus
+					erzeugten TEI-XML-, LaTeX- und PDF-Dateien zur Verfügung. Das Repository dient damit als zentrale
+					Quelle für die Nachnutzung der Forschungsdaten und gewährleistet Transparenz hinsichtlich der
+					Datenstruktur und ihrer Verarbeitung.
+				</p>
+				<p>
+					Für die automatisierte Weiterverarbeitung der Daten stellt das Projekt zudem eine
+					<NavLink href="/oai-pmh">OAI-PMH-Schnittstelle</NavLink> (Open Archives Initiative Protocol
+					for Metadata Harvesting) bereit. Über diese standardisierte Schnittstelle können Datensätze
+					von externen Forschungsinfrastrukturen, Bibliothekskatalogen und Aggregationsdiensten abgefragt
+					und in andere Systeme integriert werden. Die OAI-PMH-Schnittstelle ermöglicht sowohl den Zugriff
+					auf einzelne Datensätze als auch die Ernte größerer Datenbestände und unterstützt damit die
+					langfristige Interoperabilität der Projektdaten.
+				</p>
+				<p>
+					Zur eindeutigen Identifikation und Vernetzung der erfassten Entitäten werden etablierte
+					Normdaten- und Referenzsysteme verwendet. Personen, Autoren, Werke und Institutionen
+					werden, soweit entsprechende Normdatensätze vorhanden sind, mit Identifikatoren der
+					<NavLink
+						href="https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html"
+						external>Gemeinsamen Normdatei (GND)</NavLink
+					> verknüpft. Ortsangaben werden über <NavLink href="https://www.geonames.org/" external
+						>GeoNames</NavLink
+					> referenziert und mit Geokoordinaten angereichert. Die bibliographischen Daten des Projekts
+					werden in einer gemeinsamen <NavLink
+						href="https://www.zotero.org/groups/5525026/histories_in_transition/library"
+						external>Zotero-Bibliothek</NavLink
+					> verwaltet und mit den entsprechenden Datensätzen verknüpft.
+				</p>
+
+				<p>
+					Diese Anbindung an externe Normdaten und Schnittstellen erleichtert die Nachnutzung der
+					Daten in anderen Forschungsumgebungen und trägt zur Einbettung des Projekts in bestehende
+					digitale Forschungsinfrastrukturen bei.
+				</p>
+				<p>
+					Nach Abschluss des Projekts werden die Forschungsdaten im Langzeitarchiv <NavLink
+						external
+						href="https://arche.acdh.oeaw.ac.at/browser/"
+					>
+						ARCHE
+					</NavLink> (A Resource Centre for the Humanities Related Research in Austria) des <NavLink
+						external
+						href="https://www.oeaw.ac.at/acdh/acdh-home"
+					>
+						Austrian Centre for Digital Humanities (ACDH)
+					</NavLink> archiviert. Dadurch wird die langfristige Verfügbarkeit, Zitierbarkeit und Nachnutzbarkeit
+					der Daten sichergestellt und ihre Einbindung in die österreichische und internationale Forschungsinfrastruktur
+					gewährleistet.
+				</p>
+			</section>
+		</div>
+	</div>
+</PageLayout>
