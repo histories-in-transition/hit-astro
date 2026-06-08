@@ -60,7 +60,7 @@
               <term type="scribe_role"><%= role.role.map(s_role => s_role.value).join(', ') %></term>
               <term type="scribe_type"><%= role.scribe_type.map(s_type => s_type.value).join(', ') %></term>
               <term type="function"><%= role.function.map(f => f.value).join(', ') %></term>
-              <term type="locus_layout"><%= role.locus_layout.join(', ') %></term>
+              <term type="locus_layout"><%= role.locus_layout.map(ll => ll.value).join(', ') %></term>
             </desc>
           </relation>
         <% }) %>
