@@ -63,8 +63,9 @@
             <% } %>     
                         <% if (it.bibliography && it.bibliography.length > 0) { %>
                             <% it.bibliography.forEach((bibl) => { %>
-                                <bibl xml:id="<%= bibl.hit_id %>">
+                                <bibl><ref target="<%= bibl.hit_id %>">
                                     <%= bibl.citation || bibl.title || bibl.author %><% if (bibl.page) { %> S. <%= bibl.page %><% } %>
+                                </ref>
                                 </bibl>
                             <% }) %>
                         <% } %>
