@@ -5,7 +5,7 @@ import NavLink from "@/components/nav-link.astro";
 
 <PageLayout title="FAQs">
 	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10 grid gap-3">
-		<h1 class="text-2xl md:text-4xl font-semibold text-center">Häufig gestellte Fragen (FAQs)</h1>
+		<h1 class="text-2xl md:text-3xl font-semibold text-center">Häufig gestellte Fragen (FAQs)</h1>
 
 		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
 			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl">Was bietet die Seite?</summary>
@@ -20,18 +20,34 @@ import NavLink from "@/components/nav-link.astro";
 
 		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
 			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Wie ist die Datenbank strukturiert?</summary
+			>
+			<p>
+				Das Datenmodell basiert auf einer relationalen Datenbank. Im Zentrum stehen Handschriften,
+				die mit kodikologischen Einheiten, Texteinheiten, Händen, Schreibern und Strata verknüpft
+				sind. Ergänzend werden Normdaten zu Personen, Werken, Orten, Institutionen und Literatur
+				eingebunden. Eine ausführliche Beschreibung des Datenmodells findet sich auf der Seite
+				<NavLink href="/about-tech">„Technische Umsetzung“</NavLink>.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
 				>Wie kann ich die Seite nutzen?</summary
 			>
 			<p>
-				Es gibt mehrere Einstiegsmöglichkeiten. Über die tabellarischen Übersichten können
+				Es gibt mehrere Einstiegsmöglichkeiten. Über die <span class="font-semibold"
+					>tabellarischen Übersichten</span
+				> können
 				<NavLink href="/manuscripts">Handschriften</NavLink>, <NavLink href="/works">Werke</NavLink
 				>, <NavLink href="/hands">Hände</NavLink>, <NavLink href="/scribes">Schreiber</NavLink>, <NavLink
 					href="/strata">Strata</NavLink
 				> und weitere Datensätze recherchiert werden. Alle Tabellen bieten Such-, Sortier- und Filterfunktionen.
-				Darüber hinaus stehen zwei facettierte Suchoberflächen für <NavLink href="/search"
-					>Texteinheiten (msItems)</NavLink
-				> und <NavLink href="/search-strata">Strata</NavLink> zur Verfügung, die eine Kombination verschiedener
-				Suchkriterien ermöglichen. Die Suchergebnisse können zudem mit Analyse- und Visualisierungswerkzeugen
+				Darüber hinaus stehen <span class="font-semibold">zwei facettierte Suchoberflächen</span> für
+				<NavLink href="/search">Texteinheiten (msItems)</NavLink> und <NavLink href="/search-strata"
+					>Strata</NavLink
+				> zur Verfügung, die eine Kombination verschiedener Suchkriterien ermöglichen. Die Suchergebnisse
+				können zudem mit <NavLink href="/tools">Analyse- und Visualisierungswerkzeugen</NavLink>
 				weiter untersucht werden.
 			</p>
 		</details>
@@ -64,14 +80,32 @@ import NavLink from "@/components/nav-link.astro";
 
 		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
 			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
-				>Wie ist die Datenbank strukturiert?</summary
+				>Kann ich die Daten herunterladen?</summary
 			>
 			<p>
-				Das Datenmodell basiert auf einer relationalen Datenbank. Im Zentrum stehen Handschriften,
-				die mit kodikologischen Einheiten, Texteinheiten, Händen, Schreibern und Strata verknüpft
-				sind. Ergänzend werden Normdaten zu Personen, Werken, Orten, Institutionen und Literatur
-				eingebunden. Eine ausführliche Beschreibung des Datenmodells findet sich auf der Seite
-				<NavLink href="/about-tech">„Technische Umsetzung“</NavLink>.
+				Jede Handschriftenbeschreibung kann in den jeweiligen Detailansichten als TEI-XML-Datei
+				heruntergeladen werden. Darüber hinaus steht eine <NavLink
+					href="/tei/manuscripts/index.html">Übersicht</NavLink
+				> aller verfügbaren TEI-XML-Dateien zur Verfügung.
+			</p>
+			<p>
+				Die Rohdaten der Datenbank werden als JSON-Dateien im öffentlichen <NavLink
+					href="https://github.com/histories-in-transition/hit-baserow-dump"
+					>GitHub-Repository</NavLink
+				> des Projekts bereitgestellt. Die für die Website aufbereiteten Datensätze können zudem direkt
+				aus den Tabellenansichten exportiert werden. Hierfür stehen verschiedene Formate wie JSON, CSV
+				und HTML zur Verfügung.
+			</p>
+		</details>
+
+		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
+				>Unter welcher Lizenz stehen die Daten?</summary
+			>
+			<p>
+				Die im Projekt entwickelten Skripte und Softwarekomponenten werden unter der MIT-Lizenz
+				veröffentlicht. Die Handschriftenbeschreibungen und Forschungsdaten stehen unter der Lizenz
+				Creative Commons Attribution 4.0 International (CC BY 4.0), sofern nicht anders angegeben.
 			</p>
 		</details>
 
@@ -84,33 +118,6 @@ import NavLink from "@/components/nav-link.astro";
 				die Zitierung des gesamten Datensatzes empfehlen wir die Angabe „Histories in Transition“
 				mit Erscheinungsjahr, URL und Abrufdatum. Nach der Archivierung in ARCHE werden zudem
 				persistente Identifikatoren für die Zitierung zur Verfügung stehen.
-			</p>
-		</details>
-		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
-			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
-				>Kann ich die Daten herunterladen?</summary
-			>
-			<p>
-				Jede Handschriftenbeschreibung kann in den jeweiligen Detailansichten als TEI-XML-Datei
-				heruntergeladen werden. Darüber hinaus steht eine Übersicht aller verfügbaren
-				TEI-XML-Dateien zur Verfügung.
-			</p>
-			<p>
-				Die Rohdaten der Datenbank werden als JSON-Dateien im öffentlichen GitHub-Repository des
-				Projekts bereitgestellt. Die für die Website aufbereiteten Datensätze können zudem direkt
-				aus den Tabellenansichten exportiert werden. Hierfür stehen verschiedene Formate wie JSON,
-				CSV und HTML zur Verfügung.
-			</p>
-		</details>
-
-		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
-			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl"
-				>Unter welcher Lizenz stehen die Daten?</summary
-			>
-			<p>
-				Die im Projekt entwickelten Skripte und Softwarekomponenten werden unter der MIT-Lizenz
-				veröffentlicht. Die Handschriftenbeschreibungen und Forschungsdaten stehen unter der Lizenz
-				Creative Commons Attribution 4.0 International (CC BY 4.0), sofern nicht anders angegeben.
 			</p>
 		</details>
 

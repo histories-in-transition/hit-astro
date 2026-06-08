@@ -4,6 +4,7 @@ import Aside from "@/components/ui/Aside.astro";
 import NavLink from "@/components/nav-link.astro";
 import { Image } from "astro:assets";
 import DBdiagram from "/public/images/hit_dbdiagram.png";
+import handSchema from "/public/images/hand-role.svg";
 const tocSections = [
 	{ id: "datamodel", title: "Datenmodel" },
 	{ id: "modelebene", title: "Erschließungstiefe" },
@@ -16,15 +17,16 @@ const tocSections = [
 <PageLayout title="Technische Umsetzung">
 	<div class="flex mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10">
 		<Aside sections={tocSections} />
-		<div class="grid gap-4">
-			<h1 class="text-2xl md:text-4xl font-semibold text-center">Technische Umsetzung</h1>
+		<div class="grid gap-4 text-justify">
+			<h1 class="text-2xl md:text-3xl font-semibold text-center">Technische Umsetzung</h1>
 			<section id="datamodel" class="grid gap-3">
 				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenmodel</h2>
 				<p>
 					Die Forschungsdaten des Projekts <span class="italic">Histories in Transition</span> werden
 					kollaborativ durch die Projektmitarbeitenden in einer relationalen Datenbank erfasst. Als Erfassungsoberfläche
-					dient Baserow, das die strukturierte Eingabe, Verknüpfung und Verwaltung der Daten ermöglicht.
-					Das zugrunde liegende Datenmodell wurde speziell für die Untersuchung mittelalterlicher Handschriften
+					dient <NavLink href="https://baserow.io/" external>Baserow</NavLink>, das die
+					strukturierte Eingabe, Verknüpfung und Verwaltung der Daten ermöglicht. Das zugrunde
+					liegende Datenmodell wurde speziell für die Untersuchung mittelalterlicher Handschriften
 					und ihrer Überlieferungs- und Transformationsprozesse entwickelt.
 				</p>
 				<p>
@@ -40,8 +42,8 @@ const tocSections = [
 						<Image src={DBdiagram} alt="Database schema" width={500} class="border rounded" />
 					</NavLink>
 					<figcaption class="text-sm text-brand-700/80 mt-2">
-						Datenmodell der Datenbank „Histories in Transition“. Zum Öffnen der Vollbildansicht
-						bitte anklicken.
+						Fig. 1. Datenmodell der Datenbank „Histories in Transition“. Zum Öffnen der
+						Vollbildansicht bitte anklicken.
 					</figcaption>
 				</figure>
 				<p>
@@ -56,10 +58,31 @@ const tocSections = [
 				<p>
 					Ein Stratum wird nicht unmittelbar einer Handschrift zugewiesen, sondern über die an
 					seiner Entstehung beteiligten Hände definiert. Die Verbindung erfolgt über die Tabelle
-					hands_role, in der dokumentiert wird, welche Hand an welchem Textabschnitt tätig war und
-					welche Funktion sie dort ausübte. Auf dieser Grundlage können einzelne oder mehrere Hände
-					einem gemeinsamen Stratum zugeordnet werden.
+					<code>hands_role</code>, in der dokumentiert wird, welche Hand an welchem Textabschnitt
+					tätig war und welche Funktion sie dort ausübte. Auf dieser Grundlage können einzelne oder
+					mehrere Hände einem gemeinsamen Stratum zugeordnet werden.
 				</p>
+				<figure class="hidden md:block">
+					<Image
+						src={handSchema}
+						width={700}
+						alt="Das Schema zeigt die Beziehung zwischen Schreiber, Hände, Hand-Aktivitäten, Texteinheiten und Strata."
+						class="mx-auto border rounded"
+					/>
+					<figcaption class="text-sm text-brand-700/80 mt-2">
+						Fig. 2. Modellierung Hand-Aktivitäten. Eine Hand kann einem bestimmten Schreiber
+						zugeordnet werden (scribe) und darüber hinaus räumlich (place) sowie zeitlich (date)
+						eingeordnet werden. Ihre Aktivität innerhalb einer Handschrift wird durch eine oder
+						mehrere hand roles beschrieben. Eine hand role kann sich auf eine oder mehrere
+						Texteinheiten (ms items) beziehen und durch verschiedene Merkmale näher charakterisiert
+						werden: die genaue Position innerhalb der Texteinheit (locus), die Platzierung auf der
+						Seite, etwa im Randbereich oder interlinear (locus layout), ihre Funktion,
+						beispielsweise als grammatikalische oder inhaltliche Erläuterung (function), ihre Rolle
+						als Kommentator, Korrektor oder Überarbeiter (role) sowie ihren Typ, etwa Erweiterung
+						oder Fortsetzung (type). Eine oder mehrere solcher Aktivitäten (hand roles) können
+						schließlich zu einem gemeinsamen Stratum zusammengefasst werden.
+					</figcaption>
+				</figure>
 				<p>
 					Da viele Hände paläographisch datiert und lokalisiert werden können, lassen sich diese
 					Informationen auch auf die entsprechenden Strata übertragen. Die Strata bilden damit eine
@@ -188,10 +211,28 @@ const tocSections = [
 					Eine Besonderheit des Projekts ist die Modellierung der Strata. Da diese eine analytische
 					und keine materielle Ebene repräsentieren, existiert im TEI-Standard kein unmittelbar
 					entsprechendes Element. Die Beziehungen zwischen Händen, Texteinheiten und Strata werden
-					daher mithilfe von Relationselementen abgebildet. Dadurch können Tätigkeiten einzelner
-					Hände mit bestimmten Textabschnitten verknüpft und zu historischen Produktions- oder
+					daher mithilfe von Element <code>&lt;relation&gt;</code> abgebildet. Dadurch können Tätigkeiten
+					einzelner Hände mit bestimmten Textabschnitten verknüpft und zu historischen Produktions- oder
 					Nutzungsschichten zusammengeführt werden.
 				</p>
+				<pre
+					class="border text-xs">
+<code>
+	&lt;relation xml:id="hit_hands_role__63" active="#hit_hands__41" passive="#hit_ms_items__137"&gt;
+		&lt;desc&gt;
+			&lt;list type="msitems"&gt;
+			&lt;item&gt;
+				&lt;ref target="#hit_ms_items__137"&gt;Fratres de foris&lt;/ref&gt;
+			&lt;/item&gt;
+			&lt;/list&gt;
+			&lt;locus/&gt;
+			&lt;term type="scribe_role"&gt;Schreiber&lt;/term&gt;
+			&lt;term type="scribe_type"/&gt;
+			&lt;term type="function"&gt;anlegend / Anlage&lt;/term&gt;
+			&lt;term type="locus_layout"&gt;"Schriftraum"&lt;/term&gt;
+		&lt;/desc&gt;
+	&lt;/relation&gt;
+</code></pre>
 				<p>
 					Ergänzend werden die Handschriftenbeschreibungen automatisiert in LaTeX-Dokumente
 					überführt und als PDF-Dateien bereitgestellt. Auf diese Weise stehen die Daten sowohl in
