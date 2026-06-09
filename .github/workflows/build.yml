@@ -59,6 +59,11 @@ jobs:
           echo "Processing data..."
           pnpm run process-data
 
+      - name: split manuscripts json to single files
+        run: |
+          echo "Split manuscripts.json ..."
+          pnpm run split-mss-json
+
       - name: Generate and validate TEI files
         run: |
           echo "Generating TEI files with validation..."

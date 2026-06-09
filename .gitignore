@@ -30,5 +30,7 @@ src/content
 *.xml
 
 *.tex
-/public/pdf/
-/public/tei/
+/public/download/pdf/
+/public/download/tei/
+/public/download/json/
+/public/download/tex/

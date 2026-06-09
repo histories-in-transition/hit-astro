@@ -8,6 +8,7 @@
 		"format:fix": "pnpm run format:check --write",
 		"get-data": "pnpm tsx ./scripts/fetch-data.ts",
 		"process-data": "pnpm tsx ./scripts/preprocess/preprocess-data.ts",
+		"split-mss-json": "pnpm tsx ./scripts/export/makeSingleJson.ts",
 		"zod-data": "pnpm tsx ./scripts/preprocess/data-loader.ts",
 		"generate-tei": "node ./scripts/export/tei/generate-tei.js",
 		"generate-tex": "node ./scripts/export/tex/generate-tex.js",

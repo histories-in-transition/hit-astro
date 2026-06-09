@@ -27,6 +27,7 @@ async function generateAllTex() {
 			const texFilename = ms.hit_id ? `${ms.hit_id}.tex` : `manuscript_${ms.id}.tex`;
 			const teiFilename = ms.hit_id ? `${ms.hit_id}.xml` : `manuscript_${ms.id}.xml`;
 			const pdfFilename = ms.hit_id ? `${ms.hit_id}.pdf` : `manuscript_${ms.id}.pdf`;
+			const jsonFilename = ms.hit_id ? `${ms.hit_id}.json` : `manuscript_${ms.id}.json`;
 
 			return `
       <tr>
@@ -35,6 +36,7 @@ async function generateAllTex() {
         <td><a href="./tei/${teiFilename}" download="${teiFilename}">${teiFilename}</a></td>
         <td><a href="./tex/${texFilename}" download="${texFilename}">${texFilename}</a></td>
         <td><a href="./pdf/${pdfFilename}" download="${pdfFilename}">${pdfFilename}</a></td>
+        <td><a href="./json/${jsonFilename}" download="${jsonFilename}">${jsonFilename}</a></td>
       </tr>
     `;
 		})
@@ -79,6 +81,7 @@ async function generateAllTex() {
         <th>TEI File</th>
         <th>TEX File</th>
         <th>PDF File</th>
+        <th>JSON File</th>
       </tr>
     </thead>
     <tbody>
@@ -90,7 +93,7 @@ async function generateAllTex() {
 
 	writeFileSync(join(donwloadDir, "index.html"), indexHtml, "utf8");
 
-	console.log("Generated manuscripts-tex/index.html");
+	console.log("Generated download index.html");
 }
 
 generateAllTex();

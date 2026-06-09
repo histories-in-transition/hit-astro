@@ -58,14 +58,19 @@ import { Icon } from "astro-icon/components";
 	}
 	<div class="flex gap-2 justify-center md:justify-end">
 		<NavLink
-			href=`/tei/manuscripts/${manuscript.hit_id}.xml`
+			href=`/download/tei/${manuscript.hit_id}.xml`
 			class="rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 			id="download-tei">TEI</NavLink
 		>
 		<NavLink
-			href=`/pdf/manuscripts/${manuscript.hit_id}.pdf`
+			href=`/download/pdf/${manuscript.hit_id}.pdf`
 			class="rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
 			id="download-pdf">PDF</NavLink
+		>
+		<NavLink
+			href=`/download/json/${manuscript.hit_id}.json`
+			class="rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
+			id="download-json">JSON</NavLink
 		>
 	</div>
 </div>
