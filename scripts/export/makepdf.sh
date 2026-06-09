@@ -7,8 +7,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 # Directories
-TEX_DIR="$PROJECT_ROOT/public/tex/manuscripts"
-PDF_DIR="$PROJECT_ROOT/public/pdf/manuscripts"
+TEX_DIR="$PROJECT_ROOT/public/download/tex"
+PDF_DIR="$PROJECT_ROOT/public/download/pdf"
 
 # Create output folder if it doesn't exist
 mkdir -p "$PDF_DIR"

@@ -14,7 +14,7 @@ import { execSync } from "child_process";
 async function downloadSchemaWithDependencies(baseUrl, schemaDir) {
 	const dependencies = ["cataloguing.xsd", "dcr.xsd", "teix.xsd", "xml.xsd"];
 
-	console.log("🔍 Checking TEI schemas...");
+	console.log("Checking TEI schemas...");
 
 	// Check which schemas are missing
 	const missingSchemas = [];
@@ -45,7 +45,7 @@ async function downloadSchemaWithDependencies(baseUrl, schemaDir) {
 		return true;
 	}
 
-	console.log(`📥 Downloading ${missingSchemas.length} missing schemas...`);
+	console.log(` Downloading ${missingSchemas.length} missing schemas...`);
 
 	let downloadedCount = 0;
 
@@ -54,7 +54,7 @@ async function downloadSchemaWithDependencies(baseUrl, schemaDir) {
 		const depPath = join(schemaDir, dep);
 
 		try {
-			console.log(`📥 Downloading ${dep}...`);
+			console.log(` Downloading ${dep}...`);
 			const response = await fetch(depUrl);
 
 			if (!response.ok) {
@@ -79,7 +79,7 @@ async function downloadSchemaWithDependencies(baseUrl, schemaDir) {
 	}
 
 	console.log(
-		`📊 Schema summary: ${existingCount} existing, ${downloadedCount} downloaded, ${missingSchemas.length - downloadedCount} failed`,
+		`Schema summary: ${existingCount} existing, ${downloadedCount} downloaded, ${missingSchemas.length - downloadedCount} failed`,
 	);
 
 	// Return true if we have at least the main schema
@@ -234,9 +234,9 @@ async function main() {
 	const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
 
 	if (isCI) {
-		console.log("🔧 Running in CI environment");
+		console.log("Running in CI environment");
 		if (isGitHubActions) {
-			console.log("🐙 GitHub Actions detected");
+			console.log("GitHub Actions detected");
 		}
 	}
 
@@ -247,7 +247,7 @@ async function main() {
 	);
 
 	// Set the output folder
-	const mssFolderPath = join(process.cwd(), "public", "tei", "manuscripts");
+	const mssFolderPath = join(process.cwd(), "public", "download", "tei");
 	mkdirSync(mssFolderPath, { recursive: true });
 
 	// Eta views path
@@ -346,7 +346,7 @@ async function main() {
 
 			return `
       <tr>
-        <td><a href="./${filename}">${filename}</a></td>
+        <td><a href="./${filename}" download="${filename}">${filename}</a></td>
         <td>${ms.view_label ?? ""}</td>
         <td>${ms.title ?? ""}</td>
       </tr>

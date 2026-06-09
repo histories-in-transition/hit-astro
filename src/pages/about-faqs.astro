@@ -4,10 +4,10 @@ import NavLink from "@/components/nav-link.astro";
 ---
 
 <PageLayout title="FAQs">
-	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10 grid gap-3">
+	<div class="mx-auto w-full max-w-(--breakpoint-xl) px-3 md:px-16 py-10 grid gap-3">
 		<h1 class="text-2xl md:text-3xl font-semibold text-center">Häufig gestellte Fragen (FAQs)</h1>
 
-		<details class="px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
+		<details class="p-3 md:px-5 pb-3 bg-white shadow border border-neutral-300 rounded-md">
 			<summary class="pt-3 pb-1 font-semibold text-lg md:text-xl">Was bietet die Seite?</summary>
 			<p>
 				Histories in Transition bietet einen digitalen Forschungsdatensatz zu mittelalterlichen
@@ -72,8 +72,8 @@ import NavLink from "@/components/nav-link.astro";
 			>
 			<p>
 				Die TEI-XML-Dateien können über die
-				<NavLink href="/tei/manuscripts/index.html">TEI-Übersicht</NavLink>
-				aufgerufen werden. Zusätzlich sind die XML-Dateien in den Detailansichten der einzelnen Handschriften
+				<NavLink href="/download/index.html">TEI-Übersicht</NavLink>
+				aufgerufen werden. Zusätzlich sind die TEI-XML-Dateien in den Detailansichten der einzelnen Handschriften
 				verlinkt.
 			</p>
 		</details>
@@ -84,9 +84,9 @@ import NavLink from "@/components/nav-link.astro";
 			>
 			<p>
 				Jede Handschriftenbeschreibung kann in den jeweiligen Detailansichten als TEI-XML-Datei
-				heruntergeladen werden. Darüber hinaus steht eine <NavLink
-					href="/tei/manuscripts/index.html">Übersicht</NavLink
-				> aller verfügbaren TEI-XML-Dateien zur Verfügung.
+				heruntergeladen werden. Darüber hinaus steht eine <NavLink href="/download/index.html"
+					>Übersicht</NavLink
+				> aller verfügbaren TEI-XML-, PDF sowie TEX-Dateien zur Verfügung.
 			</p>
 			<p>
 				Die Rohdaten der Datenbank werden als JSON-Dateien im öffentlichen <NavLink

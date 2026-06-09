@@ -10,15 +10,27 @@ const tocSections = [
 	{ id: "modelebene", title: "Erschließungstiefe" },
 	{ id: "dataprocessing", title: "Datenverarbeitung" },
 	{ id: "encoding", title: "Kodierungsrichtlinien" },
-	{ id: "standards", title: "Quellendaten & Schnittstellen" },
+	{ id: "interfaces", title: "Datensets & Schnittstellen" },
 ];
 ---
 
 <PageLayout title="Technische Umsetzung">
-	<div class="flex mx-auto w-full max-w-(--breakpoint-xl) px-16 py-10">
+	<div class="flex mx-auto w-full max-w-(--breakpoint-xl) p-3 md:px-16 md:py-10">
 		<Aside sections={tocSections} />
 		<div class="grid gap-4 text-justify">
 			<h1 class="text-2xl md:text-3xl font-semibold text-center">Technische Umsetzung</h1>
+			<div class="md:hidden">
+				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Übersicht</h2>
+				<ul class="list-disc list-inside">
+					{
+						tocSections.map((section) => (
+							<li class="px-4 py-1 text-brand-700 hover:underline underline-offset-2 decoration-dotted ">
+								<a href={`#${section.id}`}>{section.title}</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
 			<section id="datamodel" class="grid gap-3">
 				<h2 class="text-lg md:text-2xl font-semibold text-brand-800">Datenmodel</h2>
 				<p>
@@ -37,6 +49,7 @@ const tocSections = [
 					über Beziehungen mit den Handschriftenobjekten verknüpft. Diese Struktur vermeidet
 					Redundanzen und ermöglicht eine konsistente Erfassung wiederkehrender Informationen.
 				</p>
+				<NavLink href={DBdiagram.src} target="_blank"> Öffnen Schema Darstellung. </NavLink>
 				<figure class="hidden md:block">
 					<NavLink href={DBdiagram.src} target="_blank">
 						<Image src={DBdiagram} alt="Database schema" width={500} class="border rounded" />
@@ -62,6 +75,9 @@ const tocSections = [
 					tätig war und welche Funktion sie dort ausübte. Auf dieser Grundlage können einzelne oder
 					mehrere Hände einem gemeinsamen Stratum zugeordnet werden.
 				</p>
+				<NavLink href={handSchema.src} target="_blank"
+					>Öffnen Hand-Strata Schema Darstellung.</NavLink
+				>
 				<figure class="hidden md:block">
 					<Image
 						src={handSchema}
@@ -216,7 +232,7 @@ const tocSections = [
 					Nutzungsschichten zusammengeführt werden.
 				</p>
 				<pre
-					class="border text-xs">
+					class="hidden md:block border text-xs">
 <code>
 	&lt;relation xml:id="hit_hands_role__63" active="#hit_hands__41" passive="#hit_ms_items__137"&gt;
 		&lt;desc&gt;
@@ -233,9 +249,9 @@ const tocSections = [
 		&lt;/desc&gt;
 	&lt;/relation&gt;
 </code></pre>
-				<p>Die Strata werden dann in Element <code>body</code> gelistet:</p>
+				<p>Die Strata werden dann in Element <code>body</code> gelistet.</p>
 				<pre
-					class="border text-xs">
+					class="hidden md:block border text-xs">
 <code>
 	&lt;body&gt;
 		&lt;div&gt;
@@ -271,14 +287,13 @@ const tocSections = [
 					Quellendaten und Schnittstellen
 				</h2>
 				<p>
-					Sämtliche im Projekt veröffentlichten Daten werden über das öffentliche <NavLink
+					Die rohe JSON Datei werden über das öffentliche <NavLink
 						href="https://github.com/histories-in-transition"
 						external>GitHub-Repository</NavLink
 					>
-					bereitgestellt. Dort stehen die aus der Datenbank generierten JSON-Dateien sowie die daraus
-					erzeugten TEI-XML-, LaTeX- und PDF-Dateien zur Verfügung. Das Repository dient damit als zentrale
-					Quelle für die Nachnutzung der Forschungsdaten und gewährleistet Transparenz hinsichtlich der
-					Datenstruktur und ihrer Verarbeitung.
+					bereitgestellt. Die aus den rohen JSON prozesierte JSON-Dateien können in den Tabellenübersichten
+					heruntergeladen werden (als CSV JSON oder HTML Format). Die daraus erzeugten TEI-XML-, LaTeX-
+					und PDF-Dateien stehen in eine <NavLink href="/download/index.html">Tabelle</NavLink> zur Verfügung.
 				</p>
 				<p>
 					Für die automatisierte Weiterverarbeitung der Daten stellt das Projekt zudem eine
