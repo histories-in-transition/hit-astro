@@ -50,6 +50,11 @@ async function generate() {
 			{ name: "language", type: "object[]", facet: true, optional: true },
 			{ name: "project", type: "string[]", facet: true, optional: true },
 		],
+		metadata: {
+			owners: ["Ivana Dobcheva"],
+			description: "index for the HIT project, indexing all strata",
+			service_ids: [23143],
+		},
 		default_sorting_field: "sort_id",
 	};
 
