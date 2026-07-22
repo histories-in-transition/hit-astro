@@ -11,261 +11,308 @@ import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { msItemTableConfig } from "@/lib/tabulator-table-configs.js";
 
-export async function getStaticPaths() { 
-  const msItemsList = Object.values(msitems);
- 
-  const paths = msItemsList.map((item) => {
-    const msItemId = item.hit_id;
-   
-    return {
-      params: { id: msItemId }, 
-      props: { data: item as MsItem }
-    }
-  });
+export async function getStaticPaths() {
+	const msItemsList = Object.values(msitems);
 
-  return paths;
+	const paths = msItemsList.map((item) => {
+		const msItemId = item.hit_id;
+
+		return {
+			params: { id: msItemId },
+			props: { data: item as MsItem },
+		};
+	});
+
+	return paths;
 }
-       
+
 const { data: item } = Astro.props;
 // filter hands which are NOT screiber (for the 'Bearbeitungsschritten')
-const tableData =  msItemTableConfig.transformData(item.hands
-                  .filter(hand => hand.jobs.some(j => !j.role.some(r => r.value ==='Schreiber'))))
+const tableData = msItemTableConfig.transformData(
+	item.hands.filter((hand) => hand.jobs.some((j) => !j.role.some((r) => r.value === "Schreiber"))),
+);
 
 const columns = msItemTableConfig.getColumns();
 const rowClickConfig = msItemTableConfig.getRowClickConfig;
 ---
 
 <PageLayout title={item.view_label}>
-  
-  <Article
-          prevLink={`/msitems/${item.prev.id}`}
-          nextLink={`/msitems/${item.next.id}`}
-          mainTitle={item.library_place.map(p => p.value) + ', ' + item.view_label}
-          authorEntry={item.author_entry}
-        > 
-      <div
-        class="border-2 rounded-sm border-brandBrown bg-brand-100
+	<Article
+		prevLink={`/msitems/${item.prev.id}`}
+		nextLink={`/msitems/${item.next.id}`}
+		mainTitle={item.library_place.map((p) => p.value) + ", " + item.view_label}
+		authorEntry={item.author_entry}
+	>
+		<div
+			class="border-2 rounded-sm border-brandBrown bg-brand-100
         text-sm md:leading-7 md:text-base"
-      >
-        <div class="md:grid grid-cols-[auto_auto] gap-2">
-          <section aria-labelledby="msitemInfo" class="m-5">
-            <h2 id="msitemInfo" class="text-xl font-semibold text-brand-800">Allgemeine Info über das MS Element
-          
-            </h2>
-           <DescriptionList>
+		>
+			<div class="md:grid grid-cols-[auto_auto] gap-2">
+				<section aria-labelledby="msitemInfo" class="m-5">
+					<h2 id="msitemInfo" class="text-xl font-semibold text-brand-800">
+						Allgemeine Info über das MS Element
+					</h2>
+					<DescriptionList>
+						<DescriptionListItem label="Handschrift:">
+							<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`}>
+								{item.library_place.map((p) => p.value).join(", ")}, {item.manuscript[0]?.value}
+							</NavLink>
+						</DescriptionListItem>
 
-                <DescriptionListItem label="Handschrift:">
-                  <NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`}>
-                    {item.library_place.map(p => p.value).join(", ")}, {item.manuscript[0]?.value}
-                  </NavLink>
-                </DescriptionListItem>
+						<DescriptionListItem label="Locus:">
+							{item.locus}
+						</DescriptionListItem>
 
-                <DescriptionListItem label="Locus:">
-                  {item.locus}
-                </DescriptionListItem>
+						<DescriptionListItem label="Titel:">
+							{
+								item.title_work?.map((title) =>
+									title.hit_id ? (
+										<NavLink href={`/works/${title.hit_id}`}>{title.title}</NavLink>
+									) : (
+										title.title
+									),
+								)
+							}
+						</DescriptionListItem>
 
-                <DescriptionListItem label="Titel:">
-                  {item.title_work?.map((title) =>
-                    title.hit_id ? (
-                      <NavLink href={`/works/${title.hit_id}`}>{title.title}</NavLink>
-                    ) : (
-                      title.title
-                    )
-                  )}
-                </DescriptionListItem>
+						{
+							item.title_work?.some((title) => title.author?.length > 0) && (
+								<DescriptionListItem label="Autor:">
+									{item.title_work.map((title) =>
+										title.author.map((aut) =>
+											aut.gnd_url ? (
+												<NavLink href={aut.gnd_url} target="_blank">
+													{aut.name}
+													<Icon
+														class="inline-flex align-middle"
+														aria-hidden="true"
+														name="lucide:external-link"
+													/>
+												</NavLink>
+											) : (
+												<span>{aut.name}</span>
+											),
+										),
+									)}
+								</DescriptionListItem>
+							)
+						}
 
-                {item.title_work?.some(title => title.author?.length > 0) && (
-                  <DescriptionListItem label="Autor:">
-                    {item.title_work.map(title =>
-                      title.author.map(aut =>
-                        aut.gnd_url ? (
-                          <NavLink href={aut.gnd_url} target="_blank">
-                            {aut.name}
-                            <Icon
-                              class="inline-flex align-middle"
-                              aria-hidden="true"
-                              name="lucide:external-link"
-                            />
-                          </NavLink>
-                        ) : (
-                          <span>{aut.name}</span>
-                        )
-                      )
-                    )}
-                  </DescriptionListItem>
-                )}
+						<DescriptionListItem label="Sprache:">
+							{item.language.map((lang) => lang.value).join(", ")}
+						</DescriptionListItem>
 
-                <DescriptionListItem label="Sprache:">
-                  {item.language.map(lang => lang.value).join(", ")}
-                </DescriptionListItem>
+						{
+							item.text_modification.length > 0 && (
+								<DescriptionListItem label="Textmodifikation:">
+									{item.text_modification.join(", ")}
+								</DescriptionListItem>
+							)
+						}
 
-                {item.text_modification.length > 0 && (
-                  <DescriptionListItem label="Textmodifikation:">
-                    {item.text_modification.join(", ")}
-                  </DescriptionListItem>
-                )}
+						{
+							item.interpolations.length > 0 && (
+								<DescriptionListItem label="Interpolation:">
+									<ul>
+										{item.interpolations.map((i) => (
+											<li>
+												<NavLink href={`/works/${i.hit_id}`}>
+													{i.author.length > 0
+														? `${i.author.map((a) => a.name).join(", ")} : ${i.title}`
+														: i.title}
+												</NavLink>
+											</li>
+										))}
+									</ul>
+								</DescriptionListItem>
+							)
+						}
 
-                {item.interpolations.length > 0 && (
-                  <DescriptionListItem label="Interpolation:">
-                    <ul>
-                      {item.interpolations.map(i => (
-                        <li>
-                          <NavLink href={`/works/${i.hit_id}`}>
-                            {i.author.length > 0
-                              ? `${i.author.map(a => a.name).join(", ")} : ${i.title}`
-                              : i.title}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
-                  </DescriptionListItem>
-                )}
+						{
+							item.title_note && (
+								<DescriptionListItem label="Bemerkung:">{item.title_note}</DescriptionListItem>
+							)
+						}
 
-                {item.title_note && (
-                  <DescriptionListItem label="Bemerkung:">
-                    {item.title_note}
-                  </DescriptionListItem>
-                )}
+						{
+							item.rubric && (
+								<DescriptionListItem label="Rubrik:">
+									›
+									{item.rubric
+										.split(/(\[.*?\])/)
+										.map((part) =>
+											part.startsWith("[") && part.endsWith("]") ? (
+												<span class="not-italic">{part}</span>
+											) : (
+												<span class="italic">{part}</span>
+											),
+										)}
+									‹
+								</DescriptionListItem>
+							)
+						}
 
-                {item.rubric && (
-                  <DescriptionListItem label="Rubrik:">
-                    ›{item.rubric.split(/(\[.*?\])/).map(part =>
-                      part.startsWith("[") && part.endsWith("]")
-                        ? <span class="not-italic">{part}</span>
-                        : <span class="italic">{part}</span>
-                    )}‹
-                  </DescriptionListItem>
-                )}
+						{
+							item.incipit && (
+								<DescriptionListItem label="Incipit:">
+									<span class="italic">
+										{item.incipit
+											.split(/(\[.*?\])/)
+											.map((part) =>
+												part.startsWith("[") && part.endsWith("]") ? (
+													<span class="not-italic">{part}</span>
+												) : (
+													<span class="italic">{part}</span>
+												),
+											)}
+										{!item.incipit.trim().endsWith("…") && "…"}
+									</span>
+								</DescriptionListItem>
+							)
+						}
 
-                {item.incipit && (
-                  <DescriptionListItem label="Incipit:">
-                    <span class="italic">
-                      {item.incipit.split(/(\[.*?\])/).map(part =>
-                        part.startsWith("[") && part.endsWith("]")
-                          ? <span class="not-italic">{part}</span>
-                          : <span class="italic">{part}</span>
-                      )}
-                      {!item.incipit.trim().endsWith("…") && "…"}
-                    </span>
-                  </DescriptionListItem>
-                )}
+						{
+							item.explicit && (
+								<DescriptionListItem label="Explicit:">
+									<span class="italic">
+										{item.explicit
+											.split(/(\[.*?\])/)
+											.map((part) =>
+												part.startsWith("[") && part.endsWith("]") ? (
+													<span class="not-italic">{part}</span>
+												) : (
+													<span>{part}</span>
+												),
+											)}
+										{!item.explicit.trim().startsWith("…") && "…"}
+									</span>
+								</DescriptionListItem>
+							)
+						}
 
-                {item.explicit && (
-                  <DescriptionListItem label="Explicit:">
-                    <span class="italic">
-                      {item.explicit.split(/(\[.*?\])/).map(part =>
-                        part.startsWith("[") && part.endsWith("]")
-                          ? <span class="not-italic">{part}</span>
-                          : <span>{part}</span>
-                      )}
-                      {!item.explicit.trim().startsWith("…") && "…"}
-                    </span>
-                  </DescriptionListItem>
-                )}
+						{
+							item.final_rubric && (
+								<DescriptionListItem label="Final Rubrik:">
+									›
+									{item.final_rubric
+										.split(/(\[.*?\])/)
+										.map((part) =>
+											part.startsWith("[") && part.endsWith("]") ? (
+												<span class="not-italic">{part}</span>
+											) : (
+												<span class="italic">{part}</span>
+											),
+										)}
+									‹
+								</DescriptionListItem>
+							)
+						}
 
-                {item.final_rubric && (
-                  <DescriptionListItem label="Final Rubrik:">
-                    ›{item.final_rubric.split(/(\[.*?\])/).map(part =>
-                      part.startsWith("[") && part.endsWith("]")
-                        ? <span class="not-italic">{part}</span>
-                        : <span class="italic">{part}</span>
-                    )}‹
-                  </DescriptionListItem>
-                )}
+						{
+							item.decoration.length > 0 && (
+								<DescriptionListItem label="Dekoration:">
+									{item.decoration.map((d) => d.value).join(", ")}
+								</DescriptionListItem>
+							)
+						}
 
-                {item.decoration.length > 0 && (
-                  <DescriptionListItem label="Dekoration:">
-                    {item.decoration.map(d => d.value).join(", ")}
-                  </DescriptionListItem>
-                )}
+						{
+							item.form.length > 0 && (
+								<DescriptionListItem label="Form:">
+									{item.form.map((f) => f.value).join(", ")}
+									{item.form_note && <span class="italic"> ({item.form_note})</span>}
+								</DescriptionListItem>
+							)
+						}
 
-                {item.form.length > 0 && (
-                  <DescriptionListItem label="Form:">
-                    {item.form.map(f => f.value).join(", ")}
-                    {item.form_note && <span class="italic"> ({item.form_note})</span>}
-                  </DescriptionListItem>
-                )}
+						<DescriptionListItem label="Schreiberhände:">
+							{
+								item.hands
+									.filter((hand) =>
+										hand.jobs.some((job) => job.role.some((r) => r.value === "Schreiber")),
+									)
+									.map((filteredHand) => (
+										<ul>
+											<li>
+												<NavLink href={`/hands/${filteredHand.hit_id}`}>
+													{filteredHand.label}
+												</NavLink>
 
-                <DescriptionListItem label="Schreiberhände:">
-                  {item.hands
-                    .filter(hand =>
-                      hand.jobs.some(job =>
-                        job.role.some(r => r.value === "Schreiber")
-                      )
-                    )
-                    .map(filteredHand => (
-                      <ul>
-                        <li>
-                          <NavLink href={`/hands/${filteredHand.hit_id}`}>
-                            {filteredHand.label}
-                          </NavLink>
+												{(filteredHand.place.length > 0 ||
+													filteredHand.dating.length > 0 ||
+													filteredHand.jobs.some((j) => j.role_context.length > 0)) && (
+													<span>
+														<Icon
+															class="inline-flex align-middle"
+															aria-hidden="true"
+															name="lucide:arrow-right"
+														/>
+														{filteredHand.place
+															.map((pl) => pl.place?.map((p) => p.value).join(", "))
+															.join("; ")}
+														{filteredHand.dating.length > 0 &&
+															` | ${filteredHand.dating
+																.map((d) => d.date?.map((dt) => dt.value).join(", "))
+																.join("; ")}`}
+														{filteredHand.jobs.some((j) => j.role_context.length > 0) &&
+															` | ${filteredHand.jobs
+																.flatMap((j) => j.role_context.map((rc) => rc.value))
+																.join(", ")}`}
+													</span>
+												)}
+											</li>
+										</ul>
+									))
+							}
+						</DescriptionListItem>
 
-                          {(filteredHand.place.length > 0 ||
-                            filteredHand.dating.length > 0 ||
-                            filteredHand.jobs.some(j => j.role_context.length > 0)) && (
-                            <span>
-                              <Icon
-                                class="inline-flex align-middle"
-                                aria-hidden="true"
-                                name="lucide:arrow-right"
-                              />
-                              {filteredHand.place.map(pl =>
-                                pl.place?.map(p => p.value).join(", ")
-                              ).join("; ")}
-                              {filteredHand.dating.length > 0 &&
-                                ` | ${filteredHand.dating.map(d =>
-                                  d.date?.map(dt => dt.value).join(", ")
-                                ).join("; ")}`}
-                              {filteredHand.jobs.some(j => j.role_context.length > 0) &&
-                                ` | ${filteredHand.jobs.flatMap(j =>
-                                  j.role_context.map(rc => rc.value)
-                                ).join(", ")}`}
-                            </span>
-                          )}
-                        </li>
-                      </ul>
-                    ))}
-                </DescriptionListItem>
+						{
+							item.commented_msitem.length > 0 && (
+								<DescriptionListItem label="Bezug zu anderen Texten:">
+									{item.commented_msitem.map((i) => (
+										<NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>
+									))}
+								</DescriptionListItem>
+							)
+						}
+					</DescriptionList>
+				</section>
+				{
+					item.facs_url && (
+						<div class="p-5 place-self-start">
+							<NavLink href={item.facs_url} target="_blank">
+								<img src={`${item.facs_url}`} alt="first page of the selected ms-item" />
+							</NavLink>
+						</div>
+					)
+				}
+			</div>
+		</div>
 
-                {item.commented_msitem.length > 0 && (
-                  <DescriptionListItem label="Bezug zu anderen Texten:">
-                    {item.commented_msitem.map(i => (
-                      <NavLink href={`/msitems/${i.hit_id}`}>{i.title}</NavLink>
-                    ))}
-                  </DescriptionListItem>
-                )}
-              </DescriptionList>
-            
-          </section>
-          {item.facs_url && 
-          <div class="p-5 place-self-start">
-            <NavLink href={item.facs_url} target="_blank">
-              <img src=`${item.facs_url}` alt="first page of the selected ms-item"></img>
-            </NavLink>
-          </div>}
-        </div>
+		{
+			item.hands.some((hand) =>
+				hand.jobs.some((job) => !job.role.some((r) => r.value === "Schreiber")),
+			) && (
+				<section aria-labelledby="msitemRework" class="overflow-x-auto m-5">
+					<h2 id="msitemRework" class="text-xl font-semibold text-brand-800 mb-5">
+						Bearbeitungsschritte
+					</h2>
 
-        {item.hands.some(hand => hand.jobs.some(job => !job.role.some(r => r.value ==='Schreiber'))) &&
-              
-          <section aria-labelledby="msitemRework"  class="overflow-x-auto m-5">            
-             <h2 id="msitemRework" class="text-xl font-semibold text-brand-800 mb-5">Bearbeitungsschritte</h2>
-            
-            <div class="text-sm md:text-base">
-					<div id={`${item.label}-table`}></div>
-				</div>
-				<TabulatorTable
-					client:only="svelte"
-					data={tableData}
-					columns={columns}
-					tableId={`${item.label}-table`}
-					downloadTitle={`${item.label}-table`}
-					rowClickConfig={rowClickConfig}
-					updateMapOnFilter={true}
-					mapIdField="hit_id"
-				/>
-          
-          </section>
-      }
-      </div>
-  </Article>
+					<div class="text-sm md:text-base">
+						<div id={`${item.label}-table`} />
+					</div>
+					<TabulatorTable
+						client:only="svelte"
+						data={tableData}
+						columns={columns}
+						tableId={`${item.label}-table`}
+						downloadTitle={`${item.label}-table`}
+						rowClickConfig={rowClickConfig}
+						updateMapOnFilter={true}
+						mapIdField="hit_id"
+					/>
+				</section>
+			)
+		}
+	</Article>
 </PageLayout>

@@ -10,6 +10,11 @@
 
 	import { withBasePath } from "@/lib/withBasePath";
 
+	  import pinGreen from "@/icons/map-pin-green.png"
+  import pinRed from "@/icons/map-pin-red.png"
+  import pinBlue from "@/icons/map-pin-blue.png"
+  import pin from "@/icons/map-pin.png"
+
 	export let geoJsonData;
 	export let className = "w-full h-64 md:h-120 border rounded z-10";
 	export let initialView = [50, 10];
@@ -34,33 +39,30 @@
 		}
 
 	// Icons
-	const pinGreen = new URL("@/icons/map-pin-green.png", import.meta.url).toString();
-	const pinRed = new URL("@/icons/map-pin-red.png", import.meta.url).toString();
-	const pin = new URL("@/icons/map-pin.png", import.meta.url).toString();
-	const pinBlue = new URL("@/icons/map-pin-blue.png", import.meta.url).toString();
+	
 	const originIcon = L.icon({
-		iconUrl: pinRed,
+		iconUrl: pinRed.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
 	});
 
 	const provenanceIcon = L.icon({
-		iconUrl: pinGreen,
+		iconUrl: pinGreen.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
 	});
 
 	const currentPlaceIcon = L.icon({
-		iconUrl: pinBlue,
+		iconUrl: pinBlue.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
 	});
 
 	const customIcon = L.icon({
-		iconUrl: pin,
+		iconUrl: pin.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
