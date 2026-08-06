@@ -21,7 +21,7 @@ import DescriptionList from "@/components/ui/DescriptionList.astro";
 			]}
 		/>
 		<div class="print:hidden hidden md:block">
-			<MapLeaf client:only="svelte" geoJsonData={geoData} />
+			<MapLeaf client:only="svelte" geoJsonData={geoData} enableFiltering={false} />
 		</div>
 	</div>
 

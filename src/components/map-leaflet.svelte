@@ -10,9 +10,9 @@
 
 	import { withBasePath } from "@/lib/withBasePath";
 
-	  import pinGreen from "@/icons/map-pin-green.png"
-  import pinRed from "@/icons/map-pin-red.png"
-  import pinBlue from "@/icons/map-pin-blue.png"
+	  import pinGreen from "@/icons/map-pin-green.svg"
+  import pinRed from "@/icons/map-pin-red.svg"
+  import pinBlue from "@/icons/map-pin-blue.svg"
   import pin from "@/icons/map-pin.png"
 
 	export let geoJsonData;
@@ -30,13 +30,19 @@
 	let cleanupResize;
 	let isReady = false;
 
-	$: if (isReady) {
-		const idsToUse =
-			$lockedIds.size > 0 ? $lockedIds : $filteredIds;
+	export let enableFiltering = true;
 
-		const filtered = filterGeoJsonByIds(geoJsonData, idsToUse);
-		updateMapMarkers(filtered);
-		}
+$: if (isReady) {
+    const data =
+        enableFiltering
+            ? filterGeoJsonByIds(
+                  geoJsonData,
+                  $lockedIds.size > 0 ? $lockedIds : $filteredIds
+              )
+            : geoJsonData;
+
+    updateMapMarkers(data);
+}
 
 	// Icons
 	
@@ -70,13 +76,14 @@
 
 	L.Marker.prototype.options.icon = customIcon;
 
+	let counter = 0;
 	function updateMapMarkers(dataToShow) {
+		
 		if (!map || !originLayer || !provenanceLayer || !currentLocationLayer) return;
 
 		originLayer.clearLayers();
 		provenanceLayer.clearLayers();
 		currentLocationLayer.clearLayers();
-
 		dataToShow?.features?.forEach((feature) => {
 			const { geometry, properties } = feature;
 			if (
@@ -93,6 +100,7 @@
 					: type === "provenance" ? provenanceIcon 
 					:	currentPlaceIcon }
 				);
+				//console.log(marker.getLatLng())
 
 				if (properties) {
 					const url = withBasePath(properties.url || "");
@@ -160,7 +168,7 @@
 			iconCreateFunction: (cluster) => {
 				const count = cluster.getChildCount();
 				return L.divIcon({
-					html: `<div class="bg-brand-800 opacity-60 text-white rounded-full w-8 h-8 flex items-center justify-center">${count}</div>`,
+					html: `<div class="bg-red-700 opacity-60 text-white rounded-full w-8 h-8 flex items-center justify-center">${count}</div>`,
 					className: "custom-cluster-icon-origin",
 					iconSize: [30, 30],
 				});
