@@ -38,7 +38,7 @@ export interface Codunit {
 export interface ContentUnit {
 	id?: number;
 	hit_id: string;
-	label: string;
+	label?: string;
 	language: Form[];
 	locus: string;
 	facs_url: string;

@@ -10,6 +10,11 @@
 
 	import { withBasePath } from "@/lib/withBasePath";
 
+	  import pinGreen from "@/icons/map-pin-green.svg"
+  import pinRed from "@/icons/map-pin-red.svg"
+  import pinBlue from "@/icons/map-pin-blue.svg"
+  import pin from "@/icons/map-pin.png"
+
 	export let geoJsonData;
 	export let className = "w-full h-64 md:h-120 border rounded z-10";
 	export let initialView = [50, 10];
@@ -25,42 +30,45 @@
 	let cleanupResize;
 	let isReady = false;
 
-	$: if (isReady) {
-		const idsToUse =
-			$lockedIds.size > 0 ? $lockedIds : $filteredIds;
+	export let enableFiltering = true;
 
-		const filtered = filterGeoJsonByIds(geoJsonData, idsToUse);
-		updateMapMarkers(filtered);
-		}
+$: if (isReady) {
+    const data =
+        enableFiltering
+            ? filterGeoJsonByIds(
+                  geoJsonData,
+                  $lockedIds.size > 0 ? $lockedIds : $filteredIds
+              )
+            : geoJsonData;
+
+    updateMapMarkers(data);
+}
 
 	// Icons
-	const pinGreen = new URL("@/icons/map-pin-green.png", import.meta.url).toString();
-	const pinRed = new URL("@/icons/map-pin-red.png", import.meta.url).toString();
-	const pin = new URL("@/icons/map-pin.png", import.meta.url).toString();
-	const pinBlue = new URL("@/icons/map-pin-blue.png", import.meta.url).toString();
+	
 	const originIcon = L.icon({
-		iconUrl: pinRed,
+		iconUrl: pinRed.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
 	});
 
 	const provenanceIcon = L.icon({
-		iconUrl: pinGreen,
+		iconUrl: pinGreen.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
 	});
 
 	const currentPlaceIcon = L.icon({
-		iconUrl: pinBlue,
+		iconUrl: pinBlue.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
 	});
 
 	const customIcon = L.icon({
-		iconUrl: pin,
+		iconUrl: pin.src,
 		iconSize: [25, 25],
 		iconAnchor: [12, 41],
 		popupAnchor: [0, -41],
@@ -68,13 +76,14 @@
 
 	L.Marker.prototype.options.icon = customIcon;
 
+	let counter = 0;
 	function updateMapMarkers(dataToShow) {
+		
 		if (!map || !originLayer || !provenanceLayer || !currentLocationLayer) return;
 
 		originLayer.clearLayers();
 		provenanceLayer.clearLayers();
 		currentLocationLayer.clearLayers();
-
 		dataToShow?.features?.forEach((feature) => {
 			const { geometry, properties } = feature;
 			if (
@@ -91,6 +100,7 @@
 					: type === "provenance" ? provenanceIcon 
 					:	currentPlaceIcon }
 				);
+				//console.log(marker.getLatLng())
 
 				if (properties) {
 					const url = withBasePath(properties.url || "");
@@ -158,7 +168,7 @@
 			iconCreateFunction: (cluster) => {
 				const count = cluster.getChildCount();
 				return L.divIcon({
-					html: `<div class="bg-brand-800 opacity-60 text-white rounded-full w-8 h-8 flex items-center justify-center">${count}</div>`,
+					html: `<div class="bg-red-700 opacity-60 text-white rounded-full w-8 h-8 flex items-center justify-center">${count}</div>`,
 					className: "custom-cluster-icon-origin",
 					iconSize: [30, 30],
 				});

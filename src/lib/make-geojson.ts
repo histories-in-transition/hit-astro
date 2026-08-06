@@ -153,7 +153,7 @@ export function processMSData(input: Manuscript | Manuscript[]): FeatureCollecti
 			for (const pl of library.place) {
 				const feature = createPointFeature(pl, {
 					title: `HS: ${library.abbreviation}, ${mssData.shelfmark}`,
-					description: `Repositorium: ${library.library_full ?? "N/A"}`,
+					description: `Repositorium: ${library.library_full ? library.library_full : library.abbreviation}`,
 					place: pl.value ? `Aufbewahrungsort: ${pl.value}` : "",
 					type: "currentLocation",
 					url: `/places/${pl.hit_id}`,

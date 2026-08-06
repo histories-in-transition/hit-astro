@@ -1,6 +1,13 @@
 import * as d3 from "d3";
 
-export function createWorkGraph(container, graphData, { onNavigate, onLockChange } = {}) {
+export function createWorkGraph(
+	container: HTMLElement,
+	graphData: any,
+	{
+		onNavigate,
+		onLockChange,
+	}: { onNavigate?: (d: any) => void; onLockChange?: (node: any) => void } = {},
+) {
 	let width = 0;
 	let height = 0;
 
@@ -42,7 +49,7 @@ export function createWorkGraph(container, graphData, { onNavigate, onLockChange
 	// colors for genre legend and nodes
 
 	const genres = Array.from(new Set(graphData.nodes.map((d) => d.genre))).sort((a, b) =>
-		a.localeCompare(b),
+		(a as string).localeCompare(b as string),
 	);
 
 	const palette = [
@@ -334,7 +341,7 @@ export function createWorkGraph(container, graphData, { onNavigate, onLockChange
 
 		labels
 			.attr("opacity", (n) => (n.id === d.id ? 1 : 0))
-			.each(function (n) {
+			.each(function (this: SVGTextElement, n) {
 				if (n.id === d.id) {
 					this.parentNode.appendChild(this);
 				}

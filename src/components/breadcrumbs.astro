@@ -38,8 +38,9 @@ const translationMap = {
 					// Rebuild the URL for the current segment without prepending the base
 					// base comes with NavLink
 					const url = `/${segments.slice(0, index + 1).join("/")}/`;
-					const rawName = segment.replace("hit_", " ").replace("__", " #");
-					const displayName = translationMap[rawName] || rawName;
+					const rawName = segment.split("__")[1] || segment; // Get the part after "__" if it exists, otherwise use the whole segment
+
+					const displayName = translationMap[rawName] || `#${rawName}`;
 
 					// If it's the last segment, render as plain text
 					const isLastSegment = index === segments.length - 1;
