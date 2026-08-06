@@ -43,10 +43,10 @@ jobs:
         with:
           node-version: 22 # need to specify the version
 
-      - name: set up pnpm
-        uses: pnpm/action-setup@v6 # this one lives in the pnpm github repo
-        with:
-          version: 9
+      - name: enable corepack
+        run: |
+          corepack enable
+          corepack install
 
       - name: install dependencies # install all dependencies need to run the project
         run: pnpm install

@@ -1,7 +1,6 @@
 import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 
-import { request } from "@acdh-oeaw/lib";
 // fetch baserow dumps from github and store them in the raw folder
 // this script is meant to be run only once by build to fetch the initial data
 // subsequent preprocessing of the data is done with the preprocess-data.js script
@@ -37,10 +36,18 @@ const fileNames: string[] = [
 
 async function fetchData(fileName: string): Promise<void> {
 	try {
-		const data: unknown = await request(new URL(fileName, baseUrl), { responseType: "json" });
+		const response = await fetch(new URL(fileName, baseUrl));
+
+		if (!response.ok) {
+			throw new Error(`${response.status} ${response.statusText}`);
+		}
+
+		const data = await response.json();
+
 		writeFileSync(join(folderPath, fileName), JSON.stringify(data, null, 2), "utf-8");
+
 		console.log(`✅ Saved: ${fileName}`);
-	} catch (error: unknown) {
+	} catch (error) {
 		console.error(`❌ Error fetching ${fileName}:`, error);
 	}
 }
