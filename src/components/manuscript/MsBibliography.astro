@@ -1,18 +1,25 @@
 ---
 const { manuscript } = Astro.props;
+import Section from "@/components/ui/Section.astro";
+import NavLink from "@/components/nav-link.astro";
+import { Icon } from "astro-icon/components";
 ---
 
-<section
-	aria-labelledby="bibl"
-	class="border rounded-xs border-neutral-200 shadow-xs bg-brand-100 text-sm md:leading-7 md:text-base md:px-5"
->
-	<details open>
-		<summary class="text-xl cursor-pointer p-4 font-semibold text-brand-800" id="bibl">
-			Bibliographie
-		</summary>
-
-		<ul>
-			{manuscript.bibliography.map((bibl) => <li>{bibl}</li>)}
-		</ul>
-	</details>
-</section>
+<Section heading="Bibliographie" id="msBibliography">
+	<ul class="list-disc list-inside p-4">
+		{
+			manuscript.bibliography.map((bibl) => (
+				<li>
+					{bibl.author}. {bibl.title}{" "}
+					<NavLink
+						href={bibl.url}
+						target="_blank"
+						class="cursor-pointer text-brand-900 underline decoration-dotted underline-offset-4"
+					>
+						Zotero <Icon name="lucide:external-link" class="inline-block align-middle" />
+					</NavLink>
+				</li>
+			))
+		}
+	</ul>
+</Section>
