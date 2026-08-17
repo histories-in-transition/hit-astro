@@ -86,6 +86,7 @@ async function processAllData(): Promise<{
 			cod_unitsprov: rawData.cod_unit_placed,
 			bibliography: rawData.bibliography,
 			dates: rawData.dates,
+			facsimiles: rawData.facsimiles,
 		});
 		console.log(`Processed ${processedMsItems.length} manuscript items`);
 

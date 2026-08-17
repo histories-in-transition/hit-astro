@@ -462,3 +462,15 @@ export const HitStrataFiliationSchema = z.object({
 	note: stringOrEmpty,
 });
 export type HitStrataFiliation = z.infer<typeof HitStrataFiliationSchema>;
+
+export const HitFacsimileSchema = z.object({
+	id: z.number(),
+	order: stringOrEmpty,
+	fol: stringOrEmpty,
+	shelfmark: stringOrEmpty,
+	facs_number: stringOrEmpty,
+	fol_page: stringOrEmpty,
+	page_url: stringOrEmpty,
+	ms_link: arrayOrEmpty(RefSchema),
+});
+export type HitFacsimile = z.infer<typeof HitFacsimileSchema>;

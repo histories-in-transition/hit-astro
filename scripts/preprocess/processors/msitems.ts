@@ -19,6 +19,7 @@ import type {
 	HitCodPlaced,
 	HitBibliography,
 	HitDates,
+	HitFacsimile,
 } from "@/types/zod/zod-types.js";
 import type { Place, Library, MsItem } from "@/types/index.js";
 
@@ -37,6 +38,7 @@ type MsItemDeps = {
 	cod_unitsprov: HitCodPlaced[];
 	bibliography: HitBibliography[];
 	dates: HitDates[];
+	facsimiles: HitFacsimile[];
 };
 
 export function processMsItems(msItems: HitMsitem[], deps: MsItemDeps): MsItem[] {
@@ -63,6 +65,7 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 		cod_unitsprov,
 		bibliography,
 		dates,
+		facsimiles,
 	} = deps;
 
 	// Get author_entry from manuscript
@@ -92,8 +95,34 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 
 	// Get provenance from cod. units and enrich it with place and date information
 	const provenance = getProvenance(item, cod_unitsprov, places, dates, bibliography);
-	// the same for manuscript
+	// ttry to get facsimile for locus
 
+	let locusArray = [];
+	const msFacsimiles = facsimiles.filter((f) => f.ms_link?.[0]?.id === item.manuscript?.[0]?.id);
+	msFacsimiles.length > 0
+		? (locusArray = item.locus_grp?.split("|").map((group) => {
+				const firstFol = msFacsimiles
+					.filter((f) => f.fol_page === group.split("-")[0].trim())
+					.map((f) => ({
+						facs_number: f.facs_number,
+						fol_page: f.fol_page,
+						page_url: f.page_url,
+					}));
+
+				const lastFol = msFacsimiles
+					.filter((f) => f.fol_page === group.split("-")[1]?.trim())
+					.map((f) => ({
+						facs_number: f.facs_number,
+						fol_page: f.fol_page,
+						page_url: f.page_url,
+					}));
+
+				return {
+					begin: firstFol,
+					end: lastFol.length > 0 ? lastFol : firstFol,
+				};
+			}))
+		: [];
 	// Return the enriched msitem
 	return {
 		id: item.id,
@@ -115,6 +144,7 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 		cod_unit: item.cod_unit.map(({ order, ...rest }) => rest),
 		language: item.language.map(({ value }) => ({ value })),
 		locus: item.locus_grp,
+		locusArray: locusArray,
 		facs_url: item.facs_url,
 		incipit: item.incipit,
 		explicit: item.explicit,

@@ -10,6 +10,7 @@ import type {
 	Value,
 } from "./shared";
 import type { MsItemHand } from "./hand";
+import type { HitFacsimile } from "@/types/zod/zod-types";
 
 //used in work
 export interface MsItemBase {
@@ -68,6 +69,12 @@ export interface MsItem {
 	annotation_typ?: string[];
 	annotation_date?: OrigDate[];
 	project?: string[];
+	locusArray?: locusArray[];
+	facsimiles?: { begin: HitFacsimile | undefined; end: HitFacsimile | undefined }[];
+}
+interface locusArray {
+	begin: { facs_number: string; fol_page: string; page_url: string }[];
+	end: { facs_number: string; fol_page: string; page_url: string }[];
 }
 
 interface FormItem {

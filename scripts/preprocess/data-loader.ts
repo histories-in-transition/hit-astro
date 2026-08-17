@@ -23,6 +23,7 @@ import {
 	HitBibliographySchema,
 	HitCodPlacedSchema,
 	HitStrataFiliationSchema,
+	HitFacsimileSchema,
 } from "@/types/zod/zod-types";
 
 // function to load JSON files from the raw content directory
@@ -82,6 +83,9 @@ export function loadAllData() {
 		),
 		cod_unit_placed: Object.values(
 			loadJSON("cod_unit_placed.json", z.record(z.string(), HitCodPlacedSchema)),
+		),
+		facsimiles: Object.values(
+			loadJSON("facsimiles.json", z.record(z.string(), HitFacsimileSchema)),
 		),
 	};
 }

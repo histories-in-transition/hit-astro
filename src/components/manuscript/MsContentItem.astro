@@ -1,20 +1,44 @@
 ---
 import NavLink from "@/components/nav-link.astro";
+import { parseLocus } from "@/lib/utils";
 const { item } = Astro.props;
 ---
 
 <>
 	<dt class="md:border-r border-gray-300 pr-2 justify-self-end">
-		{item.hit_id ? <NavLink href={`/msitems/${item.hit_id}`}>{item.locus}</NavLink> : item.locus}
+		{
+			item.locusArray.length > 0
+				? item.locusArray.map((locus, index) => (
+						<span>
+							{index > 0 && " | "}
+
+							<NavLink href={locus.begin[0].page_url} data-popup>
+								{locus.begin[0].fol_page}
+							</NavLink>
+
+							{locus.end[0].fol_page !== locus.begin[0].fol_page && (
+								<>
+									{"–"}
+									<NavLink href={locus.end[0].page_url} data-popup>
+										{locus.end[0].fol_page}
+									</NavLink>
+								</>
+							)}
+						</span>
+					))
+				: item.locus
+		}
 	</dt>
 
 	<dd class="pl-5 space-x-1">
 		{
 			item.title_work.map((work) => (
 				<span class="font-semibold">
-					{work.author?.length ? `${work.author.map((a) => a.name).join(", ")}: ` : ""}
 					{work.hit_id ? (
-						<NavLink href={`/works/${work.hit_id}`}>{work.title}</NavLink>
+						<NavLink href={`/msitems/${item.hit_id}`}>
+							{work.author?.length ? `${work.author.map((a) => a.name).join(", ")}: ` : ""}
+							{work.title}
+						</NavLink>
 					) : (
 						work.title
 					)}
@@ -114,3 +138,16 @@ const { item } = Astro.props;
 		}
 	</dd>
 </>
+<script>
+	function openFacsimile(event: MouseEvent) {
+		const link = event.currentTarget as HTMLAnchorElement;
+
+		event.preventDefault();
+
+		window.open(link.href, "_blank", "width=1000,height=800,resizable=yes,scrollbars=yes");
+	}
+
+	document.querySelectorAll<HTMLAnchorElement>("[data-popup]").forEach((link) => {
+		link.addEventListener("click", openFacsimile);
+	});
+</script>
