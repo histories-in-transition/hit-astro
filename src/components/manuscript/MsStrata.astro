@@ -5,45 +5,12 @@ import type { Stratum } from "@/types";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { strataMsTableConfig } from "@/lib/tabulator-table-configs.js";
 import type { Manuscript } from "@/types";
-import { date } from "astro:schema";
 
 const { manuscript } = Astro.props as { manuscript: Manuscript };
 
 const tableData = strataMsTableConfig.transformData(manuscript.strata);
 const columns = strataMsTableConfig.getColumns();
 const rowClickConfig = strataMsTableConfig.getRowClickConfig;
-
-//collect all msitems from the strata and enrich them with locusArray from cod_units
-const msitems = manuscript.strata.flatMap((st) =>
-	st.msitems.map((msi) => {
-		const codUnitContent = manuscript.cod_units
-			.flatMap((cu) => cu.content)
-			.find((contentItem) => contentItem.hit_id === msi.hit_id);
-		const titleWork = codUnitContent?.title_work[0]?.title
-			? codUnitContent?.title_work[0]?.title
-			: "N/A";
-		const author =
-			codUnitContent?.title_work[0]?.author?.length > 0
-				? codUnitContent?.title_work[0]?.author.map((a) => a.name).join(", ")
-				: "";
-		const titleAuthor = author ? `${author}: ${titleWork}` : titleWork;
-		return {
-			hit_id: msi.hit_id,
-			locusArray: codUnitContent?.locusArray ?? [],
-			stratum_number: st.number,
-			character: st.character,
-			title: titleAuthor,
-		};
-	}),
-);
-console.log("msitems", msitems);
-// get first and last page of the ms using the locusArray of the msitems
-const pages = msitems
-	.flatMap((msi) => msi.locusArray)
-	.flatMap((locus) => [Number(locus.begin[0].facs_number), Number(locus.end[0].facs_number)]);
-
-const firstPage = pages.length > 0 ? Math.min(...pages) : undefined;
-const lastPage = pages.length > 0 ? Math.max(...pages) : undefined;
 ---
 
 <Section heading="Strata" id="msStrata">
