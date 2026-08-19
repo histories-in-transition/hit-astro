@@ -8,6 +8,7 @@ import type {
 	ProvenanceItem,
 	Bibliography,
 	Value,
+	locusArray,
 } from "./shared";
 import type { MsItemHand } from "./hand";
 import type { HitFacsimile } from "@/types/zod/zod-types";
@@ -71,10 +72,6 @@ export interface MsItem {
 	project?: string[];
 	locusArray?: locusArray[];
 	facsimiles?: { begin: HitFacsimile | undefined; end: HitFacsimile | undefined }[];
-}
-interface locusArray {
-	begin: { facs_number: string; fol_page: string; page_url: string }[];
-	end: { facs_number: string; fol_page: string; page_url: string }[];
 }
 
 interface FormItem {

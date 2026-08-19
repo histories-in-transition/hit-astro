@@ -1,5 +1,6 @@
 import type { Manuscript } from "@/types";
-export function prepareDataForStrataGraph(manuscript: Manuscript) {
+import type { StratigraphyData } from "@/types/stratigraphy";
+export function prepareDataForStrataGraph(manuscript: Manuscript): StratigraphyData {
 	//collect all msitems from the hand_roles and enrich them with locusArray from cod_units
 	const msitems = manuscript.strata.flatMap((st) =>
 		st.hand_roles.flatMap((hr) =>
@@ -17,25 +18,26 @@ export function prepareDataForStrataGraph(manuscript: Manuscript) {
 
 				return {
 					hit_id: msi.hit_id,
+					title: msi.author[0] ? `${msi.author[0]}: ${msi.title}` : msi.title,
 					locusArray,
 
 					pageStart: pages.length ? Math.min(...pages) : undefined,
 					pageEnd: pages.length ? Math.max(...pages) : undefined,
 
-					dateStart: codUnitContent.orig_date[0]?.not_before
-						? Number(codUnitContent.orig_date[0].not_before)
+					dateStart: codUnitContent?.orig_date[0]?.date[0]?.not_before
+						? Number(codUnitContent.orig_date[0].date[0].not_before)
 						: undefined,
-					dateEnd: codUnitContent.orig_date[0]?.not_after
-						? Number(codUnitContent.orig_date[0].not_after)
+					dateEnd: codUnitContent?.orig_date[0]?.date[0]?.not_after
+						? Number(codUnitContent.orig_date[0].date[0].not_after)
 						: undefined,
 
 					stratum_number: st.number,
 					character: st.character,
-					title: msi.author[0] ? `${msi.author[0]}: ${msi.title}` : msi.title,
 				};
 			}),
 		),
 	);
+	// get hand_roles from strata and enrich with pages from the prepared msitems
 	const handRoles = manuscript.strata.flatMap((st) =>
 		st.hand_roles.map((hr) => {
 			const date = hr.hand[0]?.date?.[0];
@@ -58,8 +60,10 @@ export function prepareDataForStrataGraph(manuscript: Manuscript) {
 
 				pageStart: pages.length > 0 ? Math.min(...pages) : undefined,
 				pageEnd: pages.length > 0 ? Math.max(...pages) : undefined,
+				stratum: st.number,
+				hand: hr.hand[0].label.split("_")[1],
 			};
 		}),
 	);
-	return msitems;
+	return { msitems, handRoles };
 }
