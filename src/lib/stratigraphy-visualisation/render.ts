@@ -240,25 +240,50 @@ export function renderManuscriptStratigraphy(container: HTMLElement, data: Strat
 		.attr("width", (d) => Math.max(2, x(d.pageEnd!) - x(d.pageStart!)))
 		.attr("height", (d) => Math.max(2, y(d.dateStart!) - y(d.dateEnd!)))
 		.attr("fill", (d) => getStratumColor(d.stratum))
-		.attr("opacity", 0.35)
+		.attr("opacity", 0.5)
 		.attr("stroke", (d) => getStratumColor(d.stratum))
 		.attr("stroke-width", 1.5);
 
 	// --------------------------------------------------
-	// Hand-role IDs for now
+	// Hand-role labels
 	// --------------------------------------------------
 	const labelLineHeight = 14;
-	chart
+
+	const labels = chart
 		.append("g")
 		.attr("class", "hand-role-labels")
-		.selectAll("text")
+		.selectAll("g")
 		.data(handRolesWithLabelLine)
-		.join("text")
-		.attr("x", (d) => (x(d.pageStart!) + x(d.pageEnd!)) / 2)
-		.attr("y", (d) => (y(d.dateStart!) + y(d.dateEnd!)) / 2 + d.labelLine * labelLineHeight)
+		.join("g")
+		.attr(
+			"transform",
+			(d) =>
+				`translate(
+                ${(x(d.pageStart!) + x(d.pageEnd!)) / 2},
+                ${(y(d.dateStart!) + y(d.dateEnd!)) / 2 + d.labelLine * labelLineHeight}
+            )`,
+		);
+
+	labels
+		.append("text")
 		.attr("text-anchor", "middle")
 		.attr("dominant-baseline", "middle")
 		.attr("fill", "#5a2102")
 		.attr("font-size", "11px")
 		.text((d) => d.hand);
+
+	labels.each(function () {
+		const group = d3.select(this);
+		const text = group.select("text").node() as SVGTextElement;
+		const bbox = text.getBBox();
+
+		group
+			.insert("rect", "text")
+			.attr("x", bbox.x - 3)
+			.attr("y", bbox.y - 2)
+			.attr("width", bbox.width + 6)
+			.attr("height", bbox.height + 4)
+			.attr("fill", "white")
+			.attr("rx", 2);
+	});
 }
