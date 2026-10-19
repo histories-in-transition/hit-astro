@@ -24,3 +24,29 @@ export const sortByLocus = (a, b) => {
 		endA[1].localeCompare(endB[1])
 	);
 };
+
+export const palette = [
+	"#1f77b4",
+	"#ff7f0e",
+	"#2ca02c",
+	"#d62728",
+	"#9467bd",
+	"#c7523a",
+	"#e377c2",
+	"#7f7f7f",
+	"#bcbd22",
+	"#17becf",
+	"#393b79",
+	"#637939",
+	"#8c6d31",
+	"#843c39",
+	"#7b4173",
+	"#3182bd",
+	"#e6550d",
+	"#31a354",
+	"#756bb1",
+	"#636363",
+];
+export function getStratumColor(stratum: string | number) {
+	return palette[Number(stratum) % palette.length];
+}

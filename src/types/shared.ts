@@ -121,3 +121,8 @@ export interface Author {
 export interface Bibliography {
 	/* Currently empty array in JSON */
 }
+
+export interface locusArray {
+	begin: { facs_number: string; fol_page: string; page_url: string }[];
+	end: { facs_number: string; fol_page: string; page_url: string }[];
+}

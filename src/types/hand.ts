@@ -21,7 +21,7 @@ export interface Hand {
 	note?: string;
 	scribe?: ScribeForHand[];
 	group?: boolean;
-	date?: HandDate[] | DateInfo[];
+	date?: DateInfo[];
 	dating?: OrigDate[];
 	place?: OrigPlace[] | Place[];
 	hand_roles?: HandRole[];
