@@ -105,7 +105,10 @@ header {
 }
 
 .tabulator .tabulator-footer.tabulator-footer {
-	@apply bg-brand-100;
+	@apply bg-brand-50 py-1;
+}
+button.tabulator-page {
+	background-color: theme("colors.brand.400") !important;
 }
 
 .tabulator .tabulator-row:nth-child(even) {

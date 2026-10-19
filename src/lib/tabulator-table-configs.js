@@ -279,7 +279,7 @@ export const worksTableConfig = {
 				origPlace: orgPlace,
 				provenance: provenance,
 				origDate: orgDate,
-				sortkey: `${[...new Set(work.author.map((a) => a.name))].join(", ")}|||${work.title}`,
+				sortkey: `${work.author.length ? work.author.map((a) => a.name) : "ZZ"}${work.title}`,
 				_children: transmission, // children for the msTransmission msitems in dataTree
 			};
 		});
@@ -287,7 +287,16 @@ export const worksTableConfig = {
 
 	getColumns() {
 		const columns = [
-			{ title: "sortKey", field: "sortkey", visible: false },
+			{
+				title: "sortKey",
+				field: "sortkey",
+				visible: false,
+				sorter: "string",
+				sorterParams: {
+					locale: true,
+					alignEmptyValues: "bottom",
+				},
+			},
 			{
 				title: "Autor",
 				field: "author",
@@ -775,11 +784,11 @@ export const handTableConfig = {
 			const works = role.content.map((msitem) => msitem.title_work[0]);
 			const work_aut = works
 				.map((w) => (w.author.length > 0 ? `${w.author[0].name}: ${w.title}` : w.title))
-				.join("; ");
+				.join("\n");
 			return {
 				hit_id: role.hit_id,
 				id: role.content[0].hit_id,
-				locus: role.content.map((msitem) => msitem.locus).join("; "),
+				locus: role.content.map((msitem) => msitem.locus).join("\n"),
 				works: work_aut,
 				rolle: role.role.map((r) => r.value).join(", "),
 				typ: role.scribe_type.map((st) => st.value).join(", "),
@@ -799,6 +808,7 @@ export const handTableConfig = {
 				minWidth: 100,
 				responsive: 1,
 				widthGrow: 0,
+				formatter: "textarea",
 			},
 			{
 				title: "Werk",
@@ -879,7 +889,7 @@ export const msItemTableConfig = {
 					// one row per job
 					.map((job) => ({
 						id: "",
-						hit_id: "",
+						hit_id: hand.hit_id,
 						hand: hand.label.split("_")[1],
 						role: job.role.map((r) => r.value).join(" | "),
 						scribe: hand.scribe[0]?.value,
@@ -970,7 +980,7 @@ export const msItemTableConfig = {
 	},
 	// Row click configuration for strata table
 	getRowClickConfig: {
-		urlPattern: "/msitems/{id}",
+		urlPattern: "/hands/{id}",
 		idField: "hit_id",
 		target: "_self",
 	},

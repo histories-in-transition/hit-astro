@@ -98,6 +98,9 @@
 			if (rowClickConfig) {
 				tabulator.on("rowClick", (e, row) => {
 					const rowData = row.getData();
+					if(rowData.hit_id.includes("TBD")) { //disable for rows strata TBD since they dont have detail view pages
+						return
+					}
 					let url;
 
 					if (typeof rowClickConfig.getUrl === "function") {

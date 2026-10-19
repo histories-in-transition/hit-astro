@@ -18,19 +18,23 @@ const rowClickConfig = strataMsTableConfig.getRowClickConfig;
 <Section heading="Strata" id="msStrata">
 	<div><Stratigraphy {manuscript} client:only="svelte" /></div>
 	<!-- use custom dl to have link in dt (DescriptionListItem has label: string) -->
-	<dl class="md:grid grid-cols-[1fr_5fr] p-3">
+	<dl class="md:grid grid-cols-[1fr_5fr] p-3 space-y-1">
 		{
 			manuscript.strata.map((stratum: Stratum) => {
 				return (
 					<>
 						<dt class="font-semibold md:border-r border-gray-300 pr-2 justify-self-end">
-							<NavLink
-								href={`/strata/${stratum.hit_id}`}
-								style={`background-color: ${getStratumColor(stratum.number)}`}
-								class="px-1 rounded text-brand-950"
-							>
-								Stratum {stratum.number}:
-							</NavLink>
+							{stratum.hit_id.includes("TBD") ? (
+								<span class="px-1 rounded text-brand-950">Stratum {stratum.number}:</span>
+							) : (
+								<NavLink
+									href={`/strata/${stratum.hit_id}`}
+									style={`background-color: ${getStratumColor(stratum.number)}`}
+									class="px-1 py-0.5 rounded text-brand-50"
+								>
+									Stratum {stratum.number}:
+								</NavLink>
+							)}
 						</dt>
 						<dd class="pl-5">
 							<span class="underlined">
