@@ -64,9 +64,8 @@ export interface MsItem {
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
-	language: FormItem[];
+	language: string[];
 	version: FormItem[];
-	facs_url: string;
 	annotation_typ?: string[];
 	annotation_date?: OrigDate[];
 	project?: string[];

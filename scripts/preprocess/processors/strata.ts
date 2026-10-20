@@ -384,9 +384,28 @@ export function getCodUnitsForManuscript(manuscript, processedCodUnits) {
  * @returns {Array} Strata belonging to this manuscript
  */
 export function getStrataForManuscript(manuscript, processedStrata) {
-	return processedStrata.filter((stratum) =>
-		stratum.manuscript.some((ms) => ms.id === manuscript.id),
-	);
+	const strata = processedStrata
+		.filter((stratum) => stratum.manuscript.some((ms) => ms.id === manuscript.id))
+		.map((st) => {
+			const handR = st.hand_roles.map((r) => {
+				return {
+					hit_id: r.hit_id,
+					hands: r.hand.map((h) => h.hit_id),
+					msitems: r.ms_item.map((item) => item.hit_id),
+				};
+			});
+			return {
+				id: st.id,
+				hit_id: st.hit_id,
+				number: st.number,
+				label: st.label,
+				character: st.character,
+				note: st.note,
+				hand_roles: handR,
+			};
+		});
+
+	return strata;
 }
 
 /**

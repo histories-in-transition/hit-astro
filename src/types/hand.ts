@@ -79,11 +79,11 @@ interface HandRole {
 	id?: number;
 	content?: HandRoleContent[];
 	scope?: string;
-	role?: Value[];
-	function?: Value[];
-	role_context?: Value[];
-	scribe_type?: Value[];
-	locus_layout?: Value[];
+	role?: string[];
+	function?: string[];
+	role_context?: string[];
+	scribe_type?: string[];
+	locus_layout?: string[];
 	all_in_one?: string;
 	locus?: string;
 }
