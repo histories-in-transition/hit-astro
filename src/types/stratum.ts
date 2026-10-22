@@ -30,6 +30,16 @@ export interface Stratum {
 	next?: NavigationLink;
 }
 
+export interface StratumForMS {
+	id: number | string;
+	number: string;
+	hit_id?: string;
+	label: string;
+	character?: string[];
+	hand_roles?: string[];
+	note?: string;
+}
+
 interface StratumFiliation {
 	id?: string | number;
 	hit_id: string;

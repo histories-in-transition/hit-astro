@@ -556,19 +556,20 @@ export const strataMsTableConfig = {
 	transformData: (strata) => {
 		return strata.flatMap((stratum) =>
 			stratum.hand_roles.map((role) => {
-				const origDate = role.hand?.[0]?.date
-					? [...new Map(role.hand[0].date.map((d) => [d.id, d])).values()]
+				const origDate = role.hands?.[0]?.date.length
+					? [
+							...new Map(
+								role.hands?.[0]?.date.flatMap((dat) => dat.dated.map((d) => [d.id, d])),
+							).values(),
+						]
 					: [];
 
 				const works =
-					role.ms_item.length > 0 &&
-					role.ms_item
-						.map((item) =>
-							item.author.length > 0
-								? `${item.author[0]}: ${item.title} (${item.locus})`
-								: `${item.title} (${item.locus})`,
-						)
-						.join("\n");
+					role.content.length > 0 &&
+					role.content.some((c) => c.title_work.length) &&
+					role.content.map((item) =>
+						item.title_work.map((tw) => `${tw.title} (${item.locus})`).join("\n"),
+					);
 
 				return {
 					id: stratum.id || "",
@@ -576,8 +577,7 @@ export const strataMsTableConfig = {
 					number: stratum.number || "",
 					texts: works,
 					origDate: origDate,
-					place: stratum.place.length > 0 ? stratum.place.map((pl) => pl.value).join(" | ") : "",
-					hands: role.hand?.map((h) => h.label.split("_")[1]).join("\n") || "",
+					hands: role.hands?.map((h) => h.label.split("_")[1]).join("\n") || "",
 					role: role.role?.join(", ") || "",
 					type: role.scribe_type?.join(", ") || "",
 					function: role.function?.join(", ") || "",

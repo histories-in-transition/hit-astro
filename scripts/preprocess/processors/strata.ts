@@ -13,7 +13,6 @@ import type {
 } from "@/types/zod/zod-types.ts";
 import type { Stratum } from "@/types/stratum.ts";
 import type { Place } from "@/types/index.js";
-import type { Hit } from "instantsearch.js";
 
 type StrataDeps = {
 	handsrole: HitHandRole[];
@@ -387,13 +386,11 @@ export function getStrataForManuscript(manuscript, processedStrata) {
 	const strata = processedStrata
 		.filter((stratum) => stratum.manuscript.some((ms) => ms.id === manuscript.id))
 		.map((st) => {
-			const handR = st.hand_roles.map((r) => {
-				return {
-					hit_id: r.hit_id,
-					hands: r.hand.map((h) => h.hit_id),
-					msitems: r.ms_item.map((item) => item.hit_id),
-				};
-			});
+			const handR = new Set();
+			for (const r of st.hand_roles) {
+				handR.add(r.hit_id);
+			}
+
 			return {
 				id: st.id,
 				hit_id: st.hit_id,
@@ -401,7 +398,7 @@ export function getStrataForManuscript(manuscript, processedStrata) {
 				label: st.label,
 				character: st.character,
 				note: st.note,
-				hand_roles: handR,
+				hand_roles: [...handR],
 			};
 		});
 
@@ -448,17 +445,18 @@ export function createTBDStratum(
 					stratum.hand_roles.some((hr) => hr.hit_id === h_role.hit_id),
 				),
 		)
-		.map((h_role) =>
-			processHandRoleForStratum(
-				h_role,
-				hands,
-				handsdated,
-				handsplaced,
-				msItemsPlus,
-				places,
-				dates,
-				bibliography,
-			),
+		.map(
+			(h_role) => h_role.hit_id,
+			// processHandRoleForStratum(
+			// 	h_role,
+			// 	hands,
+			// 	handsdated,
+			// 	handsplaced,
+			// 	msItemsPlus,
+			// 	places,
+			// 	dates,
+			// 	bibliography,
+			// ),
 		);
 
 	if (uncharted_roles.length === 0) {
@@ -473,16 +471,5 @@ export function createTBDStratum(
 		character: ["TBD"],
 		hand_roles: uncharted_roles,
 		note: "These hand-roles are not yet assigned to a stratum",
-		manuscript: [
-			{
-				id: manuscript.id,
-				hit_id: manuscript.hit_id,
-				value: manuscript.shelfmark?.[0]?.value || "Unknown Manuscript",
-			},
-		],
-		msitems: [],
-		date: [],
-		place: [],
-		hands: [],
 	};
 }

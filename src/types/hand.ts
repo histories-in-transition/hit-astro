@@ -90,7 +90,7 @@ interface HandRole {
 
 interface HandRoleContent {
 	hit_id: string;
-	title_work?: TitleWork[];
+	title_work?: string[];
 	locus: string;
 }
 export interface ScribeForHand {

@@ -1,7 +1,7 @@
 ---
 import NavLink from "@/components/nav-link.astro";
 import Section from "@/components/ui/Section.astro";
-import type { Stratum } from "@/types";
+import type { StratumForMS } from "@/types";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { strataMsTableConfig } from "@/lib/tabulator-table-configs.js";
 import type { Manuscript } from "@/types";
@@ -9,18 +9,57 @@ import Stratigraphy from "@/components/visualisations/Stratigraphy.svelte";
 import { getStratumColor } from "@/lib/utils";
 
 const { manuscript } = Astro.props as { manuscript: Manuscript };
+const strataData = manuscript.strata.map((st) => {
+	const stratumRoleIds = new Set(st.hand_roles);
 
-const tableData = strataMsTableConfig.transformData(manuscript.strata);
+	// key: role hit_id -> value: role object with a hands array
+	const rolesById = new Map();
+
+	for (const h of manuscript.hands) {
+		for (const hr of h.hand_roles) {
+			// skip roles that don't belong to this stratum
+			if (!stratumRoleIds.has(hr.hit_id)) continue;
+
+			// first time we see this role: create the entry
+			if (!rolesById.has(hr.hit_id)) {
+				rolesById.set(hr.hit_id, {
+					hit_id: hr.hit_id,
+					hands: [],
+					content: hr.content,
+					scope: hr.scope,
+					role: hr.role,
+					function: hr.function,
+					scribe_type: hr.scribe_type,
+					locus_layout: hr.locus_layout,
+					locus: hr.locus,
+					all_in_one: hr.all_in_one,
+				});
+			}
+
+			// every time: add this hand to the role's hands array
+			rolesById.get(hr.hit_id).hands.push({
+				hit_id: h.hit_id,
+				label: h.label,
+				date: h.date,
+			});
+		}
+	}
+
+	return { ...st, hand_roles: [...rolesById.values()] };
+});
+console.log(strataData[0].hand_roles[0].content);
+
+const tableData = strataMsTableConfig.transformData(strataData);
 const columns = strataMsTableConfig.getColumns();
 const rowClickConfig = strataMsTableConfig.getRowClickConfig;
 ---
 
 <Section heading="Strata" id="msStrata">
-	<div><Stratigraphy {manuscript} client:only="svelte" /></div>
+	<!-- <div><Stratigraphy {manuscript} client:only="svelte" /></div> -->
 	<!-- use custom dl to have link in dt (DescriptionListItem has label: string) -->
 	<dl class="md:grid grid-cols-[1fr_5fr] p-3 space-y-1">
 		{
-			manuscript.strata.map((stratum: Stratum) => {
+			manuscript.strata.map((stratum: StratumForMS) => {
 				return (
 					<>
 						<dt class="font-semibold md:border-r border-gray-300 pr-2 justify-self-end">
