@@ -47,7 +47,7 @@ const strataData = manuscript.strata.map((st) => {
 
 	return { ...st, hand_roles: [...rolesById.values()] };
 });
-console.log(strataData[0].hand_roles[0].content);
+console.log(strataData[0].hand_roles[0].hands);
 
 const tableData = strataMsTableConfig.transformData(strataData);
 const columns = strataMsTableConfig.getColumns();
@@ -55,7 +55,7 @@ const rowClickConfig = strataMsTableConfig.getRowClickConfig;
 ---
 
 <Section heading="Strata" id="msStrata">
-	<!-- <div><Stratigraphy {manuscript} client:only="svelte" /></div> -->
+	<div><Stratigraphy {strataData} client:only="svelte" /></div>
 	<!-- use custom dl to have link in dt (DescriptionListItem has label: string) -->
 	<dl class="md:grid grid-cols-[1fr_5fr] p-3 space-y-1">
 		{

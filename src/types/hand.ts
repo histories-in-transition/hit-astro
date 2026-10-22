@@ -7,6 +7,7 @@ import type {
 	ShortRef,
 	Value,
 	OrigPlace,
+	Placement,
 	Authority,
 } from "./shared";
 
@@ -16,20 +17,26 @@ export interface Hand {
 	label: string;
 	view_label?: string;
 	description?: string;
-	similar_hands?: SimilarHand[];
+	similar_hands?: ShortRef[];
 	nr_daniel?: string;
+	manuscript?: ShortRef[];
 	note?: string;
+	role?: string[];
 	scribe?: ScribeForHand[];
 	group?: boolean;
-	date?: DateInfo[];
+	date?: HandDate[];
 	dating?: OrigDate[];
 	place?: OrigPlace[] | Place[];
-	hand_roles?: HandRole[];
-	placed?: OrigPlace[];
+	hand_roles?: HandRoleForHands[];
+	placed?: Placement[];
 	jobs?: HandRole[];
-	texts?: TitleWork[];
+	texts?: [
+		{
+			hit_id: string;
+			title: string;
+		},
+	];
 	roles?: Value[] | string[];
-	manuscript?: ShortRef[];
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
@@ -41,7 +48,7 @@ export interface MsItemHand {
 	label: string;
 	view_label?: string;
 	description?: string;
-	similar_hands?: SimilarHand[];
+	similar_hands?: ShortRef[];
 	nr_daniel?: string;
 	note?: string;
 	scribe?: ShortRef[];
@@ -58,11 +65,6 @@ export interface MsItemHand {
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;
-}
-
-interface SimilarHand {
-	id: number;
-	value: string;
 }
 
 interface HandDate {
@@ -86,6 +88,26 @@ interface HandRole {
 	locus_layout?: string[];
 	all_in_one?: string;
 	locus?: string;
+}
+
+interface HandRoleForHands {
+	hit_id: string;
+	id?: number;
+	content?: HandRoleContentA[];
+	scope?: string;
+	role?: string[];
+	function?: string[];
+	role_context?: string[];
+	scribe_type?: string[];
+	locus_layout?: string[];
+	all_in_one?: string;
+	locus?: string;
+}
+
+interface HandRoleContentA {
+	hit_id: string;
+	title_work?: [{ hit_id: string; title: string }];
+	locus: string;
 }
 
 interface HandRoleContent {

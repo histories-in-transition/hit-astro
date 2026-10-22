@@ -4,11 +4,11 @@
 	import { prepareDataForStrataGraph } from "@/lib/stratigraphy-visualisation/prepareData";
 	import { renderManuscriptStratigraphy } from "@/lib/stratigraphy-visualisation/render";
 
-	let { manuscript }: { manuscript: Manuscript } = $props();
+	let { strataData } = $props();
 
 	let container: HTMLDivElement;
 
-	const data = prepareDataForStrataGraph(manuscript);
+	const data = prepareDataForStrataGraph(strataData);
 
 	onMount(() => {
 		renderManuscriptStratigraphy(container, data);

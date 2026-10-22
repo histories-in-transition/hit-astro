@@ -781,20 +781,19 @@ export const msItemsTableConfig = {
 export const handTableConfig = {
 	transformData: (hand) => {
 		return hand.hand_roles.map((role) => {
-			const works = role.content.map((msitem) => msitem.title_work[0]);
-			const work_aut = works
-				.map((w) => (w.author.length > 0 ? `${w.author[0].name}: ${w.title}` : w.title))
+			const works = role.content
+				.map((msitem) => msitem.title_work.map((tw) => tw.title))
 				.join("\n");
 			return {
 				hit_id: role.hit_id,
 				id: role.content[0].hit_id,
 				locus: role.content.map((msitem) => msitem.locus).join("\n"),
-				works: work_aut,
-				rolle: role.role.map((r) => r.value).join(", "),
-				typ: role.scribe_type.map((st) => st.value).join(", "),
-				function: role.function.map((f) => f.value).join(", "),
+				works: works,
+				rolle: role.role.join(", "),
+				typ: role.scribe_type.join(", "),
+				function: role.function.join(", "),
 				scope: role.scope,
-				locus_layout: role.locus_layout.map((ll) => ll.value).join(", "),
+				locus_layout: role.locus_layout.join(", "),
 			};
 		});
 	},

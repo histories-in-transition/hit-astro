@@ -208,14 +208,14 @@ const geoJson = processScribesData(scribe);
                                                                 </td>
                                                                 <td class="p-2 border border-neutral-200">{msItem.title_work?.map(work => (
                                                                     <NavLink href={`/works/${work.hit_id}`}>
-                                                                        {work.author.length > 0 ? `${work.author.map(a => a.name).join(', ')}: ${work.title}` : work.title                                                            
+                                                                        {work.title                                                           
                                                                     }
                                                                     </NavLink>  ))}
                                                                     </td>
-                                                                <td class="p-2 border border-neutral-200">{(role.role.map(r => r.value).join(' und '))}</td>
-                                                                <td class="p-2 border border-neutral-200">{role.scribe_type?.map(type => type.value).join(', ')}</td>
-                                                               <td class="p-2 border border-neutral-200">{role.function?.map(func => func.value).join(', ')}</td>
-                                                               <td class="p-2 border border-neutral-200">{role.locus_layout?.map(l => l.value).join(', ')}</td>
+                                                                <td class="p-2 border border-neutral-200">{(role.role.join(' und '))}</td>
+                                                                <td class="p-2 border border-neutral-200">{role.scribe_type?.join(', ')}</td>
+                                                               <td class="p-2 border border-neutral-200">{role.function?.join(', ')}</td>
+                                                               <td class="p-2 border border-neutral-200">{role.locus_layout?.join(', ')}</td>
                                                                <td class="p-2 border border-neutral-200">{role.scope}</td>
                                                             
                                                         </tr>)

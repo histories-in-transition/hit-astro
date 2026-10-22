@@ -111,8 +111,7 @@ const origPlaces = item?.placed
 								origDates.map((d, index) => (
 									<>
 										{d.date}
-										{d.authority && ` nach ${d.authority}`}
-
+										{d.authority && ` nach ${d.authority}`}{" "}
 										{d.link ? (
 											<NavLink
 												href={d.link}
@@ -120,7 +119,6 @@ const origPlaces = item?.placed
 										) : (
 											d.citation && ` (${d.citation}${d.page ? `, S. ${d.page}` : ""})`
 										)}
-
 										{index < origDates.length - 1 && <br />}
 									</>
 								))
@@ -131,14 +129,12 @@ const origPlaces = item?.placed
 								origPlaces.map((pl, index) => (
 									<>
 										{pl.place}
-										{pl.authority && ` nach ${pl.authority}`}
-
+										{pl.authority && ` nach ${pl.authority}`}{" "}
 										{pl.link ? (
 											<NavLink href={pl.link}>{` (${pl.citation})`}</NavLink>
 										) : (
 											pl.citation && ` (${pl.citation}`
 										)}
-
 										{index < origDates.length - 1 && <br />}
 									</>
 								))

@@ -37,10 +37,10 @@ export interface HandRole {
 	hit_id: string;
 	content: Content[];
 	scope: string;
-	role: Value[];
-	function: Value[];
-	scribe_type: Value[];
-	locus_layout: Value[];
+	role: string[];
+	function: string[];
+	scribe_type: string[];
+	locus_layout: string[];
 	all_in_one: string;
 }
 
@@ -53,7 +53,6 @@ export interface Content {
 export interface Text {
 	hit_id: string;
 	title: string;
-	author: Author[];
 }
 
 export interface Ref {
