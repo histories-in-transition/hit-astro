@@ -64,7 +64,9 @@ const rowClickConfig = strataMsTableConfig.getRowClickConfig;
 					<>
 						<dt class="font-semibold md:border-r border-gray-300 pr-2 justify-self-end">
 							{stratum.hit_id.includes("TBD") ? (
-								<span class="px-1 rounded text-brand-950">Stratum {stratum.number}:</span>
+								<span class="px-1 rounded bg-brand-950 text-white cursor-not-allowed">
+									Stratum {stratum.number}:
+								</span>
 							) : (
 								<NavLink
 									href={`/strata/${stratum.hit_id}`}

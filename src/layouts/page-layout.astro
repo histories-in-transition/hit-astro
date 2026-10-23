@@ -43,3 +43,16 @@ const { title = "Histories in transition" } = Astro.props;
 </html>
 
 <script src="@/lib/show-more-button.ts"></script>
+<script>
+	function openFacsimile(event: MouseEvent) {
+		const link = event.currentTarget as HTMLAnchorElement;
+
+		event.preventDefault();
+
+		window.open(link.href, "_blank", "width=1000,height=800,resizable=yes,scrollbars=yes");
+	}
+
+	document.querySelectorAll<HTMLAnchorElement>("[data-popup]").forEach((link) => {
+		link.addEventListener("click", openFacsimile);
+	});
+</script>

@@ -890,12 +890,12 @@ export const msItemTableConfig = {
 						id: "",
 						hit_id: hand.hit_id,
 						hand: hand.label.split("_")[1],
-						role: job.role.map((r) => r.value).join(" | "),
+						role: job.role.join(" | "),
 						scribe: hand.scribe[0]?.value,
 						scope: job.locus,
-						layout: job.locus_layout.map((l) => l.value).join(" | "),
-						type: job.scribe_type?.map((st) => st.value).join(" | "),
-						function: job.function?.map((f) => f.value).join(" | "),
+						layout: job.locus_layout.join(" | "),
+						type: job.scribe_type?.join(" | "),
+						function: job.function?.join(" | "),
 						origDate: origDate,
 					}))
 			);
@@ -1080,11 +1080,7 @@ export const handsTableConfig = {
 				hit_id: hand.hit_id,
 				manuscript: hand.manuscript.map((ms) => ms.value),
 				view_label: hand.label.split("_")[1],
-				texts: hand.texts
-					.map((text) =>
-						text.author.length > 0 ? `${text.author[0].name}: ${text.title}` : text.title,
-					)
-					.join("\n"),
+				texts: hand.texts.map((text) => text.title).join("\n"),
 				hand_roles: [...new Set(hand.hand_roles.map((h_role) => h_role.all_in_one))].join("\n"),
 				origDate: hand.date.flatMap((dating) => dating.dated),
 				places: hand.placed

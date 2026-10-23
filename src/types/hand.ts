@@ -30,12 +30,10 @@ export interface Hand {
 	hand_roles?: HandRoleForHands[];
 	placed?: Placement[];
 	jobs?: HandRole[];
-	texts?: [
-		{
-			hit_id: string;
-			title: string;
-		},
-	];
+	texts?: {
+		hit_id: string;
+		title: string;
+	}[];
 	roles?: Value[] | string[];
 	author_entry?: string[];
 	prev?: NavigationLink;
@@ -106,7 +104,7 @@ interface HandRoleForHands {
 
 interface HandRoleContentA {
 	hit_id: string;
-	title_work?: [{ hit_id: string; title: string }];
+	title_work?: { hit_id: string; title: string }[];
 	locus: string;
 }
 

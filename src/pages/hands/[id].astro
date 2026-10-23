@@ -74,7 +74,7 @@ const origPlaces = item?.placed
 		mainTitle={`Hand: ${item.view_label}`}
 		authorEntry={item.author_entry}
 	>
-		<div class="border-2 rounded-sm border-brandBrown bg-brand-100">
+		<div>
 			<Section heading="Eingaben über die Hand">
 				<div class="md:grid grid-cols-[1fr_1fr] gap-5 items-start">
 					<DescriptionList>
@@ -161,7 +161,11 @@ const origPlaces = item?.placed
 					{
 						item.placed.length > 0 && (
 							<div class="hidden md:block">
-								<MapLeaflet client:only="svelte" geoJsonData={geoJsonData} />
+								<MapLeaflet
+									client:only="svelte"
+									geoJsonData={geoJsonData}
+									enableFiltering={false}
+								/>
 							</div>
 						)
 					}

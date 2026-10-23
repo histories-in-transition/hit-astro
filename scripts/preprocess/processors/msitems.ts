@@ -285,12 +285,12 @@ function getHandRoles(hand: HitHand, item: HitMsitem, handsrole: HitHandRole[]) 
 		.map((hRole) => ({
 			id: hRole.id,
 			hit_id: hRole.hit_id,
-			role: hRole.role.map(({ value }) => ({ value })),
+			role: hRole.role.map((r) => r.value),
 			locus: hRole.locus,
-			locus_layout: hRole.locus_layout.map(({ value }) => ({ value })),
-			scribe_type: hRole.scribe_type.map(({ value }) => ({ value })),
-			function: hRole.function.map(({ value }) => ({ value })),
-			role_context: hRole.scribe_type.map(({ value }) => ({ value })),
+			locus_layout: hRole.locus_layout.map((ll) => ll.value),
+			scribe_type: hRole.scribe_type.map((st) => st.value),
+			function: hRole.function.map((f) => f.value),
+			role_context: hRole.scribe_type.map((rc) => rc.value),
 		}));
 }
 

@@ -5,6 +5,10 @@ import TabulatorTable from "@/components/tabulator-table.svelte";
 import { handsTableConfig } from "@/lib/tabulator-table-configs.js";
 import hands from "@/content/data/hands.json";
 
+import MapLeaflet from "@/components/map-leaflet.svelte";
+import { processHandsData } from "@/lib/make-geojson.ts";
+const geoJsonData = processHandsData(hands);
+
 // Transform data and prepare columns for Tabulator Table
 const tableData = handsTableConfig.transformData(hands);
 const columns = handsTableConfig.getColumns();
@@ -23,9 +27,13 @@ const rowClickConfig = handsTableConfig.getRowClickConfig;
 			tableId="hands-table"
 			downloadTitle="hit_hands"
 			rowClickConfig={rowClickConfig}
+			updateMapOnFilter={true}
+			mapIdField="hit_id"
 			options={{
 				initialSort: [{ column: "manuscript", dir: "asc" }],
 			}}
-		/>
+		>
+			<MapLeaflet slot="map" client:only="svelte" geoJsonData={geoJsonData} />
+		</TabulatorTable>
 	</TableHead>
 </PageLayout>

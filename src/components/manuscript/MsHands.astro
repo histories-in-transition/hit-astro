@@ -59,7 +59,7 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 							{hand.date.map((d) => {
 								const authority = d.authority[0]?.author ? ` nach ${d.authority[0].author}` : "";
 								const citation = d.authority[0]?.citation
-									? ` (${d.authority[0].citation}${d.page ? `, S. ${d.page}` : ""})`
+									? `${d.authority[0].citation}${d.page ? `, S. ${d.page}` : ""}`
 									: "";
 								const link = d.authority[0]?.link;
 								const date = d.dated.length > 0 ? d.dated.map((x) => x.value).join(", ") : "N/A";
@@ -68,7 +68,7 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 									<span>
 										{date}
 										{authority}
-										{link ? <NavLink href={link}>{citation}</NavLink> : citation}
+										{link ? (<span> (</span><NavLink href={link}>{citation}</NavLink><span>)</span>) : citation}
 									</span>
 								);
 							})}
@@ -84,7 +84,7 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 							{hand.placed.map((p) => {
 								const authority = p.authority[0]?.author ? ` nach ${p.authority[0].author}` : "";
 								const citation = p.authority[0]?.citation
-									? ` (${p.authority[0].citation}${p.page ? `, S. ${p.page}` : ""})`
+									? ` ${p.authority[0].citation}${p.page ? `, S. ${p.page}` : ""}`
 									: "";
 								const link = p.authority[0]?.link;
 								const place = p.place.length > 0 ? p.place.map((pl) => pl.value).join(", ") : "N/A";
@@ -93,7 +93,7 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 									<span>
 										{place}
 										{authority}
-										{link ? <NavLink href={link}>{citation}</NavLink> : citation}
+										{link ? (<span> (</span><NavLink href={link}>{citation}</NavLink><span>)</span>) : citation}
 									</span>
 								);
 							})}
@@ -122,7 +122,9 @@ const hands = manuscript.hands.slice().sort((a, b) => {
 								{hand.hand_roles.map((role) => {
 									const c = role.content[0];
 									const link = c.hit_id ? (
-										<NavLink href={`/msitems/${c.hit_id}`}>({c.locus})</NavLink>
+										<span> (</span>
+										<NavLink href={`/msitems/${c.hit_id}`}>{c.locus}</NavLink>
+										<span>)</span>
 									) : (
 										<span>{c.locus ? `fols. ${c.locus}` : "fol. ?"}</span>
 									);
