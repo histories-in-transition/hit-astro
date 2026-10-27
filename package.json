@@ -54,6 +54,7 @@
 		"tsx": "^4.21.0",
 		"typesense": "^3.0.6",
 		"typesense-instantsearch-adapter": "^3.0.2",
+		"xml-formatter": "^3.7.0",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {

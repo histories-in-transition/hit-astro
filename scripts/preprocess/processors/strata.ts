@@ -397,6 +397,7 @@ export function getStrataForManuscript(manuscript, processedStrata) {
 				number: st.number,
 				label: st.label,
 				character: st.character,
+				stratum_filiations: st.stratum_filiations,
 				note: st.note,
 				hand_roles: [...handR],
 			};
@@ -419,18 +420,7 @@ export function getStrataForManuscript(manuscript, processedStrata) {
  * @param {Array} bibliography - Bibliography data
  * @returns {Object|null} TBD stratum or null if no uncharted roles
  */
-export function createTBDStratum(
-	manuscript,
-	handsrole,
-	msItemsPlus,
-	processedStrata,
-	hands,
-	handsdated,
-	handsplaced,
-	places,
-	dates,
-	bibliography,
-) {
+export function createTBDStratum(manuscript, handsrole, msItemsPlus, processedStrata) {
 	const uncharted_roles = handsrole
 		.filter((h_role) =>
 			msItemsPlus.some(
@@ -445,19 +435,7 @@ export function createTBDStratum(
 					stratum.hand_roles.some((hr) => hr.hit_id === h_role.hit_id),
 				),
 		)
-		.map(
-			(h_role) => h_role.hit_id,
-			// processHandRoleForStratum(
-			// 	h_role,
-			// 	hands,
-			// 	handsdated,
-			// 	handsplaced,
-			// 	msItemsPlus,
-			// 	places,
-			// 	dates,
-			// 	bibliography,
-			// ),
-		);
+		.map((h_role) => h_role.hit_id);
 
 	if (uncharted_roles.length === 0) {
 		return null;
@@ -467,9 +445,9 @@ export function createTBDStratum(
 		id: "TBD",
 		hit_id: `TBD_${manuscript.id}`,
 		number: "TBD",
-		label: "undefined stratum",
+		label: "TBD stratum",
 		character: ["TBD"],
 		hand_roles: uncharted_roles,
-		note: "These hand-roles are not yet assigned to a stratum",
+		note: "Die folgenden Hände sind keinem existierenden Stratum zuzuordnen.",
 	};
 }

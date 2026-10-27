@@ -38,6 +38,7 @@ export interface StratumForMS {
 	character?: string[];
 	hand_roles?: string[];
 	note?: string;
+	stratum_filiations: StratumFiliation[];
 }
 
 interface StratumFiliation {
