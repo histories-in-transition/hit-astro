@@ -23,6 +23,7 @@ export function makeMsDesc(ms: Manuscript): string {
 	const renderedItems = new Set<string>();
 
 	let content = "";
+	// if there is only one cod. unit we put content here, if more than 1 it goes to msPart
 	if (ms.cod_units.length === 1 && ms.cod_units[0].content) {
 		content = ms.cod_units[0].content
 			.map((item, index) => renderMsItem(item, index, renderedItems))

@@ -47,7 +47,6 @@ const strataData = manuscript.strata.map((st) => {
 
 	return { ...st, hand_roles: [...rolesById.values()] };
 });
-console.log(strataData[0].hand_roles[0].hands);
 
 const tableData = strataMsTableConfig.transformData(strataData);
 const columns = strataMsTableConfig.getColumns();

@@ -4,7 +4,9 @@ import { makeRegister } from "./register.ts";
 import { makeStrata } from "./strata.ts";
 
 export function mainTei(ms: Manuscript) {
-	return `
+	return `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
+	schematypens="http://purl.oclc.org/dsdl/schematron"?>
     <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://diglib.hab.de/rules/schema/mss/v1.0/cataloguing.xsd"
     version="5" xml:lang="deu">

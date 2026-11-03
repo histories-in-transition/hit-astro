@@ -39,7 +39,7 @@ export function renderMsItem(
 	renderedItems: Set<MsItem["hit_id"]> = new Set(),
 ): string {
 	// The first time we see an item it gets an xml:id, later ones point to it with sameAs.
-	// Note: this changes the Set that the caller passed in (on purpose, like the old code).
+	// Note: this changes the Set that the caller passed in.
 	const isFirstOccurrence = !renderedItems.has(item.hit_id);
 	if (isFirstOccurrence) renderedItems.add(item.hit_id);
 

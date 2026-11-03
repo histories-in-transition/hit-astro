@@ -32,7 +32,7 @@ export default function MainMS(manuscript) {
 		tex += Codunits(manuscript.cod_units);
 	}
 
-	tex += Strata(manuscript.strata);
+	tex += Strata(manuscript.strata, manuscript);
 
 	return tex;
 }

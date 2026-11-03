@@ -5,7 +5,6 @@ import type { Manuscript } from "@/types";
 import { log } from "@acdh-oeaw/lib";
 import format from "xml-formatter";
 
-import { makeIndexPage } from "./indexXml.ts";
 import { mainTei } from "./partials/tei.ts";
 import { prepareSchema } from "./schemas.ts";
 import { checkWellFormed, validateAgainstSchema, validateTeiStructure } from "./validate.ts";
@@ -85,12 +84,6 @@ async function makeTei() {
 		}
 	}
 
-	writeFileSync(
-		join(outputFolder, "index.html"),
-		makeIndexPage(manuscripts.map((ms) => ({ filename: getFilename(ms), ms }))),
-		"utf-8",
-	);
-
 	// ---------- summary ----------
 	for (const { filename, type, errors } of problems) {
 		const report = type === "schema" ? log.warn : log.error;
@@ -99,7 +92,7 @@ async function makeTei() {
 
 	// Schema problems are warnings, everything else breaks the build
 	const criticalCount = problems.filter((p) => p.type !== "schema").length;
-	log.info(
+	log.success(
 		`Done: ${manuscripts.length} manuscripts, ${criticalCount} errors, ${problems.length - criticalCount} schema warnings`,
 	);
 

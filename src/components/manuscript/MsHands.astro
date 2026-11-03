@@ -1,7 +1,7 @@
 ---
 import NavLink from "@/components/nav-link.astro";
 import Section from "@/components/ui/Section.astro";
-import DescriptionList from "../ui/DescriptionList.astro";
+import DescriptionList from "@/components/ui/DescriptionList.astro";
 const { manuscript } = Astro.props;
 const hands = manuscript.hands.slice().sort((a, b) => {
 	const numA = Number(a.label.split("_H. ")[1]);
