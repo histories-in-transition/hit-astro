@@ -320,21 +320,15 @@ search.addWidgets([
 										),
 									].join(" | ")}
 								</dd>
-								${hit.hands?.some((h) =>
-									h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
-								)
+								${hit.hands?.some((h) => h.jobs?.some((j) => j.role?.includes("Schreiber")))
 									? html`
 											<dt class="font-semibold pr-2">Bearbeitung:</dt>
 											<dd class="pl-5">
 												${[
 													...new Set(
 														hit.hands
-															.filter((h) =>
-																h.jobs?.some((j) => j.role?.some((r) => r.value !== "Schreiber")),
-															)
-															.flatMap(
-																(h) => h.jobs?.flatMap((j) => j.role?.map((r) => r.value)) || [],
-															),
+															.filter((h) => h.jobs?.some((j) => j.role?.includes("Schreiber")))
+															.flatMap((h) => h.jobs?.flatMap((j) => j.role) || []),
 													),
 												].join(" | ")}
 											</dd>
@@ -346,9 +340,7 @@ search.addWidgets([
 											<dd class="pl-5">
 												${[
 													...new Set(
-														hit.hands.flatMap(
-															(h) => h.jobs?.flatMap((j) => j.function?.map((f) => f.value)) || [],
-														),
+														hit.hands.flatMap((h) => h.jobs?.flatMap((j) => j.function) || []),
 													),
 												].join(" | ")}
 											</dd>
@@ -448,7 +440,7 @@ search.addWidgets([
 
 	refinementListHandsRole({
 		container: "#refinement-list-hands-function",
-		attribute: "hands.jobs.role.value",
+		attribute: "hands.jobs.role",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -462,7 +454,7 @@ search.addWidgets([
 	}),
 	refinementListHandsContextRole({
 		container: "#refinement-list-scribe-type",
-		attribute: "hands.jobs.role_context.value",
+		attribute: "hands.jobs.role_context",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -477,7 +469,7 @@ search.addWidgets([
 
 	refinementListHandsFunktion({
 		container: "#refinement-list-hands-role",
-		attribute: "hands.jobs.function.value",
+		attribute: "hands.jobs.function",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -567,7 +559,7 @@ search.addWidgets([
 
 	refinementListLanguage({
 		container: "#refinement-list-language",
-		attribute: "language.value",
+		attribute: "language",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -643,9 +635,9 @@ search.addWidgets([
 				["orig_date.date.century", "Entstehungszeit"],
 				["orig_place.place.value", "Entstehungsort"],
 				["provenance.value", "Provenienz"],
-				["hands.jobs.function.value", "Händefunktion"],
-				["hands.jobs.role.value", "Schreiberaktivitäten"],
-				["hands.jobs.role_context.value", "Schreiber Typ"],
+				["hands.jobs.function", "Händefunktion"],
+				["hands.jobs.role", "Schreiberaktivitäten"],
+				["hands.jobs.role_context", "Schreiber Typ"],
 				["decoration.value", "Decoration"],
 				["terminus_ante_quem", "Terminus ante quem"],
 				["terminus_post_quem", "Termininus post quem"],

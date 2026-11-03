@@ -406,15 +406,24 @@ function getJoinedTransmission(
 	);
 }
 
+// Small helpers so the intent is readable
+const isScribeHand = (hand) => hand.jobs.some((job) => job.role.includes("Schreiber"));
+
+const hasNonScribeRole = (hand) => hand.jobs.some((job) => job.role.some((r) => r !== "Schreiber"));
+
+const hasDate = (entry) => Array.isArray(entry.date) && entry.date.length > 0;
+const hasPlace = (entry) => Array.isArray(entry.place) && entry.place.length > 0;
+
 function getOrigDate(relatedHand, provenance, item, manuscriptDated, dates) {
+	// 1. Dates from the scribe hands
 	const handDates = relatedHand
-		.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-		.flatMap((hand) => hand.dating);
+		.filter(isScribeHand)
+		.flatMap((hand) => hand.dating)
+		.filter(hasDate); // ignore dating records with no actual date
 
-	if (handDates.length > 0) {
-		return handDates;
-	}
+	if (handDates.length > 0) return handDates;
 
+	// 2. Dates from the codicological unit's "orig" provenance
 	const provDates = provenance
 		.filter((prov) => prov.type === "orig")
 		.map((prov) => ({
@@ -422,26 +431,27 @@ function getOrigDate(relatedHand, provenance, item, manuscriptDated, dates) {
 			authority: prov.authority,
 			page: prov.page,
 			date: prov.from,
-		}));
+		}))
+		.filter(hasDate);
 
-	if (provDates.length > 0) {
-		return provDates;
-	}
-	const msDates = manuscriptDated
+	if (provDates.length > 0) return provDates;
+
+	// 3. Fallback: the manuscript itself
+	return manuscriptDated
 		.filter((msDated) => msDated.manuscript[0]?.id === item.manuscript[0]?.id)
-		.flatMap((msDated) => ({
+		.map((msDated) => ({
 			hit_id: msDated.hit_id,
 			date: enrichDates(msDated.date, dates),
-		}));
-
-	return msDates;
+		}))
+		.filter(hasDate);
 }
 // three option to get data for orig place, check first related hand, then cod unit, and as fallback manuscript
 function getOrigPlace(relatedHand, provenance, item, manuscripts, places) {
 	// 1. From relatedHand
 	const handPlaces = relatedHand
-		.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")))
-		.flatMap((hand) => hand.place);
+		.filter(isScribeHand)
+		.flatMap((hand) => hand.place)
+		.filter(hasPlace);
 
 	if (handPlaces.length > 0) {
 		return handPlaces;
@@ -455,7 +465,8 @@ function getOrigPlace(relatedHand, provenance, item, manuscripts, places) {
 			place: prov.places,
 			authority: prov.authority,
 			page: prov.page,
-		}));
+		}))
+		.filter(hasPlace);
 
 	if (provPlaces.length > 0) {
 		return provPlaces;
@@ -473,17 +484,15 @@ function getOrigPlace(relatedHand, provenance, item, manuscripts, places) {
 }
 
 function getProvenanceData(provenance, relatedHand, item, manuscripts, places) {
-	const relatedHandPlaces = relatedHand
-		.filter((h) => h.jobs.some((j) => j.role.some((r) => r.value !== "Schreiber")))
-		.flatMap((hand) =>
-			hand.place.map((pl) => ({
-				hit_id: pl.hit_id,
-				places: pl.place,
-				from: hand.dating.flatMap((dating) => dating.date),
-				till: [],
-				authority: hand.dating.flatMap((d) => d.authority),
-			})),
-		);
+	const relatedHandPlaces = relatedHand.filter(hasNonScribeRole).flatMap((hand) =>
+		hand.place.map((pl) => ({
+			hit_id: pl.hit_id,
+			places: pl.place,
+			from: hand.dating.flatMap((dating) => dating.date),
+			till: [],
+			authority: hand.dating.flatMap((d) => d.authority),
+		})),
+	);
 	const provenancePlaces = provenance.filter((prov) => prov.type === "prov");
 	if (provenancePlaces.length > 0 || relatedHandPlaces.length > 0) {
 		return [...provenancePlaces, ...relatedHandPlaces];

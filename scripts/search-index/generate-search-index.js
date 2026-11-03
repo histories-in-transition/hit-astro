@@ -51,7 +51,7 @@ async function generate() {
 			{ name: "form", type: "object[]", facet: true, optional: true },
 			{ name: "modifications", type: "string[]", facet: true, optional: true },
 			{ name: "interpolations", type: "object[]", facet: true, optional: true },
-			{ name: "language", type: "object[]", facet: true, optional: true },
+			{ name: "language", type: "string[]", facet: true, optional: true },
 			{ name: "project", type: "string[]", facet: true, optional: true },
 			{ name: "joined_transmission", type: "object[]", facet: true, optional: true },
 		],

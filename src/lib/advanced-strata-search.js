@@ -489,7 +489,7 @@ search.addWidgets([
 
 	refinementListLanguage({
 		container: "#refinement-list-language",
-		attribute: "language.value",
+		attribute: "language",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -540,7 +540,7 @@ search.addWidgets([
 				["form.value", "Form"],
 				["character", "Stratum Typ"],
 				["project", "Projekt"],
-				["language.value", "Sprache"],
+				["language", "Sprache"],
 			]);
 			return items.map((item) => ({
 				...item,
