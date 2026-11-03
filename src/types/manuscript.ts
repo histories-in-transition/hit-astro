@@ -1,5 +1,5 @@
 import type { Place, NavigationLink, OrigDate, Bibliography, ProvenanceItem } from "./shared";
-import type { Stratum } from "./stratum";
+import type { StratumForMS } from "./stratum";
 import type { MsItem } from "./msitem";
 import type { Hand } from "./hand";
 
@@ -36,7 +36,7 @@ export interface Manuscript {
 	status?: string[];
 	hands?: Hand[];
 	cod_units?: CodUnit[];
-	strata?: Stratum[];
+	strata?: StratumForMS[];
 	author_entry?: string[];
 	prev?: NavigationLink;
 	next?: NavigationLink;

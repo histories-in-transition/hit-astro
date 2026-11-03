@@ -31,16 +31,9 @@
 	let isReady = false;
 
 	export let enableFiltering = true;
-
 $: if (isReady) {
-    const data =
-        enableFiltering
-            ? filterGeoJsonByIds(
-                  geoJsonData,
-                  $lockedIds.size > 0 ? $lockedIds : $filteredIds
-              )
-            : geoJsonData;
-
+    const ids = $lockedIds.size > 0 ? $lockedIds : $filteredIds;
+    const data = enableFiltering ? filterGeoJsonByIds(geoJsonData, ids) : geoJsonData;
     updateMapMarkers(data);
 }
 
@@ -76,7 +69,6 @@ $: if (isReady) {
 
 	L.Marker.prototype.options.icon = customIcon;
 
-	let counter = 0;
 	function updateMapMarkers(dataToShow) {
 		
 		if (!map || !originLayer || !provenanceLayer || !currentLocationLayer) return;
@@ -100,7 +92,6 @@ $: if (isReady) {
 					: type === "provenance" ? provenanceIcon 
 					:	currentPlaceIcon }
 				);
-				//console.log(marker.getLatLng())
 
 				if (properties) {
 					const url = withBasePath(properties.url || "");
@@ -267,14 +258,14 @@ $: if (isReady) {
 				document.removeEventListener("pointermove", onMouseMove);
 				document.removeEventListener("pointerup", onMouseUp);
 			};
-}
-cleanupResize = enableVerticalResize(mapEl, map, resizeHandle);
-isReady = true;
-});
-onDestroy(() => {
-	if (cleanupResize) cleanupResize();
-	if (map) map.remove();
-});
+		}
+		cleanupResize = enableVerticalResize(mapEl, map, resizeHandle);
+		isReady = true;
+			});
+	onDestroy(() => {
+			if (cleanupResize) cleanupResize();
+			if (map) map.remove();
+		});
 
 
 // helper

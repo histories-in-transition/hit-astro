@@ -126,10 +126,11 @@ function getHandRoles(hand: HitHand, handsrole: HitHandRole[], msItemsPlus: MsIt
 				hit_id: hand_r.hit_id,
 				content: msitem,
 				scope: hand_r.locus ?? "",
-				role: hand_r.role.map((r) => ({ value: r.value })),
-				function: hand_r.function.map((f) => ({ value: f.value })),
-				scribe_type: hand_r.scribe_type.map((sc) => ({ value: sc.value })),
-				locus_layout: hand_r.locus_layout.map((l) => ({ value: l.value })),
+				role: hand_r.role.map((r) => r.value),
+				function: hand_r.function.map((f) => f.value),
+				scribe_type: hand_r.scribe_type.map((sc) => sc.value),
+				locus: hand_r.locus,
+				locus_layout: hand_r.locus_layout.map((l) => l.value),
 				all_in_one: hand_qualities,
 			};
 		});
@@ -141,11 +142,10 @@ function getMsItemsForHandRole(hand_r: HitHandRole, msItemsPlus: MsItem[]) {
 		.filter((m) => m.hands.some((han) => han.jobs.some((j) => j.hit_id === hand_r.hit_id)))
 		.map((msit) => ({
 			hit_id: msit.hit_id,
-			title_work: msit.title_work.map((t) => ({
-				hit_id: t.hit_id,
-				title: t.title,
-				author: t.author,
-			})),
+			title_work: msit.title_work.map((t) => {
+				const title_aut = t.author.length ? `${t.author[0].name}: ${t.title}` : t.title;
+				return { hit_id: t.hit_id, title: title_aut };
+			}),
 			locus: msit.locus,
 		}));
 }

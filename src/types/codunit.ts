@@ -39,9 +39,8 @@ export interface ContentUnit {
 	id?: number;
 	hit_id: string;
 	label?: string;
-	language: Form[];
+	language: string[];
 	locus: string;
-	facs_url: string;
 	incipit?: string;
 	explicit?: string;
 	rubric?: string;

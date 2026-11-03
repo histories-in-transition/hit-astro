@@ -94,7 +94,7 @@ function getManuscriptTransmission(work: HitWorks, msItemsPlus: MsItem[]) {
 function transformMsItemForTransmission(msi: MsItem) {
 	// Get annotation data from hands that are not 'schreiber' (i.e. not the main scribe but annotators etc.)
 	const annotationHands = msi.hands.filter(
-		(h) => !h.jobs.some((j) => j.role.some((r) => r.value === "Schreiber")),
+		(h) => !h.jobs.some((j) => j.role.includes("Schreiber")),
 	);
 
 	return {
@@ -109,9 +109,7 @@ function transformMsItemForTransmission(msi: MsItem) {
 		annotation_date: annotationHands.flatMap((hand) => hand.dating),
 		annotation_place: annotationHands.flatMap((hand) => hand.place.flatMap((p) => p.place)),
 		annotation_typ: [
-			...new Set(
-				annotationHands.flatMap((hand) => hand.jobs.flatMap((j) => j.role.map((r) => r.value))),
-			),
+			...new Set(annotationHands.flatMap((hand) => hand.jobs.flatMap((j) => j.role))),
 		],
 		form: msi.form,
 		text_modification: msi.text_modification,

@@ -42,6 +42,13 @@ export interface Value {
 	value: string;
 }
 
+export interface Placement {
+	hit_id: string;
+	authority: Authority[];
+	page: string;
+	place: Place[];
+}
+
 export interface OrigPlace {
 	id?: number;
 	hit_id?: string;

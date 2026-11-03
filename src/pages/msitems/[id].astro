@@ -11,6 +11,11 @@ import DescriptionListItem from "@/components/ui/DescriptionListItem.astro";
 import TabulatorTable from "@/components/tabulator-table.svelte";
 import { msItemTableConfig } from "@/lib/tabulator-table-configs.js";
 
+import MapLeaflet from "@/components/map-leaflet.svelte";
+import { processMsItemsData } from "@/lib/make-geojson.ts";
+
+import Section from "@/components/ui/Section.astro";
+
 export async function getStaticPaths() {
 	const msItemsList = Object.values(msitems);
 
@@ -27,9 +32,11 @@ export async function getStaticPaths() {
 }
 
 const { data: item } = Astro.props;
+const geoJson = processMsItemsData(item);
+
 // filter hands which are NOT screiber (for the 'Bearbeitungsschritten')
 const tableData = msItemTableConfig.transformData(
-	item.hands.filter((hand) => hand.jobs.some((j) => !j.role.some((r) => r.value === "Schreiber"))),
+	item.hands.filter((hand) => hand.jobs.some((j) => !j.role.includes("Schreiber"))),
 );
 
 const columns = msItemTableConfig.getColumns();
@@ -43,15 +50,9 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 		mainTitle={item.library_place.map((p) => p.value) + ", " + item.view_label}
 		authorEntry={item.author_entry}
 	>
-		<div
-			class="border-2 rounded-sm border-brandBrown bg-brand-100
-        text-sm md:leading-7 md:text-base"
-		>
-			<div class="md:grid grid-cols-[auto_auto] gap-2">
-				<section aria-labelledby="msitemInfo" class="m-5">
-					<h2 id="msitemInfo" class="text-xl font-semibold text-brand-800">
-						Allgemeine Info über das MS Element
-					</h2>
+		<Section aria-labelledby="msitemInfo" heading="Allgemeine Info über das MS Element">
+			<div class="md:grid grid-cols-[auto_auto] gap-2 items-start">
+				<div>
 					<DescriptionList>
 						<DescriptionListItem label="Handschrift:">
 							<NavLink href={`/manuscripts/hit_manuscript__${item.manuscript[0]?.id}`}>
@@ -60,10 +61,31 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 						</DescriptionListItem>
 
 						<DescriptionListItem label="Locus:">
-							{item.locus}
+							{
+								item.locusArray.length > 0
+									? item.locusArray.map((locus, index) => (
+											<span>
+												{index > 0 && " | "}
+
+												<NavLink href={locus.begin[0].page_url} data-popup>
+													{locus.begin[0].fol_page}
+												</NavLink>
+
+												{locus.end[0].fol_page !== locus.begin[0].fol_page && (
+													<>
+														{"–"}
+														<NavLink href={locus.end[0].page_url} data-popup>
+															{locus.end[0].fol_page}
+														</NavLink>
+													</>
+												)}
+											</span>
+										))
+									: item.locus
+							}
 						</DescriptionListItem>
 
-						<DescriptionListItem label="Titel:">
+						<DescriptionListItem label="Werk/Titel:">
 							{
 								item.title_work?.map((title) =>
 									title.hit_id ? (
@@ -99,7 +121,7 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 						}
 
 						<DescriptionListItem label="Sprache:">
-							{item.language.map((lang) => lang.value).join(", ")}
+							{item.language.join(", ")}
 						</DescriptionListItem>
 
 						{
@@ -228,9 +250,7 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 						<DescriptionListItem label="Schreiberhände:">
 							{
 								item.hands
-									.filter((hand) =>
-										hand.jobs.some((job) => job.role.some((r) => r.value === "Schreiber")),
-									)
+									.filter((hand) => hand.jobs.some((job) => job.role.includes("Schreiber")))
 									.map((filteredHand) => (
 										<ul>
 											<li>
@@ -255,9 +275,7 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 																.map((d) => d.date?.map((dt) => dt.value).join(", "))
 																.join("; ")}`}
 														{filteredHand.jobs.some((j) => j.role_context.length > 0) &&
-															` | ${filteredHand.jobs
-																.flatMap((j) => j.role_context.map((rc) => rc.value))
-																.join(", ")}`}
+															` | ${filteredHand.jobs.flatMap((j) => j.role_context).join(", ")}`}
 													</span>
 												)}
 											</li>
@@ -276,28 +294,30 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 							)
 						}
 					</DescriptionList>
-				</section>
-				{
-					item.facs_url && (
-						<div class="p-5 place-self-start">
-							<NavLink href={item.facs_url} target="_blank">
-								<img src={`${item.facs_url}`} alt="first page of the selected ms-item" />
-							</NavLink>
-						</div>
-					)
-				}
+					{
+						item.locusArray.length ? (
+							<div class="p-5 place-self-start">
+								<NavLink
+									href={item.locusArray[0].begin[0].page_url}
+									data-popup
+									class=" rounded-md py-2 px-4 bg-brand-600 text-brand-100 hover:bg-brand-500 hover:text-brand-950 font-semibold transition"
+								>
+									Digitalisat{" "}
+									<Icon class="inline-flex align-middle" aria-hidden="true" name="lucide:image" />
+								</NavLink>
+							</div>
+						) : (
+							""
+						)
+					}
+				</div>
+				<MapLeaflet client:only="svelte" geoJsonData={geoJson} />
 			</div>
-		</div>
-
+		</Section>
+		<!-- Table for Bearbeitungscritte aka hand_roles -->
 		{
-			item.hands.some((hand) =>
-				hand.jobs.some((job) => !job.role.some((r) => r.value === "Schreiber")),
-			) && (
-				<section aria-labelledby="msitemRework" class="overflow-x-auto m-5">
-					<h2 id="msitemRework" class="text-xl font-semibold text-brand-800 mb-5">
-						Bearbeitungsschritte
-					</h2>
-
+			item.hands.some((hand) => hand.jobs.some((job) => !job.role.includes("Schreiber"))) && (
+				<Section heading="Bearbeitungsschritte" id="Bearbeitungsschritte">
 					<div class="text-sm md:text-base">
 						<div id={`${item.label}-table`} />
 					</div>
@@ -311,7 +331,7 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 						updateMapOnFilter={true}
 						mapIdField="hit_id"
 					/>
-				</section>
+				</Section>
 			)
 		}
 	</Article>

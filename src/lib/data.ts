@@ -134,7 +134,7 @@ export interface Manuscript {
 	history: string;
 	orig_place: CommentedMSItem[];
 	provenance: CommentedMSItem[];
-	orig_date: ManuscriptOrigDate[];
+	orig_date: Manuscript[];
 	content_summary: string;
 	charakter: string[];
 	case_study: string[];

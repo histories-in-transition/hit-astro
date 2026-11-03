@@ -1,6 +1,6 @@
 import { texEscape } from "./utils.js";
 
-export default function Strata(strata) {
+export default function Strata(strata, manuscript) {
 	if (!strata || strata.length === 0) return "";
 
 	const tex = strata.flatMap((stratum) => {
@@ -28,33 +28,58 @@ export default function Strata(strata) {
 			})
 			.join("; ");
 
-		// Data for hand roles table
-		const handroles = (stratum.hand_roles ?? [])
+		// Join an array with ", " and escape it for LaTeX. Returns "—" if missing or empty.
+		const joinOrDash = (arr) => (arr?.length ? texEscape(arr.join(", ")) : "—");
+
+		//stratum has only the hand_roles hit_id, full data only in manuscript.hands
+		//Step 1: build a lookup of all roles from hands, keyed by hit_id.
+		// Each role gets a `hands` array with every hand that has this role.
+		const rolesById = new Map();
+
+		for (const h of manuscript.hands ?? []) {
+			for (const hr of h.hand_roles ?? []) {
+				// first time we see this role: store a copy with an empty hands array
+				if (!rolesById.has(hr.hit_id)) {
+					rolesById.set(hr.hit_id, { ...hr, hands: [] });
+				}
+				// every time: add the current hand to the role
+				rolesById.get(hr.hit_id).hands.push({
+					hit_id: h.hit_id,
+					label: h.label,
+					date: h.date,
+				});
+			}
+		}
+
+		// Step 2: the stratum only has IDs, use the lookup above
+		const stratumRoles = (stratum.hand_roles ?? []).map((id) => rolesById.get(id)).filter(Boolean); // drop IDs that were not found
+
+		// Step 3: build the table rows
+		const handroles = stratumRoles
 			.map((hr) => {
-				const msitem = hr.ms_item
-					?.map((mi) => {
-						const author =
-							mi.author?.length > 0
-								? `${texEscape(mi.author.join(", "))}: ${texEscape(mi.title)}`
-								: texEscape(mi.title);
-						const locus = mi.locus ? ` (${texEscape(mi.locus)})` : "";
-						return `${author}${locus}`;
+				const msitem = (hr.content ?? [])
+					.map((mi) => {
+						const title = (mi.title_work ?? []).map((w) => texEscape(w.title)).join("; ");
+						const itemLocus = mi.locus ? ` (${texEscape(mi.locus)})` : "";
+						return `${title}${itemLocus}`;
 					})
 					.join(" \\\\ ");
 
-				const hand = hr.hand?.length
-					? texEscape(hr.hand.map((h) => h.label.split("_")[1]).join(", "))
-					: "";
+				const hand = (hr.hands ?? [])
+					.map((h) => {
+						const num = texEscape(h.label.split("_")[1]);
 
-				const role = texEscape((hr.role.length === 0 ? ["—"] : hr.role).join(", "));
-				const scribe = texEscape((hr.scribe_type.length === 0 ? ["—"] : hr.scribe_type).join(", "));
-				const func = texEscape((hr.function.length === 0 ? ["—"] : hr.function).join(", "));
+						return num;
+					})
+					.join(", ");
+
+				const role = joinOrDash(hr.role);
+				const scribe = joinOrDash(hr.scribe_type);
+				const func = joinOrDash(hr.function);
+				const layout = joinOrDash(hr.locus_layout);
 				const locus = hr.locus ? texEscape(hr.locus) : "—";
-				const layout = texEscape(
-					(hr.locus_layout.length === 0 ? ["—"] : hr.locus_layout).join(", "),
-				);
 
-				return `${msitem} & ${hand ?? ""} & ${role} & ${scribe} & ${func} & ${locus} & ${layout} \\\\`;
+				return `${msitem} & ${hand} & ${role} & ${scribe} & ${func} & ${locus} & ${layout} \\\\`;
 			})
 			.join("\n");
 

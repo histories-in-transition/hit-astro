@@ -556,19 +556,20 @@ export const strataMsTableConfig = {
 	transformData: (strata) => {
 		return strata.flatMap((stratum) =>
 			stratum.hand_roles.map((role) => {
-				const origDate = role.hand?.[0]?.date
-					? [...new Map(role.hand[0].date.map((d) => [d.id, d])).values()]
+				const origDate = role.hands?.[0]?.date.length
+					? [
+							...new Map(
+								role.hands?.[0]?.date.flatMap((dat) => dat.dated.map((d) => [d.id, d])),
+							).values(),
+						]
 					: [];
 
 				const works =
-					role.ms_item.length > 0 &&
-					role.ms_item
-						.map((item) =>
-							item.author.length > 0
-								? `${item.author[0]}: ${item.title} (${item.locus})`
-								: `${item.title} (${item.locus})`,
-						)
-						.join("\n");
+					role.content.length > 0 &&
+					role.content.some((c) => c.title_work.length) &&
+					role.content.map((item) =>
+						item.title_work.map((tw) => `${tw.title} (${item.locus})`).join("\n"),
+					);
 
 				return {
 					id: stratum.id || "",
@@ -576,8 +577,7 @@ export const strataMsTableConfig = {
 					number: stratum.number || "",
 					texts: works,
 					origDate: origDate,
-					place: stratum.place.length > 0 ? stratum.place.map((pl) => pl.value).join(" | ") : "",
-					hands: role.hand?.map((h) => h.label.split("_")[1]).join("\n") || "",
+					hands: role.hands?.map((h) => h.label.split("_")[1]).join("\n") || "",
 					role: role.role?.join(", ") || "",
 					type: role.scribe_type?.join(", ") || "",
 					function: role.function?.join(", ") || "",
@@ -781,20 +781,19 @@ export const msItemsTableConfig = {
 export const handTableConfig = {
 	transformData: (hand) => {
 		return hand.hand_roles.map((role) => {
-			const works = role.content.map((msitem) => msitem.title_work[0]);
-			const work_aut = works
-				.map((w) => (w.author.length > 0 ? `${w.author[0].name}: ${w.title}` : w.title))
+			const works = role.content
+				.map((msitem) => msitem.title_work.map((tw) => tw.title))
 				.join("\n");
 			return {
 				hit_id: role.hit_id,
 				id: role.content[0].hit_id,
 				locus: role.content.map((msitem) => msitem.locus).join("\n"),
-				works: work_aut,
-				rolle: role.role.map((r) => r.value).join(", "),
-				typ: role.scribe_type.map((st) => st.value).join(", "),
-				function: role.function.map((f) => f.value).join(", "),
+				works: works,
+				rolle: role.role.join(", "),
+				typ: role.scribe_type.join(", "),
+				function: role.function.join(", "),
 				scope: role.scope,
-				locus_layout: role.locus_layout.map((ll) => ll.value).join(", "),
+				locus_layout: role.locus_layout.join(", "),
 			};
 		});
 	},
@@ -891,12 +890,12 @@ export const msItemTableConfig = {
 						id: "",
 						hit_id: hand.hit_id,
 						hand: hand.label.split("_")[1],
-						role: job.role.map((r) => r.value).join(" | "),
+						role: job.role.join(" | "),
 						scribe: hand.scribe[0]?.value,
 						scope: job.locus,
-						layout: job.locus_layout.map((l) => l.value).join(" | "),
-						type: job.scribe_type?.map((st) => st.value).join(" | "),
-						function: job.function?.map((f) => f.value).join(" | "),
+						layout: job.locus_layout.join(" | "),
+						type: job.scribe_type?.join(" | "),
+						function: job.function?.join(" | "),
 						origDate: origDate,
 					}))
 			);
@@ -1081,11 +1080,7 @@ export const handsTableConfig = {
 				hit_id: hand.hit_id,
 				manuscript: hand.manuscript.map((ms) => ms.value),
 				view_label: hand.label.split("_")[1],
-				texts: hand.texts
-					.map((text) =>
-						text.author.length > 0 ? `${text.author[0].name}: ${text.title}` : text.title,
-					)
-					.join("\n"),
+				texts: hand.texts.map((text) => text.title).join("\n"),
 				hand_roles: [...new Set(hand.hand_roles.map((h_role) => h_role.all_in_one))].join("\n"),
 				origDate: hand.date.flatMap((dating) => dating.dated),
 				places: hand.placed

@@ -107,6 +107,9 @@ importers:
       typesense-instantsearch-adapter:
         specifier: ^3.0.2
         version: 3.0.2(@babel/runtime@7.28.4)
+      xml-formatter:
+        specifier: ^3.7.0
+        version: 3.7.0
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -3188,6 +3191,14 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  xml-formatter@3.7.0:
+    resolution: {integrity: sha512-+8qTc3zv2UcJ1v9IsSIce37Dl4MQG14Cp7tWrwmy202UaI1wqRukw5QMX1JHsV+DX64yw77EgGsj2s5wGvuMbQ==}
+    engines: {node: '>= 16'}
+
+  xml-parser-xo@4.1.6:
+    resolution: {integrity: sha512-mXbSNSM+rIwndoxSwmFa83bOdeP8G/cOGr7XvxA67X7ebCzoAuVez9JYDCDub3zRDNBZxIbfjuXLSsamr7NfwQ==}
+    engines: {node: '>= 20'}
+
   xxhash-wasm@1.1.0:
     resolution: {integrity: sha512-147y/6YNh+tlp6nd/2pWq38i9h6mz/EuQ6njIrmW8D1BS5nCqs0P6DG+m6zTGnNz5I+uhZ0SHxBs9BsPrwcKDA==}
 
@@ -6229,6 +6240,12 @@ snapshots:
       strip-ansi: 6.0.1
 
   wrappy@1.0.2: {}
+
+  xml-formatter@3.7.0:
+    dependencies:
+      xml-parser-xo: 4.1.6
+
+  xml-parser-xo@4.1.6: {}
 
   xxhash-wasm@1.1.0: {}
 

@@ -252,7 +252,9 @@ function getRelevantHands(manuscript: HitManuscript, handsWithScribe: Hand[]) {
  * Get provenance information
  */
 function getProvenance(manuscript: HitManuscript, librariesPlus: Library[]) {
-	return librariesPlus.filter((lib) => manuscript.provenance.some((prov) => prov.id === lib.id));
+	return librariesPlus
+		.filter((lib) => manuscript.provenance.some((prov) => prov.id === lib.id))
+		.map(({ next, prev, ...rest }) => rest);
 }
 
 /**

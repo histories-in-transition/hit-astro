@@ -16,14 +16,28 @@ interface FeatureCollection {
 
 import type { Hand } from "@/types";
 
-export function processHandsData(handsData: Hand): FeatureCollection {
+export function processHandsData(handsData: Hand | Hand[]): FeatureCollection {
+	const hands = Array.isArray(handsData) ? handsData : [handsData];
 	const features: GeoJSONFeature[] = [];
 
-	for (const placement of handsData.placed ?? []) {
-		for (const pl of placement.place ?? []) {
+	for (const hand of hands) {
+		const uniquePlaces = new Map<number, any>();
+
+		for (const placement of hand.placed ?? []) {
+			for (const pl of placement.place ?? []) {
+				if (!uniquePlaces.has(pl.id)) {
+					uniquePlaces.set(pl.id, pl);
+				}
+			}
+		}
+
+		for (const pl of uniquePlaces.values()) {
 			const feature = createPointFeature(pl, {
-				title: pl.value,
-				description: `Quelle: ${placement.authority?.[0]?.citation ?? "N/A"}`,
+				title: hand.label ?? "",
+				place: `Ort: ${pl.value ?? "N/A"}`,
+				description: "",
+				url: `/hands/${hand.hit_id}`,
+				hit_id: hand.hit_id,
 			});
 
 			if (feature) features.push(feature);

@@ -130,5 +130,8 @@ export function getCodUnitsForManuscript(
 	manuscript: { id: string | number },
 	processedCodUnits: Codunit[],
 ) {
-	return processedCodUnits.filter((unit) => unit.manuscript.some((ms) => ms.id === manuscript.id));
+	const unit = processedCodUnits.filter((unit) =>
+		unit.manuscript.some((ms) => ms.id === manuscript.id),
+	);
+	return unit.map(({ prev, next, ...rest }) => rest);
 }

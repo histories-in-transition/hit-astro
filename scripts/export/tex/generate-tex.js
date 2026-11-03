@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import TexHeader from "./tex-header.js";
+import { log } from "@acdh-oeaw/lib";
 
 const outputDir = join(process.cwd(), "public", "download", "tex");
 const donwloadDir = join(process.cwd(), "public", "download");
@@ -10,17 +11,17 @@ mkdirSync(donwloadDir, { recursive: true });
 async function writeTexFile(filename, content) {
 	const filepath = join(outputDir, filename);
 	writeFileSync(filepath, content, "utf8");
-	console.log(`✓ Generated: ${filename} ${filepath}`);
+	log.success(`Generated: ${filename} ${filepath}`);
 }
 
 async function generateAllTex() {
 	const manuscripts = JSON.parse(readFileSync("src/content/data/manuscripts.json", "utf-8"));
-
+	log.info(`Found ${manuscripts.length} mss. Starting TeX generation ...`);
 	for (const manuscript of manuscripts) {
 		const tex = TexHeader(manuscript);
 		await writeTexFile(`${manuscript.hit_id}.tex`, tex);
 	}
-	console.log("Tex generated");
+	log.success("Tex generated");
 
 	const rows = manuscripts
 		.map((ms) => {
@@ -33,10 +34,10 @@ async function generateAllTex() {
       <tr>
 	  <td>${ms.view_label ?? ""}</td>
 	  <td>${ms.title ?? ""}</td>
-        <td><a href="./tei/${teiFilename}" download="${teiFilename}">${teiFilename}</a></td>
-        <td><a href="./tex/${texFilename}" download="${texFilename}">${texFilename}</a></td>
-        <td><a href="./pdf/${pdfFilename}" download="${pdfFilename}">${pdfFilename}</a></td>
-        <td><a href="./json/${jsonFilename}" download="${jsonFilename}">${jsonFilename}</a></td>
+        <td><a href="./tei/${teiFilename}">${teiFilename}</a></td>
+        <td><a href="./tex/${texFilename}">${texFilename}</a></td>
+        <td><a href="./pdf/${pdfFilename}">${pdfFilename}</a></td>
+        <td><a href="./json/${jsonFilename}">${jsonFilename}</a></td>
       </tr>
     `;
 		})
@@ -93,7 +94,7 @@ async function generateAllTex() {
 
 	writeFileSync(join(donwloadDir, "index.html"), indexHtml, "utf8");
 
-	console.log("Generated download index.html");
+	log.success("Generated download index.html");
 }
 
 generateAllTex();

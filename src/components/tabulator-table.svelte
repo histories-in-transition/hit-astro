@@ -87,13 +87,7 @@
 		});
 		
 		tabulator.on("tableBuilt", () => {
-			const rows = tabulator.getData("active");
-
-			const ids = new Set(
-				rows.flatMap((r) => extractMapIds(r, mapIdField))
-			);
-
-			filteredIds.set(ids);
+			updateFilteredIds()
 			// Row click navigation
 			if (rowClickConfig) {
 				tabulator.on("rowClick", (e, row) => {
@@ -151,11 +145,7 @@
 
 					clearTimeout(timeout);
 					timeout = setTimeout(() => {
-						const rows = tabulator.getData("active");
-						const ids = new Set(rows.flatMap((r) => extractMapIds(r, mapIdField)));
-
-						// write filtered ids to store
-						filteredIds.set(new Set(ids));
+						updateFilteredIds();
 					}, 50);
 				});
 			}
@@ -165,6 +155,7 @@
 	onDestroy(() => {
 		tabulator?.destroy();
 		tabulator = null;
+		 filteredIds.set(new Set());
 	});
 
 	function download(type, ext, opts = {}) {
@@ -172,12 +163,13 @@
 	}
 
 	function updateFilteredIds() {
-	const rows = tabulator.getData("active");
-	const ids = new Set(
-		rows.flatMap((r) => extractMapIds(r, mapIdField))
-	);
-	filteredIds.set(ids);
-}
+		 if (!tabulator) return;
+		const rows = tabulator.getData("active");
+		const ids = new Set(
+			rows.flatMap((r) => extractMapIds(r, mapIdField))
+		);
+		filteredIds.set(ids);
+	}
 </script>
 
 <div class="text-sm md:text-base w-full">

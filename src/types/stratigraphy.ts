@@ -2,7 +2,12 @@ import type { LeafSegment } from "@/lib/stratigraphy-visualisation/helpers";
 
 export interface StratigraphyMsItem {
 	hit_id: string;
-	title: string;
+	title_work: [
+		{
+			hit_id: string;
+			title: string;
+		},
+	];
 	/** Original notation, e.g. "1r-8r" */
 	locus: string;
 	/** Overall start/end as side numbers (see lib/folio.ts) */
