@@ -16,11 +16,11 @@ export interface Stratum {
 	id: number | string;
 	number: string;
 	hit_id?: string;
+	manuscript: StratumMs[];
 	label: string;
 	character?: string[];
-	hand_roles?: StratumHandRole[];
 	note?: string;
-	manuscript: StratumMs[];
+	hand_roles?: StratumHandRole[];
 	msitems: MSIforStratum[];
 	date: DateInfo[];
 	place: Place[];
@@ -57,7 +57,7 @@ interface StratumFiliation {
 }
 
 interface MSIforStratum {
-	id: string | number;
+	id: number;
 	hit_id: string;
 	work: {
 		title: string;
@@ -73,7 +73,7 @@ interface MSIforStratum {
 	text_modification: string[];
 	interpolations: TitleWork[];
 	form: Value[];
-	language: Value[];
+	language: string[];
 }
 
 interface StratumMs {
@@ -86,7 +86,7 @@ interface StratumMs {
 
 interface StratumHandRole {
 	hit_id: string;
-	hand?: Hand[];
+	hand?: HandForStratum[];
 	ms_item?: StratumMsItem[];
 	role?: string[];
 	locus?: string;
@@ -101,4 +101,11 @@ interface StratumMsItem {
 	title?: string[];
 	author?: string[];
 	locus: string;
+}
+
+interface HandForStratum {
+	hit_id: string;
+	label: string;
+	date: DateInfo[];
+	place: Place[];
 }

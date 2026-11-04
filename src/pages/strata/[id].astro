@@ -28,11 +28,11 @@ const columns = msItemsStratumTableConfig.getColumns();
 const rowClickConfig = msItemsStratumTableConfig.getRowClickConfig;
 ---
 
-<PageLayout title={stratum?.label}>
+<PageLayout title={stratum?.number}>
 	<Article
 		prevLink={`/strata/${stratum.prev.id}`}
 		nextLink={`/strata/${stratum.next.id}`}
-		mainTitle={stratum.label}
+		mainTitle={`${stratum.manuscript[0].value}, Stratum ${stratum?.number}`}
 		authorEntry={stratum.manuscript[0].author_entry}
 	>
 		<div

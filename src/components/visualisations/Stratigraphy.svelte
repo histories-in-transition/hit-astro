@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import type { Manuscript } from "@/types";
 	import { prepareDataForStrataGraph } from "@/lib/stratigraphy-visualisation/prepareData";
 	import { renderManuscriptStratigraphy } from "@/lib/stratigraphy-visualisation/render";
 

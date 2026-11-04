@@ -182,17 +182,17 @@
 			<div class="flex gap-2 justify-end">
 				<button on:click={() => download("csv", "csv")}
 					aria-label="Als CSV herunterladen"
-					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
+					class="cursor-pointer px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
 					CSV
 				</button>
 				<button on:click={() => download("json", "json")}
 					aria-label="Als JSON herunterladen"
-					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
+					class="cursor-pointer px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
 					JSON
 				</button>
 				<button on:click={() => download("html", "html", { style: true })}
 					aria-label="Als HTML herunterladen"
-					class="px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
+					class="cursor-pointer px-3 py-1 bg-brand-600 text-brand-50 rounded hover:bg-brand-500 hover:text-brand-950 font-semibold text-md">
 					HTML
 				</button>
 			</div>

@@ -457,13 +457,13 @@ export const msItemsStratumTableConfig = {
 			const work = item.work[0].title;
 			const author = item.author[0]?.name;
 			const work_aut = author ? `${author}: ${work}` : work;
-			const hands = item.hands.map((hand) => hand.label.split("_")[1]);
+			const hands = item.hands.map((hand) => hand.label.split("_")[1]).join("\n");
 			const jobs = item.hands.flatMap((hand) => hand.jobs);
-			const rolls = jobs.map((j) => j.role.map((r) => r.value)).join("\n");
-			const scribe_type = jobs.map((j) => j.scribe_type.map((st) => st.value)).join(" | ");
-			const func = jobs.map((j) => j.function.map((f) => f.value)).join(" | ");
+			const rolls = jobs.map((j) => j.role).join("\n");
+			const scribe_type = jobs.map((j) => j.scribe_type).join("\n");
+			const func = jobs.map((j) => j.function).join("\n");
 			const scope = jobs.map((j) => j.locus);
-			const mise = jobs.map((j) => j.locus_layout.map((l) => l.value)).join(" | ");
+			const mise = jobs.map((j) => j.locus_layout).join("\n");
 			return {
 				id: item.id || "",
 				hit_id: item.hit_id || "",
@@ -495,6 +495,7 @@ export const msItemsStratumTableConfig = {
 				minWidth: 80,
 				widthGrow: 1,
 				responsive: 1,
+				formatter: "textarea",
 			},
 
 			{
@@ -513,6 +514,7 @@ export const msItemsStratumTableConfig = {
 				minWidth: 150,
 				formatter: "textarea",
 				widthGrow: 1,
+				formatter: "textarea",
 				responsive: 2,
 			},
 			{
@@ -522,6 +524,7 @@ export const msItemsStratumTableConfig = {
 				headerFilterPlaceholder: "e.g. 850, nach 850",
 				minWidth: 150,
 				responsive: 2,
+				formatter: "textarea",
 				widthGrow: 1,
 			},
 			{
