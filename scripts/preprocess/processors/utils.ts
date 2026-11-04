@@ -5,7 +5,7 @@ import type {
 	HitPeople,
 	HitWorks,
 } from "@/types/zod/zod-types.js";
-import type { Place } from "@/types/index.ts";
+import type { Place, Library } from "@/types/index.ts";
 
 export function addPrevNextToMsItems(items, idField = "hit_id", labelField = "view_label") {
 	// Sort msItems by their keys or any specific field (if needed)
@@ -39,6 +39,7 @@ type PlaceRaw = { id: number; value: string; order: string };
 type DateRaw = { id: number; value: string; order: string };
 type BiblRaw = { id: number; value: string; order: string };
 type WorkRaw = { id: number; value: string; order: string };
+type LibraryRaw = { id: number; value: string; order: string };
 
 export function enrichPlaces(placeArray: PlaceRaw[], places: Place[]) {
 	return placeArray.map((place) => {
@@ -51,6 +52,21 @@ export function enrichPlaces(placeArray: PlaceRaw[], places: Place[]) {
 			hit_id: place_geo?.hit_id ?? "",
 			lat: place_geo?.lat ?? "",
 			long: place_geo?.long ?? "",
+		};
+	});
+}
+
+export function getPlaceFromLibrary(libArray: LibraryRaw[], libraries: Library[]) {
+	return libArray.map((lib) => {
+		//find matching lib organisation in processed libraries.json
+		const library = libraries.find((l) => l.id === lib.id) || null;
+		return {
+			id: library.id,
+			hit_id: library.hit_id,
+			value: library.library_full,
+			geonames_url: library.place[0].geonames_url,
+			lat: library.place[0].lat,
+			long: library.place[0].long,
 		};
 	});
 }

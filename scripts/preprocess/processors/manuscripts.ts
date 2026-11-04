@@ -78,18 +78,7 @@ function transformManuscript(manuscript: HitManuscript, deps: ManuscriptDeps): M
 	const manuscriptStrata = getStrataForManuscript(manuscript, processedStrata);
 
 	// Create TBD stratum for uncharted roles if needed
-	const tbdStratum = createTBDStratum(
-		manuscript,
-		handsrole,
-		msItemsPlus,
-		processedStrata,
-		hands,
-		handsdated,
-		handsplaced,
-		places,
-		dates,
-		bibliography,
-	);
+	const tbdStratum = createTBDStratum(manuscript, handsrole, msItemsPlus, processedStrata);
 
 	// Combine strata
 	const allStrata = tbdStratum ? [...manuscriptStrata, tbdStratum] : manuscriptStrata;

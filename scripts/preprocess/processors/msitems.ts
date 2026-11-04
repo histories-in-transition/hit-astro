@@ -4,6 +4,7 @@ import {
 	enrichWorks,
 	enrichBibl,
 	enrichDates,
+	getPlaceFromLibrary,
 } from "./utils.js";
 import type {
 	HitMsitem,
@@ -164,7 +165,7 @@ function transformMsItem(item: HitMsitem, deps: MsItemDeps, originalMsItems: Hit
 		note: item.note ?? "",
 		orig_date: getOrigDate(relatedHand, provenance, item, manuscriptDated, dates),
 		orig_place: getOrigPlace(relatedHand, provenance, item, manuscripts, places),
-		provenance: getProvenanceData(provenance, relatedHand, item, manuscripts, places),
+		provenance: getProvenanceData(provenance, relatedHand, item, manuscripts, librariesPlus),
 		author_entry: author_entry,
 		project: project,
 	};
@@ -483,7 +484,7 @@ function getOrigPlace(relatedHand, provenance, item, manuscripts, places) {
 	return msPlaces;
 }
 
-function getProvenanceData(provenance, relatedHand, item, manuscripts, places) {
+function getProvenanceData(provenance, relatedHand, item, manuscripts, librariesPlus) {
 	const relatedHandPlaces = relatedHand.filter(hasNonScribeRole).flatMap((hand) =>
 		hand.place.map((pl) => ({
 			hit_id: pl.hit_id,
@@ -497,11 +498,12 @@ function getProvenanceData(provenance, relatedHand, item, manuscripts, places) {
 	if (provenancePlaces.length > 0 || relatedHandPlaces.length > 0) {
 		return [...provenancePlaces, ...relatedHandPlaces];
 	}
+	//fallback to provenance from ms
 	const msProvenance = manuscripts
 		.filter((ms) => ms.id === item.manuscript[0]?.id)
 		.flatMap((ms) => ({
 			hit_id: ms.hit_id,
-			places: enrichPlaces(ms.provenance, places),
+			places: getPlaceFromLibrary(ms.provenance, librariesPlus),
 		}));
 	return msProvenance;
 }
