@@ -7,7 +7,8 @@ const { item } = Astro.props;
 <>
 	<dt class="md:border-r border-gray-300 pr-2 justify-self-end">
 		{
-			item.locusArray.length > 0
+			item.locusArray.length > 0 &&
+			item.locusArray.every((la) => la.begin.length > 0 && la.end.length > 0)
 				? item.locusArray.map((locus, index) => (
 						<span>
 							{index > 0 && " | "}

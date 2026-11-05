@@ -62,7 +62,8 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 
 						<DescriptionListItem label="Locus:">
 							{
-								item.locusArray.length > 0
+								item.locusArray.length > 0 &&
+								item.locusArray.every((la) => la.begin.length > 0 && la.end.length > 0)
 									? item.locusArray.map((locus, index) => (
 											<span>
 												{index > 0 && " | "}
@@ -295,7 +296,8 @@ const rowClickConfig = msItemTableConfig.getRowClickConfig;
 						}
 					</DescriptionList>
 					{
-						item.locusArray.length ? (
+						item.locusArray.length &&
+						item.locusArray.every((la) => la.begin.length > 0 && la.end.length > 0) ? (
 							<div class="p-5 place-self-start">
 								<NavLink
 									href={item.locusArray[0].begin[0].page_url}
