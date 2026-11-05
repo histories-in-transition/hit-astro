@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 10 182 100" role="img" aria-labelledby="t">
+  <title id="t">Histories in Transition (HiT)</title>
+
+  <!-- strata lines (orange). Left lines start at the H's left stem (x=100) and run left.
+       Right lines start at the T's stem (x=162) and run right.
+       No line is longer than the T's top bar (52 units). -->
+  <g stroke="#ffa500" stroke-width="1.5" fill="none">
+    <!-- left side -->
+    <line x1="100" y1="40" x2="52" y2="40"/>
+    <line x1="100" y1="50" x2="70" y2="50"/>
+    <line x1="100" y1="60" x2="56" y2="60"/>
+    <line x1="100" y1="70" x2="78" y2="70"/>
+    <line x1="100" y1="80" x2="62" y2="80"/>
+    <line x1="100" y1="90" x2="50" y2="90"/>
+    <!-- right side -->
+    <line x1="162" y1="40" x2="202" y2="40"/>
+    <line x1="162" y1="50" x2="214" y2="50"/>
+    <line x1="162" y1="60" x2="190" y2="60"/>
+    <line x1="162" y1="70" x2="208" y2="70"/>
+    <line x1="162" y1="80" x2="182" y2="80"/>
+    <line x1="162" y1="90" x2="198" y2="90"/>
+  </g>
+
+  <!-- letters H i T (drawn as strokes, no font needed) -->
+  <g stroke="#f9f6f1" stroke-width="4" stroke-linecap="butt" fill="none">
+    <!-- H: narrow -->
+    <line x1="100" y1="30" x2="100" y2="90"/>
+    <line x1="124" y1="30" x2="124" y2="90"/>
+    <line x1="100" y1="60" x2="124" y2="60"/>
+    <!-- i: lower, tucked under the left arm of the T -->
+    <line x1="142" y1="62" x2="142" y2="90"/>
+    <!-- T: top bar overhangs the i -->
+    <line x1="136" y1="32" x2="188" y2="32"/>
+    <line x1="162" y1="32" x2="162" y2="90"/>
+  </g>
+  <circle cx="142" cy="50" r="3" fill="#f9f6f1"/>
+</svg>

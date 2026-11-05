@@ -1,22 +1,28 @@
 ---
 import NavLink from "./nav-link.astro";
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import hitLogo from "../../public/images/hit-logo.svg";
 const pathname = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-50">
 	<div class="bg-brand-800 align-center flex justify-between">
 		<div
-			class="md:px-6 text-xl md:text-3xl text-brand-50 self-center tracking-wide
+			class="2xl:px-6 text-base lg:text-xl 3xl:text-3xl text-brand-50 self-center tracking-wide
 			uppercase underline-offset-8 decoration-brand-100 p-2"
 		>
-			<NavLink href="/index.html" class="none">Histories in transition </NavLink>
+			<NavLink href="/index.html" class="flex items-center">
+				<Image src={hitLogo} alt="" class="h-auto w-16 m-auto" />
+				Histories in transition
+			</NavLink>
 			<p class="text-yellow-400 font-semibold text-sm normal-case italic flex items-center gap-2">
 				<Icon aria-hidden="true" name="lucide:construction" />
 				Diese Website ist noch im Aufbau.
 				<Icon aria-hidden="true" name="lucide:construction" />
 			</p>
 		</div>
+		<!-- Mobile -->
 		<nav aria-label="primary-navigation" class="lg:hidden md:p-4">
 			<button
 				id="hamburger"
@@ -42,9 +48,10 @@ const pathname = Astro.url.pathname;
 				</svg>
 			</button>
 		</nav>
+		<!-- Desktop -->
 		<nav
 			aria-label="primary-navigation"
-			class="hidden lg:flex items-center gap-x-4 text-brand-50 p-5"
+			class="hidden lg:flex items-center gap-x-4 text-brand-50 pr-5 py-5"
 		>
 			<ul class="flex place-content-start gap-x-8 text-md text-brand-50">
 				<li
@@ -63,7 +70,7 @@ const pathname = Astro.url.pathname;
 					class={`${pathname.split("/").includes("msitems") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
 					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
 				>
-					<NavLink class="none" href="/msitems">MS Elemente</NavLink>
+					<NavLink class="none" href="/msitems">MS Items</NavLink>
 				</li>
 
 				<li
@@ -86,63 +93,91 @@ const pathname = Astro.url.pathname;
 				</li>
 				<li
 					class={`${pathname.split("/").includes("tools") ? "underline underline-offset-4 decoration-2 decoration-brand-50" : ""} 
-					hover:underline underline-offset-4 decoration-2 decoration-brand-50`}
+					hover:underline underline-offset-4 decoration-2 decoration-brand-50 inline-flex`}
 				>
 					<NavLink class="none" href="/tools">Tools</NavLink>
 				</li>
-				<li class="relative group">
-					<button class="flex gap-0.5 items-center" aria-haspopup="true" aria-expanded="false"
+				<li class="relative group" data-dropdown>
+					<button
+						type="button"
+						class="inline-flex items-center gap-0.5 cursor-pointer"
+						aria-label="Open Data menu"
+						aria-haspopup="true"
+						aria-expanded="false"
+						data-dropdown-button
 						>Projekt
 						<Icon
 							aria-hidden="true"
-							class="size-4.5 transition-transform group-hover:rotate-180"
+							class="size-4.5 transition-transform"
+							data-dropdown-icon
 							name="lucide:chevron-down"
 						/>
 					</button>
 
-					<div
-						class="absolute left-0 top-full hidden w-48 bg-brand-800 rounded-md p-3 group-hover:grid"
+					<ul
+						class="absolute left-0 top-full hidden w-48 rounded-md bg-brand-800 p-3 grid gap-1 border border-brand-600 shadow-xl/30 list-outside"
+						data-dropdown-menu
 					>
-						<NavLink
-							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
-							href="/about">Über das Projekt</NavLink
-						>
-						<NavLink
-							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
-							href="/about-tech">Technische Umsetzung</NavLink
-						>
-						<NavLink
-							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
-							href="/oai-pmh">OAI-PMH Schnittstelle</NavLink
-						>
-						<NavLink
-							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
-							href="/download/index.html">Datenset</NavLink
-						>
-						<NavLink
-							class="hover:underline underline-offset-4 hover:text-brand-200 p-2"
-							href="/about-faqs">FAQs</NavLink
-						>
-					</div>
+						<li>
+							<NavLink
+								class="block w-full hover:underline underline-offset-4 hover:text-brand-200 p-2"
+								href="/about">Über das Projekt</NavLink
+							>
+						</li>
+						<li>
+							<NavLink
+								class="block w-full hover:underline underline-offset-4 hover:text-brand-200 p-2"
+								href="/about-tech">Technische Umsetzung</NavLink
+							>
+						</li>
+						<li>
+							<NavLink
+								class="block w-full hover:underline underline-offset-4 hover:text-brand-200 p-2"
+								href="/oai-pmh">OAI-PMH Schnittstelle</NavLink
+							>
+						</li>
+						<li>
+							<NavLink
+								class="block w-full hover:underline underline-offset-4 hover:text-brand-200 p-2"
+								href="/download/index.html">Datenset</NavLink
+							>
+						</li>
+						<li>
+							<NavLink
+								class="block w-full hover:underline underline-offset-4 hover:text-brand-200 p-2"
+								href="/about-faqs">FAQs</NavLink
+							>
+						</li>
+					</ul>
 				</li>
+				<form id="searchForm" class="hidden md:flex items-center gap-x-2">
+					<label for="searchInput" class="sr-only">Volltextsuche</label>
+					<input
+						type="text"
+						id="searchInput"
+						class="hidden 2xl:block py-1 px-2 w-48 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
+						placeholder="Autor, Werk, Handschrift"
+						aria-label="suche nach Autor, Werk, Handschrift"
+					/>
+					<button
+						id="searchButton"
+						type="submit"
+						class="bg-brand-500 min-w-40 font-semibold py-1 px-2 rounded-md cursor-pointer"
+						>Erweiterte Suche</button
+					>
+				</form>
 			</ul>
-			<form id="searchForm" class="hidden md:flex items-center gap-x-2">
-				<label for="searchInput" class="sr-only">Volltextsuche</label>
-				<input
-					type="text"
-					id="searchInput"
-					class="hidden 2xl:block py-1 px-2 w-64 rounded-md bg-brand-50 text-brand-800 focus:outline-none focus:ring-3 focus:ring-brand-600 italic text-base"
-					placeholder="Autor, Werk, Handschrift"
-					aria-label="suche nach Autor, Werk, Handschrift"
-				/>
-				<button
-					id="searchButton"
-					type="submit"
-					class="bg-brand-500 font-semibold py-1 px-2 rounded-md cursor-pointer"
-					>Erweiterte Suche</button
-				>
-			</form>
 		</nav>
+
+		<!-- CSS-only scroll indicator anchored to the bottom of the header -->
+		<div data-scroll-indicator aria-hidden="true"></div>
+
+		<script src="@/lib/menu.ts"></script>
+		<script>
+			import { initDropdowns, startSearch } from "@/lib/utils.ts";
+			document.addEventListener("astro:page-load", initDropdowns);
+			document.addEventListener("astro:page-load", startSearch);
+		</script>
 	</div>
 	<ul id="nav-links" class="hidden rounded-xs grid grid-cols-1 p-5 gap-2 text-lg bg-brand-800">
 		<li>
@@ -207,10 +242,4 @@ const pathname = Astro.url.pathname;
 			</NavLink>
 		</li>
 	</ul>
-
-	<!-- CSS-only scroll indicator anchored to the bottom of the header -->
-	<div data-scroll-indicator aria-hidden="true"></div>
-
-	<script src="@/lib/menu.ts"></script>
-	<script src="@/lib/search-link.ts"></script>
 </header>

@@ -3,13 +3,14 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
+	--breakpoint-3xl: 120rem;
 	/* Brand Colors - Warm, earthy tones */
 	--color-brand-50: #f9f6f1;
 	--color-brand-100: #f6f0e6;
 	--color-brand-200: #f0e5d8;
 	--color-brand-300: #e9dfcd;
 	--color-brand-400: #f8c161c4;
-	--color-brand-500: orange;
+	--color-brand-500: #ffa500;
 	--color-brand-600: #953c04;
 	--color-brand-700: #7f3303;
 	--color-brand-800: #6d2b02;
