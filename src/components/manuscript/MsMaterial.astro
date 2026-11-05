@@ -10,25 +10,63 @@ const { manuscript } = Astro.props;
 
 <Section heading="Materialität" id="msMaterial">
 	<DescriptionList>
-		<DescriptionListItem label="Material:">
-			{manuscript?.material}
-		</DescriptionListItem>
-		<DescriptionListItem label="Umfang:">{manuscript?.extent} Bll.</DescriptionListItem>
-		<DescriptionListItem label="Maße:"
-			>{manuscript?.height ?? "N/A"} × {manuscript?.width ?? "N/A"} mm</DescriptionListItem
-		>
-		<DescriptionListItem label="Foliierung:">{manuscript?.foliation ?? "N/A"}</DescriptionListItem>
-		<DescriptionListItem label="Lagenstruktur:">
-			{
-				manuscript.quire_structure && (
-					<span set:html={makeSuperScript(manuscript?.quire_structure)} />
-				)
-			}
-		</DescriptionListItem>
-		<DescriptionListItem label="Einband:">
-			{manuscript?.binding_date.map((date) => <span>{date?.value}</span>)}
-			{manuscript?.binding}
-		</DescriptionListItem>
+		{
+			manuscript.material.length ? (
+				<DescriptionListItem label="Material:">
+					{manuscript?.material.join(", ")}
+				</DescriptionListItem>
+			) : (
+				""
+			)
+		}
+		{
+			manuscript.extent ? (
+				<DescriptionListItem label="Umfang:">{manuscript?.extent} Bll.</DescriptionListItem>
+			) : (
+				""
+			)
+		}
+		{
+			manuscript.width || manuscript.height ? (
+				<DescriptionListItem label="Maße:">
+					{manuscript?.height ?? "N/A"} × {manuscript?.width ?? "N/A"} mm
+				</DescriptionListItem>
+			) : (
+				""
+			)
+		}
+		{
+			manuscript.foliation ? (
+				<DescriptionListItem label="Foliierung:">
+					{manuscript?.foliation ?? "N/A"}
+				</DescriptionListItem>
+			) : (
+				""
+			)
+		}
+		{
+			manuscript.quire_structure ? (
+				<DescriptionListItem label="Lagenstruktur:">
+					{manuscript.quire_structure && (
+						<span set:html={makeSuperScript(manuscript?.quire_structure)} />
+					)}
+				</DescriptionListItem>
+			) : (
+				""
+			)
+		}
+		{
+			manuscript.binding ? (
+				<DescriptionListItem label="Einband:">
+					{manuscript?.binding}{" "}
+					{manuscript?.binding_date.map((date) => (
+						<span>({date?.value})</span>
+					))}
+				</DescriptionListItem>
+			) : (
+				""
+			)
+		}
 		{
 			manuscript?.acc_mat && (
 				<DescriptionListItem label="Fragmente">{manuscript?.acc_mat}</DescriptionListItem>

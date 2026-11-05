@@ -41,15 +41,12 @@ const origDates = manuscript?.orig_date
 			{
 				origDates.map((d, index) => (
 					<>
-						{d.date}
-						{d.authority && ` nach ${d.authority}`}
-
+						{d.date} {d.authority && ` nach ${d.authority}`}{" "}
 						{d.link ? (
-							<NavLink href={d.link}>{` (${d.citation}${d.page ? `, S. ${d.page}` : ""})`}</NavLink>
+							<span>(</span><NavLink href={d.link}>{`${d.citation}${d.page ? `, S. ${d.page}` : ""}`}</NavLink><span>)</span>
 						) : (
 							d.citation && ` (${d.citation}${d.page ? `, S. ${d.page}` : ""})`
 						)}
-
 						{index < origDates.length - 1 && <br />}
 					</>
 				))
