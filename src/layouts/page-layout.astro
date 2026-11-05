@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from "astro:transitions";
+
 import "@/styles/global.css";
 import ScrollToTop from "@/components/scroll-to-top.astro";
 import PageFooter from "@/components/page-footer.astro";
@@ -17,6 +19,8 @@ const { title = "Histories in transition" } = Astro.props;
 		<meta name="color-scheme" content="light" />
 		<meta charset="utf-8" />
 		<title>HiT · {title}</title>
+		<ClientRouter />
+
 		<meta
 			name="description"
 			content="Histories in Transition is a searchable platform for exploring medieval manuscripts and historiographical texts through structured, relational data."
