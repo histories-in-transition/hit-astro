@@ -18,7 +18,7 @@ import { withBasePath } from "./withBasePath";
 const project_collection_name = "hit__msitems";
 const main_search_field = "title";
 const secondary_search_field = "manuscript";
-const third_search_field = "work.author.name";
+const third_search_field = "author";
 const search_api_key = "m4HIiAYUUfemilHQ5LvSTC6hqEiNCjSX"; // custom search only key
 
 const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
@@ -290,10 +290,8 @@ search.addWidgets([
 						>
 							<a href="${href}">
 								<span class="absolute inset-0 z-10 bg-brand-300/15"></span>
-								${hit.work[0]?.author?.length
-									? `${hit.work[0].author.map((a) => a.name).join(", ")}: `
-									: ""}
-								<span class="italic wrap-break-word">${hit.work[0]?.title || "Untitled"}</span>
+								${hit.author?.length ? `${hit.author.join(", ")}: ` : ""}
+								<span class="italic wrap-break-word">${hit.work || "Untitled"}</span>
 							</a>
 						</h2>
 						<div class="text-gray-700">
@@ -307,43 +305,19 @@ search.addWidgets([
 								<dt class="font-semibold pr-2">Handschrift:</dt>
 								<dd class="pl-5">${hit.view_label}</dd>
 								<dt class="font-semibold pr-2">Datierung:</dt>
-								<dd class="pl-5">
-									${[
-										...new Set(hit.orig_date?.flatMap((od) => od.date?.map((d) => d.value)) || []),
-									].join(" | ")}
-								</dd>
+								<dd class="pl-5">${[...new Set(hit.orig_date || [])].join(" | ")}</dd>
 								<dt class="font-semibold pr-2">Entstehungsort:</dt>
-								<dd class="pl-5">
-									${[
-										...new Set(
-											hit.orig_place?.flatMap((pl) => pl.place?.map((p) => p.value)) || [],
-										),
-									].join(" | ")}
-								</dd>
-								${hit.hands?.some((h) => h.jobs?.some((j) => j.role?.includes("Schreiber")))
+								<dd class="pl-5">${[...new Set(hit.orig_place || [])].join(" | ")}</dd>
+								${hit.hands_role?.length > 0
 									? html`
 											<dt class="font-semibold pr-2">Bearbeitung:</dt>
-											<dd class="pl-5">
-												${[
-													...new Set(
-														hit.hands
-															.filter((h) => h.jobs?.some((j) => j.role?.includes("Schreiber")))
-															.flatMap((h) => h.jobs?.flatMap((j) => j.role) || []),
-													),
-												].join(" | ")}
-											</dd>
+											<dd class="pl-5">${[...new Set(hit.hands_role)].join(" | ")}</dd>
 										`
 									: ""}
-								${hit.hands?.some((h) => h.jobs?.some((j) => j.function.length > 0))
+								${hit.hands_function.length > 0
 									? html`
 											<dt class="font-semibold pr-2">Händefunktion:</dt>
-											<dd class="pl-5">
-												${[
-													...new Set(
-														hit.hands.flatMap((h) => h.jobs?.flatMap((j) => j.function) || []),
-													),
-												].join(" | ")}
-											</dd>
+											<dd class="pl-5">${[...new Set(hit.hands_function)].join(" | ")}</dd>
 										`
 									: ""}
 							</dl>
@@ -364,7 +338,7 @@ search.addWidgets([
 
 	refinementListMS({
 		container: "#refinement-list-manuscripts",
-		attribute: "manuscript.value",
+		attribute: "manuscript",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -379,7 +353,7 @@ search.addWidgets([
 
 	refinementListWork({
 		container: "#refinement-list-work",
-		attribute: "work.title",
+		attribute: "work",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -394,7 +368,7 @@ search.addWidgets([
 
 	refinementListCentury({
 		container: "#refinement-list-century",
-		attribute: "orig_date.date.century",
+		attribute: "orig_century",
 		searchable: true,
 		sortBy: centuryComparator,
 		showMore: true,
@@ -410,7 +384,7 @@ search.addWidgets([
 
 	refinementListOrigPlace({
 		container: "#refinement-list-orig-place",
-		attribute: "orig_place.place.value",
+		attribute: "orig_place",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -425,7 +399,7 @@ search.addWidgets([
 
 	refinementListProvenance({
 		container: "#refinement-list-provenance",
-		attribute: "provenance.places.value",
+		attribute: "provenance",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -440,7 +414,7 @@ search.addWidgets([
 
 	refinementListHandsRole({
 		container: "#refinement-list-hands-function",
-		attribute: "hands.jobs.role",
+		attribute: "hands_role",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -454,7 +428,7 @@ search.addWidgets([
 	}),
 	refinementListHandsContextRole({
 		container: "#refinement-list-scribe-type",
-		attribute: "hands.jobs.role_context",
+		attribute: "hands_role_context",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -469,7 +443,7 @@ search.addWidgets([
 
 	refinementListHandsFunktion({
 		container: "#refinement-list-hands-role",
-		attribute: "hands.jobs.function",
+		attribute: "hands_function",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -484,7 +458,7 @@ search.addWidgets([
 
 	refinementListAuthor({
 		container: "#refinement-list-authors",
-		attribute: "work.author.name",
+		attribute: "author",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -499,7 +473,7 @@ search.addWidgets([
 
 	refinementListDecoration({
 		container: "#refinement-list-decoration",
-		attribute: "decoration.value",
+		attribute: "decoration",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -514,7 +488,7 @@ search.addWidgets([
 
 	refinementListForm({
 		container: "#refinement-list-form",
-		attribute: "form.value",
+		attribute: "form",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -544,7 +518,7 @@ search.addWidgets([
 
 	refinementListInterpolations({
 		container: "#refinement-list-interpolations",
-		attribute: "interpolations.title",
+		attribute: "interpolations",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -589,7 +563,7 @@ search.addWidgets([
 
 	refinementListTransmission({
 		container: "#refinement-list-transmission",
-		attribute: "joined_transmission.title",
+		attribute: "joined_transmission",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -628,22 +602,22 @@ search.addWidgets([
 		container: "#current-refinements",
 		transformItems(items) {
 			const labelMap = new Map([
-				["work.author.name", "Author"],
-				["work.title", "Werk"],
-				["manuscript.value", "Handschrift"],
-				["orig_date.date.value", "Entstehungszeit"],
-				["orig_date.date.century", "Entstehungszeit"],
-				["orig_place.place.value", "Entstehungsort"],
-				["provenance.value", "Provenienz"],
-				["hands.jobs.function", "Händefunktion"],
-				["hands.jobs.role", "Schreiberaktivitäten"],
-				["hands.jobs.role_context", "Schreiber Typ"],
-				["decoration.value", "Decoration"],
+				["author", "Author"],
+				["work", "Werk"],
+				["manuscript", "Handschrift"],
+				["orig_date", "Entstehungszeit"],
+				["orig_century", "Entstehungszeit"],
+				["orig_place.", "Entstehungsort"],
+				["provenance", "Provenienz"],
+				["hands_function", "Händefunktion"],
+				["hands_role", "Schreiberaktivitäten"],
+				["hands_role_context", "Schreiber Typ"],
+				["decoration", "Decoration"],
 				["terminus_ante_quem", "Terminus ante quem"],
 				["terminus_post_quem", "Termininus post quem"],
 				["main_genre", "Genre"],
-				["interpolations.title", "Interpolations"],
-				["joined_transmission.title", "Überlieferungsgemeinschaft"],
+				["interpolations", "Interpolations"],
+				["joined_transmission", "Überlieferungsgemeinschaft"],
 				["modifications", "Textvariationen"],
 				["language.value", "Sprache"],
 			]);

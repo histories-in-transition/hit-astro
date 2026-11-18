@@ -34,26 +34,30 @@ async function generate() {
 			{ name: "title", type: "string", sort: true },
 			{ name: "authors", type: "string", facet: true, optional: true },
 			{ name: "title_note", type: "string", sort: true },
-			{ name: "manuscript", type: "object[]", facet: true, optional: true },
-			{ name: "library", type: "object[]", facet: true, optional: true },
-			{ name: "library_place", type: "object[]", facet: true, optional: true },
-			{ name: "work", type: "object[]", facet: true, optional: true },
-			{ name: "decoration", type: "object[]", facet: true, optional: true },
-			{ name: "orig_date", type: "object[]", facet: true, optional: true },
-			{ name: "orig_place", type: "object[]", facet: true, optional: true },
-			{ name: "provenance", type: "object[]", facet: true, optional: true },
-			{ name: "hands", type: "object[]", facet: true, optional: true },
+			{ name: "manuscript", type: "string[]", facet: true, optional: true },
+			{ name: "library", type: "string[]", facet: true, optional: true },
+			{ name: "library_place", type: "string[]", facet: true, optional: true },
+			{ name: "work", type: "string[]", facet: true, optional: true },
+			{ name: "author", type: "string[]", facet: true, optional: true },
+			{ name: "decoration", type: "string[]", facet: true, optional: true },
+			{ name: "orig_date", type: "string[]", facet: true, optional: true },
+			{ name: "orig_century", type: "string[]", facet: true, optional: true },
+			{ name: "orig_place", type: "string[]", facet: true, optional: true },
+			{ name: "provenance", type: "string[]", facet: true, optional: true },
+			{ name: "hands_role_context", type: "string[]", facet: true, optional: true },
+			{ name: "hands_role", type: "string[]", facet: true, optional: true },
+			{ name: "hands_function", type: "string[]", facet: true, optional: true },
 			{ name: "sub_genre", type: "string[]", facet: true, optional: true },
 			{ name: "main_genre", type: "string[]", facet: true, optional: true },
 			// get dates as separate numbers for filtering 'from -to' in the frontend
 			{ name: "terminus_post_quem", type: "int32", facet: true, optional: true },
 			{ name: "terminus_ante_quem", type: "int32", facet: true, optional: true },
-			{ name: "form", type: "object[]", facet: true, optional: true },
+			{ name: "form", type: "string[]", facet: true, optional: true },
 			{ name: "modifications", type: "string[]", facet: true, optional: true },
-			{ name: "interpolations", type: "object[]", facet: true, optional: true },
+			{ name: "interpolations", type: "string[]", facet: true, optional: true },
 			{ name: "language", type: "string[]", facet: true, optional: true },
 			{ name: "project", type: "string[]", facet: true, optional: true },
-			{ name: "joined_transmission", type: "object[]", facet: true, optional: true },
+			{ name: "joined_transmission", type: "string[]", facet: true, optional: true },
 		],
 		metadata: {
 			owners: ["Ivana Dobcheva"],
@@ -94,6 +98,8 @@ async function generate() {
 		const minNotBefore =
 			terminus_post_quem.length > 0 ? Math.min(...terminus_post_quem) : undefined;
 		const maxNotAfter = terminus_ante_quem.length > 0 ? Math.max(...terminus_ante_quem) : undefined;
+		// Keeps only real values. Removes undefined, null and empty strings.
+		const clean = (arr) => (arr ?? []).filter((v) => v !== undefined && v !== null && v !== "");
 
 		const item = {
 			sort_id: value?.id,
@@ -102,32 +108,72 @@ async function generate() {
 			title: value?.title_work?.[0]?.title || "Untitled",
 			authors: value?.title_work?.[0]?.author?.[0]?.name || "Unknown",
 			title_note: value?.title_note || "",
-			manuscript: value?.manuscript || [],
-			library: value?.library || [],
-			library_place: value?.library_place || [],
-			work: value?.title_work || [],
-			decoration: value?.decoration || [],
-			orig_date: value?.orig_date || [],
-			orig_place: value?.orig_place || [],
-			provenance: value?.provenance || [],
-			hands: value?.hands || [],
-			terminus_post_quem: minNotBefore !== undefined ? minNotBefore : null,
-			terminus_ante_quem: maxNotAfter !== undefined ? maxNotAfter : null,
-			sub_genre: value.title_work[0].subGenre || [],
-			main_genre: value.title_work[0].mainGenre || [],
-			form: value.form || [],
-			modifications: value.text_modification || [],
-			interpolations: value.interpolations || [],
-			language: value.language || [],
-			project: value.project || [],
-			joined_transmission: value.joined_transmission || [],
+			manuscript: clean(value?.manuscript?.map((ms) => ms.value)),
+			library: clean(value?.library?.map((l) => l.value)),
+			library_place: clean(value?.library_place?.map((lb) => lb.value)),
+			work: clean(value?.title_work?.map((w) => w.title)),
+			author: clean(value?.title_work?.flatMap((w) => w.author?.map((a) => a.name) ?? [])),
+			decoration: clean(value?.decoration?.map((d) => d.value)),
+			orig_date: clean(value?.orig_date?.flatMap((od) => od.date?.map((d) => d.value) ?? [])),
+			orig_century: clean(
+				value?.orig_date?.flatMap((od) => od.date?.flatMap((d) => d.century) ?? []),
+			),
+			orig_place: clean(value?.orig_place?.flatMap((p) => p.place?.map((pl) => pl.value) ?? [])),
+			provenance: clean(
+				value?.provenance?.flatMap((prov) => prov.places?.map((pl) => pl.value) ?? []),
+			),
+			hands_role: clean(value?.hands?.flatMap((h) => h.jobs?.flatMap((j) => j.role) ?? [])),
+			hands_function: clean(value?.hands?.flatMap((h) => h.jobs?.flatMap((j) => j.function) ?? [])),
+			hands_role_context: clean(
+				value?.hands?.flatMap((h) => h.jobs?.flatMap((j) => j.role_context) ?? []),
+			),
+
+			terminus_post_quem: minNotBefore ?? null,
+			terminus_ante_quem: maxNotAfter ?? null,
+			sub_genre: value?.title_work?.[0]?.subGenre ?? [],
+			main_genre: value?.title_work?.[0]?.mainGenre ?? [],
+			form: value?.form?.map((f) => f.value) ?? [],
+			modifications: value?.text_modification ?? [],
+			interpolations: value?.interpolations?.map((i) => i.title) ?? [],
+			language: value?.language ?? [],
+			project: value?.project ?? [],
+			joined_transmission: value?.joined_transmission?.map((tr) => tr.title) ?? [],
 		};
 		records.push(item);
 	});
 
 	// - import data into typesense collection
-	await client.collections(collectionName).documents().import(records);
-	log.success("All msitems data imported for indexing");
+	try {
+		await client.collections(collectionName).documents().import(records, { action: "create" });
+		log.success("All msitems data imported for indexing");
+	} catch (error) {
+		// typesense-js attaches one result per document to the thrown ImportError
+		const results = error.importResults ?? [];
+
+		// results are in the same order as `records`, so the index tells us which item failed
+		const failed = results
+			.map((r, index) => ({ ...r, record: records[index] }))
+			.filter((r) => !r.success);
+
+		if (failed.length > 0) {
+			// Count how often each error message occurs
+			const errorCounts = {};
+			failed.forEach((f) => {
+				errorCounts[f.error] = (errorCounts[f.error] || 0) + 1;
+			});
+			log.error("Error counts:\n", JSON.stringify(errorCounts, null, 2));
+
+			// Show the first 5 failed documents
+			failed.slice(0, 5).forEach((f) => {
+				log.error(`Failed: ${f.error}\nhit_id: ${f.record?.hit_id}`);
+			});
+		} else {
+			// Not an import-result problem (e.g. connection or auth), so show everything
+			log.error("Import failed:\n", error.stack ?? String(error));
+		}
+
+		throw error; // still reaches your outer .catch() and sets the exit code
+	}
 }
 
 generate()
