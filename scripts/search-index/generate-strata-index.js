@@ -31,22 +31,23 @@ async function generate() {
 			{ name: "sort_id", type: "int32", sort: true },
 			{ name: "hit_id", type: "string", sort: true },
 			{ name: "label", type: "string", sort: true },
-			{ name: "manuscript", type: "object[]", facet: true, optional: true },
-			{ name: "work", type: "object[]", facet: true, optional: true },
-			{ name: "author", type: "object[]", facet: true, optional: true },
+			{ name: "manuscript", type: "string[]", facet: true, optional: true },
+			{ name: "work", type: "string[]", facet: true, optional: true },
+			{ name: "author", type: "string[]", facet: true, optional: true },
 			{ name: "character", type: "string[]", facet: true, optional: true },
-			{ name: "orig_date", type: "object[]", facet: true, optional: true },
-			{ name: "orig_place", type: "object[]", facet: true, optional: true },
+			{ name: "orig_date", type: "string[]", facet: true, optional: true },
+			{ name: "orig_century", type: "string[]", facet: true, optional: true },
+			{ name: "orig_place", type: "string[]", facet: true, optional: true },
 			// get dates as separate numbers for filtering 'from -to' in the frontend
 			{ name: "terminus_post_quem", type: "int32", facet: true, optional: true },
 			{ name: "terminus_ante_quem", type: "int32", facet: true, optional: true },
-			{ name: "form", type: "object[]", facet: true, optional: true },
+			{ name: "form", type: "string[]", facet: true, optional: true },
 			{ name: "role", type: "string[]", facet: true, optional: true },
 			{ name: "scribe_type", type: "string[]", facet: true, optional: true },
 			{ name: "function", type: "string[]", facet: true, optional: true },
 			{ name: "locus_layout", type: "string[]", facet: true, optional: true },
 			{ name: "text_modifications", type: "string[]", facet: true, optional: true },
-			{ name: "interpolations", type: "object[]", facet: true, optional: true },
+			{ name: "interpolations", type: "string[]", facet: true, optional: true },
 			{ name: "language", type: "string[]", facet: true, optional: true },
 			{ name: "project", type: "string[]", facet: true, optional: true },
 		],
@@ -85,26 +86,31 @@ async function generate() {
 		const minNotBefore =
 			terminus_post_quem.length > 0 ? Math.min(...terminus_post_quem) : undefined;
 		const maxNotAfter = terminus_ante_quem.length > 0 ? Math.max(...terminus_ante_quem) : undefined;
+		const clean = (arr) => (arr ?? []).filter((v) => v !== undefined && v !== null && v !== "");
 
 		const item = {
 			sort_id: value?.id,
 			hit_id: value?.hit_id,
 			label: value?.label,
-			manuscript: value?.manuscript || [],
-			work: value?.msitems.flatMap((item) => item.work || []),
-			author: value?.msitems.flatMap((item) => item.author || []),
+			manuscript: clean(value?.manuscript?.map((ms) => ms.value)),
+
+			work: clean(value?.msitems?.flatMap((item) => item.work?.map((w) => w.title))),
+			author: clean(value?.msitems.flatMap((item) => item.author?.map((a) => a.name) ?? [])),
 			character: value?.character || [],
-			orig_date: value?.date || [],
-			orig_place: value?.place || [],
+			orig_date: clean(value?.date?.map((d) => d.value) ?? []),
+			orig_century: clean(value?.date?.flatMap((d) => d.century) ?? []),
+			orig_place: clean(value?.place?.map((p) => p.value) ?? []),
 			terminus_post_quem: minNotBefore !== undefined ? minNotBefore : null,
 			terminus_ante_quem: maxNotAfter !== undefined ? maxNotAfter : null,
 			role: value.hand_roles.flatMap((hrole) => hrole.role || []),
 			scribe_type: value.hand_roles.flatMap((hrole) => hrole.scribe_type || []),
 			function: value.hand_roles.flatMap((hrole) => hrole.function || []),
 			locus_layout: value.hand_roles.flatMap((hrole) => hrole.locus_layout || []),
-			form: value.msitems.flatMap((item) => item.form || []),
+			form: value.msitems.flatMap((item) => item.form.map((f) => f.value) || []),
 			text_modifications: value.msitems.flatMap((item) => item.text_modification || []),
-			interpolations: value.msitems.flatMap((item) => item.interpolations || []),
+			interpolations: value.msitems.flatMap(
+				(item) => item.interpolations.map((i) => i.title) || [],
+			),
 			language: value.msitems.flatMap((item) => item.language) || [],
 			project: value.manuscript[0].project || [],
 		};
@@ -112,8 +118,37 @@ async function generate() {
 	});
 
 	// - import data into typesense collection
-	await client.collections(collectionName).documents().import(records);
-	log.success("All strata data imported");
+	try {
+		await client.collections(collectionName).documents().import(records, { action: "create" });
+		log.success("All msitems data imported for indexing");
+	} catch (error) {
+		// typesense-js attaches one result per document to the thrown ImportError
+		const results = error.importResults ?? [];
+
+		// results are in the same order as `records`, so the index tells us which item failed
+		const failed = results
+			.map((r, index) => ({ ...r, record: records[index] }))
+			.filter((r) => !r.success);
+
+		if (failed.length > 0) {
+			// Count how often each error message occurs
+			const errorCounts = {};
+			failed.forEach((f) => {
+				errorCounts[f.error] = (errorCounts[f.error] || 0) + 1;
+			});
+			log.error("Error counts:\n", JSON.stringify(errorCounts, null, 2));
+
+			// Show the first 5 failed documents
+			failed.slice(0, 5).forEach((f) => {
+				log.error(`Failed: ${f.error}\nhit_id: ${f.record?.hit_id}`);
+			});
+		} else {
+			// Not an import-result problem (e.g. connection or auth), so show everything
+			log.error("Import failed:\n", error.stack ?? String(error));
+		}
+
+		throw error; // still reaches your outer .catch() and sets the exit code
+	}
 }
 
 generate()

@@ -15,9 +15,9 @@ import {
 import { simple } from "instantsearch.js/es/lib/stateMappings";
 import { withBasePath } from "./withBasePath";
 const project_collection_name = "hit__strata";
-const main_search_field = "work.title";
+const main_search_field = "work";
 const secondary_search_field = "manuscript";
-const third_search_field = "author.name";
+const third_search_field = "author";
 const search_api_key = "fAVyM549LHHgo0uapHq9NtEoW0U2gSeI"; // custom search only key
 
 const typesenseInstantsearchAdapter = new TypesenseInstantsearchAdapter({
@@ -280,21 +280,15 @@ search.addWidgets([
 						<div class="text-gray-700">
 							<dl class="grid grid-cols-[1fr_5fr] p-2 break-inside-avoid-column">
 								<dt class="font-semibold pr-2">Handschrift:</dt>
-								<dd class="pl-5">${hit.manuscript[0].value}</dd>
+								<dd class="pl-5">${hit.manuscript}</dd>
 								<dt class="font-semibold pr-2">Typ:</dt>
 								<dd class="pl-5">${hit.character.join(", ")}</dd>
 								<dt class="font-semibold pr-2">Datierung:</dt>
-								<dd class="pl-5">
-									${[...new Set(hit.orig_date?.map((d) => d.value) || [])].join(" | ")}
-								</dd>
+								<dd class="pl-5">${[...new Set(hit.orig_date)].join(" | ")}</dd>
 								<dt class="font-semibold pr-2">Entstehungsort:</dt>
-								<dd class="pl-5">
-									${[...new Set(hit.orig_place?.flatMap((pl) => pl.value) || [])].join(" | ")}
-								</dd>
+								<dd class="pl-5">${[...new Set(hit.orig_place)].join(" | ")}</dd>
 								<dt class="font-semibold pr-2">Werke:</dt>
-								<dd class="pl-5">
-									${[...new Set(hit.work?.flatMap((w) => w.title) || [])].join(" | ")}
-								</dd>
+								<dd class="pl-5">${[...new Set(hit.work)].join(" | ")}</dd>
 								<dt class="font-semibold pr-2">Schreiberaktivitäten:</dt>
 								<dd class="pl-5">${[...new Set(hit.role || [])].join(" | ")}</dd>
 							</dl>
@@ -315,7 +309,7 @@ search.addWidgets([
 
 	refinementListMS({
 		container: "#refinement-list-manuscripts",
-		attribute: "manuscript.value",
+		attribute: "manuscript",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -330,7 +324,7 @@ search.addWidgets([
 
 	refinementListWork({
 		container: "#refinement-list-work",
-		attribute: "work.title",
+		attribute: "work",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -345,7 +339,7 @@ search.addWidgets([
 
 	refinementListCentury({
 		container: "#refinement-list-century",
-		attribute: "orig_date.century",
+		attribute: "orig_century",
 		searchable: true,
 		sortBy: centuryComparator,
 		showMore: true,
@@ -361,7 +355,7 @@ search.addWidgets([
 
 	refinementListOrigPlace({
 		container: "#refinement-list-orig-place",
-		attribute: "orig_place.value",
+		attribute: "orig_place",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -420,7 +414,7 @@ search.addWidgets([
 
 	refinementListAuthor({
 		container: "#refinement-list-authors",
-		attribute: "author.name",
+		attribute: "author",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -435,7 +429,7 @@ search.addWidgets([
 
 	refinementListForm({
 		container: "#refinement-list-form",
-		attribute: "form.value",
+		attribute: "form",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -465,7 +459,7 @@ search.addWidgets([
 
 	refinementListInterpolations({
 		container: "#refinement-list-interpolations",
-		attribute: "interpolations.title",
+		attribute: "interpolations",
 		searchable: true,
 		showMore: true,
 		showMoreLimit: 50,
@@ -525,19 +519,19 @@ search.addWidgets([
 		container: "#current-refinements",
 		transformItems(items) {
 			const labelMap = new Map([
-				["author.name", "Autor"],
-				["work.title", "Werk"],
-				["manuscript.value", "Handschrift"],
-				["orig_date.century", "Entstehungszeit"],
-				["orig_place.value", "Entstehungsort"],
+				["author", "Autor"],
+				["work", "Werk"],
+				["manuscript", "Handschrift"],
+				["orig_century", "Entstehungszeit"],
+				["orig_place", "Entstehungsort"],
 				["function", "Händefunktion"],
 				["role", "Schreiberaktivitäten"],
 				["scribe_type", "Schreiber Typ"],
 				["terminus_ante_quem", "Terminus ante quem"],
 				["terminus_post_quem", "Termininus post quem"],
-				["interpolations.title", "Interpolations"],
+				["interpolations", "Interpolations"],
 				["text_modifications", "Textvariationen"],
-				["form.value", "Form"],
+				["form", "Form"],
 				["character", "Stratum Typ"],
 				["project", "Projekt"],
 				["language", "Sprache"],
