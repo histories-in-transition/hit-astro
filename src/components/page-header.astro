@@ -115,7 +115,7 @@ const pathname = Astro.url.pathname;
 					</button>
 
 					<ul
-						class="absolute left-0 top-full hidden w-48 rounded-md bg-brand-800 p-3 grid gap-1 border border-brand-600 shadow-xl/30 list-outside"
+						class="absolute left-0 top-full hidden z-0 w-48 rounded-md bg-brand-700 p-3 grid gap-1 border border-brand-600 shadow-xl/30 list-outside"
 						data-dropdown-menu
 					>
 						<li>
@@ -151,7 +151,10 @@ const pathname = Astro.url.pathname;
 					</ul>
 				</li>
 				<form id="searchForm" class="hidden md:flex items-center gap-x-2">
-					<label for="searchInput" class="sr-only">Volltextsuche</label>
+					<label for="searchInput">
+						<span class="sr-only">Volltextsuche</span>
+						<Icon aria-hidden="true" class="h-6 w-6 hidden 2xl:block" name="lucide:search" />
+					</label>
 					<input
 						type="text"
 						id="searchInput"

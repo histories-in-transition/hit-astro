@@ -73,9 +73,9 @@ const tocSections = [
 				<p>
 					Ein Stratum wird nicht unmittelbar einer Handschrift zugewiesen, sondern über die an
 					seiner Entstehung beteiligten Hände definiert. Die Verbindung erfolgt über die Tabelle
-					<code>hands_role</code>, in der dokumentiert wird, welche Hand an welchem Textabschnitt
-					tätig war und welche Funktion sie dort ausübte. Auf dieser Grundlage können einzelne oder
-					mehrere Hände einem gemeinsamen Stratum zugeordnet werden.
+					{" "}<code>hands_role</code>, in der dokumentiert wird, welche Hand an welchem
+					Textabschnitt tätig war und welche Funktion sie dort ausübte. Auf dieser Grundlage können
+					einzelne oder mehrere Hände einem gemeinsamen Stratum zugeordnet werden.
 				</p>
 				<NavLink class="md:hidden" href={handSchema.src} target="_blank"
 					>Öffnen Hand-Strata Schema Darstellung.</NavLink
@@ -212,7 +212,7 @@ const tocSections = [
 						Text Encoding Initiative (TEI)
 					</NavLink> und folgt dem von der <NavLink href="https://www.hab.de/" external
 						>Herzog August Bibliothek Wolfenbüttel</NavLink
-					>
+					>{" "}
 					entwickelten <NavLink
 						external
 						href="https://diglib.hab.de/rules/schema/mss/v1.0/cataloguing.xsd">Schema</NavLink
@@ -292,14 +292,14 @@ const tocSections = [
 					Die rohe JSON Datei werden über das öffentliche <NavLink
 						href="https://github.com/histories-in-transition"
 						external>GitHub-Repository</NavLink
-					>
+					>{" "}
 					bereitgestellt. Die aus den rohen JSON prozesierte JSON-Dateien können in den Tabellenübersichten
 					heruntergeladen werden (als CSV JSON oder HTML Format). Die daraus erzeugten TEI-XML-, LaTeX-
 					und PDF-Dateien stehen in eine <NavLink href="/download/index.html">Tabelle</NavLink> zur Verfügung.
 				</p>
 				<p>
 					Für die automatisierte Weiterverarbeitung der Daten stellt das Projekt zudem eine
-					<NavLink href="/oai-pmh">OAI-PMH-Schnittstelle</NavLink> (Open Archives Initiative Protocol
+					{" "}<NavLink href="/oai-pmh">OAI-PMH-Schnittstelle</NavLink> (Open Archives Initiative Protocol
 					for Metadata Harvesting) bereit. Über diese standardisierte Schnittstelle können Datensätze
 					von externen Forschungsinfrastrukturen, Bibliothekskatalogen und Aggregationsdiensten abgefragt
 					und in andere Systeme integriert werden. Die OAI-PMH-Schnittstelle ermöglicht sowohl den Zugriff
@@ -310,7 +310,7 @@ const tocSections = [
 					Zur eindeutigen Identifikation und Vernetzung der erfassten Entitäten werden etablierte
 					Normdaten- und Referenzsysteme verwendet. Personen, Autoren, Werke und Institutionen
 					werden, soweit entsprechende Normdatensätze vorhanden sind, mit Identifikatoren der
-					<NavLink
+					{" "}<NavLink
 						href="https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html"
 						external>Gemeinsamen Normdatei (GND)</NavLink
 					> verknüpft. Ortsangaben werden über <NavLink href="https://www.geonames.org/" external
